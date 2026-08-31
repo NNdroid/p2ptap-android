@@ -58,29 +58,18 @@ data class P2PConfig(
         root.put("transport_strategy", transportStrategy)
         root.put("discover_boot_mesh", discoverBootMesh)
 
-        val exitNodeObj = JSONObject()
         val targetNode = exitNode.trim()
         if (targetNode.isNotBlank()) {
-            exitNodeObj.put("enable", true)
-            exitNodeObj.put("enabled", true)
-            exitNodeObj.put("target", targetNode)
-            exitNodeObj.put("peer_id", targetNode)
-            exitNodeObj.put("exit_node", targetNode)
-            exitNodeObj.put("gateway", targetNode)
-
             root.put("exit_node_peer", targetNode)
             root.put("exit_gateway", targetNode)
         } else {
-            exitNodeObj.put("enable", false)
-            exitNodeObj.put("enabled", false)
-            exitNodeObj.put("target", "")
-            exitNodeObj.put("peer_id", "")
-            exitNodeObj.put("exit_node", "")
-            exitNodeObj.put("gateway", "")
-
             root.put("exit_node_peer", "")
             root.put("exit_gateway", "")
         }
+
+        val exitNodeObj = JSONObject()
+        exitNodeObj.put("enable", false)
+        exitNodeObj.put("target", targetNode)
         root.put("exit_node", exitNodeObj)
 
         // Transports

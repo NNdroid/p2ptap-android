@@ -98,28 +98,28 @@ class TrafficDetailDialog : BottomSheetDialogFragment() {
                 val pktObj = statsJson.optJSONObject("packet_stats")
                 val pktsSent = pktObj?.optLong("packets_sent", 0L) ?: 0L
                 val pktsRecv = pktObj?.optLong("packets_recv", 0L) ?: 0L
-                val pktsDropped = pktObj?.optLong("packets_dropped", 0L) ?: 0L
-                val cryptoErrors = pktObj?.optLong("crypto_errors", 0L) ?: 0L
+                val pktsDropped = pktObj?.optLong("dispatch_drops", pktObj.optLong("packets_dropped", 0L)) ?: 0L
+                val dedupCount = pktObj?.optLong("dedup_count", 0L) ?: 0L
 
                 val protoObj = statsJson.optJSONObject("protocol_stats")
-                val ipv4Pkts = protoObj?.optLong("ipv4_packets", 0L) ?: 0L
-                val ipv6Pkts = protoObj?.optLong("ipv6_packets", 0L) ?: 0L
-                val arpPkts = protoObj?.optLong("arp_packets", 0L) ?: 0L
-                val tcpPkts = protoObj?.optLong("tcp_packets", 0L) ?: 0L
-                val udpPkts = protoObj?.optLong("udp_packets", 0L) ?: 0L
-                val icmpPkts = protoObj?.optLong("icmp_packets", 0L) ?: 0L
+                val ipv4Pkts = protoObj?.optLong("ipv4", protoObj.optLong("ipv4_packets", 0L)) ?: 0L
+                val ipv6Pkts = protoObj?.optLong("ipv6", protoObj.optLong("ipv6_packets", 0L)) ?: 0L
+                val arpPkts = protoObj?.optLong("arp", protoObj.optLong("arp_packets", 0L)) ?: 0L
+                val tcpPkts = protoObj?.optLong("tcp", protoObj.optLong("tcp_packets", 0L)) ?: 0L
+                val udpPkts = protoObj?.optLong("udp", protoObj.optLong("udp_packets", 0L)) ?: 0L
+                val icmpPkts = protoObj?.optLong("icmp", protoObj.optLong("icmp_packets", 0L)) ?: 0L
 
                 val secObj = statsJson.optJSONObject("security")
-                val obfEnabled = secObj?.optBoolean("obfuscation_enabled", true) ?: true
-                val obfAlgo = secObj?.optString("algorithm", "ChaCha20-Poly1305") ?: "ChaCha20-Poly1305"
-                val pfsEnabled = secObj?.optBoolean("pfs_enabled", true) ?: true
+                val obfAlgo = secObj?.optString("obfuscation", secObj.optString("algorithm", "ChaCha20-Poly1305")) ?: "ChaCha20-Poly1305"
+                val obfEnabled = (obfAlgo != "none" && obfAlgo.isNotBlank())
+                val pskStatus = secObj?.optString("psk_status", "Active") ?: "Active"
 
                 withContext(Dispatchers.Main) {
                     if (_binding == null) return@withContext
 
                     setupRow(binding.rowTxPkts, getString(R.string.stat_total_tx_pkts), getString(R.string.stat_packets_unit, pktsSent))
                     setupRow(binding.rowRxPkts, getString(R.string.stat_total_rx_pkts), getString(R.string.stat_packets_unit, pktsRecv))
-                    setupRow(binding.rowDropped, getString(R.string.stat_dropped_pkts), getString(R.string.stat_dropped_fmt, pktsDropped, cryptoErrors))
+                    setupRow(binding.rowDropped, getString(R.string.stat_dropped_pkts), getString(R.string.stat_dropped_fmt, pktsDropped, dedupCount))
 
                     setupRow(binding.rowIpv4, getString(R.string.stat_ipv4), getString(R.string.stat_packets_unit, ipv4Pkts))
                     setupRow(binding.rowIpv6, getString(R.string.stat_ipv6), getString(R.string.stat_packets_unit, ipv6Pkts))
@@ -128,9 +128,9 @@ class TrafficDetailDialog : BottomSheetDialogFragment() {
                     setupRow(binding.rowUdp, getString(R.string.stat_udp), getString(R.string.stat_packets_unit, udpPkts))
                     setupRow(binding.rowIcmp, getString(R.string.stat_icmp), getString(R.string.stat_packets_unit, icmpPkts))
 
-                    setupRow(binding.rowObf, getString(R.string.stat_obf), if (obfEnabled) getString(R.string.stat_obf_enabled) else getString(R.string.stat_obf_disabled))
+                    setupRow(binding.rowObf, getString(R.string.stat_obf), if (obfEnabled) "$obfAlgo ($pskStatus)" else getString(R.string.stat_obf_disabled))
                     setupRow(binding.rowAlgo, getString(R.string.stat_algo), obfAlgo)
-                    setupRow(binding.rowPfs, getString(R.string.stat_pfs), if (pfsEnabled) getString(R.string.stat_pfs_strict) else getString(R.string.stat_pfs_shared))
+                    setupRow(binding.rowPfs, getString(R.string.stat_pfs), getString(R.string.stat_pfs_strict))
                     setupRow(binding.rowReplay, getString(R.string.stat_replay), getString(R.string.stat_replay_desc))
                 }
             } catch (e: Exception) {

@@ -80,7 +80,51 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 return START_NOT_STICKY
             }
             ACTION_RELOAD -> {
-                restartVpn()
+                val newConfig = AppConfigManager.load(this)
+                val oldConfig = cachedConfig
+                cachedConfig = newConfig
+
+                if (P2PTap.isRunning()) {
+                    val wasExitActive = oldConfig?.exitNode?.isNotBlank() == true
+                    val isExitActive = newConfig.exitNode.isNotBlank()
+
+                    if (wasExitActive == isExitActive) {
+                        // Case 1: Seamless hot-switch between exit nodes without modifying TUN routes
+                        thread(name = "P2PTap-ExitHotSwitch") {
+                            try {
+                                if (isExitActive) {
+                                    P2PTap.setExitNode(newConfig.exitNode, "", "")
+                                    Log.i(TAG, "Seamlessly hot-switched exit node to: ${newConfig.exitNode}")
+                                } else {
+                                    P2PTap.clearExitNode()
+                                    Log.i(TAG, "Seamlessly cleared exit node (Auto mode)")
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error hot-switching exit node, falling back to restart", e)
+                                restartVpn()
+                            }
+                        }
+                    } else {
+                        // Case 2: Routes changed (Auto <-> Exit Node mode). Hot-swap TUN fd without dropping P2P engine!
+                        thread(name = "P2PTap-TunHotReload") {
+                            try {
+                                val newTunFd = establishVpn(newConfig)
+                                P2PTap.updateTunFd(newTunFd.toLong())
+                                if (isExitActive) {
+                                    P2PTap.setExitNode(newConfig.exitNode, "", "")
+                                } else {
+                                    P2PTap.clearExitNode()
+                                }
+                                Log.i(TAG, "Seamlessly hot-swapped TUN fd and updated exit node to: ${newConfig.exitNode}")
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error hot-swapping TUN fd, falling back to restart", e)
+                                restartVpn()
+                            }
+                        }
+                    }
+                } else {
+                    startVpn()
+                }
                 return START_STICKY
             }
             ACTION_START, null -> {

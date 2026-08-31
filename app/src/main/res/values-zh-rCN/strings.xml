@@ -246,6 +246,7 @@
     <string name="dialog_custom_exit_node_title">手动指定出口节点</string>
     <string name="hint_custom_exit_node">请输入出口节点的 Peer ID 或虚拟 IP (如 10.0.0.1)</string>
     <string name="exit_node_empty_hint">当前没有开启出口网关功能的在线节点。\n请在对端节点上开启出口网关宣告，或在上方点击「手动指定」。</string>
+    <string name="exit_node_vpn_stopped_hint">VPN 当前未运行。启动 VPN 后将自动发现支持出口网关的在线节点，您也可点击下方手动输入指定节点。</string>
     <string name="msg_exit_node_updated">已设置出口节点为: %s</string>
     <string name="msg_exit_node_cleared">已切换为自动 Mesh 模式 (禁用出口中继)</string>
     <string name="msg_exit_node_hot_reloaded">出口路由已实时平滑生效</string>

@@ -246,6 +246,7 @@
     <string name="dialog_custom_exit_node_title">Custom Exit Node Gateway</string>
     <string name="hint_custom_exit_node">Enter Exit Node Peer ID or Virtual IP (e.g. 10.0.0.1)</string>
     <string name="exit_node_empty_hint">No online peers currently support exit gateway functionality.\nEnable exit gateway mode on a remote node or manually enter its Peer ID above.</string>
+    <string name="exit_node_vpn_stopped_hint">VPN is not running. Start VPN to automatically discover online exit gateways, or enter a custom Peer ID below.</string>
     <string name="msg_exit_node_updated">Exit node updated to: %s</string>
     <string name="msg_exit_node_cleared">Exit node disabled (Auto Mesh Mode)</string>
     <string name="msg_exit_node_hot_reloaded">Exit node routing updated seamlessly in active VPN</string>

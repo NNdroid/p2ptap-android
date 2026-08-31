@@ -104,6 +104,14 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
         binding.containerPeers.removeAllViews()
 
         if (!P2PTapVpnService.isRunning()) {
+            val offlineTv = android.widget.TextView(ctx).apply {
+                text = getString(R.string.exit_node_vpn_stopped_hint)
+                textSize = 13f
+                setTextColor(ContextCompat.getColor(ctx, R.color.text_muted))
+                gravity = android.view.Gravity.CENTER
+                setPadding(24, 48, 24, 48)
+            }
+            binding.containerPeers.addView(offlineTv)
             return
         }
 
@@ -120,11 +128,18 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                     for (i in 0 until totalPeers) {
                         val peer = peersArray!!.getJSONObject(i)
                         val peerId = peer.optString("peer_id", "-")
-                        val nodeName = peer.optString("node_name", "Peer-$i")
+                        val rawNodeName = peer.optString("node_name", "")
+                        val nodeName = if (rawNodeName.isNotBlank()) {
+                            rawNodeName
+                        } else if (peerId.length > 8) {
+                            "Peer-${peerId.takeLast(6)}"
+                        } else {
+                            "Peer-$i"
+                        }
                         val tapIp = peer.optString("tap_ip", "")
                         val connState = peer.optString("conn_state", "ok")
                         val rtt = peer.optDouble("rtt_ms", 0.0)
-                        val isDirect = (connState == "ok")
+                        val isDirect = (connState == "ok" || (!peer.optBoolean("is_relayed", false) && connState != "relay_ok"))
 
                         val isExitGateway = isExitGatewayPeer(peer)
                         val isSelected = currentExitNode.isNotBlank() &&

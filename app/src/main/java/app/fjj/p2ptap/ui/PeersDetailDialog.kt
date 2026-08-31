@@ -90,18 +90,27 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
                     for (i in 0 until totalPeers) {
                         val peer = peersArray!!.getJSONObject(i)
                         val peerId = peer.optString("peer_id", "-")
-                        val nodeName = peer.optString("node_name", "Peer-$i")
+                        val rawNodeName = peer.optString("node_name", "")
+                        val nodeName = if (rawNodeName.isNotBlank()) {
+                            rawNodeName
+                        } else if (peerId.length > 8) {
+                            "Peer-${peerId.takeLast(6)}"
+                        } else {
+                            "Peer-$i"
+                        }
                         val tapIp = peer.optString("tap_ip", "")
                         val tapIpv6 = peer.optString("tap_ipv6", "")
                         val connState = peer.optString("conn_state", "ok")
-                        val multiaddr = peer.optString("multiaddr", "")
+                        val addr = peer.optString("addr", peer.optString("multiaddr", ""))
+                        val transport = peer.optString("transport", "P2P")
                         val rtt = peer.optDouble("rtt_ms", 0.0)
-                        val txBytes = peer.optLong("tx_bytes", 0L)
-                        val rxBytes = peer.optLong("rx_bytes", 0L)
-                        val os = peer.optString("os", "")
+                        val txBytes = peer.optLong("total_tx", peer.optLong("tx_bytes", 0L))
+                        val rxBytes = peer.optLong("total_rx", peer.optLong("rx_bytes", 0L))
+                        val osArch = peer.optString("os_arch", peer.optString("os", ""))
                         val version = peer.optString("version", "")
+                        val isExitNode = peer.optBoolean("is_exit_node", false)
 
-                        val isDirect = (connState == "ok")
+                        val isDirect = (connState == "ok" || (!peer.optBoolean("is_relayed", false) && connState != "relay_ok"))
                         if (isDirect) directCount++ else relayCount++
 
                         peerDataList.add(
@@ -111,12 +120,15 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
                                 tapIp = tapIp,
                                 tapIpv6 = tapIpv6,
                                 isDirect = isDirect,
-                                multiaddr = multiaddr,
+                                connState = connState,
+                                multiaddr = addr,
+                                transport = transport,
                                 rtt = rtt,
                                 txBytes = txBytes,
                                 rxBytes = rxBytes,
-                                os = os,
-                                version = version
+                                os = osArch,
+                                version = version,
+                                isExitNode = isExitNode
                             )
                         )
                     }
@@ -138,8 +150,28 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
 
                         itemBinding.tvNodeName.text = item.nodeName
                         itemBinding.tvBadge.apply {
-                            text = if (item.isDirect) getString(R.string.badge_direct) else getString(R.string.badge_relay)
-                            setTextColor(if (item.isDirect) Color.parseColor("#059669") else Color.parseColor("#D97706"))
+                            when (item.connState) {
+                                "ok" -> {
+                                    text = getString(R.string.badge_direct)
+                                    setTextColor(Color.parseColor("#059669"))
+                                }
+                                "relay_ok" -> {
+                                    text = getString(R.string.badge_relay)
+                                    setTextColor(Color.parseColor("#0284C7"))
+                                }
+                                "connecting" -> {
+                                    text = "Connecting"
+                                    setTextColor(Color.parseColor("#D97706"))
+                                }
+                                "obf_failed", "proto_mismatch" -> {
+                                    text = "Error"
+                                    setTextColor(Color.parseColor("#DC2626"))
+                                }
+                                else -> {
+                                    text = if (item.isDirect) getString(R.string.badge_direct) else getString(R.string.badge_relay)
+                                    setTextColor(if (item.isDirect) Color.parseColor("#059669") else Color.parseColor("#D97706"))
+                                }
+                            }
                         }
 
                         itemBinding.tvRtt.text = if (item.rtt > 0) "📶 ${item.rtt.toInt()}ms" else ""
@@ -158,13 +190,23 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
                             Toast.makeText(ctx, getString(R.string.msg_peer_id_copied_fmt, item.peerId), Toast.LENGTH_SHORT).show()
                         }
 
-                        itemBinding.tvEndpoint.text = if (item.multiaddr.isNotBlank()) getString(R.string.label_endpoint_prefix) + item.multiaddr else ""
-                        itemBinding.tvEndpoint.visibility = if (item.multiaddr.isBlank()) View.GONE else View.VISIBLE
+                        val endpointText = buildString {
+                            if (item.multiaddr.isNotBlank()) {
+                                append(getString(R.string.label_endpoint_prefix))
+                                append(item.multiaddr)
+                            } else if (item.transport.isNotBlank()) {
+                                append(getString(R.string.label_endpoint_prefix))
+                                append("(${item.transport})")
+                            }
+                        }
+                        itemBinding.tvEndpoint.text = endpointText
+                        itemBinding.tvEndpoint.visibility = if (endpointText.isBlank()) View.GONE else View.VISIBLE
 
                         val tx = P2PStateRepository.formatBytes(item.txBytes)
                         val rx = P2PStateRepository.formatBytes(item.rxBytes)
-                        val sys = if (item.os.isNotBlank()) " • ${item.os} ${item.version}" else ""
-                        itemBinding.tvTraffic.text = getString(R.string.label_traffic_prefix) + "↑ $tx  ↓ $rx$sys"
+                        val sys = if (item.os.isNotBlank()) " • ${item.os} ${item.version}".trim() else ""
+                        val exitBadge = if (item.isExitNode) " • 🚀 Exit Gateway" else ""
+                        itemBinding.tvTraffic.text = getString(R.string.label_traffic_prefix) + "↑ $tx  ↓ $rx$sys$exitBadge"
                     }
 
                     binding.tvSummary.text = getString(R.string.peers_summary_fmt, totalPeers, directCount, relayCount)
@@ -185,12 +227,15 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
         val tapIp: String,
         val tapIpv6: String,
         val isDirect: Boolean,
+        val connState: String,
         val multiaddr: String,
+        val transport: String,
         val rtt: Double,
         val txBytes: Long,
         val rxBytes: Long,
         val os: String,
-        val version: String
+        val version: String,
+        val isExitNode: Boolean
     )
 
     override fun onDestroyView() {
