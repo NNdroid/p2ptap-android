@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Semantic Window & Card (Night Mode) -->
+    <color name="window_bg">#070A10</color>
+    <color name="card_bg">#0F172A</color>
+    <color name="card_stroke">#1E293B</color>
+    <color name="card_elevated">#1E293B</color>
+
+    <color name="surface_light_base">#070A10</color>
+    <color name="surface_light_card">#0F172A</color>
+    <color name="surface_light_stroke">#1E293B</color>
+
+    <!-- Log Viewer Colors (Night Mode) -->
+    <color name="log_bg">#070A10</color>
+    <color name="log_card">#0F172A</color>
+    <color name="log_stroke">#1E293B</color>
+    <color name="log_text">#E2E8F0</color>
+    <color name="log_time">#64748B</color>
+    <color name="log_tag">#38BDF8</color>
+    <color name="log_info">#2DD4BF</color>
+    <color name="log_warn">#FBBF24</color>
+    <color name="log_error">#F87171</color>
+    <color name="log_debug">#94A3B8</color>
+
+    <!-- Text Colors (Night Mode) -->
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_muted">#64748B</color>
+</resources>

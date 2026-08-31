@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512">
+  <defs>
+    <!-- Background Linear Gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="108" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0B0F19"/>
+      <stop offset="45%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+
+    <!-- Radial Cyber Aura -->
+    <radialGradient id="auraGrad" cx="54" cy="54" r="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.21"/>
+      <stop offset="50%" stop-color="#4F46E5" stop-opacity="0.10"/>
+      <stop offset="90%" stop-color="#0F172A" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Outer Shield Frame Gradient -->
+    <linearGradient id="shieldGrad" x1="30" y1="24" x2="78" y2="83" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00F2FE"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+
+    <!-- Translucent Shield Core Gradient -->
+    <linearGradient id="coreGrad" x1="54" y1="25" x2="54" y2="82" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.15"/>
+      <stop offset="70%" stop-color="#1E1B4B" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.13"/>
+    </linearGradient>
+
+    <!-- Lightning Bolt Gradient -->
+    <linearGradient id="boltGrad" x1="46" y1="39" x2="63" y2="67" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="#E0F2FE"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Obsidian Cyber Gradient -->
+  <rect width="108" height="108" rx="24" fill="url(#bgGrad)"/>
+
+  <!-- Outer Radial Cyber Aura -->
+  <circle cx="54" cy="54" r="54" fill="url(#auraGrad)"/>
+
+  <!-- Subtle Geometric Mesh Grid Lines -->
+  <path d="M18,54 L90,54 M54,18 L54,90 M28.5,28.5 L79.5,79.5 M79.5,28.5 L28.5,79.5" stroke="#38BDF8" stroke-opacity="0.09" stroke-width="0.6"/>
+
+  <!-- Orbital Concentric Circles -->
+  <circle cx="54" cy="54" r="42" fill="none" stroke="#38BDF8" stroke-opacity="0.12" stroke-width="0.8"/>
+  <circle cx="54" cy="54" r="28" fill="none" stroke="#06B6D4" stroke-opacity="0.13" stroke-width="0.8"/>
+
+  <!-- Outer Soft Glow / Ambient Shadow -->
+  <path d="M54,23 L79,35 L79,64 L54,84 L29,64 L29,35 Z" fill="none" stroke="#06B6D4" stroke-opacity="0.21" stroke-width="5"/>
+
+  <!-- Outer Shield / Rounded Hexagon Frame -->
+  <path d="M54,24.5 L78,36 L78,63.5 L54,83 L30,63.5 L30,36 Z" fill="none" stroke="url(#shieldGrad)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Translucent Shield Core Background -->
+  <path d="M54,25.5 L77,36.5 L77,63 L54,82 L31,63 L31,36.5 Z" fill="url(#coreGrad)"/>
+
+  <!-- P2P Mesh Interconnect Pathways -->
+  <path d="M54,37 L41,61" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M54,37 L67,61" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M41,61 L67,61" stroke="#10B981" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Central High-Tech TAP Bridge / Lightning Fast Connector -->
+  <path d="M55.5,39.5 L46,54 L53,54 L51.5,67.5 L63,51.5 L56.5,51.5 Z" fill="url(#boltGrad)"/>
+
+  <!-- P2P Mesh Orbit Nodes -->
+  <!-- Top Master Node -->
+  <circle cx="54" cy="37" r="4.5" fill="#00F2FE"/>
+  <circle cx="54" cy="37" r="2" fill="#FFFFFF"/>
+
+  <!-- Left Peer Node -->
+  <circle cx="41" cy="61" r="4.5" fill="#38BDF8"/>
+  <circle cx="41" cy="61" r="2" fill="#FFFFFF"/>
+
+  <!-- Right Peer Node -->
+  <circle cx="67" cy="61" r="4.5" fill="#10B981"/>
+  <circle cx="67" cy="61" r="2" fill="#FFFFFF"/>
+</svg>

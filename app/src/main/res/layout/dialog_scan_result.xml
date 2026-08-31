@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_code_block"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_scan_result_title"
+        android:textColor="@color/text_primary"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <!-- Node Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/card_bg"
+        app:cardCornerRadius="14dp"
+        app:strokeColor="@color/card_stroke"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/tvScanNodeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Node-Alpha-Win11" />
+
+            <TextView
+                android:id="@+id/tvScanIps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="monospace"
+                android:textColor="@color/status_connected"
+                android:textSize="13sp"
+                tools:text="IPv4: 10.0.0.2/24 | IPv6: fd00::2" />
+
+            <TextView
+                android:id="@+id/tvScanPeerId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="middle"
+                android:fontFamily="monospace"
+                android:singleLine="true"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                tools:text="PeerID: 12D3KooW..." />
+
+            <TextView
+                android:id="@+id/tvScanMultiaddrs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_code_block"
+                android:fontFamily="monospace"
+                android:padding="8dp"
+                android:textColor="@color/text_primary"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:text="/ip4/192.168.1.100/udp/4001/quic-v1/p2p/12D3..." />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Import Actions -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="选择导入方式："
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <!-- Action 1: Add to Static Peers -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddStaticPeer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/action_add_static_peer"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart" />
+
+    <!-- Action 2: Add to Bootstrap Peers -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddBootstrapPeer"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/action_add_bootstrap_peer"
+        app:icon="@drawable/ic_peers"
+        app:iconGravity="textStart" />
+
+    <!-- Action 3: Override Full Config (if full config payload) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnImportFullConfig"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/action_import_full_config"
+        android:visibility="gone"
+        app:icon="@drawable/ic_restore"
+        app:iconGravity="textStart" />
+
+    <!-- Cancel -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancelScan"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_cancel" />
+
+</LinearLayout>

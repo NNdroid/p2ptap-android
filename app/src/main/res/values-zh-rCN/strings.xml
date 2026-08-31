@@ -1,0 +1,252 @@
+<resources>
+    <string name="app_name">P2PTap</string>
+    <string name="action_settings">设置</string>
+
+    <!-- 状态 -->
+    <string name="status_disconnected">已断开连接</string>
+    <string name="status_connecting">正在连接...</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_stopping">正在停止...</string>
+    <string name="status_error">连接错误</string>
+    <string name="status_hint_idle">点击连接加入 P2P 网络</string>
+    <string name="status_hint_connected">P2P 虚拟网已激活并正在路由</string>
+    <string name="status_hint_starting">正在建立隧道并发现节点...</string>
+    <string name="status_hint_stopping">正在释放隧道并停止引擎...</string>
+
+    <!-- 按钮与操作 -->
+    <string name="btn_connect">连接</string>
+    <string name="btn_disconnect">断开连接</string>
+    <string name="btn_retry">重试</string>
+    <string name="btn_open_webui">Web 控制台</string>
+    <string name="btn_open_settings">设置</string>
+    <string name="btn_save">保存设置</string>
+    <string name="btn_import">导入</string>
+    <string name="btn_export">导出</string>
+    <string name="btn_backup_restore">备份与还原</string>
+    <string name="btn_view_logs">查看日志</string>
+    <string name="btn_qr_code">分享二维码</string>
+    <string name="btn_copy">复制</string>
+
+    <!-- 信息标签 -->
+    <string name="node_info_title">节点身份与网络</string>
+    <string name="label_node_name">节点名称</string>
+    <string name="label_peer_id">Peer ID</string>
+    <string name="label_tap_ip">虚拟 IPv4</string>
+    <string name="label_tap_ipv6">虚拟 IPv6</string>
+    <string name="label_bootstrap_peers">引导节点</string>
+    <string name="label_active_peers">在线节点</string>
+    <string name="label_live_speed">实时吞吐量</string>
+    <string name="label_traffic">累计流量</string>
+    <string name="label_web_console">Web 控制台</string>
+    <string name="label_upload">上传</string>
+    <string name="label_download">下载</string>
+    <string name="label_direct_peers">直连</string>
+    <string name="label_relay_peers">中继</string>
+    <string name="label_multiaddrs">监听多地址</string>
+    <string name="multiaddrs_empty_hint">连接后开始监听并查看多地址</string>
+    <string name="about_title">关于 P2PTap</string>
+    <string name="about_desc">高性能对等网络 L2/L3 覆盖网</string>
+    <string name="label_github_repo">GitHub 仓库</string>
+    <string name="label_developer">开发者 @NNdroid</string>
+
+    <!-- 设置分组 -->
+    <string name="title_settings">节点设置</string>
+    <string name="group_identity">👤 节点身份与密钥</string>
+    <string name="group_network">🌐 虚拟网络 (L2/L3)</string>
+    <string name="group_peers">🚀 引导与网格节点</string>
+    <string name="group_security">🔒 安全与混淆</string>
+    <string name="group_routing">🧭 子网与路由</string>
+    <string name="group_webui">📊 Web 控制台与诊断</string>
+
+    <!-- 设置提示 -->
+    <string name="title_web_console">P2PTap Web 控制台</string>
+    <string name="hint_node_name">节点名称 (别名)</string>
+    <string name="hint_tap_ip">虚拟 IPv4 / CIDR (例如 10.0.0.88/24)</string>
+    <string name="hint_tap_ipv6">虚拟 IPv6 / CIDR (例如 fd00::88/64, 可选)</string>
+    <string name="hint_psk">预共享密钥 / PSK (可选)</string>
+    <string name="hint_bootstrap">引导多地址 (每行一个)</string>
+    <string name="hint_static_peers">静态节点 (每行一个, 可选)</string>
+    <string name="hint_advertised_subnets">宣告子网 (例如 192.168.1.0/24, 可选)</string>
+    <string name="hint_webui_port">Web 控制台端口</string>
+    <string name="hint_webui_token">Web 控制台令牌</string>
+    <string name="helper_webui_token">Web 仪表盘/API 的访问令牌 (可选, 留空则自动生成)</string>
+    <string name="hint_mtu">隧道 MTU</string>
+    <string name="hint_obfuscation_mode">混淆模式</string>
+    <string name="hint_obfuscation_algo">加密算法</string>
+    <string name="hint_transport_strategy">传输策略</string>
+    <string name="hint_log_level">日志级别</string>
+
+    <string name="switch_accept_subnets">接收宣告子网</string>
+    <string name="switch_obfuscation">启用流量混淆与加密</string>
+    <string name="switch_discover_boot_mesh">发现 Boot 骨干网</string>
+    <string name="switch_webui_enable">启用内置 Web 控制台</string>
+
+    <!-- 日志查看器 -->
+    <string name="title_log_viewer">诊断日志</string>
+    <string name="hint_search_logs">搜索日志关键字、IP、节点...</string>
+    <string name="filter_all">全部</string>
+    <string name="filter_info">信息</string>
+    <string name="filter_warn">警告</string>
+    <string name="filter_error">错误</string>
+    <string name="filter_debug">调试</string>
+    <string name="chip_auto_scroll">自动滚动</string>
+    <string name="btn_pause_logs">暂停</string>
+    <string name="btn_resume_logs">恢复</string>
+    <string name="btn_clear_logs">清空</string>
+    <string name="btn_copy_logs">复制</string>
+    <string name="menu_toggle_theme">切换主题 (白天 / 黑夜)</string>
+
+    <!-- 身份与备份对话框 -->
+    <string name="title_identity_backup">身份与备份</string>
+    <string name="action_export_bundle">导出完整备份 (配置 + 密钥)</string>
+    <string name="action_export_config_only">仅导出配置 JSON</string>
+    <string name="action_export_key_only">仅导出私钥 (Base64)</string>
+    <string name="action_import_bundle">导入备份 (配置 + 密钥)</string>
+    <string name="action_import_key">导入私钥</string>
+    <string name="action_reset_key">生成新 Peer ID (重置密钥)</string>
+    <string name="confirm_reset_key_title">重新生成 Peer ID？</string>
+    <string name="confirm_reset_key_msg">这将生成一个全新的加密身份。您当前的 Peer ID 将被永久替换。确定吗？</string>
+    <string name="btn_confirm_reset">重置密钥</string>
+    <string name="btn_cancel">取消</string>
+
+    <!-- 消息与对话框 -->
+    <string name="msg_config_saved">配置已成功保存</string>
+    <string name="msg_peer_id_copied">节点 Peer ID 已复制到剪贴板</string>
+    <string name="msg_multiaddrs_copied">所有多地址已复制到剪贴板</string>
+    <string name="msg_import_success">配置已导入！点击保存以生效。</string>
+    <string name="msg_import_failed">导入配置失败：</string>
+    <string name="msg_copied_clipboard">已复制到剪贴板</string>
+    <string name="dialog_export_title">导出配置与密钥</string>
+    <string name="dialog_import_title">导入配置与密钥</string>
+    <string name="opt_copy_clipboard">复制到剪贴板</string>
+    <string name="opt_share_file">分享 / 发送</string>
+    <string name="opt_paste_clipboard">从剪贴板粘贴</string>
+    <string name="opt_choose_file">选择 JSON 文件</string>
+    <string name="prompt_vpn_not_running">注意：必须运行 P2PTap VPN 才能访问控制台</string>
+    <string name="notification_starting">正在启动 P2PTap VPN...</string>
+    <string name="notification_running">P2PTap 已连接</string>
+    <string name="notification_action_disconnect">断开</string>
+    <string name="tile_label">P2PTap</string>
+    <string name="switch_enable_mdns">启用 mDNS 局域网自动发现</string>
+    <string name="switch_disable_relay">仅直连模式 (禁用电路中继)</string>
+    <string name="switch_strict_key">严格前向安全 (每节点 PFS 密钥隔离)</string>
+    <string name="group_transports">传输层协议</string>
+    <string name="switch_quic">启用 QUIC 传输 (UDP)</string>
+    <string name="switch_webrtc">启用 WebRTC 直连 (NAT 打洞)</string>
+    <string name="switch_webtransport">启用 WebTransport 协议</string>
+    <string name="switch_tcp">启用 TCP 传输 (端口复用)</string>
+    <string name="hint_allowed_subnet_peers">允许的子网节点 ID (或 * 代表全部)</string>
+
+    <!-- 节点详情对话框 -->
+    <string name="dialog_peers_title">活跃节点详情</string>
+    <string name="peers_offline_hint">VPN 未连接。请先在主界面点击连接。</string>
+    <string name="peers_empty_title">无活跃节点</string>
+    <string name="peers_empty_offline">节点目前离线。\n请在主界面点击连接以发现并连接节点。</string>
+    <string name="peers_waiting_hint">等待其他节点加入虚拟网格...</string>
+    <string name="peers_summary_fmt">共 %1$d 个活跃节点 (%2$d 直连, %3$d 中继)</string>
+    <string name="badge_direct">⚡ 直连</string>
+    <string name="badge_relay">🔁 中继</string>
+    <string name="msg_peer_id_copied_fmt">Peer ID 已复制: %s</string>
+    <string name="label_endpoint_prefix">终结点: </string>
+    <string name="label_traffic_prefix">流量: </string>
+    <string name="msg_peers_refreshed">节点数据已刷新</string>
+    <string name="err_parse_peers">解析节点数据失败: </string>
+
+    <!-- 流量详情对话框 -->
+    <string name="dialog_traffic_title">流量与吞吐量指标</string>
+    <string name="traffic_offline_hint">VPN 未连接。请在主界面点击连接以监控实时流量。</string>
+    <string name="section_live_throughput">⚡ 实时吞吐量与生命周期数据</string>
+    <string name="section_protocol_stats">🌐 L2/L3 协议明细</string>
+    <string name="section_security_stats">🔒 安全与混淆</string>
+    <string name="stat_live_tx_speed">实时发送速率</string>
+    <string name="stat_live_rx_speed">实时接收速率</string>
+    <string name="stat_total_tx_bytes">累计发送数据</string>
+    <string name="stat_total_rx_bytes">累计接收数据</string>
+    <string name="stat_total_tx_pkts">发送数据包</string>
+    <string name="stat_total_rx_pkts">接收数据包</string>
+    <string name="stat_dropped_pkts">丢弃数据包</string>
+    <string name="stat_dropped_fmt">%1$d 个包 (加密错误: %2$d)</string>
+    <string name="stat_packets_unit">%d 个包</string>
+    <string name="stat_ipv4">IPv4 数据包</string>
+    <string name="stat_ipv6">IPv6 数据包</string>
+    <string name="stat_arp">ARP 解析包</string>
+    <string name="stat_tcp">TCP 流数据包</string>
+    <string name="stat_udp">UDP 数据报包</string>
+    <string name="stat_icmp">ICMP Ping 包</string>
+    <string name="stat_obf">流量混淆</string>
+    <string name="stat_obf_enabled">已启用 (Anti-DPI)</string>
+    <string name="stat_obf_disabled">已禁用</string>
+    <string name="stat_algo">加密算法</string>
+    <string name="stat_pfs">前向安全 (PFS)</string>
+    <string name="stat_pfs_strict">严格 (每节点临时密钥)</string>
+    <string name="stat_pfs_shared">共享会话密钥</string>
+    <string name="stat_replay">防重放防御</string>
+    <string name="stat_replay_desc">动态滑动窗口序列同步 (SeqSync)</string>
+    <string name="msg_traffic_refreshed">流量指标已刷新</string>
+    <string name="err_parse_traffic">解析流量数据失败: </string>
+
+    <!-- 其他对话框与 QR 字符串 -->
+    <string name="dialog_backup_title">配置与身份密钥备份</string>
+    <string name="msg_backup_copied">完整备份 JSON 已复制到剪贴板</string>
+    <string name="msg_config_copied">配置 JSON 已复制到剪贴板</string>
+    <string name="msg_key_copied">私钥 Base64 已复制到剪贴板</string>
+    <string name="dialog_qr_title">节点身份与连接二维码</string>
+    <string name="qr_scan_hint">扫描此二维码以获取节点别名、Peer ID 和虚拟 IP</string>
+    <string name="btn_copy_qr_content">复制二维码文本</string>
+    <string name="btn_share_qr_img">分享二维码图片</string>
+    <string name="msg_qr_copied">二维码连接文本已复制到剪贴板</string>
+    <string name="err_open_browser">打开浏览器失败: %s</string>
+
+    <!-- 地址列表管理器 -->
+    <string name="dialog_manage_addresses">管理地址列表</string>
+    <string name="dialog_manage_bootstrap">管理引导节点地址 (Bootstrap Peers)</string>
+    <string name="dialog_manage_static">管理静态直连节点 (Static Peers)</string>
+    <string name="dialog_manage_subnets">管理宣告子网网段 (Advertised Subnets)</string>
+    <string name="dialog_manage_allowed_peers">管理允许访问子网节点 (Allowed Peer IDs)</string>
+    <string name="btn_manage_list_fmt">管理列表 (%d)</string>
+    <string name="btn_add_address">添加新地址</string>
+    <string name="btn_scan_qr">📷 扫码添加</string>
+    <string name="btn_paste_clip">📋 粘贴追加</string>
+    <string name="btn_switch_text_mode">📝 批量文本模式</string>
+    <string name="btn_switch_list_mode">📇 卡片列表模式</string>
+    <string name="hint_input_address">输入 /ip4/.../udp/.../p2p/... 或 IP/CIDR 地址</string>
+    <string name="dialog_edit_address_title">编辑地址</string>
+    <string name="dialog_add_address_title">添加新地址</string>
+    <string name="msg_address_added">已添加新地址</string>
+    <string name="msg_address_updated">地址已更新</string>
+    <string name="msg_address_deleted">地址已删除</string>
+    <string name="empty_address_list">暂无配置地址\n点击下方按钮添加或扫码导入</string>
+    <string name="btn_save_list">保存并应用</string>
+
+    <!-- 二维码扫描与导入 -->
+    <string name="btn_scan_config">📷 扫码导入</string>
+    <string name="title_scan_qr">扫描节点连接二维码</string>
+    <string name="msg_scan_success">扫码成功</string>
+    <string name="msg_scan_no_result">未识别到有效二维码</string>
+    <string name="dialog_scan_result_title">已识别节点连接信息</string>
+    <string name="action_add_static_peer">➕ 添加为静态对端节点 (Static Peer)</string>
+    <string name="action_add_bootstrap_peer">🌐 添加为引导中继节点 (Bootstrap Peer)</string>
+    <string name="action_import_full_config">⚙️ 覆盖导入完整网络配置</string>
+    <string name="label_virtual_ipv6">虚拟 IPv6: </string>
+    <string name="label_subnets">宣告子网: </string>
+    <string name="label_direct_multiaddrs">直连 Multiaddrs: </string>
+    <string name="permission_camera_rationale">需要相机权限以扫描节点连接二维码</string>
+    <string name="btn_choose_gallery_qr">从相册选取二维码图片</string>
+
+    <!-- 出口节点选择器 -->
+    <string name="label_exit_node">出口节点 / 全局网关</string>
+    <string name="exit_node_auto_display">🌐 自动 Mesh 选路 (不启用出口中继)</string>
+    <string name="exit_node_active_fmt">🚀 出口: %1$s (%2$s)</string>
+    <string name="dialog_exit_node_title">出口节点选择</string>
+    <string name="dialog_exit_node_desc">选择通过哪台在线 Mesh 节点中转互联网/全局网关流量</string>
+    <string name="exit_node_auto_title">自动 Mesh 直连模式 (默认)</string>
+    <string name="exit_node_auto_desc">仅进行 P2P 虚拟局域网内部路由，公网流量保持本地出口。</string>
+    <string name="exit_node_custom_title">手动指定 Peer ID 或虚拟 IP...</string>
+    <string name="section_active_peers">支持出口网关的在线节点</string>
+    <string name="dialog_custom_exit_node_title">手动指定出口节点</string>
+    <string name="hint_custom_exit_node">请输入出口节点的 Peer ID 或虚拟 IP (如 10.0.0.1)</string>
+    <string name="exit_node_empty_hint">当前没有开启出口网关功能的在线节点。\n请在对端节点上开启出口网关宣告，或在上方点击「手动指定」。</string>
+    <string name="msg_exit_node_updated">已设置出口节点为: %s</string>
+    <string name="msg_exit_node_cleared">已切换为自动 Mesh 模式 (禁用出口中继)</string>
+    <string name="msg_exit_node_hot_reloaded">出口路由已实时平滑生效</string>
+</resources>

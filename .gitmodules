@@ -1,0 +1,3 @@
+[submodule "p2ptap-core"]
+	path = p2ptap-core
+	url = https://github.com/NNdroid/p2ptap.git

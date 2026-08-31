@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer Soft Glow / Ambient Shadow -->
+    <path
+        android:pathData="M54,23 L79,35 L79,64 L54,84 L29,64 L29,35 Z"
+        android:strokeWidth="5"
+        android:strokeColor="#3506B6D4" />
+
+    <!-- Outer Shield / Rounded Hexagon Frame -->
+    <path
+        android:pathData="M54,24.5 L78,36 L78,63.5 L54,83 L30,63.5 L30,36 Z"
+        android:strokeWidth="2.8"
+        android:strokeColor="#38BDF8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Translucent Shield Core Background -->
+    <path
+        android:pathData="M54,25.5 L77,36.5 L77,63 L54,82 L31,63 L31,36.5 Z"
+        android:fillColor="#2506B6D4" />
+
+    <!-- P2P Mesh Interconnect Pathways -->
+    <!-- Top to Bottom-Left -->
+    <path
+        android:pathData="M54,37 L41,61"
+        android:strokeWidth="2.2"
+        android:strokeColor="#38BDF8"
+        android:strokeLineCap="round" />
+    <!-- Top to Bottom-Right -->
+    <path
+        android:pathData="M54,37 L67,61"
+        android:strokeWidth="2.2"
+        android:strokeColor="#38BDF8"
+        android:strokeLineCap="round" />
+    <!-- Bottom-Left to Bottom-Right -->
+    <path
+        android:pathData="M41,61 L67,61"
+        android:strokeWidth="2.2"
+        android:strokeColor="#10B981"
+        android:strokeLineCap="round" />
+
+    <!-- Central High-Tech TAP Bridge / Lightning Fast Connector -->
+    <path
+        android:pathData="M55.5,39.5 L46,54 L53,54 L51.5,67.5 L63,51.5 L56.5,51.5 Z"
+        android:fillColor="#00F2FE" />
+
+    <!-- P2P Mesh Orbit Nodes (Top Node, Left Node, Right Node) -->
+    <!-- Top Master Node -->
+    <path
+        android:pathData="M54,37m-4.5,0a4.5,4.5 0 1,0 9,0a4.5,4.5 0 1,0 -9,0"
+        android:fillColor="#00F2FE" />
+    <path
+        android:pathData="M54,37m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Left Peer Node -->
+    <path
+        android:pathData="M41,61m-4.5,0a4.5,4.5 0 1,0 9,0a4.5,4.5 0 1,0 -9,0"
+        android:fillColor="#38BDF8" />
+    <path
+        android:pathData="M41,61m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Right Peer Node -->
+    <path
+        android:pathData="M67,61m-4.5,0a4.5,4.5 0 1,0 9,0a4.5,4.5 0 1,0 -9,0"
+        android:fillColor="#10B981" />
+    <path
+        android:pathData="M67,61m-2,0a2,2 0 1,0 4,0a2,2 0 1,0 -4,0"
+        android:fillColor="#FFFFFF" />
+
+</vector>

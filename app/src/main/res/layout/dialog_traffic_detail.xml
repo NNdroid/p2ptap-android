@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/window_bg"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_traffic_title"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRefresh"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:icon="@drawable/ic_refresh"
+            app:iconTint="@color/brand_primary" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="450dp">
+
+        <LinearLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Card 1: Throughput -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/section_live_throughput"
+                        android:textColor="@color/brand_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowTxSpeed" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowRxSpeed" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowTotalTx" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowTotalRx" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowTxPkts" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowRxPkts" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowDropped" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Protocols -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/section_protocol_stats"
+                        android:textColor="@color/brand_secondary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowIpv4" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowIpv6" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowArp" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowTcp" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowUdp" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowIcmp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Security -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/section_security_stats"
+                        android:textColor="@color/brand_accent"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowObf" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowAlgo" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowPfs" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowReplay" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

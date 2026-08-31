@@ -1,0 +1,175 @@
+name: Build & Release P2PTap APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    name: Build P2PTap Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code & Submodules
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+
+      - name: Set up Go (for p2ptap.aar compilation)
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Set up Android NDK
+        uses: nsetup/setup-ndk@v1
+        continue-on-error: true
+        with:
+          ndk-version: r25c
+
+      - name: Compile Go p2ptap.aar & Extract Commit Hash
+        id: build_go
+        run: |
+          # Detect Go submodule directory
+          GO_DIR=""
+          if [ -d "p2ptap-core" ]; then
+            GO_DIR="p2ptap-core"
+          elif [ -d "core" ]; then
+            GO_DIR="core"
+          fi
+
+          if [ -n "${GO_DIR}" ]; then
+            GO_COMMIT=$(git -C "${GO_DIR}" rev-parse --short HEAD || echo "dev")
+          else
+            GO_COMMIT="dev"
+          fi
+
+          echo "GO_COMMIT_HASH=${GO_COMMIT}" >> $GITHUB_ENV
+          echo "go_commit=${GO_COMMIT}" >> $GITHUB_OUTPUT
+          echo "Go Engine Commit Hash: ${GO_COMMIT}"
+
+          # Install gomobile and compile p2ptap.aar if Go source exists
+          if [ -n "${GO_DIR}" ]; then
+            echo "Installing gomobile..."
+            go install golang.org/x/mobile/cmd/gomobile@latest
+            export PATH=$PATH:$(go env GOPATH)/bin
+            gomobile init
+            
+            echo "Building p2ptap.aar from ${GO_DIR}..."
+            cd "${GO_DIR}"
+            gomobile bind -target=android -androidapi=21 -o ../app/libs/p2ptap.aar ./...
+            cd ..
+            echo "p2ptap.aar built successfully!"
+          else
+            echo "No Go source directory found, using existing app/libs/p2ptap.aar"
+          fi
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
+
+      - name: Prepare Keystore File from Secret
+        id: prepare_keystore
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+            echo "KEYSTORE_FILE=keystore.jks" >> $GITHUB_ENV
+            echo "keystore_available=true" >> $GITHUB_OUTPUT
+          else
+            echo "keystore_available=false" >> $GITHUB_OUTPUT
+            echo "::warning ::KEYSTORE_BASE64 secret not found. APK will be built with debug configuration."
+          fi
+
+      - name: Build Android Release APK
+        env:
+          KEYSTORE_FILE: "keystore.jks"
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          GO_COMMIT_HASH: ${{ steps.build_go.outputs.go_commit }}
+        run: |
+          if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
+            ./gradlew assembleRelease
+          else
+            ./gradlew assembleDebug
+          fi
+
+      - name: Prepare APK Outputs & Version Naming
+        id: prepare_apk
+        run: |
+          mkdir -p outputs
+          
+          TAG_NAME="${{ github.ref_name }}"
+          GO_COMMIT="${{ steps.build_go.outputs.go_commit }}"
+          
+          if [[ "${TAG_NAME}" == v* ]]; then
+            RELEASE_NAME="${TAG_NAME}"
+            APK_NAME="P2PTap-${TAG_NAME}-${GO_COMMIT}.apk"
+          else
+            RELEASE_NAME="v1.0-${GO_COMMIT}"
+            APK_NAME="P2PTap-v1.0-${GO_COMMIT}.apk"
+          fi
+          
+          echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
+          echo "APK_NAME=${APK_NAME}" >> $GITHUB_ENV
+          
+          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            cp app/build/outputs/apk/release/app-release.apk "outputs/${APK_NAME}"
+          elif [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+            cp app/build/outputs/apk/debug/app-debug.apk "outputs/${APK_NAME}"
+          fi
+
+      - name: Upload Build Artifact (Manual Workflow Dispatch / Non-Tag)
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: P2PTap-Android-APK
+          path: outputs/*.apk
+          retention-days: 14
+
+      - name: Create GitHub Release (v* Tag Push)
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ github.ref_name }}
+          body: |
+            ## 🚀 P2PTap Release: ${{ env.RELEASE_NAME }}
+            
+            - **Release Version**: `${{ github.ref_name }}`
+            - **Go Engine Commit**: `${{ steps.build_go.outputs.go_commit }}`
+            
+            ### 📦 Download & Installation
+            Download the signed APK below and install on Android 8.0+ devices.
+            
+            ---
+            *Automated Release build by GitHub Actions.*
+          files: outputs/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

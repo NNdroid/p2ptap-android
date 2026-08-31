@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/card_bg"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/card_stroke"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Index Chip -->
+            <TextView
+                android:id="@+id/tvIndex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_node_chip"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="#1"
+                android:textColor="@color/brand_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Protocol / Type Badge -->
+            <TextView
+                android:id="@+id/tvProtocolBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_status_connected"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="QUIC-v1"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Copy Action -->
+            <ImageView
+                android:id="@+id/ivCopy"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/btn_copy_qr_content"
+                android:padding="6dp"
+                android:src="@drawable/ic_copy"
+                app:tint="@color/text_secondary" />
+
+            <!-- Edit Action -->
+            <ImageView
+                android:id="@+id/ivEdit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/dialog_edit_address_title"
+                android:padding="6dp"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/brand_primary" />
+
+            <!-- Delete Action -->
+            <ImageView
+                android:id="@+id/ivDelete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/stat_dropped_pkts"
+                android:padding="6dp"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/status_error" />
+        </LinearLayout>
+
+        <!-- Address Text -->
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_code_block"
+            android:fontFamily="monospace"
+            android:padding="8dp"
+            android:text="/ip4/124.222.137.94/udp/4001/quic-v1/p2p/12D3KooW..."
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

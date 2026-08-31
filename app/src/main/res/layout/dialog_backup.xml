@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_code_block">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_backup_title"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:text="导出配置与身份私钥以防丢失，或扫描/导入已有节点配置"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <!-- Group 1: Export -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="📤 导出与分享 (Export)"
+            android:textColor="@color/brand_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExportBundle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/action_export_bundle"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_backup"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExportConfig"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/action_export_config_only"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_text"
+            app:iconGravity="textStart" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExportKey"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/action_export_key_only"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_key"
+            app:iconGravity="textStart" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/card_stroke" />
+
+        <!-- Group 2: Import -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="📥 导入与恢复 (Import &amp; Restore)"
+            android:textColor="@color/status_connected"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <!-- Scan QR to Import -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnScanQrImport"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="📷 扫描二维码导入 (配置 / 身份 / 节点)"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_qr_scan"
+            app:iconGravity="textStart" />
+
+        <!-- Choose QR from Gallery -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGalleryQrImport"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="🖼️ 从相册选取二维码图片导入"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_qr_code"
+            app:iconGravity="textStart" />
+
+        <!-- Paste from Clipboard -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPasteImport"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/opt_paste_clipboard"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_paste"
+            app:iconGravity="textStart" />
+
+        <!-- Choose File from Local Storage -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFileImport"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/opt_choose_file"
+            android:textSize="12sp"
+            app:icon="@drawable/ic_restore"
+            app:iconGravity="textStart" />
+
+        <!-- Cancel -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelBackup"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_cancel" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
