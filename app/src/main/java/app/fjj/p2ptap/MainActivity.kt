@@ -19,6 +19,7 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -35,6 +36,7 @@ import app.fjj.p2ptap.ui.LogViewerActivity
 import app.fjj.p2ptap.ui.PeersDetailDialog
 import app.fjj.p2ptap.ui.QrDialog
 import app.fjj.p2ptap.ui.TrafficDetailDialog
+import app.fjj.p2ptap.viewmodel.MainViewModel
 import com.p2ptap.P2PTap.P2PTap
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -44,6 +46,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by viewModels()
 
     private val vpnPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -51,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             startVpnService()
         } else {
-            Toast.makeText(this, "VPN permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.vpn_permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -67,6 +70,7 @@ class MainActivity : AppCompatActivity() {
                 updateUiState(state, message)
                 refreshPeerId()
                 refreshMultiaddrs()
+                viewModel.refreshPeers()
             }
         }
     }
@@ -87,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     private fun observeMetrics() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                P2PStateRepository.metrics
+                viewModel.metrics
                     .debounce(300)
                     .collect { metrics ->
                         withContext(kotlinx.coroutines.Dispatchers.Main) {
@@ -108,11 +112,12 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                P2PStateRepository.state.collect { state ->
-                    updateUiState(state, P2PStateRepository.message.value)
+                viewModel.state.collect { state ->
+                    updateUiState(state, viewModel.message.value)
                     if (state == P2PTapVpnService.STATE_RUNNING || state == P2PTapVpnService.STATE_IDLE) {
                         refreshPeerId()
                         refreshMultiaddrs()
+                        viewModel.refreshPeers()
                     }
                 }
             }
@@ -123,6 +128,8 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         loadConfigDisplay()
         updateUiState(P2PTapVpnService.currentState, P2PTapVpnService.lastErrorMessage)
+        viewModel.refreshPeers()
+
 
         val filter = IntentFilter(P2PTapVpnService.ACTION_STATE_CHANGED)
         ContextCompat.registerReceiver(this, vpnStateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)

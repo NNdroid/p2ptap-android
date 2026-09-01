@@ -229,4 +229,27 @@
     <string name="msg_exit_node_hot_reloaded">出口路由已即時平滑生效</string>
     <string name="hint_dns_servers">DNS 伺服器 (留空預設使用系統預設 DNS)</string>
     <string name="dialog_manage_dns">管理 DNS 伺服器列表</string>
+    <string name="vpn_permission_denied">VPN 權限被拒絕</string>
+    <string name="badge_connecting">連線中</string>
+    <string name="badge_error">錯誤</string>
+    <string name="auto_lowest_latency">自動選擇（預設最低延遲）</string>
+    <string name="msg_key_loaded_fmt">身分金鑰已載入，Peer ID: %s</string>
+    <string name="err_key_load_fmt">載入身分金鑰失敗: %s</string>
+    <string name="err_invalid_ipv4">請輸入正確的 IPv4 位址（例如 10.0.0.88/24）</string>
+    <string name="msg_filtered_logs_fmt">顯示 %1$d / %2$d 條日誌</string>
+    <string name="msg_clipboard_empty">剪貼簿為空</string>
+    <string name="msg_no_valid_addrs">剪貼簿未找到有效位址</string>
+    <string name="msg_imported_saved">已匯入並儲存！</string>
+    <string name="msg_peer_already_exists">該節點已在列表中</string>
+    <string name="about_title">關於 P2PTap</string>
+    <string name="about_desc">P2PTap 是一個基於 libp2p 構建的去中心化二層點對點虛擬乙太網覆層網絡，提供 ChaCha20-Poly1305 強混淆加密與零配置網狀路由。</string>
+    <string name="exit_node_empty_hint">暫未發現可用的出口閘道節點。
+開啟了 Exit Node 出口代理功能的節點將在此展示。</string>
+    <string name="exit_node_vpn_stopped_hint">VPN 服務已停止。
+請在主畫面開啟連線以查詢出口閘道節點。</string>
+    <string name="label_developer">作者與開發者</string>
+    <string name="label_github_repo">GitHub 開源專案</string>
+    <string name="label_multiaddrs">Multiaddr 多位址路徑</string>
+    <string name="msg_multiaddrs_copied">所有 Multiaddr 位址已複製到剪貼簿</string>
+    <string name="multiaddrs_empty_hint">暫無宣告的監聽位址</string>
 </resources>

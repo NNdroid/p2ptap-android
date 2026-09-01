@@ -290,11 +290,11 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
                 items.addAll(newLines)
                 adapter.notifyDataSetChanged()
                 updateEmptyState()
-                Toast.makeText(requireContext(), "已追加 " + newLines.size + " 项", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.msg_address_added), Toast.LENGTH_SHORT).show()
                 return
             }
         }
-        Toast.makeText(requireContext(), "剪贴板为空", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.msg_clipboard_empty), Toast.LENGTH_SHORT).show()
     }
 
     private fun handleScannedContent(raw: String) {

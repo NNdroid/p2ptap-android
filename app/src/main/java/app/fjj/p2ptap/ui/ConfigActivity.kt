@@ -216,9 +216,9 @@ class ConfigActivity : AppCompatActivity() {
                 try {
                     val newPid = AppConfigManager.generateNewIdentityKey(this)
                     refreshPeerIdDisplay()
-                    Toast.makeText(this, "身份密钥已重置！新 Peer ID: " + newPid.take(12) + "...", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.msg_key_loaded_fmt, newPid.take(12) + "..."), Toast.LENGTH_LONG).show()
                 } catch (e: Exception) {
-                    Toast.makeText(this, "生成新密钥失败: " + e.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.err_key_load_fmt, e.message ?: ""), Toast.LENGTH_LONG).show()
                 }
             }
             .setNegativeButton(R.string.btn_cancel, null)
@@ -328,7 +328,7 @@ class ConfigActivity : AppCompatActivity() {
     private fun saveConfig() {
         val config = collectConfigFromUi()
         if (config.tapIp.isEmpty() || !config.tapIp.contains(".")) {
-            Toast.makeText(this, "请输入正确的虚拟 IPv4 (如 10.0.0.88/24)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.err_invalid_ipv4), Toast.LENGTH_SHORT).show()
             return
         }
 

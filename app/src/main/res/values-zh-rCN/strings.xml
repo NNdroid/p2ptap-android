@@ -254,4 +254,16 @@
     <string name="msg_exit_node_hot_reloaded">出口路由已实时平滑生效</string>
     <string name="hint_dns_servers">DNS 服务器 (留空默认使用系统默认 DNS)</string>
     <string name="dialog_manage_dns">管理 DNS 服务器列表</string>
+    <string name="vpn_permission_denied">VPN 权限被拒绝</string>
+    <string name="badge_connecting">连接中</string>
+    <string name="badge_error">错误</string>
+    <string name="auto_lowest_latency">自动选择（默认最低延迟）</string>
+    <string name="msg_key_loaded_fmt">身份密钥已加载，Peer ID: %s</string>
+    <string name="err_key_load_fmt">加载身份密钥失败: %s</string>
+    <string name="err_invalid_ipv4">请输入正确的 IPv4 地址（例如 10.0.0.88/24）</string>
+    <string name="msg_filtered_logs_fmt">展示 %1$d / %2$d 条日志</string>
+    <string name="msg_clipboard_empty">剪贴板为空</string>
+    <string name="msg_no_valid_addrs">剪贴板未找到有效地址</string>
+    <string name="msg_imported_saved">已导入并保存！</string>
+    <string name="msg_peer_already_exists">该节点已在列表中</string>
 </resources>

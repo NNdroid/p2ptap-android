@@ -238,4 +238,16 @@
     <string name="msg_exit_node_hot_reloaded">출구 라우팅이 즉시 적용되었습니다</string>
     <string name="hint_dns_servers">DNS 서버 (비워두면 시스템 기본 DNS 사용)</string>
     <string name="dialog_manage_dns">DNS 서버 목록 관리</string>
+    <string name="vpn_permission_denied">VPN 권한이 거부되었습니다</string>
+    <string name="badge_connecting">연결 중</string>
+    <string name="badge_error">오류</string>
+    <string name="auto_lowest_latency">자동 (기본 최소 지연 시간)</string>
+    <string name="msg_key_loaded_fmt">식별 키가 로드되었습니다, 피어 ID: %s</string>
+    <string name="err_key_load_fmt">식별 키 로드 실패: %s</string>
+    <string name="err_invalid_ipv4">올바른 IPv4 주소를 입력하세요 (예: 10.0.0.88/24)</string>
+    <string name="msg_filtered_logs_fmt">%1$d / %2$d 개의 로그 라인 표시 중</string>
+    <string name="msg_clipboard_empty">클립보드가 비어 있습니다</string>
+    <string name="msg_no_valid_addrs">클립보드에서 유효한 주소를 찾을 수 없습니다</string>
+    <string name="msg_imported_saved">가져오기 및 저장이 완료되었습니다!</string>
+    <string name="msg_peer_already_exists">해당 피어가 이미 목록에 존재합니다</string>
 </resources>

@@ -153,7 +153,7 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
             val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val text = cm.primaryClip?.getItemAt(0)?.text?.toString()?.trim()
             if (text.isNullOrEmpty()) {
-                Toast.makeText(ctx, "剪贴板为空", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, getString(R.string.msg_clipboard_empty), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             handleImportContent(text)
@@ -181,7 +181,7 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
             try {
                 val (cfg, restoredPid) = AppConfigManager.importBackupOrConfig(ctx, raw)
                 val msg = if (restoredPid != null) {
-                    "完整备份导入成功！已恢复配置及 Peer ID: " + restoredPid.take(12) + "..."
+                    getString(R.string.msg_key_loaded_fmt, restoredPid.take(12) + "...")
                 } else {
                     getString(R.string.msg_import_success)
                 }
@@ -203,11 +203,11 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
                     current.add(multiaddr)
                     cfg.staticPeers = current
                     AppConfigManager.save(ctx, cfg)
-                    Toast.makeText(ctx, "已添加至静态节点列表！", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, getString(R.string.msg_address_added), Toast.LENGTH_SHORT).show()
                     onImportSuccess?.invoke()
                     dismiss()
                 } else {
-                    Toast.makeText(ctx, "该节点已存在", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, getString(R.string.msg_peer_already_exists), Toast.LENGTH_SHORT).show()
                 }
             },
             onAddBootstrap = { multiaddr ->
@@ -217,16 +217,16 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
                     current.add(multiaddr)
                     cfg.bootstrapPeers = current
                     AppConfigManager.save(ctx, cfg)
-                    Toast.makeText(ctx, "已添加至引导节点列表！", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, getString(R.string.msg_address_added), Toast.LENGTH_SHORT).show()
                     onImportSuccess?.invoke()
                     dismiss()
                 } else {
-                    Toast.makeText(ctx, "该引导节点已存在", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, getString(R.string.msg_peer_already_exists), Toast.LENGTH_SHORT).show()
                 }
             },
             onImportFull = { fullConfig ->
                 AppConfigManager.save(ctx, fullConfig)
-                Toast.makeText(ctx, "配置已导入保存！", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, getString(R.string.msg_imported_saved), Toast.LENGTH_LONG).show()
                 onImportSuccess?.invoke()
                 dismiss()
             }

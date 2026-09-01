@@ -246,7 +246,7 @@ class LogViewerActivity : AppCompatActivity() {
 
         val spannable = buildSyntaxHighlightedLogs(filteredList)
         binding.tvLogs.text = spannable
-        binding.tvLogStats.text = "共 ${filteredList.size} / ${rawLogLines.size} 行日志"
+        binding.tvLogStats.text = getString(R.string.msg_filtered_logs_fmt, filteredList.size, rawLogLines.size)
 
         if (!isPaused) {
             binding.scrollView.post {

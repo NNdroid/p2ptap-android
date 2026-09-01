@@ -238,5 +238,17 @@
     <string name="msg_exit_node_hot_reloaded">Ruta de salida actualizada de forma fluida</string>
     <string name="hint_dns_servers">Servidores DNS (Dejar en blanco para DNS predeterminado del sistema)</string>
     <string name="dialog_manage_dns">Administrar servidores DNS</string>
+    <string name="vpn_permission_denied">Permiso de VPN denegado</string>
+    <string name="badge_connecting">Conectando</string>
+    <string name="badge_error">Error</string>
+    <string name="auto_lowest_latency">Automático (Menor latencia)</string>
+    <string name="msg_key_loaded_fmt">Clave de identidad cargada, ID de par: %s</string>
+    <string name="err_key_load_fmt">Error al cargar la clave de identidad: %s</string>
+    <string name="err_invalid_ipv4">Ingrese una dirección IPv4 válida (ej. 10.0.0.88/24)</string>
+    <string name="msg_filtered_logs_fmt">Mostrando %1$d / %2$d líneas de registro</string>
+    <string name="msg_clipboard_empty">El portapapeles está vacío</string>
+    <string name="msg_no_valid_addrs">No se encontraron direcciones válidas en el portapapeles</string>
+    <string name="msg_imported_saved">¡Importado y guardado con éxito!</string>
+    <string name="msg_peer_already_exists">El par ya existe en la lista</string>
 </resources>
 

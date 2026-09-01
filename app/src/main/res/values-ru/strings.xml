@@ -238,4 +238,16 @@
     <string name="msg_exit_node_hot_reloaded">Маршрут выхода успешно обновлен</string>
     <string name="hint_dns_servers">DNS-серверы (Оставьте пустым для системного DNS по умолчанию)</string>
     <string name="dialog_manage_dns">Управление DNS-серверами</string>
+    <string name="vpn_permission_denied">В разрешении на VPN отказано</string>
+    <string name="badge_connecting">Подключение</string>
+    <string name="badge_error">Ошибка</string>
+    <string name="auto_lowest_latency">Авто (наименьшая задержка)</string>
+    <string name="msg_key_loaded_fmt">Ключ идентификации загружен, Peer ID: %s</string>
+    <string name="err_key_load_fmt">Не удалось загрузить ключ идентификации: %s</string>
+    <string name="err_invalid_ipv4">Пожалуйста, введите корректный IPv4-адрес (напр. 10.0.0.88/24)</string>
+    <string name="msg_filtered_logs_fmt">Отображено %1$d / %2$d строк журнала</string>
+    <string name="msg_clipboard_empty">Буфер обмена пуст</string>
+    <string name="msg_no_valid_addrs">В буфере обмена не найдено действительных адресов</string>
+    <string name="msg_imported_saved">Успешно импортировано и сохранено!</string>
+    <string name="msg_peer_already_exists">Этот узел уже есть в списке</string>
 </resources>

@@ -238,4 +238,16 @@
     <string name="msg_exit_node_hot_reloaded">Exit-Routing wurde nahtlos angewendet</string>
     <string name="hint_dns_servers">DNS-Server (Leer lassen für Systemstandard-DNS)</string>
     <string name="dialog_manage_dns">DNS-Server verwalten</string>
+    <string name="vpn_permission_denied">VPN-Berechtigung verweigert</string>
+    <string name="badge_connecting">Verbinde...</string>
+    <string name="badge_error">Fehler</string>
+    <string name="auto_lowest_latency">Automatisch (Geringste Latenz)</string>
+    <string name="msg_key_loaded_fmt">Identitätsschlüssel geladen, Peer-ID: %s</string>
+    <string name="err_key_load_fmt">Fehler beim Laden des Identitätsschlüssels: %s</string>
+    <string name="err_invalid_ipv4">Bitte gültige IPv4-Adresse eingeben (z. B. 10.0.0.88/24)</string>
+    <string name="msg_filtered_logs_fmt">Zeige %1$d / %2$d Protokollzeilen</string>
+    <string name="msg_clipboard_empty">Zwischenablage ist leer</string>
+    <string name="msg_no_valid_addrs">Keine gültigen Adressen in der Zwischenablage gefunden</string>
+    <string name="msg_imported_saved">Erfolgreich importiert und gespeichert!</string>
+    <string name="msg_peer_already_exists">Peer ist bereits in der Liste vorhanden</string>
 </resources>

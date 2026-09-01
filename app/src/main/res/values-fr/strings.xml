@@ -238,4 +238,16 @@
     <string name="msg_exit_node_hot_reloaded">Routage de sortie mis à jour en douceur</string>
     <string name="hint_dns_servers">Serveurs DNS (Laissez vide pour le DNS par défaut du système)</string>
     <string name="dialog_manage_dns">Gérer les serveurs DNS</string>
+    <string name="vpn_permission_denied">Permission VPN refusée</string>
+    <string name="badge_connecting">Connexion...</string>
+    <string name="badge_error">Erreur</string>
+    <string name="auto_lowest_latency">Automatique (Latence minimale)</string>
+    <string name="msg_key_loaded_fmt">Clé d\'identité chargée, Peer ID : %s</string>
+    <string name="err_key_load_fmt">Échec du chargement de la clé d\'identité : %s</string>
+    <string name="err_invalid_ipv4">Veuillez saisir une adresse IPv4 valide (ex. 10.0.0.88/24)</string>
+    <string name="msg_filtered_logs_fmt">Affichage de %1$d / %2$d lignes de journal</string>
+    <string name="msg_clipboard_empty">Le presse-papiers est vide</string>
+    <string name="msg_no_valid_addrs">Aucune adresse valide trouvée dans le presse-papiers</string>
+    <string name="msg_imported_saved">Importé et enregistré avec succès !</string>
+    <string name="msg_peer_already_exists">Le pair existe déjà dans la liste</string>
 </resources>

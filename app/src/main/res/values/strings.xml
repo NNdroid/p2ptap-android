@@ -254,4 +254,16 @@
     <string name="msg_exit_node_hot_reloaded">Exit node routing updated seamlessly in active VPN</string>
     <string name="hint_dns_servers">DNS Servers (Leave empty for Android System Default DNS)</string>
     <string name="dialog_manage_dns">Manage DNS Servers</string>
+    <string name="vpn_permission_denied">VPN permission denied</string>
+    <string name="badge_connecting">Connecting</string>
+    <string name="badge_error">Error</string>
+    <string name="auto_lowest_latency">Auto (Default Lowest Latency)</string>
+    <string name="msg_key_loaded_fmt">Identity key loaded, Peer ID: %s</string>
+    <string name="err_key_load_fmt">Failed to load identity key: %s</string>
+    <string name="err_invalid_ipv4">Please enter a valid IPv4 address (e.g. 10.0.0.88/24)</string>
+    <string name="msg_filtered_logs_fmt">Showing %1$d / %2$d log lines</string>
+    <string name="msg_clipboard_empty">Clipboard is empty</string>
+    <string name="msg_no_valid_addrs">No valid addresses found in clipboard</string>
+    <string name="msg_imported_saved">Imported and saved successfully!</string>
+    <string name="msg_peer_already_exists">Peer already exists in the list</string>
 </resources>

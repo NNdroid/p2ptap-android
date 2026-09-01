@@ -238,4 +238,16 @@
     <string name="msg_exit_node_hot_reloaded">出口ルーティングが即座に反映されました</string>
     <string name="hint_dns_servers">DNS サーバー (空欄でシステムデフォルト DNS を使用)</string>
     <string name="dialog_manage_dns">DNS サーバー一覧の管理</string>
+    <string name="vpn_permission_denied">VPN権限が拒否されました</string>
+    <string name="badge_connecting">接続中</string>
+    <string name="badge_error">エラー</string>
+    <string name="auto_lowest_latency">自動（最小レイテンシ）</string>
+    <string name="msg_key_loaded_fmt">IDキーが読み込まれました。Peer ID: %s</string>
+    <string name="err_key_load_fmt">IDキーの読み込みに失敗しました: %s</string>
+    <string name="err_invalid_ipv4">有効なIPv4アドレスを入力してください（例: 10.0.0.88/24）</string>
+    <string name="msg_filtered_logs_fmt">%1$d / %2$d 行のログを表示中</string>
+    <string name="msg_clipboard_empty">クリップボードが空です</string>
+    <string name="msg_no_valid_addrs">クリップボードに有効なアドレスが見つかりません</string>
+    <string name="msg_imported_saved">インポートして保存しました！</string>
+    <string name="msg_peer_already_exists">このピアは既にリストに存在します</string>
 </resources>
