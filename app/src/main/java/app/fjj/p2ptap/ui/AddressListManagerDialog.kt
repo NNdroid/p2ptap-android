@@ -29,7 +29,8 @@ enum class AddressListType {
     BOOTSTRAP_PEERS,
     STATIC_PEERS,
     ADVERTISED_SUBNETS,
-    ALLOWED_SUBNET_PEERS
+    ALLOWED_SUBNET_PEERS,
+    DNS_SERVERS
 }
 
 class AddressListManagerDialog : BottomSheetDialogFragment() {
@@ -126,6 +127,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             AddressListType.STATIC_PEERS -> R.string.dialog_manage_static
             AddressListType.ADVERTISED_SUBNETS -> R.string.dialog_manage_subnets
             AddressListType.ALLOWED_SUBNET_PEERS -> R.string.dialog_manage_allowed_peers
+            AddressListType.DNS_SERVERS -> R.string.dialog_manage_dns
         }
         binding.tvDialogTitle.text = getString(titleRes)
     }
@@ -224,10 +226,10 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
     }
 
     private fun showAddAddressDialog() {
-        val defaultHint = if (listType == AddressListType.ALLOWED_SUBNET_PEERS) {
-            "输入 Peer ID (如 12D3...) 或 * (允许所有)"
-        } else {
-            getString(R.string.hint_input_address)
+        val defaultHint = when (listType) {
+            AddressListType.ALLOWED_SUBNET_PEERS -> "输入 Peer ID (如 12D3...) 或 * (允许所有)"
+            AddressListType.DNS_SERVERS -> "输入 DNS 服务器 IP (如 1.1.1.1，留空为系统默认)"
+            else -> getString(R.string.hint_input_address)
         }
 
         val editText = EditText(requireContext()).apply {

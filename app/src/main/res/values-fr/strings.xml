@@ -6,11 +6,13 @@
     <string name="status_connecting">Connexion en cours...</string>
     <string name="status_connected">Connecté</string>
     <string name="status_stopping">Arrêt en cours...</string>
+    <string name="status_timeout">Délai dépassé</string>
     <string name="status_error">Erreur de connexion</string>
     <string name="status_hint_idle">Touchez Connecter pour rejoindre le réseau virtuel P2P</string>
     <string name="status_hint_connected">Réseau maillé P2P actif et routage chiffré</string>
     <string name="status_hint_starting">Établissement du tunnel et découverte des pairs...</string>
     <string name="status_hint_stopping">Libération du tunnel et arrêt du moteur...</string>
+    <string name="status_hint_timeout">Impossible d\'établir la connexion au pair/relais dans le délai imparti</string>
     <string name="btn_connect">Connecter</string>
     <string name="btn_disconnect">Déconnecter</string>
     <string name="btn_retry">Réessayer</string>
@@ -230,7 +232,10 @@
     <string name="dialog_custom_exit_node_title">Nœud de sortie personnalisé</string>
     <string name="hint_custom_exit_node">Saisissez le Peer ID ou l\'IP virtuelle (ex: 10.0.0.1)</string>
     <string name="exit_node_empty_hint">Aucun pair en ligne ne prend en charge la fonction de passerelle de sortie pour le moment.\nActivez le mode passerelle de sortie sur un nœud distant ou saisissez son Peer ID manuellement.</string>
+    <string name="exit_node_vpn_stopped_hint">Le VPN n\'est pas actif. Démarrez le VPN pour découvrir automatiquement les passerelles de sortie, ou saisissez un Peer ID ci-dessous.</string>
     <string name="msg_exit_node_updated">Nœud de sortie modifié : %s</string>
     <string name="msg_exit_node_cleared">Nœud de sortie désactivé (Mode auto)</string>
     <string name="msg_exit_node_hot_reloaded">Routage de sortie mis à jour en douceur</string>
+    <string name="hint_dns_servers">Serveurs DNS (Laissez vide pour le DNS par défaut du système)</string>
+    <string name="dialog_manage_dns">Gérer les serveurs DNS</string>
 </resources>

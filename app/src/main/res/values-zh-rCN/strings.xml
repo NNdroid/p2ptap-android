@@ -7,11 +7,13 @@
     <string name="status_connecting">正在连接...</string>
     <string name="status_connected">已连接</string>
     <string name="status_stopping">正在停止...</string>
+    <string name="status_timeout">连接超时</string>
     <string name="status_error">连接错误</string>
     <string name="status_hint_idle">点击连接加入 P2P 网络</string>
     <string name="status_hint_connected">P2P 虚拟网已激活并正在路由</string>
     <string name="status_hint_starting">正在建立隧道并发现节点...</string>
     <string name="status_hint_stopping">正在释放隧道并停止引擎...</string>
+    <string name="status_hint_timeout">在超时时间内无法连接到中继节点或对端</string>
 
     <!-- 按钮与操作 -->
     <string name="btn_connect">连接</string>
@@ -250,4 +252,6 @@
     <string name="msg_exit_node_updated">已设置出口节点为: %s</string>
     <string name="msg_exit_node_cleared">已切换为自动 Mesh 模式 (禁用出口中继)</string>
     <string name="msg_exit_node_hot_reloaded">出口路由已实时平滑生效</string>
+    <string name="hint_dns_servers">DNS 服务器 (留空默认使用系统默认 DNS)</string>
+    <string name="dialog_manage_dns">管理 DNS 服务器列表</string>
 </resources>

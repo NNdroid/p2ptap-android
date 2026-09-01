@@ -6,11 +6,13 @@
     <string name="status_connecting">Подключение...</string>
     <string name="status_connected">Подключено</string>
     <string name="status_stopping">Остановка...</string>
+    <string name="status_timeout">Таймаут подключения</string>
     <string name="status_error">Ошибка подключения</string>
     <string name="status_hint_idle">Нажмите для подключения к P2P сети</string>
     <string name="status_hint_connected">P2P сеть активна, выполняется шифрованная маршрутизация</string>
     <string name="status_hint_starting">Создание туннеля и поиск узлов...</string>
     <string name="status_hint_stopping">Закрытие туннеля и остановка ядра...</string>
+    <string name="status_hint_timeout">Не удалось установить соединение с пиром или реле за время ожидания</string>
     <string name="btn_connect">Подключить</string>
     <string name="btn_disconnect">Отключить</string>
     <string name="btn_retry">Повторить</string>
@@ -37,6 +39,13 @@
     <string name="label_download">Загрузка</string>
     <string name="label_direct_peers">Прямое</string>
     <string name="label_relay_peers">Реле</string>
+    <string name="label_multiaddrs">Слушаемые адреса (Multiaddrs)</string>
+    <string name="multiaddrs_empty_hint">Подключитесь, чтобы начать прослушивание и увидеть Multiaddrs</string>
+    <string name="about_title">О приложении P2PTap</string>
+    <string name="about_desc">Высокопроизводительная P2P L2/L3 оверлейная mesh-сеть</string>
+    <string name="label_github_repo">Репозиторий GitHub</string>
+    <string name="label_developer">Разработчик @NNdroid</string>
+    <string name="msg_multiaddrs_copied">Все адреса Multiaddrs скопированы в буфер обмена</string>
     <string name="title_settings">Параметры узла</string>
     <string name="group_identity">👤 Идентификация узла и ключи</string>
     <string name="group_network">🌐 Виртуальная сеть (L2/L3)</string>
@@ -223,7 +232,10 @@
     <string name="dialog_custom_exit_node_title">Пользовательский узел выхода</string>
     <string name="hint_custom_exit_node">Введите Peer ID или виртуальный IP (напр. 10.0.0.1)</string>
     <string name="exit_node_empty_hint">В настоящее время ни один онлайн-узел не поддерживает функцию шлюза выхода.\nВключите режим шлюза выхода на удаленном узле или введите его Peer ID вручную выше.</string>
+    <string name="exit_node_vpn_stopped_hint">VPN не запущен. Запустите VPN для автоматического обнаружения онлайн-шлюзов или введите Peer ID вручную ниже.</string>
     <string name="msg_exit_node_updated">Узел выхода изменен на: %s</string>
     <string name="msg_exit_node_cleared">Узел выхода отключен (Авто-режим)</string>
     <string name="msg_exit_node_hot_reloaded">Маршрут выхода успешно обновлен</string>
+    <string name="hint_dns_servers">DNS-серверы (Оставьте пустым для системного DNS по умолчанию)</string>
+    <string name="dialog_manage_dns">Управление DNS-серверами</string>
 </resources>

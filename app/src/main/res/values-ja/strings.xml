@@ -6,11 +6,13 @@
     <string name="status_connecting">接続中...</string>
     <string name="status_connected">接続完了</string>
     <string name="status_stopping">停止中...</string>
+    <string name="status_timeout">接続タイムアウト</string>
     <string name="status_error">接続エラー</string>
     <string name="status_hint_idle">接続をタップしてP2P仮想ネットワークに参加</string>
     <string name="status_hint_connected">P2P仮想メッシュ稼働中 (暗号化ルーティング)</string>
     <string name="status_hint_starting">トンネルを確立し、ピアを検出中...</string>
     <string name="status_hint_stopping">トンネルを切断しエンジンを停止中...</string>
+    <string name="status_hint_timeout">タイムアウト時間内にピアまたはリレー接続を確立できませんでした</string>
     <string name="btn_connect">接続開始</string>
     <string name="btn_disconnect">切断</string>
     <string name="btn_retry">再接続</string>
@@ -37,6 +39,13 @@
     <string name="label_download">ダウンロード</string>
     <string name="label_direct_peers">ダイレクト</string>
     <string name="label_relay_peers">リレー</string>
+    <string name="label_multiaddrs">リッスン中の Multiaddr</string>
+    <string name="multiaddrs_empty_hint">接続するとリッスンを開始し、Multiaddr が表示されます</string>
+    <string name="about_title">P2PTap について</string>
+    <string name="about_desc">高性能 P2P L2/L3 オーバーレイ メッシュネットワーク</string>
+    <string name="label_github_repo">GitHub リポジトリ</string>
+    <string name="label_developer">開発者 @NNdroid</string>
+    <string name="msg_multiaddrs_copied">すべての Multiaddr をクリップボードにコピーしました</string>
     <string name="title_settings">ノードパラメータ設定</string>
     <string name="group_identity">👤 ノードIDと秘密鍵管理</string>
     <string name="group_network">🌐 仮想ネットワーク設定 (L2/L3)</string>
@@ -223,7 +232,10 @@
     <string name="dialog_custom_exit_node_title">カスタム出口ノード</string>
     <string name="hint_custom_exit_node">Peer ID または仮想 IP を入力 (例: 10.0.0.1)</string>
     <string name="exit_node_empty_hint">現在出口ゲートウェイ機能をサポートするオンラインピアはありません。\nリモートノードで出口ゲートウェイモードを有効にするか、手動でPeer IDを入力してください。</string>
+    <string name="exit_node_vpn_stopped_hint">VPN が停止しています。VPN を開始するとオンラインの出口ゲートウェイを自動検出するか、下部に手動でピア ID を入力してください。</string>
     <string name="msg_exit_node_updated">出口ノードを更新しました: %s</string>
     <string name="msg_exit_node_cleared">出口ノードを解除しました (自動メッシュモード)</string>
     <string name="msg_exit_node_hot_reloaded">出口ルーティングが即座に反映されました</string>
+    <string name="hint_dns_servers">DNS サーバー (空欄でシステムデフォルト DNS を使用)</string>
+    <string name="dialog_manage_dns">DNS サーバー一覧の管理</string>
 </resources>

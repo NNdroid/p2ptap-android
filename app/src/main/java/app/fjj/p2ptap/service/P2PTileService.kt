@@ -36,7 +36,7 @@ class P2PTileService : TileService() {
                     )
                     startActivityAndCollapse(pendingIntent)
                 } else {
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION", "StartActivityAndCollapseDeprecated")
                     startActivityAndCollapse(activityIntent)
                 }
             } else {
@@ -57,9 +57,9 @@ class P2PTileService : TileService() {
         val tile = qsTile ?: return
         val running = P2PTapVpnService.isRunning()
         tile.state = if (running) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-        tile.label = "P2PTap"
+        tile.label = getString(app.fjj.p2ptap.R.string.app_name)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            tile.subtitle = if (running) "已连接" else "未连接"
+            tile.subtitle = if (running) getString(app.fjj.p2ptap.R.string.status_connected) else getString(app.fjj.p2ptap.R.string.status_disconnected)
         }
         tile.updateTile()
     }

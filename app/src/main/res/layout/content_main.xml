@@ -351,13 +351,18 @@
                         app:tint="@color/brand_primary" />
                 </LinearLayout>
 
-                <!-- Virtual IPv4 -->
+                <!-- Virtual IPv4 with Copy -->
                 <LinearLayout
+                    android:id="@+id/layoutTapIp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingVertical="2dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -375,16 +380,27 @@
                         android:textColor="@color/brand_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="6dp"
+                        android:src="@drawable/ic_copy"
+                        app:tint="@color/brand_primary" />
                 </LinearLayout>
 
-                <!-- Virtual IPv6 -->
+                <!-- Virtual IPv6 with Copy -->
                 <LinearLayout
                     android:id="@+id/layoutTapIpv6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
+                    android:paddingVertical="2dp"
                     android:visibility="visible">
 
                     <TextView
@@ -403,6 +419,13 @@
                         android:textColor="@color/brand_secondary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="6dp"
+                        android:src="@drawable/ic_copy"
+                        app:tint="@color/brand_secondary" />
                 </LinearLayout>
 
                 <!-- Total Traffic -->

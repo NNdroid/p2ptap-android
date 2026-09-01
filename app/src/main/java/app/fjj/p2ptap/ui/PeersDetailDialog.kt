@@ -49,8 +49,12 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnRefresh.setOnClickListener {
-            renderPeers()
-            Toast.makeText(requireContext(), getString(R.string.msg_peers_refreshed), Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                renderPeers()
+                if (_binding != null && context != null) {
+                    Toast.makeText(requireContext(), getString(R.string.msg_peers_refreshed), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         startPeriodicPeersRefresh()
@@ -67,16 +71,21 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun renderPeers() {
+    private suspend fun renderPeers() {
         if (!P2PTapVpnService.isRunning()) {
-            binding.tvSummary.text = getString(R.string.peers_offline_hint)
-            binding.peersContainer.removeAllViews()
+            withContext(Dispatchers.Main) {
+                val b = _binding ?: return@withContext
+                b.tvSummary.text = getString(R.string.peers_offline_hint)
+                b.peersContainer.removeAllViews()
+            }
             return
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             try {
                 val statsJsonStr = P2PTap.getStatsJSON()
+                if (statsJsonStr.isNullOrBlank()) return@withContext
+
                 val statsJson = JSONObject(statsJsonStr)
                 val peersArray = statsJson.optJSONArray("active_peers")
 
@@ -135,18 +144,31 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    if (_binding == null) return@withContext
-
+                    val b = _binding ?: return@withContext
                     val ctx = context ?: return@withContext
-                    binding.peersContainer.removeAllViews()
 
                     if (totalPeers == 0) {
-                        binding.tvSummary.text = getString(R.string.peers_summary_fmt, 0, 0, 0)
+                        b.peersContainer.removeAllViews()
+                        b.tvSummary.text = getString(R.string.peers_summary_fmt, 0, 0, 0)
                         return@withContext
                     }
 
-                    for (item in peerDataList) {
-                        val itemBinding = ItemPeerDetailBinding.inflate(LayoutInflater.from(ctx), binding.peersContainer, true)
+                    // Efficient View In-Place Re-use (prevents Layout Inflation thrashing and GC pauses)
+                    val currentChildCount = b.peersContainer.childCount
+                    val targetCount = peerDataList.size
+
+                    if (currentChildCount > targetCount) {
+                        b.peersContainer.removeViews(targetCount, currentChildCount - targetCount)
+                    } else if (currentChildCount < targetCount) {
+                        for (c in currentChildCount until targetCount) {
+                            ItemPeerDetailBinding.inflate(LayoutInflater.from(ctx), b.peersContainer, true)
+                        }
+                    }
+
+                    for (i in 0 until targetCount) {
+                        val childView = b.peersContainer.getChildAt(i)
+                        val itemBinding = ItemPeerDetailBinding.bind(childView)
+                        val item = peerDataList[i]
 
                         itemBinding.tvNodeName.text = item.nodeName
                         itemBinding.tvBadge.apply {
@@ -182,6 +204,12 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
                         }
                         itemBinding.tvIpAddresses.text = ipText
                         itemBinding.tvIpAddresses.visibility = if (ipText.isBlank()) View.GONE else View.VISIBLE
+                        itemBinding.tvIpAddresses.setOnClickListener {
+                            val ip = if (item.tapIp.isNotBlank()) item.tapIp else item.tapIpv6
+                            val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            cm.setPrimaryClip(ClipData.newPlainText("Peer IP", ip))
+                            Toast.makeText(ctx, getString(R.string.msg_copied_clipboard) + ": $ip", Toast.LENGTH_SHORT).show()
+                        }
 
                         itemBinding.tvPeerId.text = "ID: ${item.peerId}"
                         itemBinding.layoutPeerId.setOnClickListener {

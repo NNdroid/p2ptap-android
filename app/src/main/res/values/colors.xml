@@ -15,6 +15,7 @@
     <!-- Connection Status -->
     <color name="status_connected">#10B981</color>
     <color name="status_connecting">#F59E0B</color>
+    <color name="status_timeout">#F97316</color>
     <color name="status_disconnected">#64748B</color>
     <color name="status_error">#EF4444</color>
     <color name="status_stopping">#8B5CF6</color>

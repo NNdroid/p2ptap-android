@@ -38,7 +38,8 @@ data class P2PConfig(
     var webUiEnable: Boolean = true,
     var webUiPort: Int = 15858,
     var webUiToken: String = "p2ptap-admin",
-    var logLevel: String = "info"
+    var logLevel: String = "info",
+    var dnsServers: List<String> = listOf()
 ) {
     /**
      * Converts to JSON string matching p2ptap domain config schema for Go engine
@@ -125,6 +126,16 @@ data class P2PConfig(
         }
         root.put("allowed_subnet_peers", aspArray)
 
+        // DNS Servers
+        val dnsArray = JSONArray()
+        for (dns in dnsServers) {
+            val trimmed = dns.trim()
+            if (trimmed.isNotEmpty()) {
+                dnsArray.put(trimmed)
+            }
+        }
+        root.put("dns_servers", dnsArray)
+
         // Obfuscation
         val obf = JSONObject()
         obf.put("enable", obfuscationEnable)
@@ -190,6 +201,10 @@ data class P2PConfig(
         val aspArray = JSONArray()
         allowedSubnetPeers.forEach { aspArray.put(it) }
         root.put("allowed_subnet_peers", aspArray)
+
+        val dnsArray = JSONArray()
+        dnsServers.forEach { dnsArray.put(it) }
+        root.put("dns_servers", dnsArray)
 
         return root.toString(2)
     }
@@ -297,6 +312,15 @@ data class P2PConfig(
                 cfg.allowedSubnetPeers = list
             }
 
+            if (root.has("dns_servers")) {
+                val arr = root.getJSONArray("dns_servers")
+                val list = mutableListOf<String>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getString(i))
+                }
+                cfg.dnsServers = list
+            }
+
             return cfg
         }
     }
@@ -315,11 +339,18 @@ object AppConfigManager {
 
     fun getPeerId(context: Context): String {
         val keyPath = getNodeKeyPath(context)
-        return try {
+        val pid = try {
             com.p2ptap.P2PTap.P2PTap.getPeerIDFromKey(keyPath) ?: ""
         } catch (_: Exception) {
             ""
         }
+        if (pid.isNotBlank()) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().putString("cached_peer_id", pid).apply()
+            return pid
+        }
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString("cached_peer_id", "") ?: ""
     }
 
     fun exportIdentityKeyBase64(context: Context): String {

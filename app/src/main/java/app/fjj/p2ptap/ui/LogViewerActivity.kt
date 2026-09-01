@@ -161,7 +161,7 @@ class LogViewerActivity : AppCompatActivity() {
 
             try {
                 // Clear logcat buffer and start continuous streaming
-                val process = Runtime.getRuntime().exec("logcat -v time -s Android:V Node:V Protect:V Gateway:V P2PTap:V GoLog:V")
+                val process = Runtime.getRuntime().exec("logcat -v time -s P2PTapVpnService:V P2PTap:V GoLog:V Node:V Protect:V Gateway:V P2P:V")
                 logProcess = process
                 val reader = BufferedReader(InputStreamReader(process.inputStream))
 

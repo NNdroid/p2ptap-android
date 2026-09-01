@@ -145,20 +145,26 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                         val isSelected = currentExitNode.isNotBlank() &&
                                 (currentExitNode.equals(peerId, ignoreCase = true) || currentExitNode.equals(tapIp, ignoreCase = true))
 
-                        // Only include peers that advertise exit gateway capability or are currently selected
-                        if (isExitGateway || isSelected) {
-                            peerList.add(
-                                ExitNodePeerData(
-                                    peerId = peerId,
-                                    nodeName = nodeName,
-                                    tapIp = tapIp,
-                                    isDirect = isDirect,
-                                    rtt = rtt
-                                )
+                        peerList.add(
+                            ExitNodePeerData(
+                                peerId = peerId,
+                                nodeName = nodeName,
+                                tapIp = tapIp,
+                                isDirect = isDirect,
+                                rtt = rtt,
+                                isExitGateway = isExitGateway,
+                                isSelected = isSelected
                             )
-                        }
+                        )
                     }
                 }
+
+                // Sort: Selected peer first, then explicit Exit Gateways, then by lowest RTT
+                peerList.sortWith(
+                    compareByDescending<ExitNodePeerData> { it.isSelected }
+                        .thenByDescending { it.isExitGateway }
+                        .thenBy { if (it.rtt > 0) it.rtt else 9999.0 }
+                )
 
                 withContext(Dispatchers.Main) {
                     if (_binding == null) return@withContext
@@ -181,8 +187,13 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
 
                         itemBinding.tvNodeName.text = peer.nodeName
                         itemBinding.tvBadge.apply {
-                            text = if (peer.isDirect) getString(R.string.badge_direct) else getString(R.string.badge_relay)
-                            setTextColor(if (peer.isDirect) Color.parseColor("#059669") else Color.parseColor("#D97706"))
+                            if (peer.isExitGateway) {
+                                text = if (peer.isDirect) "🌐 Exit Gateway (Direct)" else "🌐 Exit Gateway (Relay)"
+                                setTextColor(Color.parseColor("#4F46E5"))
+                            } else {
+                                text = if (peer.isDirect) getString(R.string.badge_direct) else getString(R.string.badge_relay)
+                                setTextColor(if (peer.isDirect) Color.parseColor("#059669") else Color.parseColor("#D97706"))
+                            }
                         }
 
                         itemBinding.tvRtt.text = if (peer.rtt > 0) "📶 ${peer.rtt.toInt()}ms" else ""
@@ -194,13 +205,9 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                         itemBinding.tvIpAndPid.text = ipAndPid
 
                         // Check if selected
-                        val isSelected = (currentExitNode.isNotBlank() &&
-                                (currentExitNode.equals(peer.peerId, ignoreCase = true) ||
-                                        currentExitNode.equals(peer.tapIp, ignoreCase = true)))
-
-                        itemBinding.cardPeer.strokeColor = if (isSelected) brandPrimary else cardStroke
-                        itemBinding.cardPeer.strokeWidth = if (isSelected) 4 else 2
-                        itemBinding.ivSelectedCheck.visibility = if (isSelected) View.VISIBLE else View.GONE
+                        itemBinding.cardPeer.strokeColor = if (peer.isSelected) brandPrimary else cardStroke
+                        itemBinding.cardPeer.strokeWidth = if (peer.isSelected) 4 else 2
+                        itemBinding.ivSelectedCheck.visibility = if (peer.isSelected) View.VISIBLE else View.GONE
 
                         // Use peerId or tapIp as exit node target
                         val targetNode = if (peer.peerId.isNotBlank() && peer.peerId != "-") peer.peerId else peer.tapIp
@@ -278,7 +285,9 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
         val nodeName: String,
         val tapIp: String,
         val isDirect: Boolean,
-        val rtt: Double
+        val rtt: Double,
+        val isExitGateway: Boolean,
+        val isSelected: Boolean
     )
 
     override fun onDestroyView() {

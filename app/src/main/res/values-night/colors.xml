@@ -10,6 +10,9 @@
     <color name="surface_light_card">#0F172A</color>
     <color name="surface_light_stroke">#1E293B</color>
 
+    <!-- Status Colors (Night Mode) -->
+    <color name="status_timeout">#FB923C</color>
+
     <!-- Log Viewer Colors (Night Mode) -->
     <color name="log_bg">#070A10</color>
     <color name="log_card">#0F172A</color>

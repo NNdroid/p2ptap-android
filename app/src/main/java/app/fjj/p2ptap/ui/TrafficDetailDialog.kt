@@ -45,8 +45,12 @@ class TrafficDetailDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnRefresh.setOnClickListener {
-            refreshExtendedStats()
-            Toast.makeText(requireContext(), getString(R.string.msg_traffic_refreshed), Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                refreshExtendedStats()
+                if (_binding != null && context != null) {
+                    Toast.makeText(requireContext(), getString(R.string.msg_traffic_refreshed), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         observeMetrics()
@@ -57,16 +61,17 @@ class TrafficDetailDialog : BottomSheetDialogFragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 P2PStateRepository.metrics.collect { metrics ->
+                    val b = _binding ?: return@collect
                     if (!P2PTapVpnService.isRunning()) {
-                        binding.contentContainer.visibility = View.GONE
+                        b.contentContainer.visibility = View.GONE
                         return@collect
                     }
-                    binding.contentContainer.visibility = View.VISIBLE
+                    b.contentContainer.visibility = View.VISIBLE
 
-                    setupRow(binding.rowTxSpeed, getString(R.string.stat_live_tx_speed), P2PStateRepository.formatSpeed(metrics.txSpeed))
-                    setupRow(binding.rowRxSpeed, getString(R.string.stat_live_rx_speed), P2PStateRepository.formatSpeed(metrics.rxSpeed))
-                    setupRow(binding.rowTotalTx, getString(R.string.stat_total_tx_bytes), P2PStateRepository.formatBytes(metrics.totalTx))
-                    setupRow(binding.rowTotalRx, getString(R.string.stat_total_rx_bytes), P2PStateRepository.formatBytes(metrics.totalRx))
+                    setupRow(b.rowTxSpeed, getString(R.string.stat_live_tx_speed), P2PStateRepository.formatSpeed(metrics.txSpeed))
+                    setupRow(b.rowRxSpeed, getString(R.string.stat_live_rx_speed), P2PStateRepository.formatSpeed(metrics.rxSpeed))
+                    setupRow(b.rowTotalTx, getString(R.string.stat_total_tx_bytes), P2PStateRepository.formatBytes(metrics.totalTx))
+                    setupRow(b.rowTotalRx, getString(R.string.stat_total_rx_bytes), P2PStateRepository.formatBytes(metrics.totalRx))
                 }
             }
         }
@@ -83,16 +88,19 @@ class TrafficDetailDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun refreshExtendedStats() {
+    private suspend fun refreshExtendedStats() {
         if (!P2PTapVpnService.isRunning()) {
-            binding.contentContainer.visibility = View.GONE
+            withContext(Dispatchers.Main) {
+                _binding?.contentContainer?.visibility = View.GONE
+            }
             return
         }
-        binding.contentContainer.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             try {
                 val statsJsonStr = P2PTap.getStatsJSON()
+                if (statsJsonStr.isNullOrBlank()) return@withContext
+
                 val statsJson = JSONObject(statsJsonStr)
 
                 val pktObj = statsJson.optJSONObject("packet_stats")
@@ -115,30 +123,27 @@ class TrafficDetailDialog : BottomSheetDialogFragment() {
                 val pskStatus = secObj?.optString("psk_status", "Active") ?: "Active"
 
                 withContext(Dispatchers.Main) {
-                    if (_binding == null) return@withContext
+                    val b = _binding ?: return@withContext
+                    b.contentContainer.visibility = View.VISIBLE
 
-                    setupRow(binding.rowTxPkts, getString(R.string.stat_total_tx_pkts), getString(R.string.stat_packets_unit, pktsSent))
-                    setupRow(binding.rowRxPkts, getString(R.string.stat_total_rx_pkts), getString(R.string.stat_packets_unit, pktsRecv))
-                    setupRow(binding.rowDropped, getString(R.string.stat_dropped_pkts), getString(R.string.stat_dropped_fmt, pktsDropped, dedupCount))
+                    setupRow(b.rowTxPkts, getString(R.string.stat_total_tx_pkts), getString(R.string.stat_packets_unit, pktsSent))
+                    setupRow(b.rowRxPkts, getString(R.string.stat_total_rx_pkts), getString(R.string.stat_packets_unit, pktsRecv))
+                    setupRow(b.rowDropped, getString(R.string.stat_dropped_pkts), getString(R.string.stat_dropped_fmt, pktsDropped, dedupCount))
 
-                    setupRow(binding.rowIpv4, getString(R.string.stat_ipv4), getString(R.string.stat_packets_unit, ipv4Pkts))
-                    setupRow(binding.rowIpv6, getString(R.string.stat_ipv6), getString(R.string.stat_packets_unit, ipv6Pkts))
-                    setupRow(binding.rowArp, getString(R.string.stat_arp), getString(R.string.stat_packets_unit, arpPkts))
-                    setupRow(binding.rowTcp, getString(R.string.stat_tcp), getString(R.string.stat_packets_unit, tcpPkts))
-                    setupRow(binding.rowUdp, getString(R.string.stat_udp), getString(R.string.stat_packets_unit, udpPkts))
-                    setupRow(binding.rowIcmp, getString(R.string.stat_icmp), getString(R.string.stat_packets_unit, icmpPkts))
+                    setupRow(b.rowIpv4, getString(R.string.stat_ipv4), getString(R.string.stat_packets_unit, ipv4Pkts))
+                    setupRow(b.rowIpv6, getString(R.string.stat_ipv6), getString(R.string.stat_packets_unit, ipv6Pkts))
+                    setupRow(b.rowArp, getString(R.string.stat_arp), getString(R.string.stat_packets_unit, arpPkts))
+                    setupRow(b.rowTcp, getString(R.string.stat_tcp), getString(R.string.stat_packets_unit, tcpPkts))
+                    setupRow(b.rowUdp, getString(R.string.stat_udp), getString(R.string.stat_packets_unit, udpPkts))
+                    setupRow(b.rowIcmp, getString(R.string.stat_icmp), getString(R.string.stat_packets_unit, icmpPkts))
 
-                    setupRow(binding.rowObf, getString(R.string.stat_obf), if (obfEnabled) "$obfAlgo ($pskStatus)" else getString(R.string.stat_obf_disabled))
-                    setupRow(binding.rowAlgo, getString(R.string.stat_algo), obfAlgo)
-                    setupRow(binding.rowPfs, getString(R.string.stat_pfs), getString(R.string.stat_pfs_strict))
-                    setupRow(binding.rowReplay, getString(R.string.stat_replay), getString(R.string.stat_replay_desc))
+                    setupRow(b.rowObf, getString(R.string.stat_obf), if (obfEnabled) "$obfAlgo ($pskStatus)" else getString(R.string.stat_obf_disabled))
+                    setupRow(b.rowAlgo, getString(R.string.stat_algo), obfAlgo)
+                    setupRow(b.rowPfs, getString(R.string.stat_pfs), getString(R.string.stat_pfs_strict))
+                    setupRow(b.rowReplay, getString(R.string.stat_replay), getString(R.string.stat_replay_desc))
                 }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    if (_binding != null) {
-                        Toast.makeText(requireContext(), getString(R.string.err_parse_traffic) + e.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
+            } catch (_: Exception) {
+                // Silently swallow background parse exceptions when engine is starting up to prevent Toast spam and UI lag
             }
         }
     }

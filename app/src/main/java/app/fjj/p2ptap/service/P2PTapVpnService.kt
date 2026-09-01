@@ -46,6 +46,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         const val STATE_STARTING = "STARTING"
         const val STATE_RUNNING = "RUNNING"
         const val STATE_STOPPING = "STOPPING"
+        const val STATE_TIMEOUT = "TIMEOUT"
         const val STATE_ERROR = "ERROR"
 
         @Volatile
@@ -88,7 +89,14 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                     val wasExitActive = oldConfig?.exitNode?.isNotBlank() == true
                     val isExitActive = newConfig.exitNode.isNotBlank()
 
-                    if (wasExitActive == isExitActive) {
+                    val routesChanged = (wasExitActive != isExitActive) ||
+                            (oldConfig?.acceptSubnets != newConfig.acceptSubnets) ||
+                            (oldConfig?.advertisedSubnets != newConfig.advertisedSubnets) ||
+                            (oldConfig?.tapIp != newConfig.tapIp) ||
+                            (oldConfig?.tapIpv6 != newConfig.tapIpv6) ||
+                            (oldConfig?.mtu != newConfig.mtu)
+
+                    if (!routesChanged) {
                         // Case 1: Seamless hot-switch between exit nodes without modifying TUN routes
                         thread(name = "P2PTap-ExitHotSwitch") {
                             try {
@@ -105,7 +113,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                             }
                         }
                     } else {
-                        // Case 2: Routes changed (Auto <-> Exit Node mode). Hot-swap TUN fd without dropping P2P engine!
+                        // Case 2: Routes changed (Auto <-> Exit Node mode, subnet changes, IP/MTU change). Hot-swap TUN fd!
                         thread(name = "P2PTap-TunHotReload") {
                             try {
                                 val newTunFd = establishVpn(newConfig)
@@ -143,6 +151,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             try {
                 if (P2PTap.isRunning()) {
                     P2PTap.stop()
+                    Thread.sleep(150) // Give Go engine time to release socket ports and CGO state
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error stopping P2PTap engine on restart", e)
@@ -183,8 +192,10 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 Log.i(TAG, "P2PTap native engine running successfully")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to start P2PTap VPN", e)
-                lastErrorMessage = e.message ?: "Unknown error"
-                updateState(STATE_ERROR, lastErrorMessage)
+                val msg = e.message ?: "Unknown error"
+                lastErrorMessage = msg
+                val isTimeout = msg.contains("timeout", ignoreCase = true) || msg.contains("deadline", ignoreCase = true)
+                updateState(if (isTimeout) STATE_TIMEOUT else STATE_ERROR, lastErrorMessage)
                 cleanup()
                 stopSelf()
             }
@@ -199,15 +210,23 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                 .build()
 
+            var lastNetworkId: Long? = null
             val callback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
-                    if (P2PTap.isRunning()) {
-                        Log.i(TAG, "Android Network Available -> triggering Go network refresh")
-                        P2PTap.onNetworkChanged()
+                    val netId = network.networkHandle
+                    if (netId != lastNetworkId) {
+                        lastNetworkId = netId
+                        if (P2PTap.isRunning()) {
+                            Log.i(TAG, "Android Network Available (id=$netId) -> triggering Go network refresh")
+                            P2PTap.onNetworkChanged()
+                        }
                     }
                 }
 
                 override fun onLost(network: Network) {
+                    if (lastNetworkId == network.networkHandle) {
+                        lastNetworkId = null
+                    }
                     if (P2PTap.isRunning()) {
                         Log.i(TAG, "Android Network Lost -> triggering Go network refresh")
                         P2PTap.onNetworkChanged()
@@ -215,9 +234,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 }
 
                 override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
-                    if (P2PTap.isRunning()) {
-                        P2PTap.onNetworkChanged()
-                    }
+                    // Filter out RSSI/bandwidth fluctuations to avoid tearing down NAT hole-punched sockets repeatedly
                 }
             }
             networkCallback = callback
@@ -238,6 +255,41 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         }
     }
 
+    private fun addRouteSafe(builder: Builder, ipStr: String, prefix: Int) {
+        try {
+            val cleanIp = ipStr.trim()
+            if (cleanIp.isBlank()) return
+            val inetAddr = java.net.InetAddress.getByName(cleanIp)
+            val rawBytes = inetAddr.address
+            val isV4 = rawBytes.size == 4
+
+            val maxPrefix = if (isV4) 32 else 128
+            val validPrefix = prefix.coerceIn(0, maxPrefix)
+
+            // Zero out host bits to guarantee valid subnet base address (prevents IllegalArgumentException on Android 10+)
+            val maskedBytes = ByteArray(rawBytes.size)
+            var remainingBits = validPrefix
+            for (i in rawBytes.indices) {
+                if (remainingBits >= 8) {
+                    maskedBytes[i] = rawBytes[i]
+                    remainingBits -= 8
+                } else if (remainingBits > 0) {
+                    val mask = ((0xFF shl (8 - remainingBits)) and 0xFF).toByte()
+                    maskedBytes[i] = (rawBytes[i].toInt() and mask.toInt()).toByte()
+                    remainingBits = 0
+                } else {
+                    maskedBytes[i] = 0
+                }
+            }
+
+            val maskedAddr = java.net.InetAddress.getByAddress(maskedBytes)
+            builder.addRoute(maskedAddr, validPrefix)
+            Log.d(TAG, "Added VPN route: ${maskedAddr.hostAddress}/$validPrefix (from $ipStr/$prefix)")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to add route: $ipStr/$prefix", e)
+        }
+    }
+
     private fun establishVpn(config: P2PConfig): Int {
         val builder = Builder()
         val mtu = if (config.mtu in 576..9000) config.mtu else 1500
@@ -255,7 +307,11 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         val ipStr = parts[0].trim()
         val prefix = if (parts.size > 1) parts[1].trim().toIntOrNull() ?: 24 else 24
 
-        builder.addAddress(ipStr, prefix)
+        try {
+            builder.addAddress(ipStr, prefix.coerceIn(1, 32))
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to add IPv4 address: $ipStr/$prefix", e)
+        }
 
         // Configure virtual overlay IPv6 address
         val v6Text = if (config.tapIpv6.isNotBlank()) {
@@ -268,7 +324,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             val v6Parts = v6Text.split("/")
             val v6Ip = v6Parts[0].trim()
             val v6Prefix = if (v6Parts.size > 1) v6Parts[1].trim().toIntOrNull() ?: 64 else 64
-            builder.addAddress(v6Ip, v6Prefix)
+            builder.addAddress(v6Ip, v6Prefix.coerceIn(1, 128))
             Log.i(TAG, "Configured IPv6 address: $v6Ip/$v6Prefix")
         } catch (e: Exception) {
             Log.w(TAG, "Failed to add IPv6 address: $v6Text", e)
@@ -277,70 +333,50 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         // Route virtual overlay IPv4 and accepted subnet networks
         if (config.acceptSubnets) {
             // When acceptSubnets is true, route all private IPv4 ranges into the VPN so any peer's advertised subnets are reachable
-            builder.addRoute("10.0.0.0", 8)
-            builder.addRoute("172.16.0.0", 12)
-            builder.addRoute("192.168.0.0", 16)
+            addRouteSafe(builder, "10.0.0.0", 8)
+            addRouteSafe(builder, "172.16.0.0", 12)
+            addRouteSafe(builder, "192.168.0.0", 16)
         } else {
-            if (ipStr.startsWith("10.")) {
-                builder.addRoute("10.0.0.0", 8)
-            } else if (ipStr.startsWith("172.")) {
-                builder.addRoute("172.16.0.0", 12)
-            } else if (ipStr.startsWith("192.168.")) {
-                builder.addRoute("192.168.0.0", 16)
-            } else {
-                builder.addRoute(ipStr, prefix)
-            }
+            addRouteSafe(builder, ipStr, prefix)
         }
 
         // IPv6 Overlay Route
-        try {
-            builder.addRoute("fd00::", 8)
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to add IPv6 ULA route: fd00::/8", e)
-        }
+        addRouteSafe(builder, "fd00::", 8)
 
         // Also add explicitly advertised custom subnets if specified
         for (sub in config.advertisedSubnets) {
-            try {
-                val subParts = sub.split("/")
-                val sIp = subParts[0].trim()
-                val sPrefix = if (subParts.size > 1) subParts[1].trim().toIntOrNull() ?: 24 else 24
-                if (sIp.isNotEmpty()) {
-                    builder.addRoute(sIp, sPrefix)
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to add route for advertised subnet: $sub", e)
+            val subParts = sub.split("/")
+            val sIp = subParts[0].trim()
+            val sPrefix = if (subParts.size > 1) subParts[1].trim().toIntOrNull() ?: 24 else 24
+            if (sIp.isNotEmpty()) {
+                addRouteSafe(builder, sIp, sPrefix)
             }
         }
 
         // If Exit Node is designated, route ALL default IPv4 and IPv6 traffic + DNS through TUN
         if (config.exitNode.isNotBlank()) {
-            try {
-                builder.addRoute("0.0.0.0", 1)
-                builder.addRoute("128.0.0.0", 1)
-                Log.i(TAG, "Configured Exit Node default IPv4 routes: 0.0.0.0/1 & 128.0.0.0/1 via ${config.exitNode}")
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to add default IPv4 routes for exit node: ${config.exitNode}", e)
-            }
+            addRouteSafe(builder, "0.0.0.0", 1)
+            addRouteSafe(builder, "128.0.0.0", 1)
+            addRouteSafe(builder, "::", 1)
+            addRouteSafe(builder, "8000::", 1)
+        }
 
-            try {
-                builder.addRoute("::", 1)
-                builder.addRoute("8000::", 1)
-                Log.i(TAG, "Configured Exit Node default IPv6 routes: ::/1 & 8000::/1 via ${config.exitNode}")
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to add default IPv6 routes for exit node: ${config.exitNode}", e)
+        // Configure custom DNS servers if specified by user.
+        // If empty, Android VpnService automatically uses the underlying System Default DNS (Wi-Fi / Cellular carrier)!
+        if (config.dnsServers.isNotEmpty()) {
+            for (dns in config.dnsServers) {
+                val cleanDns = dns.trim()
+                if (cleanDns.isNotBlank()) {
+                    try {
+                        builder.addDnsServer(cleanDns)
+                        Log.i(TAG, "Configured custom VPN DNS server: $cleanDns")
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to add DNS server: $cleanDns", e)
+                    }
+                }
             }
-
-            // Configure DNS servers to route DNS requests through the TUN interface and prevent DNS leaks
-            try {
-                builder.addDnsServer("1.1.1.1")
-                builder.addDnsServer("8.8.8.8")
-                builder.addDnsServer("223.5.5.5")
-                builder.addDnsServer("2606:4700:4700::1111")
-                Log.i(TAG, "Configured encrypted/tunneled DNS servers for Exit Node mode")
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to add DNS servers for exit node mode", e)
-            }
+        } else {
+            Log.i(TAG, "No custom DNS configured -> Using Android System Default DNS")
         }
 
         // Allow app traffic through VPN
@@ -375,20 +411,28 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     }
 
     override fun onDestroy() {
+        Log.i(TAG, "P2PTapVpnService onDestroy -> stopping VPN")
+        stopVpn()
         cleanup()
         super.onDestroy()
     }
 
     // com.p2ptap.P2PTap.Protector implementation
     override fun protect(fd: Int): Boolean {
-        return super.protect(fd)
+        if (fd <= 0) return false
+        val ok = super.protect(fd)
+        if (!ok) {
+            Log.w(TAG, "VpnService.protect(fd=$fd) returned false")
+        }
+        return ok
     }
 
     private fun updateState(state: String, message: String = "") {
         currentState = state
-        if (state == STATE_ERROR) {
+        if (state == STATE_ERROR || state == STATE_TIMEOUT) {
             lastErrorMessage = message
         }
+        P2PStateRepository.updateState(state, message)
         val intent = Intent(ACTION_STATE_CHANGED).apply {
             putExtra(EXTRA_STATE, state)
             putExtra(EXTRA_MESSAGE, message)
@@ -444,8 +488,9 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     override fun onStateChange(state: String?, message: String?) {
         val s = state ?: STATE_IDLE
         val m = message ?: ""
-        P2PStateRepository.updateState(s, m)
-        updateState(s, m)
+        val isTimeout = s == STATE_TIMEOUT || m.contains("timeout", ignoreCase = true) || m.contains("deadline", ignoreCase = true)
+        val targetState = if (isTimeout && (s == STATE_ERROR || s == STATE_TIMEOUT)) STATE_TIMEOUT else s
+        updateState(targetState, m)
     }
 
     override fun onMetricsUpdate(
@@ -484,11 +529,12 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 val intf = interfaces.nextElement()
                 if (intf.isLoopback || !intf.isUp) continue
                 val name = intf.name.lowercase()
-                if (name.startsWith("tun") || name.startsWith("p2p") || name.startsWith("dummy")) continue
+                if (name.startsWith("tun") || name.startsWith("tap") || name.startsWith("dummy") || name.startsWith("vnic") || name.startsWith("veth") || name.startsWith("gso")) continue
                 val addrs = intf.inetAddresses
                 while (addrs.hasMoreElements()) {
                     val addr = addrs.nextElement()
-                    if (addr.isLoopbackAddress || addr.isLinkLocalAddress) continue
+                    if (addr.isLoopbackAddress) continue
+                    if (addr is java.net.Inet4Address && addr.isLinkLocalAddress) continue
                     val host = addr.hostAddress ?: continue
                     val cleanHost = host.split("%")[0].trim()
                     if (cleanHost.isNotEmpty()) {
@@ -500,5 +546,11 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             Log.w(TAG, "Failed to query Android NetworkInterfaces", e)
         }
         return JSONArray(list).toString()
+    }
+
+    override fun onRevoke() {
+        Log.i(TAG, "VpnService permission revoked by Android system -> stopping VPN")
+        stopVpn()
+        super.onRevoke()
     }
 }

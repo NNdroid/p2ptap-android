@@ -6,11 +6,13 @@
     <string name="status_connecting">Conectando...</string>
     <string name="status_connected">Conectado</string>
     <string name="status_stopping">Deteniendo...</string>
+    <string name="status_timeout">Tiempo de espera agotado</string>
     <string name="status_error">Error de conexión</string>
     <string name="status_hint_idle">Toca conectar para unirte a la red virtual P2P</string>
     <string name="status_hint_connected">Malla virtual P2P activa y enrutando con cifrado</string>
     <string name="status_hint_starting">Estableciendo túnel y descubriendo nodos...</string>
     <string name="status_hint_stopping">Liberando túnel y deteniendo motor...</string>
+    <string name="status_hint_timeout">No se pudo establecer conexión con el par/relé en el tiempo límite</string>
     <string name="btn_connect">Conectar</string>
     <string name="btn_disconnect">Desconectar</string>
     <string name="btn_retry">Reintentar</string>
@@ -230,8 +232,11 @@
     <string name="dialog_custom_exit_node_title">Nodo de salida personalizado</string>
     <string name="hint_custom_exit_node">Introduce Peer ID o IP virtual (ej. 10.0.0.1)</string>
     <string name="exit_node_empty_hint">Actualmente ningún par en línea admite la función de puerta de enlace de salida.\nHabilite el modo de salida en un nodo remoto o ingrese su Peer ID manualmente arriba.</string>
+    <string name="exit_node_vpn_stopped_hint">La VPN no se está ejecutando. Inicie la VPN para descubrir puertas de enlace en línea automáticamente, o ingrese un Peer ID a continuación.</string>
     <string name="msg_exit_node_updated">Nodo de salida cambiado a: %s</string>
     <string name="msg_exit_node_cleared">Nodo de salida desactivado (Modo automático)</string>
     <string name="msg_exit_node_hot_reloaded">Ruta de salida actualizada de forma fluida</string>
+    <string name="hint_dns_servers">Servidores DNS (Dejar en blanco para DNS predeterminado del sistema)</string>
+    <string name="dialog_manage_dns">Administrar servidores DNS</string>
 </resources>
 

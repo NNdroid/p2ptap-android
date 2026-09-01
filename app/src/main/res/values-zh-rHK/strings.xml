@@ -6,11 +6,13 @@
     <string name="status_connecting">正在連線...</string>
     <string name="status_connected">已建立連線</string>
     <string name="status_stopping">正在停止...</string>
+    <string name="status_timeout">連線超時</string>
     <string name="status_error">連線發生錯誤</string>
     <string name="status_hint_idle">點擊連線加入 P2P 虛擬區域網路</string>
     <string name="status_hint_connected">P2P 虛擬網就緒，正在雙向加密路由</string>
     <string name="status_hint_starting">正在建立通道並發現全網節點...</string>
     <string name="status_hint_stopping">正在釋放網路介面並關閉核心...</string>
+    <string name="status_hint_timeout">在超時時間內無法連接到中繼節點或對端</string>
     <string name="btn_connect">連線網路</string>
     <string name="btn_disconnect">斷開連線</string>
     <string name="btn_retry">重新連線</string>
@@ -225,4 +227,6 @@
     <string name="msg_exit_node_updated">已設定出口節點為: %s</string>
     <string name="msg_exit_node_cleared">已切換為自動 Mesh 模式 (停用出口中繼)</string>
     <string name="msg_exit_node_hot_reloaded">出口路由已即時平滑生效</string>
+    <string name="hint_dns_servers">DNS 伺服器 (留空預設使用系統預設 DNS)</string>
+    <string name="dialog_manage_dns">管理 DNS 伺服器列表</string>
 </resources>

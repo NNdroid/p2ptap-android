@@ -6,11 +6,13 @@
     <string name="status_connecting">Verbindung wird hergestellt...</string>
     <string name="status_connected">Verbunden</string>
     <string name="status_stopping">Wird gestoppt...</string>
+    <string name="status_timeout">Verbindungs-Timeout</string>
     <string name="status_error">Verbindungsfehler</string>
     <string name="status_hint_idle">Tippen Sie auf Verbinden, um dem P2P-Netzwerk beizutreten</string>
     <string name="status_hint_connected">P2P-Mesh aktiv und verschlüsselt geroutet</string>
     <string name="status_hint_starting">Tunnel wird aufgebaut und Peers werden gesucht...</string>
     <string name="status_hint_stopping">Tunnel wird getrennt und Engine gestoppt...</string>
+    <string name="status_hint_timeout">Keine Peer-/Relay-Verbindung innerhalb des Zeitfensters möglich</string>
     <string name="btn_connect">Verbinden</string>
     <string name="btn_disconnect">Trennen</string>
     <string name="btn_retry">Wiederholen</string>
@@ -230,7 +232,10 @@
     <string name="dialog_custom_exit_node_title">Benutzerdefinierter Exit-Knoten</string>
     <string name="hint_custom_exit_node">Peer ID oder virtuelle IP eingeben (z.B. 10.0.0.1)</string>
     <string name="exit_node_empty_hint">Derzeit unterstützen keine Online-Peers die Exit-Gateway-Funktionalität.\nAktivieren Sie den Exit-Gateway-Modus auf einem Remote-Knoten oder geben Sie dessen Peer-ID manuell ein.</string>
+    <string name="exit_node_vpn_stopped_hint">VPN ist nicht aktiv. Starten Sie das VPN, um Exit-Gateways automatisch zu erkennen, oder geben Sie unten eine Peer-ID ein.</string>
     <string name="msg_exit_node_updated">Exit-Knoten geändert auf: %s</string>
     <string name="msg_exit_node_cleared">Exit-Knoten deaktiviert (Auto-Mesh-Modus)</string>
     <string name="msg_exit_node_hot_reloaded">Exit-Routing wurde nahtlos angewendet</string>
+    <string name="hint_dns_servers">DNS-Server (Leer lassen für Systemstandard-DNS)</string>
+    <string name="dialog_manage_dns">DNS-Server verwalten</string>
 </resources>

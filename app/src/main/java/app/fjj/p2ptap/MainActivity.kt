@@ -36,6 +36,8 @@ import app.fjj.p2ptap.ui.PeersDetailDialog
 import app.fjj.p2ptap.ui.QrDialog
 import app.fjj.p2ptap.ui.TrafficDetailDialog
 import com.p2ptap.P2PTap.P2PTap
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -81,21 +83,26 @@ class MainActivity : AppCompatActivity() {
         requestNotificationPermission()
     }
 
+    @OptIn(FlowPreview::class)
     private fun observeMetrics() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                P2PStateRepository.metrics.collect { metrics ->
-                    val content = binding.contentMain
-                    if (P2PTapVpnService.isRunning()) {
-                        content.tvActivePeers.text = "${metrics.peerCount} Peers\n(${metrics.directPeers} direct, ${metrics.relayPeers} relay)"
-                        content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(metrics.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(metrics.rxSpeed)}"
-                        content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(metrics.totalTx)}  ↓ ${P2PStateRepository.formatBytes(metrics.totalRx)}"
-                    } else {
-                        content.tvActivePeers.text = "0 Peers\n(0 direct, 0 relay)"
-                        content.tvLiveSpeed.text = "↑ 0 B/s\n↓ 0 B/s"
-                        content.tvTraffic.text = "↑ 0 B  ↓ 0 B"
+                P2PStateRepository.metrics
+                    .debounce(300)
+                    .collect { metrics ->
+                        withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            val content = binding.contentMain
+                            if (P2PTapVpnService.isRunning()) {
+                                content.tvActivePeers.text = "${metrics.peerCount} Peers\n(${metrics.directPeers} direct, ${metrics.relayPeers} relay)"
+                                content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(metrics.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(metrics.rxSpeed)}"
+                                content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(metrics.totalTx)}  ↓ ${P2PStateRepository.formatBytes(metrics.totalRx)}"
+                            } else {
+                                content.tvActivePeers.text = "0 Peers\n(0 direct, 0 relay)"
+                                content.tvLiveSpeed.text = "↑ 0 B/s\n↓ 0 B/s"
+                                content.tvTraffic.text = "↑ 0 B  ↓ 0 B"
+                            }
+                        }
                     }
-                }
             }
         }
 
@@ -118,11 +125,7 @@ class MainActivity : AppCompatActivity() {
         updateUiState(P2PTapVpnService.currentState, P2PTapVpnService.lastErrorMessage)
 
         val filter = IntentFilter(P2PTapVpnService.ACTION_STATE_CHANGED)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(vpnStateReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(vpnStateReceiver, filter)
-        }
+        ContextCompat.registerReceiver(this, vpnStateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onPause() {
@@ -134,9 +137,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.contentMain.btnConnect.setOnClickListener {
-            if (P2PTapVpnService.isRunning() || P2PTapVpnService.currentState == P2PTapVpnService.STATE_STARTING) {
+            if (P2PTapVpnService.currentState == P2PTapVpnService.STATE_STARTING || P2PTapVpnService.currentState == P2PTapVpnService.STATE_STOPPING) {
+                return@setOnClickListener
+            }
+            if (P2PTapVpnService.isRunning()) {
                 stopVpnService()
             } else {
+                binding.contentMain.btnConnect.isEnabled = false
                 prepareAndStartVpn()
             }
         }
@@ -204,6 +211,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.contentMain.layoutTapIp.setOnClickListener {
+            val ip = binding.contentMain.tvTapIp.text?.toString() ?: ""
+            if (ip.isNotEmpty()) {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Virtual IPv4", ip)
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(this, getString(R.string.msg_copied_clipboard) + ": $ip", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.contentMain.layoutTapIpv6.setOnClickListener {
+            val v6 = binding.contentMain.tvTapIpv6.text?.toString() ?: ""
+            if (v6.isNotEmpty()) {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Virtual IPv6", v6)
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(this, getString(R.string.msg_copied_clipboard) + ": $v6", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.contentMain.btnCopyMultiaddrs.setOnClickListener {
             copyMultiaddrsToClipboard()
         }
@@ -240,20 +267,24 @@ class MainActivity : AppCompatActivity() {
         val ring = binding.contentMain.viewStatusRing
         ring.scaleX = 1.0f
         ring.scaleY = 1.0f
-        ring.alpha = 0.25f
+        ring.alpha = 0.20f
 
-        val scaleX = ObjectAnimator.ofFloat(ring, View.SCALE_X, 1.0f, 1.25f).apply {
-            duration = 1400
+        val interpolator = android.view.animation.AccelerateDecelerateInterpolator()
+        val scaleX = ObjectAnimator.ofFloat(ring, View.SCALE_X, 1.0f, 1.22f).apply {
+            duration = 2000L
+            this.interpolator = interpolator
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
         }
-        val scaleY = ObjectAnimator.ofFloat(ring, View.SCALE_Y, 1.0f, 1.25f).apply {
-            duration = 1400
+        val scaleY = ObjectAnimator.ofFloat(ring, View.SCALE_Y, 1.0f, 1.22f).apply {
+            duration = 2000L
+            this.interpolator = interpolator
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
         }
-        val alpha = ObjectAnimator.ofFloat(ring, View.ALPHA, 0.25f, 0.65f).apply {
-            duration = 1400
+        val alpha = ObjectAnimator.ofFloat(ring, View.ALPHA, 0.20f, 0.65f).apply {
+            duration = 2000L
+            this.interpolator = interpolator
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
         }
@@ -274,7 +305,7 @@ class MainActivity : AppCompatActivity() {
         val ring = binding.contentMain.viewStatusRing
         ring.scaleX = 1.0f
         ring.scaleY = 1.0f
-        ring.alpha = 0.25f
+        ring.alpha = 0.20f
     }
 
     private fun copyMultiaddrsToClipboard() {
@@ -344,6 +375,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshPeerId() {
+        val cachedPid = AppConfigManager.getPeerId(this@MainActivity)
+        if (cachedPid.isNotBlank()) {
+            binding.contentMain.tvPeerId.text = cachedPid
+        }
+
         lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Default) {
             var pid = com.p2ptap.P2PTap.P2PTap.getPeerID()
             if (pid.isNullOrEmpty()) {
@@ -430,6 +466,16 @@ class MainActivity : AppCompatActivity() {
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_connecting)
                 content.btnConnect.setIconResource(R.drawable.ic_refresh)
                 content.btnConnect.isEnabled = false
+                stopPulseAnimation()
+            }
+            P2PTapVpnService.STATE_TIMEOUT -> {
+                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
+                content.tvStatusTitle.text = getString(R.string.status_timeout)
+                content.tvStatusSubtitle.text = if (message.isNotBlank()) message else getString(R.string.status_hint_timeout)
+                content.btnConnect.text = getString(R.string.btn_retry)
+                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_timeout)
+                content.btnConnect.setIconResource(R.drawable.ic_refresh)
+                content.btnConnect.isEnabled = true
                 stopPulseAnimation()
             }
             P2PTapVpnService.STATE_ERROR -> {

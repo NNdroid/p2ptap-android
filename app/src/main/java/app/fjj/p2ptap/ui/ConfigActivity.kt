@@ -18,8 +18,7 @@ import app.fjj.p2ptap.R
 import app.fjj.p2ptap.config.AppConfigManager
 import app.fjj.p2ptap.config.P2PConfig
 import app.fjj.p2ptap.databinding.ActivityConfigBinding
-import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanOptions
+import app.fjj.p2ptap.service.P2PTapVpnService
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -47,25 +46,6 @@ class ConfigActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Toast.makeText(this, getString(R.string.msg_import_failed) + e.message, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private val qrScanLauncher = registerForActivityResult(ScanContract()) { result ->
-        if (result.contents != null) {
-            handleScannedResult(result.contents)
-        }
-    }
-
-    private val galleryQrLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            val content = QrImportHelper.decodeQrFromUri(this, uri)
-            if (content != null) {
-                handleScannedResult(content)
-            } else {
-                Toast.makeText(this, getString(R.string.msg_scan_no_result), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -127,10 +107,6 @@ class ConfigActivity : AppCompatActivity() {
             showResetKeyDialog()
         }
 
-        binding.btnScanQrConfig.setOnClickListener {
-            showQrSourceChoiceDialog()
-        }
-
         binding.ivCopyPeerId.setOnClickListener {
             val pid = AppConfigManager.getPeerId(this)
             if (pid.isNotBlank()) {
@@ -175,6 +151,14 @@ class ConfigActivity : AppCompatActivity() {
         binding.tilAllowedSubnetPeers.setEndIconOnClickListener {
             openAddressManager(AddressListType.ALLOWED_SUBNET_PEERS)
         }
+
+        // DNS Servers List Manager
+        binding.btnManageDns.setOnClickListener {
+            openAddressManager(AddressListType.DNS_SERVERS)
+        }
+        binding.tilDnsServers.setEndIconOnClickListener {
+            openAddressManager(AddressListType.DNS_SERVERS)
+        }
     }
 
     private fun openAddressManager(type: AddressListType) {
@@ -191,6 +175,9 @@ class ConfigActivity : AppCompatActivity() {
             AddressListType.ALLOWED_SUBNET_PEERS -> {
                 val raw = binding.etAllowedSubnetPeers.text?.toString() ?: "*"
                 raw.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+            }
+            AddressListType.DNS_SERVERS -> {
+                binding.etDnsServers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
             }
         }
 
@@ -209,69 +196,11 @@ class ConfigActivity : AppCompatActivity() {
                     val joined = if (updatedList.isEmpty()) "*" else updatedList.joinToString(", ")
                     binding.etAllowedSubnetPeers.setText(joined)
                 }
+                AddressListType.DNS_SERVERS -> {
+                    binding.etDnsServers.setText(updatedList.joinToString("\n"))
+                }
             }
         }.show(supportFragmentManager, AddressListManagerDialog.TAG)
-    }
-
-    private fun showQrSourceChoiceDialog() {
-        val options = arrayOf(getString(R.string.title_scan_qr), getString(R.string.btn_choose_gallery_qr))
-        AlertDialog.Builder(this)
-            .setTitle(R.string.btn_scan_config)
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        val scanOptions = ScanOptions().apply {
-                            setPrompt(getString(R.string.title_scan_qr))
-                            setBeepEnabled(true)
-                            setBarcodeImageEnabled(false)
-                            setOrientationLocked(false)
-                        }
-                        qrScanLauncher.launch(scanOptions)
-                    }
-                    1 -> {
-                        galleryQrLauncher.launch("image/*")
-                    }
-                }
-            }
-            .setNegativeButton(R.string.btn_cancel, null)
-            .show()
-    }
-
-    private fun handleScannedResult(raw: String) {
-        val info = QrImportHelper.parse(raw)
-        if (info == null) {
-            Toast.makeText(this, getString(R.string.msg_scan_no_result), Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        QrImportHelper.showScanResultDialog(
-            context = this,
-            info = info,
-            onAddStatic = { multiaddr ->
-                val current = binding.etStaticPeers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() }?.toMutableList() ?: mutableListOf()
-                if (!current.contains(multiaddr)) {
-                    current.add(multiaddr)
-                    binding.etStaticPeers.setText(current.joinToString("\n"))
-                    Toast.makeText(this, "已成功添加至静态节点列表！", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "该节点已存在于静态列表中", Toast.LENGTH_SHORT).show()
-                }
-            },
-            onAddBootstrap = { multiaddr ->
-                val current = binding.etBootstrapPeers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() }?.toMutableList() ?: mutableListOf()
-                if (!current.contains(multiaddr)) {
-                    current.add(multiaddr)
-                    binding.etBootstrapPeers.setText(current.joinToString("\n"))
-                    Toast.makeText(this, "已成功添加至引导节点列表！", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "该引导节点已存在", Toast.LENGTH_SHORT).show()
-                }
-            },
-            onImportFull = { fullConfig ->
-                displayConfig(fullConfig)
-                Toast.makeText(this, "配置已导入，请核对并点击保存！", Toast.LENGTH_LONG).show()
-            }
-        )
     }
 
     private fun refreshPeerIdDisplay() {
@@ -306,6 +235,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.etTapIp.setText(config.tapIp)
         binding.etTapIpv6.setText(config.tapIpv6)
         binding.etMtu.setText(config.mtu.toString())
+        binding.etDnsServers.setText(config.dnsServers.joinToString("\n"))
         binding.etPsk.setText(config.psk)
         binding.etBootstrapPeers.setText(config.bootstrapPeers.joinToString("\n"))
         binding.etStaticPeers.setText(config.staticPeers.joinToString("\n"))
@@ -357,6 +287,8 @@ class ConfigActivity : AppCompatActivity() {
         val advList = advString.lines().map { it.trim() }.filter { it.isNotEmpty() }
         val aspString = binding.etAllowedSubnetPeers.text?.toString() ?: "*"
         val aspList = aspString.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+        val dnsString = binding.etDnsServers.text?.toString() ?: ""
+        val dnsList = dnsString.lines().map { it.trim() }.filter { it.isNotEmpty() }
         val webUiEnable = binding.switchWebUi.isChecked
         val webUiPort = binding.etWebUiPort.text?.toString()?.toIntOrNull() ?: 15858
         val webUiToken = binding.etWebUiToken.text?.toString()?.trim() ?: ""
@@ -383,6 +315,7 @@ class ConfigActivity : AppCompatActivity() {
             acceptSubnets = acceptSubnets,
             advertisedSubnets = advList,
             allowedSubnetPeers = if (aspList.isEmpty()) listOf("*") else aspList,
+            dnsServers = dnsList,
             transportStrategy = strategy,
             discoverBootMesh = discoverBootMesh,
             webUiEnable = webUiEnable,
@@ -401,6 +334,18 @@ class ConfigActivity : AppCompatActivity() {
 
         AppConfigManager.save(this, config)
         Toast.makeText(this, getString(R.string.msg_config_saved), Toast.LENGTH_SHORT).show()
+
+        if (P2PTapVpnService.isRunning()) {
+            val intent = android.content.Intent(this, P2PTapVpnService::class.java).apply {
+                action = P2PTapVpnService.ACTION_RELOAD
+            }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
+        }
+
         finish()
     }
 }

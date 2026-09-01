@@ -7,11 +7,13 @@
     <string name="status_connecting">Connecting...</string>
     <string name="status_connected">Connected</string>
     <string name="status_stopping">Stopping...</string>
+    <string name="status_timeout">Connection Timeout</string>
     <string name="status_error">Connection Error</string>
     <string name="status_hint_idle">Tap connect to join the P2P overlay</string>
     <string name="status_hint_connected">P2P virtual mesh is active and routing</string>
     <string name="status_hint_starting">Establishing tunnel and discovering peers...</string>
     <string name="status_hint_stopping">Releasing tunnel and stopping engine...</string>
+    <string name="status_hint_timeout">Unable to establish peer/relay connection within timeout</string>
 
     <!-- Buttons & Actions -->
     <string name="btn_connect">Connect</string>
@@ -250,4 +252,6 @@
     <string name="msg_exit_node_updated">Exit node updated to: %s</string>
     <string name="msg_exit_node_cleared">Exit node disabled (Auto Mesh Mode)</string>
     <string name="msg_exit_node_hot_reloaded">Exit node routing updated seamlessly in active VPN</string>
+    <string name="hint_dns_servers">DNS Servers (Leave empty for Android System Default DNS)</string>
+    <string name="dialog_manage_dns">Manage DNS Servers</string>
 </resources>

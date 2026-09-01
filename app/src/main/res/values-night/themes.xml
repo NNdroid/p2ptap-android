@@ -5,8 +5,14 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/brand_secondary</item>
         <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/card_bg</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/card_elevated</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
         <item name="android:statusBarColor">@color/window_bg</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/window_bg</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:windowBackground">@color/window_bg</item>
     </style>
 </resources>
