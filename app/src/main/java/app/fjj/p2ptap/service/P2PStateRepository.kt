@@ -21,12 +21,14 @@ data class PeerItemData(
     val tapIp: String,
     val tapIpv6: String,
     val isDirect: Boolean,
+    val isRelayed: Boolean,
     val connState: String,
     val multiaddr: String,
     val transport: String,
     val transportScore: Int = 999,
     val transportPriority: String = "",
     val rtt: Double,
+    val rttMeasured: Boolean,
     val txBytes: Long,
     val rxBytes: Long,
     val os: String,
@@ -50,16 +52,14 @@ object P2PStateRepository {
     fun updateState(newState: String, newMsg: String = "") {
         _state.value = newState
         _message.value = newMsg
-        if (newState == "IDLE" || newState == "ERROR") {
+        if (newState == "IDLE" || newState == "ERROR" || newState == "TIMEOUT") {
             _metrics.value = NodeMetrics()
             _peers.value = emptyList()
         }
     }
 
     fun updatePeers(newPeers: List<PeerItemData>) {
-        if (newPeers.isNotEmpty() || _state.value == "IDLE" || _state.value == "ERROR") {
-            _peers.value = newPeers
-        }
+        _peers.value = newPeers
     }
 
     fun updateMetrics(
@@ -99,4 +99,3 @@ object P2PStateRepository {
         }
     }
 }
-

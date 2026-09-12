@@ -73,13 +73,23 @@ jobs:
           # Install gomobile and compile p2ptap.aar if Go source exists
           if [ -n "${GO_DIR}" ]; then
             echo "Installing gomobile..."
-            go install golang.org/x/mobile/cmd/gomobile@latest
+            go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20260821190718-4776eadac327
             export PATH=$PATH:$(go env GOPATH)/bin
             gomobile init
             
             echo "Building p2ptap.aar from ${GO_DIR}..."
             cd "${GO_DIR}"
-            gomobile bind -target=android -androidapi=21 -o ../app/libs/p2ptap.aar ./...
+            BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            VERSION="dev-${GO_COMMIT}"
+            export GOFLAGS="-ldflags=-checklinkname=0"
+            export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
+            gomobile bind \
+              -target=android \
+              -androidapi=21 \
+              -javapkg com.p2ptap \
+              -ldflags="-s -w -X p2ptap/pkg/version.Version=${VERSION} -X p2ptap/pkg/version.BuildTime=${BUILD_TIME} -X p2ptap/pkg/version.GitCommit=${GO_COMMIT} -extldflags '-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384'" \
+              -o ../app/libs/p2ptap.aar \
+              ./pkg/android
             cd ..
             echo "p2ptap.aar built successfully!"
           else

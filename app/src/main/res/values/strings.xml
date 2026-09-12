@@ -66,6 +66,8 @@
     <string name="hint_tap_ip">Virtual IPv4 / CIDR (e.g. 10.0.0.88/24)</string>
     <string name="hint_tap_ipv6">Virtual IPv6 / CIDR (e.g. fd00::88/64, Optional)</string>
     <string name="hint_psk">Pre-Shared Key / PSK (Optional)</string>
+    <string name="hint_tls_sni">TLS/QUIC SNI (outgoing, optional)</string>
+    <string name="hint_tls_sni_suffix">TLS SNI suffix — per-peer (optional)</string>
     <string name="hint_bootstrap">Bootstrap Multiaddrs (one per line)</string>
     <string name="hint_static_peers">Static Peers (one per line, optional)</string>
     <string name="hint_advertised_subnets">Advertised Subnets (e.g. 192.168.1.0/24, optional)</string>

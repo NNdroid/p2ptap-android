@@ -91,18 +91,15 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
             return
         }
 
-        val totalPeers = peerDataList.size
         var directCount = 0
         var relayCount = 0
         for (p in peerDataList) {
-            if (p.isDirect) directCount++ else relayCount++
+            when (p.connState) {
+                "ok" -> if (p.isDirect) directCount++ else if (p.isRelayed) relayCount++
+                "relay_ok" -> relayCount++
+            }
         }
-
-        if (totalPeers == 0) {
-            b.peersContainer.removeAllViews()
-            b.tvSummary.text = getString(R.string.peers_summary_fmt, 0, 0, 0)
-            return
-        }
+        val totalPeers = directCount + relayCount
 
         val currentChildCount = b.peersContainer.childCount
         val targetCount = peerDataList.size
@@ -124,8 +121,16 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
             itemBinding.tvBadge.apply {
                 when (item.connState) {
                     "ok" -> {
-                        text = getString(R.string.badge_direct)
-                        setTextColor(Color.parseColor("#059669"))
+                        if (item.isDirect) {
+                            text = getString(R.string.badge_direct)
+                            setTextColor(Color.parseColor("#059669"))
+                        } else if (item.isRelayed) {
+                            text = getString(R.string.badge_relay)
+                            setTextColor(Color.parseColor("#0284C7"))
+                        } else {
+                            text = getString(R.string.badge_error)
+                            setTextColor(Color.parseColor("#DC2626"))
+                        }
                     }
                     "relay_ok" -> {
                         text = getString(R.string.badge_relay)
@@ -140,13 +145,13 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
                         setTextColor(Color.parseColor("#DC2626"))
                     }
                     else -> {
-                        text = if (item.isDirect) getString(R.string.badge_direct) else getString(R.string.badge_relay)
-                        setTextColor(if (item.isDirect) Color.parseColor("#059669") else Color.parseColor("#D97706"))
+                        text = getString(R.string.badge_error)
+                        setTextColor(Color.parseColor("#DC2626"))
                     }
                 }
             }
 
-            itemBinding.tvRtt.text = if (item.rtt > 0) "📶 ${item.rtt.toInt()}ms" else ""
+            itemBinding.tvRtt.text = if (item.rttMeasured && item.rtt > 0) "📶 ${item.rtt.toInt()}ms" else ""
 
             val ipText = buildString {
                 if (item.tapIp.isNotBlank()) append("IPv4: ${item.tapIp}  ")

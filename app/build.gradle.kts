@@ -16,36 +16,12 @@ android {
         versionCode = 1
 
         val baseVersionName = "1.0"
-        val goCommitHash: String = run {
-            val envHash = System.getenv("GO_COMMIT_HASH") ?: project.findProperty("GO_COMMIT_HASH")?.toString()
-            if (!envHash.isNullOrEmpty()) {
-                envHash
-            } else {
-                try {
-                    val candidatePaths = listOf("p2ptap-core", "core", "../p2ptap-core", "../core")
-                    var subDir: java.io.File? = null
-                    for (p in candidatePaths) {
-                        val f = file(p)
-                        if (f.exists() && f.isDirectory) {
-                            subDir = f
-                            break
-                        }
-                    }
-                    if (subDir != null) {
-                        val hash = providers.exec {
-                            commandLine("git", "rev-parse", "--short", "HEAD")
-                            workingDir(subDir)
-                            isIgnoreExitValue = true
-                        }.standardOutput.asText.orNull?.trim().orEmpty()
-                        if (hash.isNotBlank()) hash else "dev"
-                    } else {
-                        "dev"
-                    }
-                } catch (_: Exception) {
-                    "dev"
-                }
-            }
-        }
+        // The AAR may be supplied by a sibling checkout, so the submodule HEAD
+        // is not proof of the embedded engine version. Build scripts and CI set
+        // GO_COMMIT_HASH from the exact source used for gomobile bind.
+        val goCommitHash = System.getenv("GO_COMMIT_HASH")
+            ?: project.findProperty("GO_COMMIT_HASH")?.toString()
+            ?: "dev"
         versionName = "$baseVersionName-$goCommitHash"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

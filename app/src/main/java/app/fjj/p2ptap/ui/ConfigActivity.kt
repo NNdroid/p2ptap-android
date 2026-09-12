@@ -237,6 +237,8 @@ class ConfigActivity : AppCompatActivity() {
         binding.etMtu.setText(config.mtu.toString())
         binding.etDnsServers.setText(config.dnsServers.joinToString("\n"))
         binding.etPsk.setText(config.psk)
+        binding.etTlsServerName.setText(config.tlsServerName)
+        binding.etTlsSniSuffix.setText(config.tlsSniSuffix)
         binding.etBootstrapPeers.setText(config.bootstrapPeers.joinToString("\n"))
         binding.etStaticPeers.setText(config.staticPeers.joinToString("\n"))
         binding.switchEnableMdns.isChecked = config.enableMdns
@@ -266,6 +268,8 @@ class ConfigActivity : AppCompatActivity() {
         val tapIpv6 = binding.etTapIpv6.text?.toString()?.trim() ?: ""
         val mtu = binding.etMtu.text?.toString()?.toIntOrNull() ?: 1500
         val psk = binding.etPsk.text?.toString()?.trim() ?: ""
+        val tlsServerName = binding.etTlsServerName.text?.toString()?.trim() ?: ""
+        val tlsSniSuffix = binding.etTlsSniSuffix.text?.toString()?.trim() ?: ""
         val bsString = binding.etBootstrapPeers.text?.toString() ?: ""
         val bsList = bsString.lines().map { it.trim() }.filter { it.isNotEmpty() }
         val stString = binding.etStaticPeers.text?.toString() ?: ""
@@ -302,6 +306,8 @@ class ConfigActivity : AppCompatActivity() {
             bootstrapPeers = bsList,
             staticPeers = stList,
             psk = psk,
+            tlsServerName = tlsServerName,
+            tlsSniSuffix = tlsSniSuffix,
             enableMdns = enableMdns,
             obfuscationEnable = obfuscation,
             obfuscationMode = obfMode,
@@ -318,6 +324,9 @@ class ConfigActivity : AppCompatActivity() {
             dnsServers = dnsList,
             transportStrategy = strategy,
             discoverBootMesh = discoverBootMesh,
+            // Exit-node selection is managed by ExitNodeSelectorDialog. Saving
+            // unrelated settings must not silently reset that independent choice.
+            exitNode = AppConfigManager.load(this).exitNode,
             webUiEnable = webUiEnable,
             webUiPort = webUiPort,
             webUiToken = webUiToken,

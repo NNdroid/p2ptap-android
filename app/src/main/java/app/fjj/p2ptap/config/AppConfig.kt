@@ -29,6 +29,8 @@ data class P2PConfig(
     var enableWebtransport: Boolean = true,
     var enableTcp: Boolean = true,
     var disableRelay: Boolean = false,
+    var tlsServerName: String = "",
+    var tlsSniSuffix: String = "",
     var acceptSubnets: Boolean = true,
     var advertisedSubnets: List<String> = listOf(),
     var allowedSubnetPeers: List<String> = listOf("*"),
@@ -80,6 +82,8 @@ data class P2PConfig(
         tr.put("enable_webtransport", enableWebtransport)
         tr.put("enable_tcp_reuse", enableTcp)
         tr.put("disable_relay", disableRelay)
+        tr.put("tls_server_name", tlsServerName)
+        tr.put("tls_sni_suffix", tlsSniSuffix)
         root.put("transports", tr)
 
         // Store private node key inside app internal storage
@@ -243,6 +247,8 @@ data class P2PConfig(
                 if (tr.has("enable_webtransport")) cfg.enableWebtransport = tr.getBoolean("enable_webtransport")
                 if (tr.has("enable_tcp_reuse")) cfg.enableTcp = tr.getBoolean("enable_tcp_reuse")
                 if (tr.has("disable_relay")) cfg.disableRelay = tr.getBoolean("disable_relay")
+                if (tr.has("tls_server_name")) cfg.tlsServerName = tr.getString("tls_server_name")
+                if (tr.has("tls_sni_suffix")) cfg.tlsSniSuffix = tr.getString("tls_sni_suffix")
             } else {
                 if (root.has("enable_quic")) cfg.enableQuic = root.getBoolean("enable_quic")
                 if (root.has("enable_webrtc")) cfg.enableWebrtc = root.getBoolean("enable_webrtc")

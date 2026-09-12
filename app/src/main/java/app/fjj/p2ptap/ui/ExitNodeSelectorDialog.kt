@@ -137,9 +137,11 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                             "Peer-$i"
                         }
                         val tapIp = peer.optString("tap_ip", "")
-                        val connState = peer.optString("conn_state", "ok")
+                        val connState = peer.optString("conn_state", "unknown")
                         val rtt = peer.optDouble("rtt_ms", 0.0)
-                        val isDirect = (connState == "ok" || (!peer.optBoolean("is_relayed", false) && connState != "relay_ok"))
+                        val rttMeasured = peer.optBoolean("rtt_measured", false)
+                        val isRelayed = peer.optBoolean("is_relayed", connState == "relay_ok")
+                        val isDirect = connState == "ok" && !isRelayed
 
                         val isExitGateway = isExitGatewayPeer(peer)
                         val isSelected = currentExitNode.isNotBlank() &&
@@ -151,7 +153,10 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                                 nodeName = nodeName,
                                 tapIp = tapIp,
                                 isDirect = isDirect,
+                                isRelayed = isRelayed,
+                                connState = connState,
                                 rtt = rtt,
+                                rttMeasured = rttMeasured,
                                 isExitGateway = isExitGateway,
                                 isSelected = isSelected
                             )
@@ -161,9 +166,10 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
 
                 // Sort: Selected peer first, then explicit Exit Gateways, then by lowest RTT
                 peerList.sortWith(
-                    compareByDescending<ExitNodePeerData> { it.isSelected }
-                        .thenByDescending { it.isExitGateway }
-                        .thenBy { if (it.rtt > 0) it.rtt else 9999.0 }
+                        compareByDescending<ExitNodePeerData> { it.isSelected }
+                            .thenByDescending { it.isExitGateway }
+                            .thenByDescending { it.connState == "ok" || it.connState == "relay_ok" }
+                            .thenBy { if (it.rttMeasured && it.rtt > 0) it.rtt else 9999.0 }
                 )
 
                 withContext(Dispatchers.Main) {
@@ -188,15 +194,31 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                         itemBinding.tvNodeName.text = peer.nodeName
                         itemBinding.tvBadge.apply {
                             if (peer.isExitGateway) {
-                                text = if (peer.isDirect) "🌐 Exit Gateway (Direct)" else "🌐 Exit Gateway (Relay)"
+                                text = when {
+                                    peer.isDirect -> "🌐 Exit Gateway (Direct)"
+                                    peer.connState == "relay_ok" || (peer.connState == "ok" && peer.isRelayed) -> "🌐 Exit Gateway (Relay)"
+                                    else -> "🌐 Exit Gateway (${getString(R.string.badge_error)})"
+                                }
                                 setTextColor(Color.parseColor("#4F46E5"))
                             } else {
-                                text = if (peer.isDirect) getString(R.string.badge_direct) else getString(R.string.badge_relay)
-                                setTextColor(if (peer.isDirect) Color.parseColor("#059669") else Color.parseColor("#D97706"))
+                                text = when {
+                                    peer.isDirect -> getString(R.string.badge_direct)
+                                    peer.connState == "relay_ok" || (peer.connState == "ok" && peer.isRelayed) -> getString(R.string.badge_relay)
+                                    peer.connState == "connecting" -> getString(R.string.badge_connecting)
+                                    else -> getString(R.string.badge_error)
+                                }
+                                setTextColor(
+                                    when {
+                                        peer.isDirect -> Color.parseColor("#059669")
+                                        peer.connState == "relay_ok" || (peer.connState == "ok" && peer.isRelayed) -> Color.parseColor("#D97706")
+                                        peer.connState == "connecting" -> Color.parseColor("#D97706")
+                                        else -> Color.parseColor("#DC2626")
+                                    }
+                                )
                             }
                         }
 
-                        itemBinding.tvRtt.text = if (peer.rtt > 0) "📶 ${peer.rtt.toInt()}ms" else ""
+                        itemBinding.tvRtt.text = if (peer.rttMeasured && peer.rtt > 0) "📶 ${peer.rtt.toInt()}ms" else ""
 
                         val ipAndPid = buildString {
                             if (peer.tapIp.isNotBlank()) append("IPv4: ${peer.tapIp}  ")
@@ -285,7 +307,10 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
         val nodeName: String,
         val tapIp: String,
         val isDirect: Boolean,
+        val isRelayed: Boolean,
+        val connState: String,
         val rtt: Double,
+        val rttMeasured: Boolean,
         val isExitGateway: Boolean,
         val isSelected: Boolean
     )

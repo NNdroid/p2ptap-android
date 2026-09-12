@@ -40,18 +40,20 @@ class MainViewModel : ViewModel() {
                     }
                     val tapIp = peer.optString("tap_ip", "")
                     val tapIpv6 = peer.optString("tap_ipv6", "")
-                    val connState = peer.optString("conn_state", "ok")
+                    val connState = peer.optString("conn_state", "unknown")
                     val addr = peer.optString("addr", peer.optString("multiaddr", ""))
                     val transport = peer.optString("transport", "P2P")
                     val transportScore = peer.optInt("transport_score", 999)
                     val transportPriority = peer.optString("transport_priority", "")
                     val rtt = peer.optDouble("rtt_ms", 0.0)
+                    val rttMeasured = peer.optBoolean("rtt_measured", false)
                     val txBytes = peer.optLong("total_tx", peer.optLong("tx_bytes", 0L))
                     val rxBytes = peer.optLong("total_rx", peer.optLong("rx_bytes", 0L))
                     val osArch = peer.optString("os_arch", peer.optString("os", ""))
                     val version = peer.optString("version", "")
                     val isExitNode = peer.optBoolean("is_exit_node", false)
-                    val isDirect = (connState == "ok" || (!peer.optBoolean("is_relayed", false) && connState != "relay_ok"))
+                    val isRelayed = peer.optBoolean("is_relayed", connState == "relay_ok")
+                    val isDirect = connState == "ok" && !isRelayed
 
                     list.add(
                         PeerItemData(
@@ -60,12 +62,14 @@ class MainViewModel : ViewModel() {
                             tapIp = tapIp,
                             tapIpv6 = tapIpv6,
                             isDirect = isDirect,
+                            isRelayed = isRelayed,
                             connState = connState,
                             multiaddr = addr,
                             transport = transport,
                             transportScore = transportScore,
                             transportPriority = transportPriority,
                             rtt = rtt,
+                            rttMeasured = rttMeasured,
                             txBytes = txBytes,
                             rxBytes = rxBytes,
                             os = osArch,
