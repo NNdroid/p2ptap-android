@@ -250,4 +250,7 @@
     <string name="msg_no_valid_addrs">クリップボードに有効なアドレスが見つかりません</string>
     <string name="msg_imported_saved">インポートして保存しました！</string>
     <string name="msg_peer_already_exists">このピアは既にリストに存在します</string>
+    <string name="hint_tls_sni">TLS/QUIC SNI（送信、任意）</string>
+    <string name="hint_tls_sni_suffix">ピア別 TLS SNI サフィックス（任意）</string>
+    <string name="active_peers_fmt">%1$d ノード\n%2$d 直接 · %3$d リレー</string>
 </resources>

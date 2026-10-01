@@ -61,8 +61,8 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.peers.collect { peerList ->
                     renderPeerList(peerList)
                 }
@@ -71,8 +71,8 @@ class PeersDetailDialog : BottomSheetDialogFragment() {
     }
 
     private fun startPeriodicPeersRefresh() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (isActive) {
                     viewModel.refreshPeers()
                     delay(2000)

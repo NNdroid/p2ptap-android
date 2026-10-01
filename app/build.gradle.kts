@@ -13,7 +13,11 @@ android {
         applicationId = "app.fjj.p2ptap"
         minSdk = 31
         targetSdk = 37
-        versionCode = 1
+        val appRevision = providers.exec {
+            workingDir(rootDir)
+            commandLine("git", "rev-list", "--count", "HEAD")
+        }.standardOutput.asText.get().trim().toInt()
+        versionCode = System.getenv("APP_VERSION_CODE")?.toIntOrNull() ?: appRevision.coerceAtLeast(1)
 
         val baseVersionName = "1.0"
         // The AAR may be supplied by a sibling checkout, so the submodule HEAD
@@ -73,7 +77,9 @@ android {
                 "proguard-rules.pro"
             )
             val releaseSigning = signingConfigs.findByName("release")
-            if (releaseSigning?.storeFile?.exists() == true) {
+            if (providers.gradleProperty("TEST_SIGNING").orNull == "true") {
+                signingConfig = signingConfigs.getByName("debug")
+            } else if (releaseSigning?.storeFile?.exists() == true) {
                 signingConfig = releaseSigning
             }
         }

@@ -250,5 +250,8 @@
     <string name="msg_no_valid_addrs">No se encontraron direcciones válidas en el portapapeles</string>
     <string name="msg_imported_saved">¡Importado y guardado con éxito!</string>
     <string name="msg_peer_already_exists">El par ya existe en la lista</string>
+    <string name="hint_tls_sni">SNI TLS/QUIC (saliente, opcional)</string>
+    <string name="hint_tls_sni_suffix">Sufijo SNI TLS por nodo (opcional)</string>
+    <string name="active_peers_fmt">%1$d nodos\n%2$d directos · %3$d retransmitidos</string>
 </resources>
 

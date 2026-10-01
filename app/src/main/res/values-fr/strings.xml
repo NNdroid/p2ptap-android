@@ -250,4 +250,7 @@
     <string name="msg_no_valid_addrs">Aucune adresse valide trouvée dans le presse-papiers</string>
     <string name="msg_imported_saved">Importé et enregistré avec succès !</string>
     <string name="msg_peer_already_exists">Le pair existe déjà dans la liste</string>
+    <string name="hint_tls_sni">SNI TLS/QUIC (sortant, facultatif)</string>
+    <string name="hint_tls_sni_suffix">Suffixe SNI TLS par pair (facultatif)</string>
+    <string name="active_peers_fmt">%1$d pairs\n%2$d directs · %3$d relais</string>
 </resources>

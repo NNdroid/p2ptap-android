@@ -252,4 +252,7 @@
     <string name="label_multiaddrs">Multiaddr 多位址路徑</string>
     <string name="msg_multiaddrs_copied">所有 Multiaddr 位址已複製到剪貼簿</string>
     <string name="multiaddrs_empty_hint">暫無宣告的監聽位址</string>
+    <string name="hint_tls_sni">TLS/QUIC SNI（輸出，選填）</string>
+    <string name="hint_tls_sni_suffix">各節點 TLS SNI 後綴（選填）</string>
+    <string name="active_peers_fmt">%1$d 個節點\n%2$d 直連 · %3$d 中繼</string>
 </resources>

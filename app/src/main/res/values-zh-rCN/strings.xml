@@ -266,4 +266,7 @@
     <string name="msg_no_valid_addrs">剪贴板未找到有效地址</string>
     <string name="msg_imported_saved">已导入并保存！</string>
     <string name="msg_peer_already_exists">该节点已在列表中</string>
+    <string name="active_peers_fmt">%1$d 个节点\n%2$d 直连 · %3$d 中继</string>
+    <string name="hint_tls_sni">TLS/QUIC SNI（出站，可选）</string>
+    <string name="hint_tls_sni_suffix">每节点 TLS SNI 后缀（可选）</string>
 </resources>

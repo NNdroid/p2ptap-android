@@ -250,4 +250,7 @@
     <string name="msg_no_valid_addrs">Keine gültigen Adressen in der Zwischenablage gefunden</string>
     <string name="msg_imported_saved">Erfolgreich importiert und gespeichert!</string>
     <string name="msg_peer_already_exists">Peer ist bereits in der Liste vorhanden</string>
+    <string name="hint_tls_sni">TLS/QUIC SNI (ausgehend, optional)</string>
+    <string name="hint_tls_sni_suffix">TLS-SNI-Suffix pro Peer (optional)</string>
+    <string name="active_peers_fmt">%1$d Knoten\n%2$d direkt · %3$d Relay</string>
 </resources>

@@ -268,4 +268,5 @@
     <string name="msg_no_valid_addrs">No valid addresses found in clipboard</string>
     <string name="msg_imported_saved">Imported and saved successfully!</string>
     <string name="msg_peer_already_exists">Peer already exists in the list</string>
+    <string name="active_peers_fmt">%1$d peers\n%2$d direct · %3$d relay</string>
 </resources>

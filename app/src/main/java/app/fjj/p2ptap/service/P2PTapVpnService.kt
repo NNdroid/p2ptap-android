@@ -68,9 +68,10 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
 
     private var connectivityManager: ConnectivityManager? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
-    private var cachedConfig: P2PConfig? = null
+    @Volatile private var cachedConfig: P2PConfig? = null
     private var lastNotifUpdateTime: Long = 0
     private val lifecycleGeneration = AtomicLong(0)
+    private val nativeSessionGeneration = AtomicLong(0)
     private val lifecycleExecutor = Executors.newSingleThreadExecutor { task ->
         Thread(task, "P2PTap-Lifecycle")
     }
@@ -180,7 +181,22 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             Log.i(TAG, "Starting P2PTap native engine")
 
             P2PTap.setProtector(this)
-            P2PTap.setStateListener(this)
+            val nativeSession = nativeSessionGeneration.incrementAndGet()
+            P2PTap.setStateListener(object : StateListener {
+                override fun onStateChange(state: String?, message: String?) {
+                    if (nativeSession == nativeSessionGeneration.get() && !destroyed) {
+                        this@P2PTapVpnService.onStateChange(state, message)
+                    }
+                }
+
+                override fun onMetricsUpdate(peerCount: Int, directPeers: Int, relayPeers: Int,
+                    txSpeed: Long, rxSpeed: Long, totalTx: Long, totalRx: Long) {
+                    if (nativeSession == nativeSessionGeneration.get() && !destroyed) {
+                        this@P2PTapVpnService.onMetricsUpdate(peerCount, directPeers, relayPeers,
+                            txSpeed, rxSpeed, totalTx, totalRx)
+                    }
+                }
+            })
             P2PTap.setInterfaceProvider(this)
             P2PTap.start(cfgJson, tunFd.toLong())
             nativeStarted = true
@@ -314,6 +330,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     }
 
     private fun clearNativeCallbacks() {
+        nativeSessionGeneration.incrementAndGet()
         // gomobile exposes Java platform types, so null clears the retained
         // Service instances without requiring a new binary API method.
         P2PTap.setStateListener(null)
@@ -623,17 +640,18 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         val activePeerCount = directPeers + relayPeers
         P2PStateRepository.updateMetrics(activePeerCount, directPeers, relayPeers, txSpeed, rxSpeed, totalTx, totalRx)
 
-        // Periodically refresh notification with live speed and active peers (at most once per second)
-        if (currentState == STATE_RUNNING) {
-            val now = System.currentTimeMillis()
-            if (now - lastNotifUpdateTime >= 1000) {
-                val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                val config = cachedConfig ?: AppConfigManager.load(this)
-                val notifTitle = "P2PTap: ${config.nodeName} (${config.tapIp})"
-                val spdText = "↑ ${P2PStateRepository.formatSpeed(txSpeed)}  ↓ ${P2PStateRepository.formatSpeed(rxSpeed)}  ·  $activePeerCount Peers ($directPeers direct)"
-                notifManager.notify(notificationId, buildNotification(notifTitle, spdText))
-                lastNotifUpdateTime = now
-            }
+        // Keep Binder calls and configuration I/O off Go's metrics callback.
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (now - lastNotifUpdateTime < 1000) return
+        lastNotifUpdateTime = now
+        val generation = lifecycleGeneration.get()
+        val config = cachedConfig ?: return
+        networkChangeHandler.post {
+            if (destroyed || !desiredRunning || generation != lifecycleGeneration.get() || currentState != STATE_RUNNING) return@post
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val title = "P2PTap: ${config.nodeName} (${config.tapIp})"
+            val speeds = "↑ ${P2PStateRepository.formatSpeed(txSpeed)}  ↓ ${P2PStateRepository.formatSpeed(rxSpeed)}"
+            manager.notify(notificationId, buildNotification(title, "$speeds · $activePeerCount"))
         }
     }
 
