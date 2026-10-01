@@ -250,4 +250,7 @@
     <string name="msg_no_valid_addrs">В буфере обмена не найдено действительных адресов</string>
     <string name="msg_imported_saved">Успешно импортировано и сохранено!</string>
     <string name="msg_peer_already_exists">Этот узел уже есть в списке</string>
+    <string name="hint_tls_sni">TLS/QUIC SNI (исходящий, необязательно)</string>
+    <string name="hint_tls_sni_suffix">Суффикс TLS SNI для узла (необязательно)</string>
+    <string name="active_peers_fmt">%1$d узлов\n%2$d напрямую · %3$d через ретранслятор</string>
 </resources>

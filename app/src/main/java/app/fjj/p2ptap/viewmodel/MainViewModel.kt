@@ -7,12 +7,17 @@ import app.fjj.p2ptap.service.P2PStateRepository
 import app.fjj.p2ptap.service.PeerItemData
 import app.fjj.p2ptap.service.P2PTapVpnService
 import com.p2ptap.P2PTap.P2PTap
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import android.util.Log
 import org.json.JSONObject
 
 class MainViewModel : ViewModel() {
+    private val refreshMutex = Mutex()
+    val status = P2PStateRepository.status
     val state: StateFlow<String> = P2PStateRepository.state
     val message: StateFlow<String> = P2PStateRepository.message
     val metrics: StateFlow<NodeMetrics> = P2PStateRepository.metrics
@@ -21,7 +26,10 @@ class MainViewModel : ViewModel() {
     fun refreshPeers() {
         if (!P2PTapVpnService.isRunning()) return
         viewModelScope.launch(Dispatchers.IO) {
+            if (!refreshMutex.tryLock()) return@launch
+            val revision = P2PStateRepository.sessionRevision
             try {
+                if (!P2PTapVpnService.isRunning()) return@launch
                 val statsJsonStr = P2PTap.getStatsJSON()
                 if (statsJsonStr.isNullOrBlank()) return@launch
                 val statsJson = JSONObject(statsJsonStr)
@@ -78,8 +86,14 @@ class MainViewModel : ViewModel() {
                         )
                     )
                 }
-                P2PStateRepository.updatePeers(list)
-            } catch (_: Exception) {}
+                P2PStateRepository.updatePeers(list, revision)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                Log.w("MainViewModel", "Unable to refresh Go peer snapshot", error)
+            } finally {
+                refreshMutex.unlock()
+            }
         }
     }
 }

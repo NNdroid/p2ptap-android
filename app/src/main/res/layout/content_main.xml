@@ -52,6 +52,7 @@
 
                 <TextView
                     android:id="@+id/tvStatusTitle"
+                    android:accessibilityLiveRegion="polite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/status_disconnected"
@@ -61,6 +62,8 @@
 
                 <TextView
                     android:id="@+id/tvStatusSubtitle"
+                    android:accessibilityLiveRegion="polite"
+                    android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -89,7 +92,8 @@
         <!-- Live Performance Metrics Grid (2 Columns Equal Height & Interactive) -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="115dp"
+            android:layout_height="wrap_content"
+            android:minHeight="115dp"
             android:layout_marginBottom="16dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
@@ -98,7 +102,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardSpeed"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
                 android:clickable="true"
@@ -111,7 +115,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="13dp">
 
@@ -149,8 +153,7 @@
                     <TextView
                         android:id="@+id/tvLiveSpeed"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="2dp"
@@ -165,7 +168,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPeers"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
                 android:clickable="true"
@@ -178,7 +181,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="13dp">
 
@@ -216,12 +219,11 @@
                     <TextView
                         android:id="@+id/tvActivePeers"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="2dp"
-                        android:text="0 Peers\n(0 direct, 0 relay)"
+                        android:text="@string/label_active_peers"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp"
                         android:textStyle="bold" />

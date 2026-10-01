@@ -17,6 +17,8 @@ import app.fjj.p2ptap.databinding.ItemExitNodePeerBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.p2ptap.P2PTap.P2PTap
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +35,7 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
         }
     }
 
+    private var refreshJob: Job? = null
     private var _binding: DialogExitNodeSelectorBinding? = null
     private val binding get() = _binding!!
     var onExitNodeChangedListener: ((String) -> Unit)? = null
@@ -115,7 +118,9 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
             return
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        refreshJob?.cancel()
+        val revision = app.fjj.p2ptap.service.P2PStateRepository.sessionRevision
+        refreshJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val statsJsonStr = P2PTap.getStatsJSON()
                 val statsJson = JSONObject(statsJsonStr)
@@ -173,7 +178,7 @@ class ExitNodeSelectorDialog : BottomSheetDialogFragment() {
                 )
 
                 withContext(Dispatchers.Main) {
-                    if (_binding == null) return@withContext
+                    if (_binding == null || revision != app.fjj.p2ptap.service.P2PStateRepository.sessionRevision || !P2PTapVpnService.isRunning()) return@withContext
                     binding.containerPeers.removeAllViews()
 
                     if (peerList.isEmpty()) {

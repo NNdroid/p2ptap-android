@@ -3,12 +3,10 @@ package app.fjj.p2ptap
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.net.VpnService
@@ -54,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             startVpnService()
         } else {
+            updateUiState(P2PTapVpnService.currentState, P2PTapVpnService.lastErrorMessage)
             Toast.makeText(this, getString(R.string.vpn_permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
@@ -61,19 +60,6 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ -> }
-
-    private val vpnStateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == P2PTapVpnService.ACTION_STATE_CHANGED) {
-                val state = intent.getStringExtra(P2PTapVpnService.EXTRA_STATE) ?: P2PTapVpnService.STATE_IDLE
-                val message = intent.getStringExtra(P2PTapVpnService.EXTRA_MESSAGE) ?: ""
-                updateUiState(state, message)
-                refreshPeerId()
-                refreshMultiaddrs()
-                viewModel.refreshPeers()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,11 +83,11 @@ class MainActivity : AppCompatActivity() {
                         withContext(kotlinx.coroutines.Dispatchers.Main) {
                             val content = binding.contentMain
                             if (P2PTapVpnService.isRunning()) {
-                                content.tvActivePeers.text = "${metrics.peerCount} Peers\n(${metrics.directPeers} direct, ${metrics.relayPeers} relay)"
+                                content.tvActivePeers.text = getString(R.string.active_peers_fmt, metrics.peerCount, metrics.directPeers, metrics.relayPeers)
                                 content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(metrics.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(metrics.rxSpeed)}"
                                 content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(metrics.totalTx)}  ↓ ${P2PStateRepository.formatBytes(metrics.totalRx)}"
                             } else {
-                                content.tvActivePeers.text = "0 Peers\n(0 direct, 0 relay)"
+                                content.tvActivePeers.text = getString(R.string.active_peers_fmt, 0, 0, 0)
                                 content.tvLiveSpeed.text = "↑ 0 B/s\n↓ 0 B/s"
                                 content.tvTraffic.text = "↑ 0 B  ↓ 0 B"
                             }
@@ -112,8 +98,9 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state ->
-                    updateUiState(state, viewModel.message.value)
+                viewModel.status.collect { status ->
+                    val state = status.state
+                    updateUiState(state, status.message)
                     if (state == P2PTapVpnService.STATE_RUNNING || state == P2PTapVpnService.STATE_IDLE) {
                         refreshPeerId()
                         refreshMultiaddrs()
@@ -131,15 +118,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.refreshPeers()
 
 
-        val filter = IntentFilter(P2PTapVpnService.ACTION_STATE_CHANGED)
-        ContextCompat.registerReceiver(this, vpnStateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onPause() {
+        stopPulseAnimation()
         super.onPause()
-        try {
-            unregisterReceiver(vpnStateReceiver)
-        } catch (_: Exception) {}
     }
 
     private fun setupListeners() {
@@ -162,6 +145,7 @@ class MainActivity : AppCompatActivity() {
         binding.contentMain.btnOpenWebUI.setOnClickListener {
             if (!P2PTapVpnService.isRunning()) {
                 Toast.makeText(this, getString(R.string.prompt_vpn_not_running), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
             val config = AppConfigManager.load(this)
             val tokenParam = if (config.webUiToken.isNotBlank()) {
@@ -270,6 +254,7 @@ class MainActivity : AppCompatActivity() {
     private var statusScaleAnimatorY: ObjectAnimator? = null
 
     private fun startPulseAnimation() {
+        if (!ValueAnimator.areAnimatorsEnabled() || statusPulseAnimator?.isRunning == true) return
         stopPulseAnimation()
         val ring = binding.contentMain.viewStatusRing
         ring.scaleX = 1.0f
@@ -444,6 +429,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUiState(state: String, message: String) {
         val content = binding.contentMain
+        content.btnOpenWebUI.isEnabled = state == P2PTapVpnService.STATE_RUNNING
         when (state) {
             P2PTapVpnService.STATE_RUNNING -> {
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connected)

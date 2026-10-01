@@ -36,7 +36,13 @@ data class PeerItemData(
     val isExitNode: Boolean
 )
 
+data class VpnStatus(val state: String = "IDLE", val message: String = "")
+
 object P2PStateRepository {
+    private val _status = MutableStateFlow(VpnStatus())
+    val status: StateFlow<VpnStatus> = _status.asStateFlow()
+    @Volatile var sessionRevision: Long = 0
+        private set
     private val _state = MutableStateFlow("IDLE")
     val state: StateFlow<String> = _state.asStateFlow()
 
@@ -49,19 +55,25 @@ object P2PStateRepository {
     private val _peers = MutableStateFlow<List<PeerItemData>>(emptyList())
     val peers: StateFlow<List<PeerItemData>> = _peers.asStateFlow()
 
+    @Synchronized
     fun updateState(newState: String, newMsg: String = "") {
+        if (_state.value != newState) sessionRevision++
         _state.value = newState
         _message.value = newMsg
-        if (newState == "IDLE" || newState == "ERROR" || newState == "TIMEOUT") {
+        _status.value = VpnStatus(newState, newMsg)
+        if (newState == "STARTING" || newState == "STOPPING" || newState == "IDLE" || newState == "ERROR" || newState == "TIMEOUT") {
             _metrics.value = NodeMetrics()
             _peers.value = emptyList()
         }
     }
 
-    fun updatePeers(newPeers: List<PeerItemData>) {
+    @Synchronized
+    fun updatePeers(newPeers: List<PeerItemData>, revision: Long = sessionRevision) {
+        if (revision != sessionRevision || _state.value != "RUNNING") return
         _peers.value = newPeers
     }
 
+    @Synchronized
     fun updateMetrics(
         peerCount: Int,
         directPeers: Int,
@@ -71,6 +83,7 @@ object P2PStateRepository {
         totalTx: Long,
         totalRx: Long
     ) {
+        if (_state.value != "RUNNING") return
         _metrics.value = NodeMetrics(
             peerCount = peerCount,
             directPeers = directPeers,

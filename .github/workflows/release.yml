@@ -34,20 +34,22 @@ jobs:
       - name: Set up Go (for p2ptap.aar compilation)
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version-file: 'p2ptap-core/go.mod'
 
-      - name: Set up JDK 17
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '25'
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Set up Android NDK
-        uses: nsetup/setup-ndk@v1
-        continue-on-error: true
+      - uses: android-actions/setup-android@v4
         with:
-          ndk-version: r25c
+          packages: platform-tools
+      - name: Install Android toolchains
+        run: |
+          sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "ndk;30.0.14904198"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/30.0.14904198" >> "$GITHUB_ENV"
 
       - name: Compile Go p2ptap.aar & Extract Commit Hash
         id: build_go
@@ -75,6 +77,7 @@ jobs:
             echo "Installing gomobile..."
             go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20260821190718-4776eadac327
             export PATH=$PATH:$(go env GOPATH)/bin
+            go install golang.org/x/mobile/cmd/gobind@v0.0.0-20260821190718-4776eadac327
             gomobile init
             
             echo "Building p2ptap.aar from ${GO_DIR}..."
@@ -97,7 +100,7 @@ jobs:
           fi
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
@@ -111,7 +114,7 @@ jobs:
             echo "keystore_available=true" >> $GITHUB_OUTPUT
           else
             echo "keystore_available=false" >> $GITHUB_OUTPUT
-            echo "::warning ::KEYSTORE_BASE64 secret not found. APK will be built with debug configuration."
+            echo "::warning ::No production signing key configured; release uses the Android test key."
           fi
 
       - name: Build Android Release APK
@@ -123,9 +126,9 @@ jobs:
           GO_COMMIT_HASH: ${{ steps.build_go.outputs.go_commit }}
         run: |
           if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
-            ./gradlew assembleRelease
+            ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease
           else
-            ./gradlew assembleDebug
+            ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease -PTEST_SIGNING=true
           fi
 
       - name: Prepare APK Outputs & Version Naming
@@ -147,11 +150,10 @@ jobs:
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
           echo "APK_NAME=${APK_NAME}" >> $GITHUB_ENV
           
-          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+          if [ "${{ github.event.inputs.build_type }}" != "debug" ]; then
             cp app/build/outputs/apk/release/app-release.apk "outputs/${APK_NAME}"
-          elif [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
-            cp app/build/outputs/apk/debug/app-debug.apk "outputs/${APK_NAME}"
           fi
+          cp app/build/outputs/apk/debug/app-debug.apk "outputs/${APK_NAME%.apk}-debug.apk"
 
       - name: Upload Build Artifact (Manual Workflow Dispatch / Non-Tag)
         if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
