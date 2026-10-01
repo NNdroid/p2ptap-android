@@ -43,12 +43,12 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
       - name: Install Android toolchains
         run: |
-          sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;30.0.14904198"
+          sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "ndk;30.0.14904198"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/30.0.14904198" >> "$GITHUB_ENV"
 
       - name: Compile Go p2ptap.aar & Extract Commit Hash

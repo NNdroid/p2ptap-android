@@ -21,11 +21,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
       - name: Install Android toolchains
-        run: sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;30.0.14904198"
+        run: sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "ndk;30.0.14904198"
       - name: Build current Go core for all Android ABIs
         run: |
           go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20260821190718-4776eadac327
