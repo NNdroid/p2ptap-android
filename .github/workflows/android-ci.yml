@@ -22,6 +22,8 @@ jobs:
           distribution: temurin
           java-version: '25'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install Android toolchains
         run: sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;30.0.14904198"
       - name: Build current Go core for all Android ABIs
