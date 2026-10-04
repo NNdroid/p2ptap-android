@@ -1,0 +1,28 @@
+<resources>
+    <string name="telemetry_unknown">Sin datos</string>
+    <string name="telemetry_loading">Cargando datos del motor…</string>
+    <string name="telemetry_refresh_failed">Error al actualizar. Pulsa actualizar para reintentar.</string>
+    <string name="telemetry_live">Datos del motor en vivo · bytes útiles TAP sin cifrado ni relleno</string>
+    <string name="telemetry_dedup">Paquetes duplicados descartados</string>
+    <string name="telemetry_ndp">Paquetes NDP</string>
+    <string name="telemetry_other">Otros paquetes</string>
+    <string name="telemetry_psk">Estado PSK</string>
+    <string name="telemetry_pending">Pendiente / no disponible</string>
+    <string name="telemetry_enabled">Activado</string>
+    <string name="telemetry_unmeasured">Sin medir</string>
+    <string name="telemetry_saved">Guardado</string>
+    <string name="telemetry_applied">Ruta instalada</string>
+    <string name="telemetry_exit_gateway">Puerta de salida</string>
+    <string name="telemetry_not_gateway">Sin función de salida</string>
+    <string name="telemetry_exit_select_hint">Solo se pueden elegir nodos en línea que anuncian salida. También puedes introducir un destino manual.</string>
+    <string name="telemetry_link_traffic">Total del enlace local: ↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">Selección guardada; se solicita aplicar si la VPN está activa.</string>
+    <string name="telemetry_invalid_exit">Introduce una dirección IPv4/IPv6 numérica válida o un ID de nodo.</string>
+    <string name="telemetry_unreachable">Inaccesible</string>
+    <string name="telemetry_proto_mismatch">Protocolo incompatible</string>
+    <string name="telemetry_crypto_failed">Error de negociación de cifrado</string>
+    <string name="telemetry_peer_summary">En línea %1$d (%2$d directos · %3$d relay) · Conocidos %4$d</string>
+    <string name="telemetry_replay_drops">Paquetes repetidos descartados</string>
+    <string name="telemetry_disabling">Eliminando ruta de salida…</string>
+    <string name="btn_refresh">Actualizar</string>
+</resources>

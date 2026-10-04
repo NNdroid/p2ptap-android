@@ -152,7 +152,10 @@
     <string name="stat_total_rx_pkts">Paquetes recibidos</string>
     <string name="stat_dropped_pkts">Paquetes descartados</string>
     <string name="stat_dropped_fmt">%1$d paquetes (Errores cripto: %2$d)</string>
-    <string name="stat_packets_unit">%d paquetes</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d paquete</item>
+        <item quantity="other">%d paquetes</item>
+    </plurals>
     <string name="stat_ipv4">Paquetes IPv4</string>
     <string name="stat_ipv6">Paquetes IPv6</string>
     <string name="stat_arp">Paquetes ARP</string>
@@ -245,13 +248,19 @@
     <string name="msg_key_loaded_fmt">Clave de identidad cargada, ID de par: %s</string>
     <string name="err_key_load_fmt">Error al cargar la clave de identidad: %s</string>
     <string name="err_invalid_ipv4">Ingrese una dirección IPv4 válida (ej. 10.0.0.88/24)</string>
-    <string name="msg_filtered_logs_fmt">Mostrando %1$d / %2$d líneas de registro</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">Mostrando %1$d / %2$d línea de registro</item>
+        <item quantity="other">Mostrando %1$d / %2$d líneas de registro</item>
+    </plurals>
     <string name="msg_clipboard_empty">El portapapeles está vacío</string>
     <string name="msg_no_valid_addrs">No se encontraron direcciones válidas en el portapapeles</string>
     <string name="msg_imported_saved">¡Importado y guardado con éxito!</string>
     <string name="msg_peer_already_exists">El par ya existe en la lista</string>
     <string name="hint_tls_sni">SNI TLS/QUIC (saliente, opcional)</string>
     <string name="hint_tls_sni_suffix">Sufijo SNI TLS por nodo (opcional)</string>
-    <string name="active_peers_fmt">%1$d nodos\n%2$d directos · %3$d retransmitidos</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d nodo\n%2$d directos · %3$d retransmitidos</item>
+        <item quantity="other">%1$d nodos\n%2$d directos · %3$d retransmitidos</item>
+    </plurals>
 </resources>
 

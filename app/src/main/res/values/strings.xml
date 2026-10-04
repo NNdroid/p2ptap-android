@@ -170,7 +170,10 @@
     <string name="stat_total_rx_pkts">Packets Received</string>
     <string name="stat_dropped_pkts">Packets Dropped</string>
     <string name="stat_dropped_fmt">%1$d pkts (Crypto errors: %2$d)</string>
-    <string name="stat_packets_unit">%d pkts</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d pkt</item>
+        <item quantity="other">%d pkts</item>
+    </plurals>
     <string name="stat_ipv4">IPv4 Packets</string>
     <string name="stat_ipv6">IPv6 Packets</string>
     <string name="stat_arp">ARP Resolution Packets</string>
@@ -263,10 +266,16 @@
     <string name="msg_key_loaded_fmt">Identity key loaded, Peer ID: %s</string>
     <string name="err_key_load_fmt">Failed to load identity key: %s</string>
     <string name="err_invalid_ipv4">Please enter a valid IPv4 address (e.g. 10.0.0.88/24)</string>
-    <string name="msg_filtered_logs_fmt">Showing %1$d / %2$d log lines</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">Showing %1$d / %2$d log line</item>
+        <item quantity="other">Showing %1$d / %2$d log lines</item>
+    </plurals>
     <string name="msg_clipboard_empty">Clipboard is empty</string>
     <string name="msg_no_valid_addrs">No valid addresses found in clipboard</string>
     <string name="msg_imported_saved">Imported and saved successfully!</string>
     <string name="msg_peer_already_exists">Peer already exists in the list</string>
-    <string name="active_peers_fmt">%1$d peers\n%2$d direct · %3$d relay</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d peer\n%2$d direct · %3$d relay</item>
+        <item quantity="other">%1$d peers\n%2$d direct · %3$d relay</item>
+    </plurals>
 </resources>

@@ -48,7 +48,7 @@ P2PTap supports **NAT traversal direct connections**, **dynamic exit node gatewa
 - **💾 Full Backup & Restore**: Export and import complete backup bundles containing node identity keys and configurations.
 
 ### 📊 Built-in Web Console & Diagnostics
-- **Web Console**: Embedded HTTP server running on port 15858 providing a visual network topology dashboard.
+- **Web Console**: Embedded HTTP server running on the configured port (15858 by default), with Overview, Peers, Network, and Diagnostics pages. A compact overview highlights measured transfer rates; peer cards open full live details and distinguish local link traffic from peer-reported node totals. Advanced tables, topology, logs and capture expand on demand; log/capture streams connect only while open. Diagnostics share one target input, and ACL rules share one settings editor. Failed refreshes mark retained data as stale.
 - **Terminal Log Viewer**: Diagnostic log viewer with pause, keyword search, one-tap copy, and dark/light theme switching.
 
 ### 🌍 Full Localization (i18n)

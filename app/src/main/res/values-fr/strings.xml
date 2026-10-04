@@ -152,7 +152,10 @@
     <string name="stat_total_rx_pkts">Paquets reçus</string>
     <string name="stat_dropped_pkts">Paquets ignorés</string>
     <string name="stat_dropped_fmt">%1$d paquets (Erreurs crypto : %2$d)</string>
-    <string name="stat_packets_unit">%d paquets</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d paquet</item>
+        <item quantity="other">%d paquets</item>
+    </plurals>
     <string name="stat_ipv4">Paquets IPv4</string>
     <string name="stat_ipv6">Paquets IPv6</string>
     <string name="stat_arp">Paquets ARP</string>
@@ -245,12 +248,18 @@
     <string name="msg_key_loaded_fmt">Clé d\'identité chargée, Peer ID : %s</string>
     <string name="err_key_load_fmt">Échec du chargement de la clé d\'identité : %s</string>
     <string name="err_invalid_ipv4">Veuillez saisir une adresse IPv4 valide (ex. 10.0.0.88/24)</string>
-    <string name="msg_filtered_logs_fmt">Affichage de %1$d / %2$d lignes de journal</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">Affichage de %1$d / %2$d ligne de journal</item>
+        <item quantity="other">Affichage de %1$d / %2$d lignes de journal</item>
+    </plurals>
     <string name="msg_clipboard_empty">Le presse-papiers est vide</string>
     <string name="msg_no_valid_addrs">Aucune adresse valide trouvée dans le presse-papiers</string>
     <string name="msg_imported_saved">Importé et enregistré avec succès !</string>
     <string name="msg_peer_already_exists">Le pair existe déjà dans la liste</string>
     <string name="hint_tls_sni">SNI TLS/QUIC (sortant, facultatif)</string>
     <string name="hint_tls_sni_suffix">Suffixe SNI TLS par pair (facultatif)</string>
-    <string name="active_peers_fmt">%1$d pairs\n%2$d directs · %3$d relais</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d pair\n%2$d directs · %3$d relais</item>
+        <item quantity="other">%1$d pairs\n%2$d directs · %3$d relais</item>
+    </plurals>
 </resources>

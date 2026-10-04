@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/window_bg"
     android:orientation="vertical"
     android:padding="20dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
 
     <!-- Header Title Bar -->
     <LinearLayout
@@ -29,6 +31,7 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:contentDescription="@string/btn_refresh"
             app:icon="@drawable/ic_refresh"
             app:iconTint="@color/brand_primary" />
     </LinearLayout>
@@ -148,16 +151,22 @@
         android:textSize="14sp"
         android:textStyle="bold" />
 
+    <TextView android:id="@+id/tvSelection" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:textColor="@color/brand_primary"
+        android:paddingBottom="8dp" android:textIsSelectable="true" />
+    <TextView android:id="@+id/tvDataStatus" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="@string/telemetry_loading"
+        android:textColor="@color/text_secondary" android:paddingBottom="8dp"
+        android:accessibilityLiveRegion="polite" />
     <!-- Active Peers List Container -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="320dp">
+
 
         <LinearLayout
             android:id="@+id/containerPeers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-    </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

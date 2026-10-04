@@ -8,7 +8,8 @@ internal enum class VpnReloadPlan {
     RESTART
 }
 
-internal fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig): VpnReloadPlan {
+internal fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boolean = false): VpnReloadPlan {
+    if (forceRestart) return VpnReloadPlan.RESTART
     if (oldConfig == null) return VpnReloadPlan.RESTART
 
     val exitModeChanged = oldConfig.exitNode.isBlank() != newConfig.exitNode.isBlank()

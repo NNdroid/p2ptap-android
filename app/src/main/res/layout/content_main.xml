@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface_light_base"
@@ -157,7 +158,7 @@
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="2dp"
-                        android:text="↑ 0 B/s\n↓ 0 B/s"
+                        android:text="@string/telemetry_unknown"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -303,7 +304,7 @@
                         android:id="@+id/tvNodeName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Android-Client"
+                        android:text="@string/telemetry_unknown"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -378,7 +379,7 @@
                         android:id="@+id/tvTapIp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10.0.0.88/24"
+                        android:text="@string/telemetry_unknown"
                         android:textColor="@color/brand_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -417,7 +418,7 @@
                         android:id="@+id/tvTapIpv6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="fd00::88/64"
+                        android:text="@string/telemetry_unknown"
                         android:textColor="@color/brand_secondary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -449,7 +450,7 @@
                         android:id="@+id/tvTraffic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="↑ 0 B  ↓ 0 B"
+                        android:text="@string/telemetry_unknown"
                         android:textColor="@color/text_muted"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -683,7 +684,7 @@
                         android:background="@drawable/bg_node_chip"
                         android:paddingHorizontal="6dp"
                         android:paddingVertical="2dp"
-                        android:text="v1.0"
+                        tools:text="v1.0"
                         android:textColor="@color/brand_primary"
                         android:textSize="11sp"
                         android:textStyle="bold" />

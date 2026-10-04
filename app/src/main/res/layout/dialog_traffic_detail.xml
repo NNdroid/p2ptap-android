@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/window_bg"
     android:orientation="vertical"
     android:padding="20dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
 
     <!-- Header -->
     <LinearLayout
@@ -29,13 +31,17 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:contentDescription="@string/btn_refresh"
             app:icon="@drawable/ic_refresh"
             app:iconTint="@color/brand_primary" />
     </LinearLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="450dp">
+    <TextView android:id="@+id/tvDataStatus"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/telemetry_loading" android:textColor="@color/text_secondary"
+        android:paddingBottom="12dp" android:accessibilityLiveRegion="polite" />
+
+
 
         <LinearLayout
             android:id="@+id/contentContainer"
@@ -75,6 +81,7 @@
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowTxPkts" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowRxPkts" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowDropped" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowDedup" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -106,6 +113,8 @@
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowIpv4" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowIpv6" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowArp" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowNdp" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowOther" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowTcp" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowUdp" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowIcmp" />
@@ -138,6 +147,7 @@
                         android:textStyle="bold" />
 
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowObf" />
+                    <include layout="@layout/item_traffic_row" android:id="@+id/rowPsk" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowAlgo" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowPfs" />
                     <include layout="@layout/item_traffic_row" android:id="@+id/rowReplay" />
@@ -145,6 +155,7 @@
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"
-            android:text="导出配置与身份私钥以防丢失，或扫描/导入已有节点配置"
+            android:text="@string/backup_description"
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
 
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="📤 导出与分享 (Export)"
+            android:text="@string/backup_export_group"
             android:textColor="@color/brand_primary"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="📥 导入与恢复 (Import &amp; Restore)"
+            android:text="@string/backup_import_group"
             android:textColor="@color/status_connected"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -95,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:text="📷 扫描二维码导入 (配置 / 身份 / 节点)"
+            android:text="@string/backup_scan_qr"
             android:textSize="12sp"
             app:icon="@drawable/ic_qr_scan"
             app:iconGravity="textStart" />
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:text="🖼️ 从相册选取二维码图片导入"
+            android:text="@string/backup_gallery_qr"
             android:textSize="12sp"
             app:icon="@drawable/ic_qr_code"
             app:iconGravity="textStart" />

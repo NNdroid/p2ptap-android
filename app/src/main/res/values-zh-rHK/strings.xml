@@ -145,7 +145,10 @@
     <string name="stat_total_rx_pkts">接收封包數</string>
     <string name="stat_dropped_pkts">丟棄封包數</string>
     <string name="stat_dropped_fmt">%1$d 包 (校驗錯誤: %2$d)</string>
-    <string name="stat_packets_unit">%d 包</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d 個封包</item>
+        <item quantity="other">%d 個封包</item>
+    </plurals>
     <string name="stat_ipv4">IPv4 封包</string>
     <string name="stat_ipv6">IPv6 封包</string>
     <string name="stat_arp">ARP 位址解析包</string>
@@ -236,7 +239,10 @@
     <string name="msg_key_loaded_fmt">身分金鑰已載入，Peer ID: %s</string>
     <string name="err_key_load_fmt">載入身分金鑰失敗: %s</string>
     <string name="err_invalid_ipv4">請輸入正確的 IPv4 位址（例如 10.0.0.88/24）</string>
-    <string name="msg_filtered_logs_fmt">顯示 %1$d / %2$d 條日誌</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">顯示 %1$d / %2$d 條日誌</item>
+        <item quantity="other">顯示 %1$d / %2$d 條日誌</item>
+    </plurals>
     <string name="msg_clipboard_empty">剪貼簿為空</string>
     <string name="msg_no_valid_addrs">剪貼簿未找到有效位址</string>
     <string name="msg_imported_saved">已匯入並儲存！</string>
@@ -254,5 +260,8 @@
     <string name="multiaddrs_empty_hint">暫無宣告的監聽位址</string>
     <string name="hint_tls_sni">TLS/QUIC SNI（傳出，可選）</string>
     <string name="hint_tls_sni_suffix">每節點 TLS SNI 後綴（可選）</string>
-    <string name="active_peers_fmt">%1$d 個節點\n%2$d 直連 · %3$d 中繼</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d 個節點\n%2$d 直連 · %3$d 中繼</item>
+        <item quantity="other">%1$d 個節點\n%2$d 直連 · %3$d 中繼</item>
+    </plurals>
 </resources>

@@ -1,13 +1,17 @@
 package app.fjj.p2ptap.config
 
+import app.fjj.p2ptap.R
+import app.fjj.p2ptap.i18n.LocalizedException
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import org.json.JSONArray
 import org.json.JSONObject
+import com.p2ptap.P2PTap.P2PTap
+import app.fjj.p2ptap.service.P2PTapVpnService
 
 data class P2PConfig(
-    var nodeName: String = "Android-" + Build.MODEL.replace(" ", "-").take(14),
+    var nodeName: String = "Android-" + (Build.MODEL ?: "Node").replace(" ", "-").take(14),
     var tapIp: String = "10.0.0.88/24",
     var tapIpv6: String = "fd00::88/64",
     var mtu: Int = 1500,
@@ -41,17 +45,35 @@ data class P2PConfig(
     var webUiPort: Int = 15858,
     var webUiToken: String = "p2ptap-admin",
     var logLevel: String = "info",
-    var dnsServers: List<String> = listOf()
+    var dnsServers: List<String> = listOf(),
+    // Preserve Go settings that have no native Android editor when saving in WebUI.
+    var engineConfig: String = ""
 ) {
+    fun snapshot(): P2PConfig = copy(
+        bootstrapPeers = bootstrapPeers.toList(), staticPeers = staticPeers.toList(),
+        advertisedSubnets = advertisedSubnets.toList(), allowedSubnetPeers = allowedSubnetPeers.toList(),
+        dnsServers = dnsServers.toList()
+    )
+
+    fun validateStrategy() {
+        if (transportStrategy !in setOf("best_path", "redundant", "fallback")) {
+            throw LocalizedException(R.string.error_strategy)
+        }
+    }
+
     /**
      * Converts to JSON string matching p2ptap domain config schema for Go engine
      */
-    fun toJsonString(context: Context): String {
-        val root = JSONObject()
+    fun toJsonString(context: Context): String = toEngineJson(context.getFileStreamPath("node.key").absolutePath)
+
+    internal fun toEngineJson(nodeKeyPath: String): String {
+        val root = if (engineConfig.isBlank()) JSONObject() else JSONObject(engineConfig)
         root.put("node_name", nodeName)
         root.put("tap_ip", tapIp)
         if (tapIpv6.isNotBlank()) {
             root.put("tap_ipv6", tapIpv6.trim())
+        } else {
+            root.put("tap_ipv6", "")
         }
         root.put("mtu", mtu)
         root.put("psk", psk)
@@ -76,7 +98,7 @@ data class P2PConfig(
         root.put("exit_node", exitNodeObj)
 
         // Transports
-        val tr = JSONObject()
+        val tr = root.optJSONObject("transports") ?: JSONObject()
         tr.put("enable_quic_reuse", enableQuic)
         tr.put("enable_webrtc", enableWebrtc)
         tr.put("enable_webtransport", enableWebtransport)
@@ -87,12 +109,11 @@ data class P2PConfig(
         root.put("transports", tr)
 
         // Store private node key inside app internal storage
-        val keyFile = context.getFileStreamPath("node.key").absolutePath
-        root.put("node_key_file", keyFile)
+        root.put("node_key_file", nodeKeyPath)
 
         // Bootstrap peers
         val bsArray = JSONArray()
-        for (peer in bootstrapPeers) {
+        for (peer in splitPeerAddresses(bootstrapPeers)) {
             val trimmed = peer.trim()
             if (trimmed.isNotEmpty()) {
                 bsArray.put(trimmed)
@@ -102,7 +123,7 @@ data class P2PConfig(
 
         // Static peers
         val stArray = JSONArray()
-        for (peer in staticPeers) {
+        for (peer in splitPeerAddresses(staticPeers)) {
             val trimmed = peer.trim()
             if (trimmed.isNotEmpty()) {
                 stArray.put(trimmed)
@@ -141,7 +162,7 @@ data class P2PConfig(
         root.put("dns_servers", dnsArray)
 
         // Obfuscation
-        val obf = JSONObject()
+        val obf = root.optJSONObject("obfuscation") ?: JSONObject()
         obf.put("enable", obfuscationEnable)
         obf.put("mode", obfuscationMode)
         obf.put("algorithm", obfuscationAlgorithm)
@@ -149,7 +170,7 @@ data class P2PConfig(
         root.put("obfuscation", obf)
 
         // WebUI config (native HTTP server)
-        val webUi = JSONObject()
+        val webUi = root.optJSONObject("web_ui") ?: JSONObject()
         webUi.put("enable", webUiEnable)
         webUi.put("listen_ip", "127.0.0.1")
         webUi.put("port", webUiPort)
@@ -186,16 +207,19 @@ data class P2PConfig(
         root.put("enable_webtransport", enableWebtransport)
         root.put("enable_tcp", enableTcp)
         root.put("disable_relay", disableRelay)
+        root.put("tls_server_name", tlsServerName)
+        root.put("tls_sni_suffix", tlsSniSuffix)
         root.put("webui_enable", webUiEnable)
         root.put("webui_port", webUiPort)
         root.put("webui_token", webUiToken)
+        if (engineConfig.isNotBlank()) root.put("_engine_config", JSONObject(engineConfig))
 
         val bsArray = JSONArray()
-        bootstrapPeers.forEach { bsArray.put(it) }
+        splitPeerAddresses(bootstrapPeers).forEach { bsArray.put(it) }
         root.put("bootstrap_peers", bsArray)
 
         val stArray = JSONArray()
-        staticPeers.forEach { stArray.put(it) }
+        splitPeerAddresses(staticPeers).forEach { stArray.put(it) }
         root.put("static_peers", stArray)
 
         val advArray = JSONArray()
@@ -217,9 +241,11 @@ data class P2PConfig(
         /**
          * Parses from export JSON or standard p2ptap config.json
          */
-        fun fromJson(jsonStr: String): P2PConfig {
+        @JvmOverloads
+        fun fromJson(jsonStr: String, strict: Boolean = true): P2PConfig {
             val root = JSONObject(jsonStr)
             val cfg = P2PConfig()
+            cfg.engineConfig = root.optJSONObject("_engine_config")?.toString() ?: ""
 
             if (root.has("node_name")) cfg.nodeName = root.getString("node_name")
             if (root.has("tap_ip")) cfg.tapIp = root.getString("tap_ip")
@@ -255,6 +281,8 @@ data class P2PConfig(
                 if (root.has("enable_webtransport")) cfg.enableWebtransport = root.getBoolean("enable_webtransport")
                 if (root.has("enable_tcp")) cfg.enableTcp = root.getBoolean("enable_tcp")
                 if (root.has("disable_relay")) cfg.disableRelay = root.getBoolean("disable_relay")
+                if (root.has("tls_server_name")) cfg.tlsServerName = root.getString("tls_server_name")
+                if (root.has("tls_sni_suffix")) cfg.tlsSniSuffix = root.getString("tls_sni_suffix")
             }
 
             if (root.has("obfuscation")) {
@@ -288,7 +316,7 @@ data class P2PConfig(
                 for (i in 0 until arr.length()) {
                     list.add(arr.getString(i))
                 }
-                cfg.bootstrapPeers = list
+                cfg.bootstrapPeers = splitPeerAddresses(list)
             }
 
             if (root.has("static_peers")) {
@@ -297,7 +325,7 @@ data class P2PConfig(
                 for (i in 0 until arr.length()) {
                     list.add(arr.getString(i))
                 }
-                cfg.staticPeers = list
+                cfg.staticPeers = splitPeerAddresses(list)
             }
 
             if (root.has("advertised_subnets")) {
@@ -327,6 +355,7 @@ data class P2PConfig(
                 cfg.dnsServers = list
             }
 
+            if (strict) cfg.validateStrategy()
             return cfg
         }
     }
@@ -409,15 +438,16 @@ object AppConfigManager {
 
         // Check if this is a full bundle with node_key_base64
         if (root.optString("bundle_type") == "p2ptap_full_backup" || root.has("node_key_base64")) {
-            val keyB64 = root.optString("node_key_base64")
-            if (keyB64.isNotBlank()) {
-                restoredPeerId = importIdentityKeyBase64(context, keyB64)
-            }
             val configObj = root.optJSONObject("config")
             val cfg = if (configObj != null) {
                 P2PConfig.fromJson(configObj.toString())
             } else {
                 P2PConfig.fromJson(trimmed)
+            }
+            validate(context, cfg)
+            val keyB64 = root.optString("node_key_base64")
+            if (keyB64.isNotBlank()) {
+                restoredPeerId = importIdentityKeyBase64(context, keyB64)
             }
             save(context, cfg)
             return Pair(cfg, restoredPeerId)
@@ -440,21 +470,20 @@ object AppConfigManager {
     }
 
     fun load(context: Context): P2PConfig {
-        cachedConfig?.let { return it }
+        cachedConfig?.let { return it.snapshot() }
         ensureIdentityKey(context)
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val jsonStr = prefs.getString(KEY_CONFIG_JSON, null)
         val cfg = if (!jsonStr.isNullOrEmpty()) {
             try {
-                val parsed = P2PConfig.fromJson(jsonStr)
+                // Keep legacy invalid values visible in the editor. Saving and
+                // starting still validate; do not replace an invalid strategy
+                // with a different mesh's default configuration.
+                val parsed = P2PConfig.fromJson(jsonStr, strict = false)
                 var changed = false
                 if (parsed.tapIpv6.isBlank()) {
                     val lastOctet = parsed.tapIp.substringBefore("/").substringAfterLast(".", "88")
                     parsed.tapIpv6 = "fd00::$lastOctet/64"
-                    changed = true
-                }
-                if (parsed.bootstrapPeers.isEmpty()) {
-                    parsed.bootstrapPeers = P2PConfig().bootstrapPeers
                     changed = true
                 }
                 if (parsed.webUiToken.isBlank()) {
@@ -466,7 +495,11 @@ object AppConfigManager {
                     changed = true
                 }
                 if (changed) {
-                    save(context, parsed)
+                    try {
+                        save(context, parsed)
+                    } catch (e: Exception) {
+                        android.util.Log.w("AppConfig", "Stored configuration needs correction", e)
+                    }
                 }
                 parsed
             } catch (_: Exception) {
@@ -477,16 +510,56 @@ object AppConfigManager {
             save(context, defaultCfg)
             defaultCfg
         }
-        cachedConfig = cfg
-        return cfg
+        cachedConfig = cfg.snapshot()
+        return cfg.snapshot()
     }
 
+    fun validate(context: Context, config: P2PConfig) {
+        config.validateStrategy()
+        P2PTap.validateConfig(config.toJsonString(context))
+    }
+
+    fun normalizePeerAddresses(addresses: List<String>): List<String> = splitPeerAddresses(addresses).mapIndexed { index, address ->
+        try { P2PTap.normalizePeerAddress(address.trim()) }
+        catch (e: Exception) { throw LocalizedException(R.string.error_peer_address_fmt, listOf(index + 1), e) }
+    }.distinct()
+
+    @Synchronized
     fun save(context: Context, config: P2PConfig) {
-        cachedConfig = config
-        val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putString(KEY_CONFIG_JSON, config.toExportJson())
-            apply()
+        val candidate = config.snapshot().apply {
+            staticPeers = normalizePeerAddresses(staticPeers)
+            bootstrapPeers = normalizePeerAddresses(bootstrapPeers)
         }
+        validate(context, candidate)
+        val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (!prefs.edit().putString(KEY_CONFIG_JSON, candidate.toExportJson()).commit()) {
+            throw LocalizedException(R.string.error_save_config)
+        }
+        cachedConfig = candidate.snapshot()
+    }
+
+    // The engine's exit_node is a server setting; the app separately owns its
+    // selected exit peer and Android DNS. Do not overwrite those on WebUI save.
+    internal fun mergeEngineConfig(current: P2PConfig, json: String): P2PConfig =
+        P2PConfig.fromJson(json).apply {
+            exitNode = current.exitNode
+            dnsServers = current.dnsServers.toList()
+            engineConfig = json
+        }
+
+    @Synchronized
+    fun saveEngineConfig(context: Context, json: String) {
+        P2PTap.validateConfig(json)
+        save(context, mergeEngineConfig(load(context), json))
+    }
+
+    fun reloadRunningService(context: Context, forceRestart: Boolean = false) {
+        if (!P2PTapVpnService.isRunning()) return
+        val intent = android.content.Intent(context, P2PTapVpnService::class.java).apply {
+            action = P2PTapVpnService.ACTION_RELOAD
+            putExtra(P2PTapVpnService.EXTRA_FORCE_RESTART, forceRestart)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) context.startForegroundService(intent)
+        else context.startService(intent)
     }
 }

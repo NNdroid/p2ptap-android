@@ -152,7 +152,10 @@
     <string name="stat_total_rx_pkts">受信パケット数</string>
     <string name="stat_dropped_pkts">ドロップパケット数</string>
     <string name="stat_dropped_fmt">%1$d パケット (暗号エラー: %2$d)</string>
-    <string name="stat_packets_unit">%d パケット</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d パケット</item>
+        <item quantity="other">%d パケット</item>
+    </plurals>
     <string name="stat_ipv4">IPv4 パケット</string>
     <string name="stat_ipv6">IPv6 パケット</string>
     <string name="stat_arp">ARP パケット</string>
@@ -245,12 +248,18 @@
     <string name="msg_key_loaded_fmt">IDキーが読み込まれました。Peer ID: %s</string>
     <string name="err_key_load_fmt">IDキーの読み込みに失敗しました: %s</string>
     <string name="err_invalid_ipv4">有効なIPv4アドレスを入力してください（例: 10.0.0.88/24）</string>
-    <string name="msg_filtered_logs_fmt">%1$d / %2$d 行のログを表示中</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">%1$d / %2$d 行のログを表示中</item>
+        <item quantity="other">%1$d / %2$d 行のログを表示中</item>
+    </plurals>
     <string name="msg_clipboard_empty">クリップボードが空です</string>
     <string name="msg_no_valid_addrs">クリップボードに有効なアドレスが見つかりません</string>
     <string name="msg_imported_saved">インポートして保存しました！</string>
     <string name="msg_peer_already_exists">このピアは既にリストに存在します</string>
     <string name="hint_tls_sni">TLS/QUIC SNI（送信、任意）</string>
     <string name="hint_tls_sni_suffix">ピア別 TLS SNI サフィックス（任意）</string>
-    <string name="active_peers_fmt">%1$d ノード\n%2$d 直接 · %3$d リレー</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d ノード\n%2$d 直接 · %3$d リレー</item>
+        <item quantity="other">%1$d ノード\n%2$d 直接 · %3$d リレー</item>
+    </plurals>
 </resources>

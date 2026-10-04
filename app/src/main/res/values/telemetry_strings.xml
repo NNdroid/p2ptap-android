@@ -1,0 +1,28 @@
+<resources>
+    <string name="telemetry_unknown">No data</string>
+    <string name="telemetry_loading">Loading engine data…</string>
+    <string name="telemetry_refresh_failed">Refresh failed. Tap refresh to retry.</string>
+    <string name="telemetry_live">Live engine data · TAP payload bytes, not encrypted wire bytes</string>
+    <string name="telemetry_dedup">Duplicate packets discarded</string>
+    <string name="telemetry_ndp">NDP packets</string>
+    <string name="telemetry_other">Other packets</string>
+    <string name="telemetry_psk">PSK status</string>
+    <string name="telemetry_pending">Pending / unavailable</string>
+    <string name="telemetry_enabled">Enabled</string>
+    <string name="telemetry_unmeasured">Not measured</string>
+    <string name="telemetry_saved">Saved</string>
+    <string name="telemetry_applied">Route installed</string>
+    <string name="telemetry_exit_gateway">Exit gateway</string>
+    <string name="telemetry_not_gateway">Not an exit gateway</string>
+    <string name="telemetry_exit_select_hint">Only online nodes advertising exit capability can be selected. Manual targets remain available.</string>
+    <string name="telemetry_link_traffic">Local link total: ↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">Selection saved; VPN application requested if running.</string>
+    <string name="telemetry_invalid_exit">Enter a valid numeric IPv4/IPv6 address or Peer ID.</string>
+    <string name="telemetry_unreachable">Unreachable</string>
+    <string name="telemetry_proto_mismatch">Protocol mismatch</string>
+    <string name="telemetry_crypto_failed">Encryption negotiation failed</string>
+    <string name="telemetry_peer_summary">Online %1$d (%2$d direct · %3$d relay) · Known %4$d</string>
+    <string name="telemetry_replay_drops">Replay packets discarded</string>
+    <string name="telemetry_disabling">Removing exit route…</string>
+    <string name="btn_refresh">Refresh</string>
+</resources>

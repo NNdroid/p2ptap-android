@@ -1,5 +1,7 @@
 package app.fjj.p2ptap.ui
 
+import app.fjj.p2ptap.i18n.UiMessages
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -16,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import app.fjj.p2ptap.R
 import app.fjj.p2ptap.config.AppConfigManager
+import app.fjj.p2ptap.config.splitPeerAddresses
 import app.fjj.p2ptap.config.P2PConfig
 import app.fjj.p2ptap.databinding.ActivityConfigBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
@@ -35,17 +38,18 @@ class ConfigActivity : AppCompatActivity() {
                     val reader = BufferedReader(InputStreamReader(inputStream))
                     val jsonStr = reader.readText()
                     val (cfg, restoredPid) = AppConfigManager.importBackupOrConfig(this, jsonStr)
+                    AppConfigManager.reloadRunningService(this, forceRestart = true)
                     displayConfig(cfg)
                     refreshPeerIdDisplay()
                     val msg = if (restoredPid != null) {
-                        "导入成功！已恢复配置及 Peer ID: " + restoredPid.take(12) + "..."
+                        getString(R.string.msg_identity_restored_fmt, restoredPid.take(12) + "…")
                     } else {
                         getString(R.string.msg_import_success)
                     }
                     Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this, getString(R.string.msg_import_failed) + e.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.msg_import_failed) + UiMessages.describe(this, e), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -111,7 +115,7 @@ class ConfigActivity : AppCompatActivity() {
             val pid = AppConfigManager.getPeerId(this)
             if (pid.isNotBlank()) {
                 val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                cm.setPrimaryClip(ClipData.newPlainText("Peer ID", pid))
+                cm.setPrimaryClip(ClipData.newPlainText(getString(R.string.label_peer_id), pid))
                 Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
             }
         }
@@ -164,10 +168,10 @@ class ConfigActivity : AppCompatActivity() {
     private fun openAddressManager(type: AddressListType) {
         val currentList = when (type) {
             AddressListType.BOOTSTRAP_PEERS -> {
-                binding.etBootstrapPeers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                splitPeerAddresses(binding.etBootstrapPeers.text?.toString().orEmpty())
             }
             AddressListType.STATIC_PEERS -> {
-                binding.etStaticPeers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                splitPeerAddresses(binding.etStaticPeers.text?.toString().orEmpty())
             }
             AddressListType.ADVERTISED_SUBNETS -> {
                 binding.etAdvertisedSubnets.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
@@ -205,7 +209,7 @@ class ConfigActivity : AppCompatActivity() {
 
     private fun refreshPeerIdDisplay() {
         val pid = AppConfigManager.getPeerId(this)
-        binding.tvConfigPeerId.text = if (pid.isNotBlank()) "Peer ID: " + pid else "Peer ID: 未生成"
+        binding.tvConfigPeerId.text = getString(R.string.peer_id_fmt, pid.ifBlank { getString(R.string.identity_not_generated) })
     }
 
     private fun showResetKeyDialog() {
@@ -218,7 +222,7 @@ class ConfigActivity : AppCompatActivity() {
                     refreshPeerIdDisplay()
                     Toast.makeText(this, getString(R.string.msg_key_loaded_fmt, newPid.take(12) + "..."), Toast.LENGTH_LONG).show()
                 } catch (e: Exception) {
-                    Toast.makeText(this, getString(R.string.err_key_load_fmt, e.message ?: ""), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.err_key_load_fmt, UiMessages.describe(this, e)), Toast.LENGTH_LONG).show()
                 }
             }
             .setNegativeButton(R.string.btn_cancel, null)
@@ -263,6 +267,7 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun collectConfigFromUi(): P2PConfig {
+        val savedConfig = AppConfigManager.load(this)
         val nodeName = binding.etNodeName.text?.toString()?.trim() ?: ""
         val tapIp = binding.etTapIp.text?.toString()?.trim() ?: "10.0.0.88/24"
         val tapIpv6 = binding.etTapIpv6.text?.toString()?.trim() ?: ""
@@ -271,9 +276,9 @@ class ConfigActivity : AppCompatActivity() {
         val tlsServerName = binding.etTlsServerName.text?.toString()?.trim() ?: ""
         val tlsSniSuffix = binding.etTlsSniSuffix.text?.toString()?.trim() ?: ""
         val bsString = binding.etBootstrapPeers.text?.toString() ?: ""
-        val bsList = bsString.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        val bsList = splitPeerAddresses(bsString)
         val stString = binding.etStaticPeers.text?.toString() ?: ""
-        val stList = stString.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        val stList = splitPeerAddresses(stString)
         val enableMdns = binding.switchEnableMdns.isChecked
         val discoverBootMesh = binding.switchDiscoverBootMesh.isChecked
         val disableRelay = binding.switchDisableRelay.isChecked
@@ -326,7 +331,8 @@ class ConfigActivity : AppCompatActivity() {
             discoverBootMesh = discoverBootMesh,
             // Exit-node selection is managed by ExitNodeSelectorDialog. Saving
             // unrelated settings must not silently reset that independent choice.
-            exitNode = AppConfigManager.load(this).exitNode,
+            exitNode = savedConfig.exitNode,
+            engineConfig = savedConfig.engineConfig,
             webUiEnable = webUiEnable,
             webUiPort = webUiPort,
             webUiToken = webUiToken,
@@ -341,19 +347,15 @@ class ConfigActivity : AppCompatActivity() {
             return
         }
 
-        AppConfigManager.save(this, config)
+        try {
+            AppConfigManager.save(this, config)
+        } catch (e: Exception) {
+            Toast.makeText(this, getString(R.string.config_invalid_fmt, UiMessages.describe(this, e)), Toast.LENGTH_LONG).show()
+            return
+        }
         Toast.makeText(this, getString(R.string.msg_config_saved), Toast.LENGTH_SHORT).show()
 
-        if (P2PTapVpnService.isRunning()) {
-            val intent = android.content.Intent(this, P2PTapVpnService::class.java).apply {
-                action = P2PTapVpnService.ACTION_RELOAD
-            }
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {
-                startService(intent)
-            }
-        }
+        AppConfigManager.reloadRunningService(this)
 
         finish()
     }

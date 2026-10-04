@@ -1,0 +1,28 @@
+<resources>
+    <string name="telemetry_unknown">Aucune donnée</string>
+    <string name="telemetry_loading">Chargement des données du moteur…</string>
+    <string name="telemetry_refresh_failed">Échec de mise à jour. Appuyez pour réessayer.</string>
+    <string name="telemetry_live">Données du moteur en direct · octets utiles TAP sans chiffrement ni remplissage</string>
+    <string name="telemetry_dedup">Paquets en double rejetés</string>
+    <string name="telemetry_ndp">Paquets NDP</string>
+    <string name="telemetry_other">Autres paquets</string>
+    <string name="telemetry_psk">État PSK</string>
+    <string name="telemetry_pending">En attente / indisponible</string>
+    <string name="telemetry_enabled">Activé</string>
+    <string name="telemetry_unmeasured">Non mesuré</string>
+    <string name="telemetry_saved">Enregistré</string>
+    <string name="telemetry_applied">Route installée</string>
+    <string name="telemetry_exit_gateway">Passerelle de sortie</string>
+    <string name="telemetry_not_gateway">Pas de passerelle de sortie</string>
+    <string name="telemetry_exit_select_hint">Seuls les nœuds en ligne annonçant une sortie sont sélectionnables. La saisie manuelle reste possible.</string>
+    <string name="telemetry_link_traffic">Total du lien local : ↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">Sélection enregistrée ; application demandée si le VPN fonctionne.</string>
+    <string name="telemetry_invalid_exit">Saisissez une adresse IPv4/IPv6 numérique valide ou un ID de pair.</string>
+    <string name="telemetry_unreachable">Injoignable</string>
+    <string name="telemetry_proto_mismatch">Protocole incompatible</string>
+    <string name="telemetry_crypto_failed">Échec de négociation du chiffrement</string>
+    <string name="telemetry_peer_summary">En ligne %1$d (%2$d directs · %3$d relais) · Connus %4$d</string>
+    <string name="telemetry_replay_drops">Paquets rejoués rejetés</string>
+    <string name="telemetry_disabling">Suppression de la route de sortie…</string>
+    <string name="btn_refresh">Actualiser</string>
+</resources>

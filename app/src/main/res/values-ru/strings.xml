@@ -152,7 +152,10 @@
     <string name="stat_total_rx_pkts">Принято пакетов</string>
     <string name="stat_dropped_pkts">Пропущено пакетов</string>
     <string name="stat_dropped_fmt">%1$d пакетов (Ошибки шифрования: %2$d)</string>
-    <string name="stat_packets_unit">%d пакетов</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d пакет</item>
+        <item quantity="other">%d пакетов</item>
+    </plurals>
     <string name="stat_ipv4">Пакетов IPv4</string>
     <string name="stat_ipv6">Пакетов IPv6</string>
     <string name="stat_arp">Пакетов ARP</string>
@@ -245,12 +248,18 @@
     <string name="msg_key_loaded_fmt">Ключ идентификации загружен, Peer ID: %s</string>
     <string name="err_key_load_fmt">Не удалось загрузить ключ идентификации: %s</string>
     <string name="err_invalid_ipv4">Пожалуйста, введите корректный IPv4-адрес (напр. 10.0.0.88/24)</string>
-    <string name="msg_filtered_logs_fmt">Отображено %1$d / %2$d строк журнала</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">Отображено %1$d / %2$d строка журнала</item>
+        <item quantity="other">Отображено %1$d / %2$d строк журнала</item>
+    </plurals>
     <string name="msg_clipboard_empty">Буфер обмена пуст</string>
     <string name="msg_no_valid_addrs">В буфере обмена не найдено действительных адресов</string>
     <string name="msg_imported_saved">Успешно импортировано и сохранено!</string>
     <string name="msg_peer_already_exists">Этот узел уже есть в списке</string>
     <string name="hint_tls_sni">TLS/QUIC SNI (исходящий, необязательно)</string>
     <string name="hint_tls_sni_suffix">Суффикс TLS SNI для узла (необязательно)</string>
-    <string name="active_peers_fmt">%1$d узлов\n%2$d напрямую · %3$d через ретранслятор</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d узел\n%2$d напрямую · %3$d через ретранслятор</item>
+        <item quantity="other">%1$d узлов\n%2$d напрямую · %3$d через ретранслятор</item>
+    </plurals>
 </resources>
