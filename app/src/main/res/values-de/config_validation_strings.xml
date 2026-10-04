@@ -1,0 +1,6 @@
+<resources>
+    <string name="config_invalid_fmt">Konfiguration nicht angewendet: %1$s</string>
+    <string name="config_peer_endpoint_required">Dieser QR-Code enthält keine erreichbare Peer-Adresse. IP/DNS, Transport und /p2p/PeerID müssen enthalten sein.</string>
+    <string name="config_strategy_help">best_path wählt einen vorhandenen Pfad nach Topologie und Schreibleistung; redundant dupliziert über vorhandene Streams; fallback versucht vorhandene Pfade der Reihe nach. Änderungen erfordern einen VPN-Neustart.</string>
+    <string name="config_static_help">Vollständige Multiaddrs mit /p2p/PeerID am Ende verwenden. Statische Peers können auch Relays nutzen. Änderungen starten das VPN neu.</string>
+</resources>

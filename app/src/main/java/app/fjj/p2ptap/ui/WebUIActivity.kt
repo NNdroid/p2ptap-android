@@ -38,7 +38,7 @@ class WebUIActivity : AppCompatActivity() {
             finish()
         }
 
-        val config = AppConfigManager.load(this)
+        val config = P2PTapVpnService.runningConfiguration() ?: AppConfigManager.load(this)
         val tokenParam = if (config.webUiToken.isNotBlank()) {
             "?token=" + java.net.URLEncoder.encode(config.webUiToken.trim(), "UTF-8")
         } else {
@@ -102,7 +102,7 @@ class WebUIActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val item = menu?.add(0, 101, 0, "Refresh")
+        val item = menu?.add(0, 101, 0, R.string.btn_refresh)
         item?.setIcon(android.R.drawable.ic_menu_rotate)
         item?.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true

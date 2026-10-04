@@ -1,5 +1,7 @@
 package app.fjj.p2ptap.ui
 
+import app.fjj.p2ptap.i18n.UiMessages
+
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -7,6 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import app.fjj.p2ptap.config.P2PConfig
+import app.fjj.p2ptap.config.AppConfigManager
+import app.fjj.p2ptap.config.splitPeerAddresses
+import app.fjj.p2ptap.R
+import android.widget.Toast
 import app.fjj.p2ptap.databinding.DialogScanResultBinding
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.MultiFormatReader
@@ -47,7 +53,9 @@ object QrImportHelper {
                         peerId = pid,
                         tapIp = cfg.tapIp,
                         tapIpv6 = cfg.tapIpv6,
-                        addrs = cfg.staticPeers,
+                        // A backup's static_peers refer to OTHER nodes, not the
+                        // backed-up node's own listening endpoints.
+                        addrs = emptyList(),
                         subnets = cfg.advertisedSubnets,
                         psk = cfg.psk,
                         rawPayload = trimmed,
@@ -69,11 +77,11 @@ object QrImportHelper {
                         }
                     }
                     return ScannedNodeInfo(
-                        nodeName = obj.optString("node_name", "RemoteNode"),
+                        nodeName = obj.optString("node_name", ""),
                         peerId = obj.optString("peer_id", ""),
                         tapIp = obj.optString("tap_ip", ""),
                         tapIpv6 = obj.optString("tap_ipv6", ""),
-                        addrs = addrsList,
+                        addrs = splitPeerAddresses(addrsList),
                         subnets = subnetsList,
                         psk = obj.optString("psk", ""),
                         rawPayload = trimmed
@@ -108,7 +116,7 @@ object QrImportHelper {
                                 "ip", "tap_ip", "ipv4" -> tapIp = value
                                 "ipv6", "tap_ipv6", "v6" -> tapIpv6 = value
                                 "addrs", "addr", "multiaddr" -> {
-                                    value.split(",", ";", "\n").map { it.trim() }.filter { it.isNotEmpty() }.forEach {
+                                    splitPeerAddresses(value).forEach {
                                         addrsList.add(it)
                                     }
                                 }
@@ -123,11 +131,11 @@ object QrImportHelper {
                     }
                 }
                 return ScannedNodeInfo(
-                    nodeName = if (nodeName.isNotBlank()) nodeName else "P2PNode",
+                    nodeName = nodeName,
                     peerId = peerId,
                     tapIp = tapIp,
                     tapIpv6 = tapIpv6,
-                    addrs = addrsList,
+                    addrs = splitPeerAddresses(addrsList),
                     subnets = subnetsList,
                     psk = psk,
                     rawPayload = trimmed
@@ -138,8 +146,8 @@ object QrImportHelper {
         // 3. Raw Multiaddr: /ip4/.../p2p/... or /ip6/...
         if (trimmed.startsWith("/")) {
             return ScannedNodeInfo(
-                nodeName = "P2P Address",
-                addrs = listOf(trimmed),
+                nodeName = "",
+                addrs = splitPeerAddresses(trimmed),
                 rawPayload = trimmed
             )
         }
@@ -147,7 +155,7 @@ object QrImportHelper {
         // 4. Raw IP / Subnet
         if (trimmed.contains(".") || trimmed.contains(":")) {
             return ScannedNodeInfo(
-                nodeName = "IP Endpoint",
+                nodeName = "",
                 tapIp = trimmed,
                 rawPayload = trimmed
             )
@@ -191,8 +199,8 @@ object QrImportHelper {
     fun showScanResultDialog(
         context: Context,
         info: ScannedNodeInfo,
-        onAddStatic: (String) -> Unit,
-        onAddBootstrap: (String) -> Unit,
+        onAddStatic: (List<String>) -> Unit,
+        onAddBootstrap: (List<String>) -> Unit,
         onImportFull: ((P2PConfig) -> Unit)? = null
     ) {
         val binding = DialogScanResultBinding.inflate(LayoutInflater.from(context))
@@ -200,7 +208,7 @@ object QrImportHelper {
             .setView(binding.root)
             .create()
 
-        binding.tvScanNodeName.text = if (info.nodeName.isNotBlank()) info.nodeName else "发现节点"
+        binding.tvScanNodeName.text = if (info.nodeName.isNotBlank()) info.nodeName else context.getString(R.string.scan_node_unknown)
         val ipText = buildString {
             if (info.tapIp.isNotBlank()) append("IPv4: " + info.tapIp)
             if (info.tapIpv6.isNotBlank()) {
@@ -208,8 +216,8 @@ object QrImportHelper {
                 append("IPv6: " + info.tapIpv6)
             }
         }
-        binding.tvScanIps.text = if (ipText.isNotBlank()) ipText else "未指定虚拟 IP"
-        binding.tvScanPeerId.text = if (info.peerId.isNotBlank()) "Peer ID: " + info.peerId else ""
+        binding.tvScanIps.text = if (ipText.isNotBlank()) ipText else context.getString(R.string.scan_ip_unknown)
+        binding.tvScanPeerId.text = if (info.peerId.isNotBlank()) context.getString(R.string.peer_id_fmt, info.peerId) else ""
         binding.tvScanPeerId.visibility = if (info.peerId.isNotBlank()) View.VISIBLE else View.GONE
 
         if (info.addrs.isNotEmpty()) {
@@ -219,28 +227,45 @@ object QrImportHelper {
             binding.tvScanMultiaddrs.visibility = View.GONE
         }
 
-        val targetMultiaddr = when {
-            info.addrs.isNotEmpty() -> info.addrs.first()
-            info.peerId.isNotBlank() -> "/p2p/" + info.peerId
-            info.tapIp.isNotBlank() -> info.tapIp
-            else -> info.rawPayload
+        val addresses = try {
+            AppConfigManager.normalizePeerAddresses(info.addrs)
+        } catch (_: Exception) {
+            emptyList()
         }
+        if (addresses.isEmpty()) {
+            binding.tvScanMultiaddrs.visibility = View.VISIBLE
+            binding.tvScanMultiaddrs.text = context.getString(R.string.config_peer_endpoint_required)
+        }
+        binding.btnAddStaticPeer.isEnabled = addresses.isNotEmpty()
+        binding.btnAddBootstrapPeer.isEnabled = addresses.isNotEmpty()
 
         binding.btnAddStaticPeer.setOnClickListener {
-            onAddStatic(targetMultiaddr)
-            dialog.dismiss()
+            try {
+                onAddStatic(addresses)
+                dialog.dismiss()
+            } catch (e: Exception) {
+                Toast.makeText(context, context.getString(R.string.config_invalid_fmt, UiMessages.describe(context, e)), Toast.LENGTH_LONG).show()
+            }
         }
 
         binding.btnAddBootstrapPeer.setOnClickListener {
-            onAddBootstrap(targetMultiaddr)
-            dialog.dismiss()
+            try {
+                onAddBootstrap(addresses)
+                dialog.dismiss()
+            } catch (e: Exception) {
+                Toast.makeText(context, context.getString(R.string.config_invalid_fmt, UiMessages.describe(context, e)), Toast.LENGTH_LONG).show()
+            }
         }
 
         if (info.isFullConfig && info.fullConfig != null && onImportFull != null) {
             binding.btnImportFullConfig.visibility = View.VISIBLE
             binding.btnImportFullConfig.setOnClickListener {
-                onImportFull(info.fullConfig)
-                dialog.dismiss()
+                try {
+                    onImportFull(info.fullConfig)
+                    dialog.dismiss()
+                } catch (e: Exception) {
+                    Toast.makeText(context, context.getString(R.string.config_invalid_fmt, UiMessages.describe(context, e)), Toast.LENGTH_LONG).show()
+                }
             }
         } else {
             binding.btnImportFullConfig.visibility = View.GONE

@@ -34,4 +34,14 @@ class VpnReloadPolicyTest {
         assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(dnsServers = listOf("1.1.1.1"))))
         assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(webUiPort = 18080)))
     }
+
+    @Test
+    fun peerListsAndTransportStrategyRestartTheEngine() {
+        val old = config()
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(transportStrategy = "redundant")))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(staticPeers = listOf("endpoint"))))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(bootstrapPeers = emptyList())))
+        // A backup can restore a new identity without changing any JSON fields.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(), forceRestart = true))
+    }
 }

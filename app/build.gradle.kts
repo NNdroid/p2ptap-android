@@ -105,6 +105,8 @@ dependencies {
     implementation(libs.zxing.core)
     implementation(libs.zxing.android.embedded)
     testImplementation(libs.junit)
+    // Android's local-test org.json classes are stubs; exercise real Go JSON fixtures.
+    testImplementation("org.json:json:20240303")
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 }

@@ -1,5 +1,7 @@
 package app.fjj.p2ptap
 
+import app.fjj.p2ptap.i18n.UiMessages
+
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -36,9 +38,10 @@ import app.fjj.p2ptap.ui.QrDialog
 import app.fjj.p2ptap.ui.TrafficDetailDialog
 import app.fjj.p2ptap.viewmodel.MainViewModel
 import com.p2ptap.P2PTap.P2PTap
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
+
+
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
@@ -73,29 +76,41 @@ class MainActivity : AppCompatActivity() {
         requestNotificationPermission()
     }
 
-    @OptIn(FlowPreview::class)
+
     private fun observeMetrics() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.metrics
-                    .debounce(300)
-                    .collect { metrics ->
-                        withContext(kotlinx.coroutines.Dispatchers.Main) {
-                            val content = binding.contentMain
-                            if (P2PTapVpnService.isRunning()) {
-                                content.tvActivePeers.text = getString(R.string.active_peers_fmt, metrics.peerCount, metrics.directPeers, metrics.relayPeers)
-                                content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(metrics.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(metrics.rxSpeed)}"
-                                content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(metrics.totalTx)}  ↓ ${P2PStateRepository.formatBytes(metrics.totalRx)}"
-                            } else {
-                                content.tvActivePeers.text = getString(R.string.active_peers_fmt, 0, 0, 0)
-                                content.tvLiveSpeed.text = "↑ 0 B/s\n↓ 0 B/s"
-                                content.tvTraffic.text = "↑ 0 B  ↓ 0 B"
-                            }
+                launch {
+                    while (kotlinx.coroutines.currentCoroutineContext().isActive) {
+                        viewModel.refreshStats()
+                        kotlinx.coroutines.delay(1500)
+                    }
+                }
+                kotlinx.coroutines.flow.combine(viewModel.telemetry, viewModel.state) { data, state -> data to state }
+                    .collect { (data, state) ->
+                        val snapshot = data.snapshot
+                        val content = binding.contentMain
+                        val unknown = getString(R.string.telemetry_unknown)
+                        if (state == P2PTapVpnService.STATE_RUNNING && snapshot != null) {
+                            val direct = snapshot.peers.count { it.isDirect }
+                            val relay = snapshot.peers.count { it.connState == "relay_ok" || (it.connState == "ok" && it.isRelayed) }
+                            val activeCount = direct + relay
+                            content.tvActivePeers.text = resources.getQuantityString(
+                                R.plurals.active_peers_fmt, activeCount, activeCount, direct, relay
+                            )
+                            fun speed(key: String) = snapshot.counters[key]?.let(P2PStateRepository::formatSpeed) ?: unknown
+                            fun bytes(key: String) = snapshot.counters[key]?.let(P2PStateRepository::formatBytes) ?: unknown
+                            content.tvLiveSpeed.text = "↑ ${speed("tx_bytes_per_sec")}\n↓ ${speed("rx_bytes_per_sec") }"
+                            content.tvTraffic.text = "↑ ${bytes("bytes_sent")}  ↓ ${bytes("bytes_recv") }"
+                        } else {
+                            content.tvActivePeers.text = getString(if (data.failed) R.string.telemetry_refresh_failed else R.string.telemetry_unknown)
+                            content.tvLiveSpeed.text = "↑ $unknown\n↓ $unknown"
+                            content.tvTraffic.text = "↑ $unknown  ↓ $unknown"
                         }
+                        refreshExitNodeDisplay()
                     }
             }
         }
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.status.collect { status ->
@@ -147,7 +162,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.prompt_vpn_not_running), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val config = AppConfigManager.load(this)
+            val config = P2PTapVpnService.runningConfiguration() ?: AppConfigManager.load(this)
             val tokenParam = if (config.webUiToken.isNotBlank()) {
                 "?token=" + java.net.URLEncoder.encode(config.webUiToken.trim(), "UTF-8")
             } else {
@@ -160,7 +175,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 startActivity(browserIntent)
             } catch (e: Exception) {
-                Toast.makeText(this, getString(R.string.err_open_browser, e.message), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.err_open_browser, UiMessages.describe(this, e)), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -196,7 +211,7 @@ class MainActivity : AppCompatActivity() {
             val pid = binding.contentMain.tvPeerId.text?.toString() ?: ""
             if (pid.isNotEmpty() && pid != "-") {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Peer ID", pid)
+                val clip = ClipData.newPlainText(getString(R.string.label_peer_id), pid)
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
             }
@@ -206,7 +221,7 @@ class MainActivity : AppCompatActivity() {
             val ip = binding.contentMain.tvTapIp.text?.toString() ?: ""
             if (ip.isNotEmpty()) {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Virtual IPv4", ip)
+                val clip = ClipData.newPlainText(getString(R.string.label_tap_ip), ip)
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(this, getString(R.string.msg_copied_clipboard) + ": $ip", Toast.LENGTH_SHORT).show()
             }
@@ -216,7 +231,7 @@ class MainActivity : AppCompatActivity() {
             val v6 = binding.contentMain.tvTapIpv6.text?.toString() ?: ""
             if (v6.isNotEmpty()) {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Virtual IPv6", v6)
+                val clip = ClipData.newPlainText(getString(R.string.label_tap_ipv6), v6)
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(this, getString(R.string.msg_copied_clipboard) + ": $v6", Toast.LENGTH_SHORT).show()
             }
@@ -245,7 +260,7 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.err_open_browser, e.message), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.err_open_browser, UiMessages.describe(this, e)), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -304,7 +319,7 @@ class MainActivity : AppCompatActivity() {
         val addrs = binding.contentMain.tvMultiaddrs.text?.toString() ?: ""
         if (addrs.isNotEmpty() && addrs != getString(R.string.multiaddrs_empty_hint) && addrs != getString(R.string.status_connecting)) {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Multiaddrs", addrs)
+            val clip = ClipData.newPlainText(getString(R.string.label_multiaddrs), addrs)
             clipboard.setPrimaryClip(clip)
             Toast.makeText(this, getString(R.string.msg_multiaddrs_copied), Toast.LENGTH_SHORT).show()
         }
@@ -348,21 +363,30 @@ class MainActivity : AppCompatActivity() {
         val v6Text = if (config.tapIpv6.isNotBlank()) {
             config.tapIpv6
         } else {
-            val lastOctet = config.tapIp.substringBefore("/").substringAfterLast(".", "88")
-            "fd00::$lastOctet/64"
+            getString(R.string.telemetry_unknown)
         }
         binding.contentMain.layoutTapIpv6.visibility = View.VISIBLE
         binding.contentMain.tvTapIpv6.text = v6Text
     }
 
     private fun refreshExitNodeDisplay() {
+        // Read through AppConfigManager every time: the exit node can be changed
+        // and hot-reloaded without the VPN state changing, so caching it against
+        // sessionRevision would keep showing the previous gateway. The config
+        // itself is already memoised, so this is a cheap read.
         val config = AppConfigManager.load(this)
         if (config.exitNode.isBlank()) {
-            binding.contentMain.tvExitNodeStatus.text = getString(R.string.exit_node_auto_display)
+            binding.contentMain.tvExitNodeStatus.text = getString(if (
+                viewModel.telemetry.value.snapshot?.let { it.activeExitPeerId.isNotBlank() || it.activeExitIpv4.isNotBlank() || it.activeExitIpv6.isNotBlank() } == true
+            ) R.string.telemetry_disabling else R.string.exit_node_auto_display)
         } else {
             val node = config.exitNode.trim()
             val shortNode = if (node.length > 20) node.take(8) + "..." + node.takeLast(6) else node
-            binding.contentMain.tvExitNodeStatus.text = getString(R.string.exit_node_active_fmt, shortNode, "Active")
+            binding.contentMain.tvExitNodeStatus.text = getString(R.string.exit_node_active_fmt, shortNode, getString(when {
+                P2PTapVpnService.currentState != P2PTapVpnService.STATE_RUNNING -> R.string.telemetry_saved
+                viewModel.telemetry.value.snapshot?.matchesExit(node) == true -> R.string.telemetry_applied
+                else -> R.string.telemetry_pending
+            }))
         }
     }
 
@@ -384,19 +408,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshMultiaddrs() {
-        if (P2PTapVpnService.isRunning()) {
-            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Default) {
-                val addrs = com.p2ptap.P2PTap.P2PTap.getMultiaddrs()
-                withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    if (!addrs.isNullOrBlank()) {
-                        binding.contentMain.tvMultiaddrs.text = addrs
-                    } else {
-                        binding.contentMain.tvMultiaddrs.text = getString(R.string.status_connecting)
-                    }
-                }
-            }
-        } else {
+        if (!P2PTapVpnService.isRunning()) {
             binding.contentMain.tvMultiaddrs.text = getString(R.string.multiaddrs_empty_hint)
+            return
+        }
+
+        // Render whatever the last session produced straight away, then let the
+        // repository fetch only if it has nothing yet. getMultiaddrs() blocks on
+        // the Go engine, so calling it on every onResume was the most visible
+        // startup stall; the listen addresses only change with a new session.
+        val cached = P2PStateRepository.multiaddrsOrNull()
+        if (!cached.isNullOrEmpty()) {
+            binding.contentMain.tvMultiaddrs.text = cached
+            return
+        }
+        binding.contentMain.tvMultiaddrs.text = getString(R.string.status_connecting)
+
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Default) {
+            val addrs = P2PStateRepository.multiaddrs {
+                com.p2ptap.P2PTap.P2PTap.getMultiaddrs()
+            }
+            withContext(kotlinx.coroutines.Dispatchers.Main) {
+                binding.contentMain.tvMultiaddrs.text =
+                    if (addrs.isNullOrEmpty()) getString(R.string.status_connecting) else addrs
+            }
         }
     }
 

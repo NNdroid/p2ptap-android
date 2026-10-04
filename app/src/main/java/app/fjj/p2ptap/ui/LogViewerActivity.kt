@@ -124,7 +124,7 @@ class LogViewerActivity : AppCompatActivity() {
             if (logText.isNotBlank()) {
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
-                    putExtra(Intent.EXTRA_SUBJECT, "P2PTap Diagnostic Logs")
+                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.title_log_viewer))
                     putExtra(Intent.EXTRA_TEXT, logText)
                 }
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.btn_view_logs)))
@@ -154,7 +154,11 @@ class LogViewerActivity : AppCompatActivity() {
     private fun startLogCollector() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Initial state entry
-            val initial = "[Info] Real-time P2P State: ${P2PStateRepository.state.value} (${P2PStateRepository.message.value})"
+            val initial = getString(
+                R.string.logs_initial_state_fmt,
+                P2PStateRepository.state.value,
+                P2PStateRepository.message.value
+            )
             rawLogLines.add(initial)
 
             withContext(Dispatchers.Main) { renderLogs() }
@@ -207,7 +211,8 @@ class LogViewerActivity : AppCompatActivity() {
                 }
                 reader.close()
             } catch (e: Exception) {
-                val errMsg = "[Error] Logcat reader terminated: ${e.message}"
+                android.util.Log.w("P2PTapLogs", "Logcat reader terminated", e)
+                val errMsg = getString(R.string.logs_reader_failed)
                 rawLogLines.add(errMsg)
                 withContext(Dispatchers.Main) { renderLogs() }
             } finally {
@@ -246,7 +251,10 @@ class LogViewerActivity : AppCompatActivity() {
 
         val spannable = buildSyntaxHighlightedLogs(filteredList)
         binding.tvLogs.text = spannable
-        binding.tvLogStats.text = getString(R.string.msg_filtered_logs_fmt, filteredList.size, rawLogLines.size)
+        val logTotal = rawLogLines.size
+        binding.tvLogStats.text = resources.getQuantityString(
+            R.plurals.msg_filtered_logs_fmt, logTotal, filteredList.size, logTotal
+        )
 
         if (!isPaused) {
             binding.scrollView.post {
@@ -258,7 +266,7 @@ class LogViewerActivity : AppCompatActivity() {
     private fun buildSyntaxHighlightedLogs(lines: List<String>): SpannableStringBuilder {
         val ssb = SpannableStringBuilder()
         if (lines.isEmpty()) {
-            ssb.append("[System] 无匹配日志记录\n")
+            ssb.append(getString(R.string.logs_empty) + "\n")
             return ssb
         }
 

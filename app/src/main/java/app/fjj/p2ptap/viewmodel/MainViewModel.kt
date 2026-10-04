@@ -1,98 +1,62 @@
-﻿package app.fjj.p2ptap.viewmodel
+package app.fjj.p2ptap.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.fjj.p2ptap.service.NodeMetrics
 import app.fjj.p2ptap.service.P2PStateRepository
-import app.fjj.p2ptap.service.PeerItemData
-import app.fjj.p2ptap.service.P2PTapVpnService
+import app.fjj.p2ptap.service.StatsSnapshotParser
 import com.p2ptap.P2PTap.P2PTap
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import android.util.Log
-import org.json.JSONObject
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     private val refreshMutex = Mutex()
     val status = P2PStateRepository.status
-    val state: StateFlow<String> = P2PStateRepository.state
-    val message: StateFlow<String> = P2PStateRepository.message
-    val metrics: StateFlow<NodeMetrics> = P2PStateRepository.metrics
-    val peers: StateFlow<List<PeerItemData>> = P2PStateRepository.peers
+    val state = P2PStateRepository.state
+    val message = P2PStateRepository.message
+    val metrics = P2PStateRepository.metrics
+    val peers = P2PStateRepository.peers
+    val telemetry = P2PStateRepository.telemetry
 
     fun refreshPeers() {
-        if (!P2PTapVpnService.isRunning()) return
-        viewModelScope.launch(Dispatchers.IO) {
-            if (!refreshMutex.tryLock()) return@launch
-            val revision = P2PStateRepository.sessionRevision
-            try {
-                if (!P2PTapVpnService.isRunning()) return@launch
-                val statsJsonStr = P2PTap.getStatsJSON()
-                if (statsJsonStr.isNullOrBlank()) return@launch
-                val statsJson = JSONObject(statsJsonStr)
-                val peersArray = statsJson.optJSONArray("active_peers") ?: return@launch
-                val list = mutableListOf<PeerItemData>()
-                for (i in 0 until peersArray.length()) {
-                    val peer = peersArray.getJSONObject(i)
-                    val peerId = peer.optString("peer_id", "-")
-                    val rawNodeName = peer.optString("node_name", "")
-                    val nodeName = if (rawNodeName.isNotBlank()) {
-                        rawNodeName
-                    } else if (peerId.length > 8) {
-                        "Peer-${peerId.takeLast(6)}"
-                    } else {
-                        "Peer-$i"
-                    }
-                    val tapIp = peer.optString("tap_ip", "")
-                    val tapIpv6 = peer.optString("tap_ipv6", "")
-                    val connState = peer.optString("conn_state", "unknown")
-                    val addr = peer.optString("addr", peer.optString("multiaddr", ""))
-                    val transport = peer.optString("transport", "P2P")
-                    val transportScore = peer.optInt("transport_score", 999)
-                    val transportPriority = peer.optString("transport_priority", "")
-                    val rtt = peer.optDouble("rtt_ms", 0.0)
-                    val rttMeasured = peer.optBoolean("rtt_measured", false)
-                    val txBytes = peer.optLong("total_tx", peer.optLong("tx_bytes", 0L))
-                    val rxBytes = peer.optLong("total_rx", peer.optLong("rx_bytes", 0L))
-                    val osArch = peer.optString("os_arch", peer.optString("os", ""))
-                    val version = peer.optString("version", "")
-                    val isExitNode = peer.optBoolean("is_exit_node", false)
-                    val isRelayed = peer.optBoolean("is_relayed", connState == "relay_ok")
-                    val isDirect = connState == "ok" && !isRelayed
+        viewModelScope.launch { refreshStats() }
+    }
 
-                    list.add(
-                        PeerItemData(
-                            peerId = peerId,
-                            nodeName = nodeName,
-                            tapIp = tapIp,
-                            tapIpv6 = tapIpv6,
-                            isDirect = isDirect,
-                            isRelayed = isRelayed,
-                            connState = connState,
-                            multiaddr = addr,
-                            transport = transport,
-                            transportScore = transportScore,
-                            transportPriority = transportPriority,
-                            rtt = rtt,
-                            rttMeasured = rttMeasured,
-                            txBytes = txBytes,
-                            rxBytes = rxBytes,
-                            os = osArch,
-                            version = version,
-                            isExitNode = isExitNode
-                        )
-                    )
-                }
-                P2PStateRepository.updatePeers(list, revision)
+    /**
+     * Telemetry is polled by the UI and also pulled on every onResume, which
+     * used to mean two getStatsJSON round-trips plus a full JSON parse within a
+     * few hundred milliseconds. A short TTL collapses those into one: the
+     * caller gets the value it asked for, and the next call inside the window
+     * reuses the freshest snapshot instead of hitting the engine again.
+     *
+     * 1200ms is short enough that live throughput still looks continuous, and
+     * long enough to absorb a resume + poll tick landing together.
+     */
+    private val telemetryTtlMs = 1_200L
+
+    suspend fun refreshStats(): Boolean = withContext(Dispatchers.IO) {
+        val now = System.currentTimeMillis()
+        if (P2PStateRepository.telemetryFresh(now, telemetryTtlMs)) return@withContext true
+
+        val revision = P2PStateRepository.sessionRevision
+        refreshMutex.withLock {
+            try {
+                if (!P2PStateRepository.beginRefresh(revision)) return@withLock false
+                val snapshot = StatsSnapshotParser.parse(P2PTap.getStatsJSON().orEmpty())
+                val applied = P2PStateRepository.finishRefresh(snapshot, revision)
+                if (applied) P2PStateRepository.markSnapshotFresh(System.currentTimeMillis())
+                applied
             } catch (cancelled: CancellationException) {
+                P2PStateRepository.finishRefresh(null, revision)
                 throw cancelled
             } catch (error: Exception) {
-                Log.w("MainViewModel", "Unable to refresh Go peer snapshot", error)
-            } finally {
-                refreshMutex.unlock()
+                Log.w("MainViewModel", "Unable to refresh Go telemetry", error)
+                P2PStateRepository.finishRefresh(null, revision)
+                false
             }
         }
     }

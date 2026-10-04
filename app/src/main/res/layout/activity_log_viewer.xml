@@ -189,7 +189,7 @@
                     android:textColor="@color/log_text"
                     android:textSize="12sp"
                     android:textIsSelectable="true"
-                    android:text="[System] Initializing P2PTap logger...\n" />
+                    android:text="@string/logs_initializing" />
             </ScrollView>
 
         </com.google.android.material.card.MaterialCardView>
@@ -207,7 +207,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="0 lines loaded"
+                android:text="@string/telemetry_loading"
                 android:textSize="12sp"
                 android:textColor="@color/text_secondary" />
 

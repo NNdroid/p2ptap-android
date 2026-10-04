@@ -21,3 +21,4 @@ local.properties
 /app/release
 
 /.artifacts
+.kotlin/

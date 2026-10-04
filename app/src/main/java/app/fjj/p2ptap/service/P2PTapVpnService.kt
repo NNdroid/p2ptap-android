@@ -1,5 +1,7 @@
 package app.fjj.p2ptap.service
 
+import app.fjj.p2ptap.i18n.UiMessages
+
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,6 +29,7 @@ import com.p2ptap.P2PTap.P2PTap
 import com.p2ptap.P2PTap.InterfaceProvider
 import com.p2ptap.P2PTap.Protector
 import com.p2ptap.P2PTap.StateListener
+import com.p2ptap.P2PTap.ConfigStore
 import java.net.NetworkInterface
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
@@ -44,6 +47,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
 
         const val EXTRA_STATE = "extra_state"
         const val EXTRA_MESSAGE = "extra_message"
+        const val EXTRA_FORCE_RESTART = "extra_force_restart"
 
         const val STATE_IDLE = "IDLE"
         const val STATE_STARTING = "STARTING"
@@ -61,6 +65,9 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             private set
 
         fun isRunning(): Boolean = currentState == STATE_RUNNING
+
+        @Volatile private var activeConfig: P2PConfig? = null
+        fun runningConfiguration(): P2PConfig? = if (isRunning()) activeConfig?.snapshot() else null
     }
 
     private val notificationChannelId = "p2ptap_vpn_channel"
@@ -105,7 +112,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 return START_NOT_STICKY
             }
             ACTION_RELOAD -> {
-                requestReload(snapshotConfig(AppConfigManager.load(this)))
+                requestReload(snapshotConfig(AppConfigManager.load(this)), intent.getBooleanExtra(EXTRA_FORCE_RESTART, false))
                 return START_STICKY
             }
             ACTION_START, null -> {
@@ -156,6 +163,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         updateState(STATE_STARTING)
         var nativeStarted = false
         try {
+            AppConfigManager.validate(this, config)
             if (P2PTap.isRunning()) {
                 Log.w(TAG, "Found an unowned native instance; stopping it before start")
                 P2PTap.stop()
@@ -198,6 +206,14 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 }
             })
             P2PTap.setInterfaceProvider(this)
+            P2PTap.setConfigStore(object : ConfigStore {
+                override fun saveConfig(cfgJSON: String?) {
+                    if (nativeSession != nativeSessionGeneration.get() || destroyed || !desiredRunning) {
+                        throw app.fjj.p2ptap.i18n.LocalizedException(R.string.error_vpn_session_ended)
+                    }
+                    AppConfigManager.saveEngineConfig(applicationContext, requireNotNull(cfgJSON))
+                }
+            })
             P2PTap.start(cfgJson, tunFd.toLong())
             nativeStarted = true
 
@@ -209,6 +225,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             }
 
             cachedConfig = snapshotConfig(config)
+            activeConfig = snapshotConfig(config)
             updateState(STATE_RUNNING)
             registerNetworkCallback()
             val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -230,7 +247,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 desiredRunning = false
                 val msg = e.message ?: "Unknown error"
                 val isTimeout = msg.contains("timeout", ignoreCase = true) || msg.contains("deadline", ignoreCase = true)
-                updateState(if (isTimeout) STATE_TIMEOUT else STATE_ERROR, msg)
+                updateState(if (isTimeout) STATE_TIMEOUT else STATE_ERROR, UiMessages.describe(this, e))
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelfResult(lastStartId)
             }
@@ -265,7 +282,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         stopSelfResult(lastStartId)
     }
 
-    private fun requestReload(newConfig: P2PConfig) {
+    private fun requestReload(newConfig: P2PConfig, forceRestart: Boolean = false) {
         if (!desiredRunning && currentState != STATE_RUNNING) {
             desiredRunning = true
             val generation = lifecycleGeneration.incrementAndGet()
@@ -276,18 +293,27 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         }
 
         val generation = lifecycleGeneration.incrementAndGet()
-        submitLifecycle { reloadVpnInternal(generation, newConfig) }
+        submitLifecycle { reloadVpnInternal(generation, newConfig, forceRestart) }
     }
 
-    private fun reloadVpnInternal(generation: Long, newConfig: P2PConfig) {
+    private fun reloadVpnInternal(generation: Long, newConfig: P2PConfig, forceRestart: Boolean = false) {
         if (!desiredRunning || generation != lifecycleGeneration.get()) return
+        try {
+            AppConfigManager.validate(this, newConfig)
+        } catch (e: Exception) {
+            Log.e(TAG, "Rejected configuration; keeping the running VPN", e)
+            Handler(Looper.getMainLooper()).post {
+                android.widget.Toast.makeText(this, getString(R.string.config_invalid_fmt, UiMessages.describe(this, e)), android.widget.Toast.LENGTH_LONG).show()
+            }
+            return
+        }
         val oldConfig = cachedConfig
         if (!P2PTap.isRunning() || oldConfig == null) {
             startVpnInternal(generation, newConfig)
             return
         }
 
-        when (planVpnReload(oldConfig, newConfig)) {
+        when (planVpnReload(oldConfig, newConfig, forceRestart)) {
             VpnReloadPlan.NONE -> return
             VpnReloadPlan.HOT -> {
                 try {
@@ -299,6 +325,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                         else P2PTap.setExitNode(newConfig.exitNode, "", "")
                     }
                     cachedConfig = snapshotConfig(newConfig)
+                    activeConfig = snapshotConfig(newConfig)
                     Log.i(TAG, "Applied hot-reloadable P2PTap configuration")
                     return
                 } catch (e: Exception) {
@@ -330,10 +357,12 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     }
 
     private fun clearNativeCallbacks() {
+        activeConfig = null
         nativeSessionGeneration.incrementAndGet()
         // gomobile exposes Java platform types, so null clears the retained
         // Service instances without requiring a new binary API method.
         P2PTap.setStateListener(null)
+        P2PTap.setConfigStore(null)
         P2PTap.setInterfaceProvider(null)
         P2PTap.setProtector(null)
     }
@@ -520,7 +549,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         }
 
         // Allow app traffic through VPN
-        val pfd = builder.establish() ?: throw IllegalStateException("VpnService.Builder.establish() returned null")
+        val pfd = builder.establish() ?: throw app.fjj.p2ptap.i18n.LocalizedException(R.string.error_vpn_establish)
         // Transfer file descriptor ownership completely to Go native engine
         return pfd.detachFd()
     }
@@ -570,10 +599,10 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 notificationChannelId,
-                "P2PTap VPN Service",
+                getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Shows P2PTap VPN connection status"
+                description = getString(R.string.notification_channel_description)
                 setShowBadge(false)
             }
             val manager = getSystemService(NotificationManager::class.java)
@@ -620,7 +649,10 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         // RUNNING or make an in-progress restart look IDLE.
         if (targetState == STATE_RUNNING || targetState == STATE_IDLE) return
         if (!desiredRunning) return
-        updateState(targetState, m)
+        if (targetState == STATE_ERROR || targetState == STATE_TIMEOUT) {
+            Log.w(TAG, "Native state $targetState: $m")
+            updateState(targetState, if (targetState == STATE_TIMEOUT) getString(R.string.error_timeout) else UiMessages.nativeError(this, m))
+        } else updateState(targetState)
     }
 
     override fun onMetricsUpdate(

@@ -1,5 +1,7 @@
 package app.fjj.p2ptap.ui
 
+import app.fjj.p2ptap.i18n.UiMessages
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -40,17 +42,18 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
                     val reader = BufferedReader(InputStreamReader(inputStream))
                     val jsonStr = reader.readText()
                     val (cfg, restoredPid) = AppConfigManager.importBackupOrConfig(requireContext(), jsonStr)
+                    AppConfigManager.reloadRunningService(requireContext(), forceRestart = true)
                     val msg = if (restoredPid != null) {
-                        "导入成功！已恢复配置及 Peer ID: " + restoredPid.take(12) + "..."
+                        getString(R.string.msg_identity_restored_fmt, restoredPid.take(12) + "…")
                     } else {
-                        getString(R.string.msg_import_success)
+                        getString(R.string.msg_imported_saved)
                     }
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                     onImportSuccess?.invoke()
                     dismiss()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), getString(R.string.msg_import_failed) + e.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.msg_import_failed) + UiMessages.describe(requireContext(), e), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -94,7 +97,7 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
             try {
                 val bundleJson = AppConfigManager.exportFullBackupBundle(ctx)
                 val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                cm.setPrimaryClip(ClipData.newPlainText("P2PTap Full Backup", bundleJson))
+                cm.setPrimaryClip(ClipData.newPlainText(getString(R.string.action_export_bundle), bundleJson))
                 Toast.makeText(ctx, getString(R.string.msg_backup_copied), Toast.LENGTH_SHORT).show()
 
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -105,7 +108,7 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.opt_share_file)))
                 dismiss()
             } catch (e: Exception) {
-                Toast.makeText(ctx, e.message ?: "", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, UiMessages.describe(ctx, e), Toast.LENGTH_LONG).show()
             }
         }
 
@@ -114,7 +117,7 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
             val cfg = AppConfigManager.load(ctx)
             val jsonStr = cfg.toExportJson()
             val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            cm.setPrimaryClip(ClipData.newPlainText("P2PTap Config", jsonStr))
+            cm.setPrimaryClip(ClipData.newPlainText(getString(R.string.action_export_config_only), jsonStr))
             Toast.makeText(ctx, getString(R.string.msg_config_copied), Toast.LENGTH_SHORT).show()
             dismiss()
         }
@@ -124,11 +127,11 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
             try {
                 val keyB64 = AppConfigManager.exportIdentityKeyBase64(ctx)
                 val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                cm.setPrimaryClip(ClipData.newPlainText("Peer ID Private Key", keyB64))
+                cm.setPrimaryClip(ClipData.newPlainText(getString(R.string.action_export_key_only), keyB64))
                 Toast.makeText(ctx, getString(R.string.msg_key_copied), Toast.LENGTH_SHORT).show()
                 dismiss()
             } catch (e: Exception) {
-                Toast.makeText(ctx, e.message ?: "", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, UiMessages.describe(ctx, e), Toast.LENGTH_LONG).show()
             }
         }
 
@@ -180,29 +183,35 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
         if (info.isFullConfig && info.fullConfig != null) {
             try {
                 val (cfg, restoredPid) = AppConfigManager.importBackupOrConfig(ctx, raw)
+                AppConfigManager.reloadRunningService(ctx, forceRestart = true)
                 val msg = if (restoredPid != null) {
-                    getString(R.string.msg_key_loaded_fmt, restoredPid.take(12) + "...")
+                    getString(R.string.msg_identity_restored_fmt, restoredPid.take(12) + "…")
                 } else {
-                    getString(R.string.msg_import_success)
+                    getString(R.string.msg_imported_saved)
                 }
                 Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show()
                 onImportSuccess?.invoke()
                 dismiss()
                 return
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                Toast.makeText(ctx, getString(R.string.msg_import_failed) + UiMessages.describe(requireContext(), e), Toast.LENGTH_LONG).show()
+                return
+            }
         }
 
         // Otherwise show interactive action dialog for scanned peer info
         QrImportHelper.showScanResultDialog(
             context = ctx,
             info = info,
-            onAddStatic = { multiaddr ->
+            onAddStatic = { addresses ->
                 val cfg = AppConfigManager.load(ctx)
                 val current = cfg.staticPeers.toMutableList()
-                if (!current.contains(multiaddr)) {
-                    current.add(multiaddr)
+                val additions = addresses.filterNot { it in current }
+                if (additions.isNotEmpty()) {
+                    current.addAll(additions)
                     cfg.staticPeers = current
                     AppConfigManager.save(ctx, cfg)
+                    AppConfigManager.reloadRunningService(ctx)
                     Toast.makeText(ctx, getString(R.string.msg_address_added), Toast.LENGTH_SHORT).show()
                     onImportSuccess?.invoke()
                     dismiss()
@@ -210,13 +219,15 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
                     Toast.makeText(ctx, getString(R.string.msg_peer_already_exists), Toast.LENGTH_SHORT).show()
                 }
             },
-            onAddBootstrap = { multiaddr ->
+            onAddBootstrap = { addresses ->
                 val cfg = AppConfigManager.load(ctx)
                 val current = cfg.bootstrapPeers.toMutableList()
-                if (!current.contains(multiaddr)) {
-                    current.add(multiaddr)
+                val additions = addresses.filterNot { it in current }
+                if (additions.isNotEmpty()) {
+                    current.addAll(additions)
                     cfg.bootstrapPeers = current
                     AppConfigManager.save(ctx, cfg)
+                    AppConfigManager.reloadRunningService(ctx)
                     Toast.makeText(ctx, getString(R.string.msg_address_added), Toast.LENGTH_SHORT).show()
                     onImportSuccess?.invoke()
                     dismiss()
@@ -226,6 +237,7 @@ class BackupDialog(private val onImportSuccess: (() -> Unit)? = null) : BottomSh
             },
             onImportFull = { fullConfig ->
                 AppConfigManager.save(ctx, fullConfig)
+                AppConfigManager.reloadRunningService(ctx, forceRestart = true)
                 Toast.makeText(ctx, getString(R.string.msg_imported_saved), Toast.LENGTH_LONG).show()
                 onImportSuccess?.invoke()
                 dismiss()

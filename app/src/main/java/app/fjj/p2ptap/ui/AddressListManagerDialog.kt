@@ -1,5 +1,7 @@
 package app.fjj.p2ptap.ui
 
+import app.fjj.p2ptap.i18n.UiMessages
+
 import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -17,6 +19,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.fjj.p2ptap.R
+import app.fjj.p2ptap.config.AppConfigManager
+import app.fjj.p2ptap.config.splitPeerAddresses
 import app.fjj.p2ptap.databinding.DialogAddressListManagerBinding
 import app.fjj.p2ptap.databinding.ItemAddressCardBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -169,9 +173,16 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             if (isTextMode) {
                 val raw = binding.etRawAddresses.text?.toString() ?: ""
                 items.clear()
-                items.addAll(raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
+                items.addAll(parseAddressText(raw))
             }
-            onSaveCallback?.invoke(items.toList())
+            val result = try {
+                if (isPeerAddressList()) AppConfigManager.normalizePeerAddresses(items.toList())
+                else items.distinct()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), getString(R.string.config_invalid_fmt, UiMessages.describe(requireContext(), e)), Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            onSaveCallback?.invoke(result)
             dismiss()
         }
 
@@ -209,7 +220,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
         } else {
             val raw = binding.etRawAddresses.text?.toString() ?: ""
             items.clear()
-            items.addAll(raw.lines().map { it.trim() }.filter { it.isNotEmpty() })
+            items.addAll(parseAddressText(raw))
             adapter.notifyDataSetChanged()
             updateEmptyState()
 
@@ -227,8 +238,8 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
 
     private fun showAddAddressDialog() {
         val defaultHint = when (listType) {
-            AddressListType.ALLOWED_SUBNET_PEERS -> "输入 Peer ID (如 12D3...) 或 * (允许所有)"
-            AddressListType.DNS_SERVERS -> "输入 DNS 服务器 IP (如 1.1.1.1，留空为系统默认)"
+            AddressListType.ALLOWED_SUBNET_PEERS -> getString(R.string.hint_allowed_peer_entry)
+            AddressListType.DNS_SERVERS -> getString(R.string.hint_dns_entry)
             else -> getString(R.string.hint_input_address)
         }
 
@@ -245,7 +256,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             .setPositiveButton(R.string.btn_add_address) { _, _ ->
                 val text = editText.text.toString().trim()
                 if (text.isNotBlank()) {
-                    val newLines = text.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+                    val newLines = parseAddressText(text, splitCommas = true)
                     items.addAll(newLines)
                     adapter.notifyDataSetChanged()
                     updateEmptyState()
@@ -271,8 +282,11 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             .setPositiveButton(R.string.msg_config_saved) { _, _ ->
                 val text = editText.text.toString().trim()
                 if (text.isNotBlank() && index in items.indices) {
-                    items[index] = text
-                    adapter.notifyItemChanged(index)
+                    val replacements = if (isPeerAddressList()) splitPeerAddresses(text) else listOf(text)
+                    items.removeAt(index)
+                    items.addAll(index, replacements)
+                    adapter.notifyDataSetChanged()
+                    updateEmptyState()
                     Toast.makeText(requireContext(), getString(R.string.msg_address_updated), Toast.LENGTH_SHORT).show()
                 }
             }
@@ -286,7 +300,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
         if (clip != null && clip.itemCount > 0) {
             val text = clip.getItemAt(0).text?.toString()?.trim() ?: ""
             if (text.isNotBlank()) {
-                val newLines = text.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+                val newLines = parseAddressText(text, splitCommas = true)
                 items.addAll(newLines)
                 adapter.notifyDataSetChanged()
                 updateEmptyState()
@@ -297,8 +311,26 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
         Toast.makeText(requireContext(), getString(R.string.msg_clipboard_empty), Toast.LENGTH_SHORT).show()
     }
 
+    private fun parseAddressText(text: String, splitCommas: Boolean = false): List<String> = when {
+        isPeerAddressList() -> splitPeerAddresses(text)
+        splitCommas -> text.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+        else -> text.lines().map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
     private fun handleScannedContent(raw: String) {
         val extractedAddrs = QrImportHelper.extractAddresses(raw)
+        if (isPeerAddressList()) {
+            try {
+                if (extractedAddrs.isEmpty()) throw app.fjj.p2ptap.i18n.LocalizedException(R.string.config_peer_endpoint_required)
+                items.addAll(AppConfigManager.normalizePeerAddresses(extractedAddrs).filterNot { it in items })
+                adapter.notifyDataSetChanged()
+                updateEmptyState()
+                Toast.makeText(requireContext(), getString(R.string.msg_scan_success), Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), getString(R.string.config_invalid_fmt, UiMessages.describe(requireContext(), e)), Toast.LENGTH_LONG).show()
+            }
+            return
+        }
         if (extractedAddrs.isNotEmpty()) {
             if (listType == AddressListType.ALLOWED_SUBNET_PEERS) {
                 // If scanned full multiaddr or payload, extract pure PeerID if possible
@@ -318,6 +350,8 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), getString(R.string.msg_scan_success), Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun isPeerAddressList() = listType == AddressListType.STATIC_PEERS || listType == AddressListType.BOOTSTRAP_PEERS
 
     inner class AddressAdapter(
         private val items: List<String>,
@@ -354,16 +388,16 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
         private fun detectProtocolBadge(addr: String): Pair<String, String> {
             val lower = addr.lowercase()
             return when {
-                addr.trim() == "*" -> "ALL" to "#10B981"
+                addr.trim() == "*" -> getString(R.string.protocol_all) to "#10B981"
                 addr.startsWith("12D3") || addr.startsWith("Qm") -> "Peer ID" to "#6366F1"
                 lower.contains("quic-v1") || lower.contains("quic") -> "QUIC-v1" to "#0891B2"
                 lower.contains("webrtc") -> "WebRTC" to "#10B981"
                 lower.contains("webtransport") -> "WebTransport" to "#6366F1"
-                lower.contains("p2p-circuit") -> "Relay" to "#8B5CF6"
+                lower.contains("p2p-circuit") -> getString(R.string.protocol_relay) to "#8B5CF6"
                 lower.contains("/tcp/") -> "TCP" to "#F59E0B"
                 lower.contains("/ip6/") || lower.contains("::") -> "IPv6" to "#7C3AED"
                 lower.contains("/") && lower.contains(".") -> "CIDR" to "#2563EB"
-                else -> "Endpoint" to "#06B6D4"
+                else -> getString(R.string.protocol_endpoint) to "#06B6D4"
             }
         }
     }

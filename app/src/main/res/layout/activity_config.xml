@@ -84,7 +84,7 @@
                             android:layout_weight="1"
                             android:ellipsize="middle"
                             android:singleLine="true"
-                            android:text="Peer ID: -"
+                            android:text="@string/label_peer_id"
                             android:textColor="@color/brand_primary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -363,6 +363,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilStaticPeers"
+                        app:helperText="@string/config_static_help"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -605,6 +606,7 @@
                     <!-- Transport Strategy Dropdown -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/menuTransportStrategy"
+                        app:helperText="@string/config_strategy_help"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

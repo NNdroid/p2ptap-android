@@ -48,7 +48,7 @@ class QrDialog : BottomSheetDialogFragment() {
         val cfg = AppConfigManager.load(ctx)
         val peerId = AppConfigManager.getPeerId(ctx)
 
-        binding.tvQrNodeName.text = if (cfg.nodeName.isNotBlank()) cfg.nodeName else "Android-Node"
+        binding.tvQrNodeName.text = if (cfg.nodeName.isNotBlank()) cfg.nodeName else getString(R.string.scan_node_unknown)
 
         if (peerId.isNotBlank()) {
             binding.tvQrPeerId.text = peerId
@@ -104,40 +104,40 @@ class QrDialog : BottomSheetDialogFragment() {
         } catch (_: Exception) {}
 
         binding.ivCopyPeerId.setOnClickListener {
-            copyToClipboard("Peer ID", peerId)
+            copyToClipboard(getString(R.string.label_peer_id), peerId)
         }
 
         binding.ivCopyIpv4.setOnClickListener {
-            copyToClipboard("Virtual IPv4", cfg.tapIp)
+            copyToClipboard(getString(R.string.label_tap_ip), cfg.tapIp)
         }
 
         binding.ivCopyIpv6.setOnClickListener {
-            copyToClipboard("Virtual IPv6", cfg.tapIpv6)
+            copyToClipboard(getString(R.string.label_tap_ipv6), cfg.tapIpv6)
         }
 
         binding.btnCopyQrUri.setOnClickListener {
-            copyToClipboard("P2PTap Connect URI", qrUri)
+            copyToClipboard(getString(R.string.label_connection_uri), qrUri)
             Toast.makeText(ctx, getString(R.string.msg_qr_copied), Toast.LENGTH_SHORT).show()
         }
 
         binding.btnShareQrText.setOnClickListener {
             val shareSummary = buildString {
-                append("P2PTap 节点连接卡片\n")
-                append("• 节点名称: ").append(cfg.nodeName).append("\n")
-                append("• 虚拟 IPv4: ").append(cfg.tapIp).append("\n")
+                append(getString(R.string.qr_connection_card_title)).append("\n")
+                append(getString(R.string.label_node_name)).append(": ").append(cfg.nodeName).append("\n")
+                append(getString(R.string.label_tap_ip)).append(": ").append(cfg.tapIp).append("\n")
                 if (cfg.tapIpv6.isNotBlank()) {
-                    append("• 虚拟 IPv6: ").append(cfg.tapIpv6).append("\n")
+                    append(getString(R.string.label_tap_ipv6)).append(": ").append(cfg.tapIpv6).append("\n")
                 }
-                append("• Peer ID: ").append(peerId).append("\n")
+                append(getString(R.string.label_peer_id)).append(": ").append(peerId).append("\n")
                 if (multiaddrsStr.isNotBlank()) {
-                    append("• 监听地址:\n").append(multiaddrsStr).append("\n")
+                    append(getString(R.string.label_multiaddrs)).append(":\n").append(multiaddrsStr).append("\n")
                 }
-                append("• 连接 URI:\n").append(qrUri)
+                append(getString(R.string.label_connection_uri)).append(":\n").append(qrUri)
             }
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_SUBJECT, "P2PTap Node: " + cfg.nodeName)
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.qr_share_subject_fmt, cfg.nodeName))
                 putExtra(Intent.EXTRA_TEXT, shareSummary)
             }
             startActivity(Intent.createChooser(shareIntent, getString(R.string.opt_share_file)))
@@ -153,7 +153,7 @@ class QrDialog : BottomSheetDialogFragment() {
         if (content.isNotBlank()) {
             val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             cm.setPrimaryClip(ClipData.newPlainText(label, content))
-            Toast.makeText(requireContext(), label + " " + getString(R.string.msg_copied_clipboard), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.msg_copied_label_fmt, label), Toast.LENGTH_SHORT).show()
         }
     }
 

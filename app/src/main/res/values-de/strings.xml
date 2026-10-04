@@ -152,7 +152,10 @@
     <string name="stat_total_rx_pkts">Empfangene Pakete</string>
     <string name="stat_dropped_pkts">Verworfene Pakete</string>
     <string name="stat_dropped_fmt">%1$d Pakete (Krypto-Fehler: %2$d)</string>
-    <string name="stat_packets_unit">%d Pakete</string>
+    <plurals name="stat_packets_unit">
+        <item quantity="one">%d Paket</item>
+        <item quantity="other">%d Pakete</item>
+    </plurals>
     <string name="stat_ipv4">IPv4-Pakete</string>
     <string name="stat_ipv6">IPv6-Pakete</string>
     <string name="stat_arp">ARP-Pakete</string>
@@ -245,12 +248,18 @@
     <string name="msg_key_loaded_fmt">Identitätsschlüssel geladen, Peer-ID: %s</string>
     <string name="err_key_load_fmt">Fehler beim Laden des Identitätsschlüssels: %s</string>
     <string name="err_invalid_ipv4">Bitte gültige IPv4-Adresse eingeben (z. B. 10.0.0.88/24)</string>
-    <string name="msg_filtered_logs_fmt">Zeige %1$d / %2$d Protokollzeilen</string>
+    <plurals name="msg_filtered_logs_fmt">
+        <item quantity="one">Zeige %1$d / %2$d Protokollzeile</item>
+        <item quantity="other">Zeige %1$d / %2$d Protokollzeilen</item>
+    </plurals>
     <string name="msg_clipboard_empty">Zwischenablage ist leer</string>
     <string name="msg_no_valid_addrs">Keine gültigen Adressen in der Zwischenablage gefunden</string>
     <string name="msg_imported_saved">Erfolgreich importiert und gespeichert!</string>
     <string name="msg_peer_already_exists">Peer ist bereits in der Liste vorhanden</string>
     <string name="hint_tls_sni">TLS/QUIC SNI (ausgehend, optional)</string>
     <string name="hint_tls_sni_suffix">TLS-SNI-Suffix pro Peer (optional)</string>
-    <string name="active_peers_fmt">%1$d Knoten\n%2$d direkt · %3$d Relay</string>
+    <plurals name="active_peers_fmt">
+        <item quantity="one">%1$d Knoten\n%2$d direkt · %3$d Relay</item>
+        <item quantity="other">%1$d Knoten\n%2$d direkt · %3$d Relay</item>
+    </plurals>
 </resources>
