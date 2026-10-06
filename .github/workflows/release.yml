@@ -14,6 +14,16 @@ on:
         options:
           - release
           - debug
+      create_release:
+        description: 'Publish a GitHub Release for this build; tag pushes always publish'
+        required: true
+        default: false
+        type: boolean
+      release_tag:
+        description: 'Existing tag to attach the release to, used when create_release is enabled'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -135,17 +145,47 @@ jobs:
           mkdir -p outputs
           
           TAG_NAME="${{ github.ref_name }}"
-          GO_COMMIT="${{ steps.build_go.outputs.go_commit }}"
-          
-          if [[ "${TAG_NAME}" == v* ]]; then
-            RELEASE_NAME="${TAG_NAME}"
-            APK_NAME="P2PTap-${TAG_NAME}-${GO_COMMIT}.apk"
-          else
-            RELEASE_NAME="v1.0-${GO_COMMIT}"
-            APK_NAME="P2PTap-v1.0-${GO_COMMIT}.apk"
+          INPUT_RELEASE_TAG="${{ github.event.inputs.release_tag }}"
+          INPUT_CREATE_RELEASE="${{ github.event.inputs.create_release }}"
+
+          # Gradle is the single source of truth for the version pair, set in
+          # app/build.gradle.kts: versionCode is APP_VERSION_CODE or the repo
+          # revision count, versionName is "1.0-<GO_COMMIT_HASH>". Read both back
+          # out of the APK that is about to be published, so the file and release
+          # names can never drift from what the APK actually carries.
+          AAPT2="${ANDROID_HOME}/build-tools/$(ls -1 "${ANDROID_HOME}/build-tools" | sort -V | tail -1)/aapt2"
+          BADGING="$("$AAPT2" dump badging app/build/outputs/apk/release/app-release.apk | head -1)"
+          VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionCode='\([0-9][0-9]*\)'.*/\1/p")"
+          VERSION_NAME="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
+          if [ -z "${VERSION_CODE}" ] || [ -z "${VERSION_NAME}" ]; then
+            echo "::error::could not read versionCode/versionName from the release APK: ${BADGING}"
+            exit 1
           fi
+          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
+          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
+          echo "Gradle version: ${VERSION_NAME} (${VERSION_CODE})"
+          
+          # A GitHub Release is keyed by a tag, and action-gh-release does not
+          # create missing tags. A v* tag push publishes the pushed tag; a manual
+          # build publishes release_tag when create_release is enabled, falling
+          # back to the gradle version.
+          RELEASE_TAG="v${VERSION_NAME}"
+          if [[ "${TAG_NAME}" == v* ]]; then
+            RELEASE_TAG="${TAG_NAME}"
+          elif [ "${INPUT_CREATE_RELEASE}" = "true" ]; then
+            RELEASE_TAG="${INPUT_RELEASE_TAG:-v${VERSION_NAME}}"
+            if ! git rev-parse -q --verify "refs/tags/${RELEASE_TAG}" >/dev/null \
+                && ! git ls-remote --exit-code --quiet --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null; then
+              echo "::error::create_release is enabled but tag '${RELEASE_TAG}' does not exist on origin"
+              echo "::error::pass release_tag, or push the tag before dispatching"
+              exit 1
+            fi
+          fi
+          RELEASE_NAME="${RELEASE_TAG}"
+          APK_NAME="P2PTap-${VERSION_NAME}-${VERSION_CODE}.apk"
           
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
           echo "APK_NAME=${APK_NAME}" >> $GITHUB_ENV
           
           if [ "${{ github.event.inputs.build_type }}" != "debug" ]; then
@@ -161,16 +201,17 @@ jobs:
           path: outputs/*.apk
           retention-days: 14
 
-      - name: Create GitHub Release (v* Tag Push)
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      - name: Create GitHub Release (v* Tag Push or create_release)
+        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.RELEASE_NAME }}
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ env.RELEASE_TAG }}
           body: |
             ## 🚀 P2PTap Release: ${{ env.RELEASE_NAME }}
             
-            - **Release Version**: `${{ github.ref_name }}`
+            - **Release Version**: `${{ env.RELEASE_NAME }}`
+            - **APK versionName / versionCode**: `${{ env.VERSION_NAME }}` / `${{ env.VERSION_CODE }}`
             - **Go Engine Commit**: `${{ steps.build_go.outputs.go_commit }}`
             
             ### 📦 Download & Installation
