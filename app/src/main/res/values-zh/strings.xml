@@ -1,18 +1,18 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap 虚拟局域网</string>
     <string name="action_settings">设置</string>
 
     <!-- Status -->
     <string name="status_disconnected">已断开连接</string>
-    <string name="status_connecting">正在连接...</string>
+    <string name="status_connecting">正在连接…</string>
     <string name="status_connected">已建立连接</string>
-    <string name="status_stopping">正在停止...</string>
+    <string name="status_stopping">正在停止…</string>
     <string name="status_timeout">连接超时</string>
     <string name="status_error">连接发生错误</string>
     <string name="status_hint_idle">点击连接加入 P2P 虚拟局域网</string>
     <string name="status_hint_connected">P2P 虚拟网就绪，正在双向加密路由</string>
-    <string name="status_hint_starting">正在建立隧道并发现全网节点...</string>
-    <string name="status_hint_stopping">正在释放网络接口并关闭内核...</string>
+    <string name="status_hint_starting">正在建立隧道并发现全网节点…</string>
+    <string name="status_hint_stopping">正在释放网络接口并关闭内核…</string>
     <string name="status_hint_timeout">在超时时间内无法连接到中继节点或对端</string>
 
     <!-- Buttons & Actions -->
@@ -85,7 +85,7 @@
 
     <!-- Log Viewer -->
     <string name="title_log_viewer">实时诊断日志</string>
-    <string name="hint_search_logs">搜索日志关键字、IP、Peer...</string>
+    <string name="hint_search_logs">搜索日志关键字、IP、Peer…</string>
     <string name="filter_all">全部</string>
     <string name="filter_info">信息 (INFO)</string>
     <string name="filter_warn">警告 (WARN)</string>
@@ -125,7 +125,7 @@
     <string name="opt_paste_clipboard">从剪贴板粘贴导入</string>
     <string name="opt_choose_file">选择本地 JSON 备份文件</string>
     <string name="prompt_vpn_not_running">提示：P2PTap VPN 必须先启动才能访问控制台</string>
-    <string name="notification_starting">正在启动 P2PTap VPN...</string>
+    <string name="notification_starting">正在启动 P2PTap VPN…</string>
     <string name="notification_running">P2PTap 虚拟局域网运行中</string>
     <string name="notification_action_disconnect">断开</string>
     <string name="tile_label">P2PTap 虚拟网</string>
@@ -144,7 +144,7 @@
     <string name="peers_offline_hint">VPN 未连接，请先在首页点击连接</string>
     <string name="peers_empty_title">暂无在线节点</string>
     <string name="peers_empty_offline">节点当前处于离线状态\n点击首页连接后即可自动发现并建立 P2P 虚拟网卡全互联</string>
-    <string name="peers_waiting_hint">暂无在线节点\n等待网络内其他 Peer 节点加入...</string>
+    <string name="peers_waiting_hint">暂无在线节点\n等待网络内其他 Peer 节点加入…</string>
     <string name="peers_summary_fmt">共 %1$d 个在线节点 (%2$d 直连, %3$d 中继)</string>
     <string name="badge_direct">⚡ 直连</string>
     <string name="badge_relay">🔁 中继</string>
@@ -169,7 +169,6 @@
     <string name="stat_dropped_pkts">丢弃数据包数</string>
     <string name="stat_dropped_fmt">%1$d 包 (校验错误: %2$d)</string>
     <plurals name="stat_packets_unit">
-        <item quantity="one">%d 个包</item>
         <item quantity="other">%d 个包</item>
     </plurals>
     <string name="stat_ipv4">IPv4 数据包</string>
@@ -214,7 +213,7 @@
     <string name="btn_paste_clip">📋 粘贴追加</string>
     <string name="btn_switch_text_mode">📝 批量文本模式</string>
     <string name="btn_switch_list_mode">📇 卡片列表模式</string>
-    <string name="hint_input_address">输入 /ip4/.../udp/.../p2p/... 或 IP/CIDR 地址</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">输入 /ip4/.../udp/.../p2p/... 或 IP/CIDR 地址</string>
     <string name="dialog_edit_address_title">编辑地址</string>
     <string name="dialog_add_address_title">添加新地址</string>
     <string name="msg_address_added">已添加新地址</string>
@@ -246,7 +245,7 @@
     <string name="dialog_exit_node_desc">选择通过哪台在线 Mesh 节点中转互联网/全局网关流量</string>
     <string name="exit_node_auto_title">自动 Mesh 直连模式 (默认)</string>
     <string name="exit_node_auto_desc">仅进行 P2P 虚拟局域网内部路由，公网流量保持本地出口。</string>
-    <string name="exit_node_custom_title">手动指定 Peer ID 或虚拟 IP...</string>
+    <string name="exit_node_custom_title">手动指定 Peer ID 或虚拟 IP…</string>
     <string name="section_active_peers">支持出口网关的在线节点</string>
     <string name="dialog_custom_exit_node_title">手动指定出口节点</string>
     <string name="hint_custom_exit_node">请输入出口节点的 Peer ID 或虚拟 IP (如 10.0.0.1)</string>
@@ -264,7 +263,6 @@
     <string name="err_key_load_fmt">加载身份密钥失败: %s</string>
     <string name="err_invalid_ipv4">请输入正确的 IPv4 地址（例如 10.0.0.88/24）</string>
     <plurals name="msg_filtered_logs_fmt">
-        <item quantity="one">显示 %1$d / %2$d 条日志</item>
         <item quantity="other">显示 %1$d / %2$d 条日志</item>
     </plurals>
     <string name="msg_clipboard_empty">剪贴板为空</string>
@@ -274,7 +272,6 @@
     <string name="exit_node_vpn_stopped_hint">VPN 服务已停止。
 请在主界面开启连接以查询出口网关节点。</string>
     <plurals name="active_peers_fmt">
-        <item quantity="one">%1$d 个节点\n%2$d 直连 · %3$d 中继</item>
         <item quantity="other">%1$d 个节点\n%2$d 直连 · %3$d 中继</item>
     </plurals>
     <string name="hint_tls_sni">TLS/QUIC SNI（出站，可选）</string>

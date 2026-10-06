@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap LAN Virtuel</string>
     <string name="action_settings">Paramètres</string>
     <string name="status_disconnected">Déconnecté</string>
-    <string name="status_connecting">Connexion en cours...</string>
+    <string name="status_connecting">Connexion en cours…</string>
     <string name="status_connected">Connecté</string>
-    <string name="status_stopping">Arrêt en cours...</string>
+    <string name="status_stopping">Arrêt en cours…</string>
     <string name="status_timeout">Délai dépassé</string>
     <string name="status_error">Erreur de connexion</string>
     <string name="status_hint_idle">Touchez Connecter pour rejoindre le réseau virtuel P2P</string>
     <string name="status_hint_connected">Réseau maillé P2P actif et routage chiffré</string>
-    <string name="status_hint_starting">Établissement du tunnel et découverte des pairs...</string>
-    <string name="status_hint_stopping">Libération du tunnel et arrêt du moteur...</string>
+    <string name="status_hint_starting">Établissement du tunnel et découverte des pairs…</string>
+    <string name="status_hint_stopping">Libération du tunnel et arrêt du moteur…</string>
     <string name="status_hint_timeout">Impossible d\'établir la connexion au pair/relais dans le délai imparti</string>
     <string name="btn_connect">Connecter</string>
     <string name="btn_disconnect">Déconnecter</string>
@@ -73,7 +73,7 @@
     <string name="switch_discover_boot_mesh">Découvrir le maillage dorsal Boot</string>
     <string name="switch_webui_enable">Activer la console Web intégrée</string>
     <string name="title_log_viewer">Journaux de diagnostic</string>
-    <string name="hint_search_logs">Rechercher par mot-clé, IP, pair...</string>
+    <string name="hint_search_logs">Rechercher par mot-clé, IP, pair…</string>
     <string name="filter_all">TOUT</string>
     <string name="filter_info">INFO</string>
     <string name="filter_warn">AVERT.</string>
@@ -109,7 +109,7 @@
     <string name="opt_paste_clipboard">Coller depuis le presse-papiers</string>
     <string name="opt_choose_file">Choisir un fichier JSON</string>
     <string name="prompt_vpn_not_running">Remarque : P2PTap VPN doit être actif pour accéder à la console</string>
-    <string name="notification_starting">Démarrage de P2PTap VPN...</string>
+    <string name="notification_starting">Démarrage de P2PTap VPN…</string>
     <string name="notification_running">P2PTap LAN Virtuel actif</string>
     <string name="notification_action_disconnect">Déconnecter</string>
     <string name="tile_label">P2PTap</string>
@@ -128,7 +128,7 @@
     <string name="peers_offline_hint">Le VPN n\'est pas connecté. Veuillez vous connecter d\'abord.</string>
     <string name="peers_empty_title">Aucun pair actif</string>
     <string name="peers_empty_offline">Le nœud est hors ligne.\nConnectez-vous pour découvrir les pairs.</string>
-    <string name="peers_waiting_hint">En attente d\'autres pairs...</string>
+    <string name="peers_waiting_hint">En attente d\'autres pairs…</string>
     <string name="peers_summary_fmt">Total %1$d pairs actifs (%2$d Direct, %3$d Relais)</string>
     <string name="badge_direct">⚡ Direct</string>
     <string name="badge_relay">🔁 Relais</string>
@@ -154,6 +154,7 @@
     <string name="stat_dropped_fmt">%1$d paquets (Erreurs crypto : %2$d)</string>
     <plurals name="stat_packets_unit">
         <item quantity="one">%d paquet</item>
+        <item quantity="many">%d paquets</item>
         <item quantity="other">%d paquets</item>
     </plurals>
     <string name="stat_ipv4">Paquets IPv4</string>
@@ -198,7 +199,7 @@
     <string name="btn_paste_clip">📋 Coller et ajouter</string>
     <string name="btn_switch_text_mode">📝 Mode texte par lot</string>
     <string name="btn_switch_list_mode">📇 Mode liste de cartes</string>
-    <string name="hint_input_address">Entrez /ip4/.../udp/.../p2p/... ou IP/CIDR</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">Entrez /ip4/.../udp/.../p2p/... ou IP/CIDR</string>
     <string name="dialog_edit_address_title">Modifier l\'adresse</string>
     <string name="dialog_add_address_title">Ajouter une adresse</string>
     <string name="msg_address_added">Nouvelle adresse ajoutée</string>
@@ -230,7 +231,7 @@
     <string name="dialog_exit_node_desc">Sélectionnez un pair pour relayer le trafic Internet</string>
     <string name="exit_node_auto_title">Mode Maillé Auto (Par défaut)</string>
     <string name="exit_node_auto_desc">Routage P2P interne uniquement. Le trafic externe utilise le réseau local.</string>
-    <string name="exit_node_custom_title">Saisir manuellement le Peer ID ou l\'IP virtuelle...</string>
+    <string name="exit_node_custom_title">Saisir manuellement le Peer ID ou l\'IP virtuelle…</string>
     <string name="section_active_peers">Pairs actifs dans le réseau</string>
     <string name="dialog_custom_exit_node_title">Nœud de sortie personnalisé</string>
     <string name="hint_custom_exit_node">Saisissez le Peer ID ou l\'IP virtuelle (ex: 10.0.0.1)</string>
@@ -242,7 +243,7 @@
     <string name="hint_dns_servers">Serveurs DNS (Laissez vide pour le DNS par défaut du système)</string>
     <string name="dialog_manage_dns">Gérer les serveurs DNS</string>
     <string name="vpn_permission_denied">Permission VPN refusée</string>
-    <string name="badge_connecting">Connexion...</string>
+    <string name="badge_connecting">Connexion…</string>
     <string name="badge_error">Erreur</string>
     <string name="auto_lowest_latency">Automatique (Latence minimale)</string>
     <string name="msg_key_loaded_fmt">Clé d\'identité chargée, Peer ID : %s</string>
@@ -250,6 +251,7 @@
     <string name="err_invalid_ipv4">Veuillez saisir une adresse IPv4 valide (ex. 10.0.0.88/24)</string>
     <plurals name="msg_filtered_logs_fmt">
         <item quantity="one">Affichage de %1$d / %2$d ligne de journal</item>
+        <item quantity="many">Affichage de %1$d / %2$d lignes de journal</item>
         <item quantity="other">Affichage de %1$d / %2$d lignes de journal</item>
     </plurals>
     <string name="msg_clipboard_empty">Le presse-papiers est vide</string>
@@ -260,6 +262,7 @@
     <string name="hint_tls_sni_suffix">Suffixe SNI TLS par pair (facultatif)</string>
     <plurals name="active_peers_fmt">
         <item quantity="one">%1$d pair\n%2$d directs · %3$d relais</item>
+        <item quantity="many">%1$d pairs\n%2$d directs · %3$d relais</item>
         <item quantity="other">%1$d pairs\n%2$d directs · %3$d relais</item>
     </plurals>
 </resources>

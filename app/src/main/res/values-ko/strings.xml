@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap 가상 LAN</string>
     <string name="action_settings">설정</string>
     <string name="status_disconnected">연결 끊김</string>
-    <string name="status_connecting">연결 중...</string>
+    <string name="status_connecting">연결 중…</string>
     <string name="status_connected">연결됨</string>
-    <string name="status_stopping">중지 중...</string>
+    <string name="status_stopping">중지 중…</string>
     <string name="status_timeout">연결 시간 초과</string>
     <string name="status_error">연결 오류</string>
     <string name="status_hint_idle">P2P 가상 네트워크에 연결하려면 누르세요</string>
     <string name="status_hint_connected">P2P 가상 메쉬 작동 중 (암호화 라우팅)</string>
-    <string name="status_hint_starting">터널 설정 및 피어 검색 중...</string>
-    <string name="status_hint_stopping">인터페이스 해제 및 엔진 중지 중...</string>
+    <string name="status_hint_starting">터널 설정 및 피어 검색 중…</string>
+    <string name="status_hint_stopping">인터페이스 해제 및 엔진 중지 중…</string>
     <string name="status_hint_timeout">시간 초과 내에 피어 또는 릴레이 연결을 설정하지 못했습니다</string>
     <string name="btn_connect">연결</string>
     <string name="btn_disconnect">연결 끊기</string>
@@ -74,7 +74,7 @@
     <string name="switch_discover_boot_mesh">부트스트랩 중계 메쉬 자동 검색</string>
     <string name="switch_webui_enable">내장 웹 콘솔 활성화</string>
     <string name="title_log_viewer">실시간 진단 로그</string>
-    <string name="hint_search_logs">키워드, IP, Peer 검색...</string>
+    <string name="hint_search_logs">키워드, IP, Peer 검색…</string>
     <string name="filter_all">전체</string>
     <string name="filter_info">정보 (INFO)</string>
     <string name="filter_warn">경고 (WARN)</string>
@@ -109,7 +109,7 @@
     <string name="opt_paste_clipboard">클립보드에서 붙여넣기</string>
     <string name="opt_choose_file">JSON 파일 선택</string>
     <string name="prompt_vpn_not_running">알림: 웹 콘솔에 액세스하려면 VPN이 실행 중이어야 합니다</string>
-    <string name="notification_starting">P2PTap VPN 시작 중...</string>
+    <string name="notification_starting">P2PTap VPN 시작 중…</string>
     <string name="notification_running">P2PTap 가상 네트워크 연결됨</string>
     <string name="notification_action_disconnect">연결 끊기</string>
     <string name="tile_label">P2PTap</string>
@@ -128,7 +128,7 @@
     <string name="peers_offline_hint">VPN이 연결되지 않았습니다. 홈 화면에서 연결하세요.</string>
     <string name="peers_empty_title">활성 피어 없음</string>
     <string name="peers_empty_offline">노드가 오프라인 상태입니다.\n연결을 시작하면 피어가 자동으로 검색됩니다.</string>
-    <string name="peers_waiting_hint">다른 피어 참가 대기 중...</string>
+    <string name="peers_waiting_hint">다른 피어 참가 대기 중…</string>
     <string name="peers_summary_fmt">총 %1$d개의 활성 피어 (%2$d 직접 연결, %3$d 릴레이)</string>
     <string name="badge_direct">⚡ 직접 연결</string>
     <string name="badge_relay">🔁 릴레이</string>
@@ -153,7 +153,6 @@
     <string name="stat_dropped_pkts">손실된 패킷 수</string>
     <string name="stat_dropped_fmt">%1$d 패킷 (암호화 오류: %2$d)</string>
     <plurals name="stat_packets_unit">
-        <item quantity="one">%d 패킷</item>
         <item quantity="other">%d 패킷</item>
     </plurals>
     <string name="stat_ipv4">IPv4 패킷</string>
@@ -198,7 +197,7 @@
     <string name="btn_paste_clip">📋 붙여넣기 추가</string>
     <string name="btn_switch_text_mode">📝 일괄 텍스트 모드</string>
     <string name="btn_switch_list_mode">📇 카드 목록 모드</string>
-    <string name="hint_input_address">/ip4/.../udp/.../p2p/... 또는 IP/CIDR 입력</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">/ip4/.../udp/.../p2p/... 또는 IP/CIDR 입력</string>
     <string name="dialog_edit_address_title">주소 편집</string>
     <string name="dialog_add_address_title">새 주소 추가</string>
     <string name="msg_address_added">새 주소가 추가되었습니다</string>
@@ -230,7 +229,7 @@
     <string name="dialog_exit_node_desc">인터넷/기본 게이트웨이 트래픽을 중계할 노드 선택</string>
     <string name="exit_node_auto_title">자동 메쉬 모드 (기본값)</string>
     <string name="exit_node_auto_desc">P2P 오버레이 내부 라우팅만 수행됩니다. 외부 인터넷은 로컬을 사용합니다.</string>
-    <string name="exit_node_custom_title">Peer ID 또는 가상 IP 수동 입력...</string>
+    <string name="exit_node_custom_title">Peer ID 또는 가상 IP 수동 입력…</string>
     <string name="section_active_peers">활성 피어 목록</string>
     <string name="dialog_custom_exit_node_title">사용자 지정 출구 노드</string>
     <string name="hint_custom_exit_node">Peer ID 또는 가상 IP 입력 (예: 10.0.0.1)</string>
@@ -249,7 +248,6 @@
     <string name="err_key_load_fmt">식별 키 로드 실패: %s</string>
     <string name="err_invalid_ipv4">올바른 IPv4 주소를 입력하세요 (예: 10.0.0.88/24)</string>
     <plurals name="msg_filtered_logs_fmt">
-        <item quantity="one">%1$d / %2$d 개의 로그 라인 표시 중</item>
         <item quantity="other">%1$d / %2$d 개의 로그 라인 표시 중</item>
     </plurals>
     <string name="msg_clipboard_empty">클립보드가 비어 있습니다</string>
@@ -259,7 +257,6 @@
     <string name="hint_tls_sni">TLS/QUIC SNI (송신, 선택 사항)</string>
     <string name="hint_tls_sni_suffix">피어별 TLS SNI 접미사 (선택 사항)</string>
     <plurals name="active_peers_fmt">
-        <item quantity="one">%1$d 노드\n%2$d 직접 · %3$d 릴레이</item>
         <item quantity="other">%1$d 노드\n%2$d 직접 · %3$d 릴레이</item>
     </plurals>
 </resources>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap Виртуальная сеть</string>
     <string name="action_settings">Настройки</string>
     <string name="status_disconnected">Отключено</string>
-    <string name="status_connecting">Подключение...</string>
+    <string name="status_connecting">Подключение…</string>
     <string name="status_connected">Подключено</string>
-    <string name="status_stopping">Остановка...</string>
+    <string name="status_stopping">Остановка…</string>
     <string name="status_timeout">Таймаут подключения</string>
     <string name="status_error">Ошибка подключения</string>
     <string name="status_hint_idle">Нажмите для подключения к P2P сети</string>
     <string name="status_hint_connected">P2P сеть активна, выполняется шифрованная маршрутизация</string>
-    <string name="status_hint_starting">Создание туннеля и поиск узлов...</string>
-    <string name="status_hint_stopping">Закрытие туннеля и остановка ядра...</string>
+    <string name="status_hint_starting">Создание туннеля и поиск узлов…</string>
+    <string name="status_hint_stopping">Закрытие туннеля и остановка ядра…</string>
     <string name="status_hint_timeout">Не удалось установить соединение с пиром или реле за время ожидания</string>
     <string name="btn_connect">Подключить</string>
     <string name="btn_disconnect">Отключить</string>
@@ -74,7 +74,7 @@
     <string name="switch_discover_boot_mesh">Обнаруживать Boot релейную сеть</string>
     <string name="switch_webui_enable">Включить встроенную веб-панель</string>
     <string name="title_log_viewer">Журнал диагностики</string>
-    <string name="hint_search_logs">Поиск по ключевым словам, IP, Peer...</string>
+    <string name="hint_search_logs">Поиск по ключевым словам, IP, Peer…</string>
     <string name="filter_all">ВСЕ</string>
     <string name="filter_info">ИНФО</string>
     <string name="filter_warn">ПРЕДУПР.</string>
@@ -109,7 +109,7 @@
     <string name="opt_paste_clipboard">Вставить из буфера обмена</string>
     <string name="opt_choose_file">Выбрать JSON файл</string>
     <string name="prompt_vpn_not_running">Внимание: Для доступа к панели VPN должен быть запущен</string>
-    <string name="notification_starting">Запуск P2PTap VPN...</string>
+    <string name="notification_starting">Запуск P2PTap VPN…</string>
     <string name="notification_running">P2PTap Виртуальная сеть активна</string>
     <string name="notification_action_disconnect">Отключить</string>
     <string name="tile_label">P2PTap</string>
@@ -128,7 +128,7 @@
     <string name="peers_offline_hint">VPN не подключен. Нажмите «Подключить» на главном экране.</string>
     <string name="peers_empty_title">Нет активных узлов</string>
     <string name="peers_empty_offline">Узел оффлайн.\nПодключитесь к сети для поиска других узлов.</string>
-    <string name="peers_waiting_hint">Ожидание подключения других узлов...</string>
+    <string name="peers_waiting_hint">Ожидание подключения других узлов…</string>
     <string name="peers_summary_fmt">Всего %1$d активных узлов (%2$d прямых, %3$d реле)</string>
     <string name="badge_direct">⚡ Прямое</string>
     <string name="badge_relay">🔁 Реле</string>
@@ -200,7 +200,7 @@
     <string name="btn_paste_clip">📋 Вставить из буфера</string>
     <string name="btn_switch_text_mode">📝 Пакетный текстовый режим</string>
     <string name="btn_switch_list_mode">📇 Режим списка карточек</string>
-    <string name="hint_input_address">Введите /ip4/.../udp/.../p2p/... или IP/CIDR</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">Введите /ip4/.../udp/.../p2p/... или IP/CIDR</string>
     <string name="dialog_edit_address_title">Редактировать адрес</string>
     <string name="dialog_add_address_title">Добавить новый адрес</string>
     <string name="msg_address_added">Новый адрес добавлен</string>
@@ -232,7 +232,7 @@
     <string name="dialog_exit_node_desc">Выберите узел для ретрансляции трафика интернета</string>
     <string name="exit_node_auto_title">Авто-режим Mesh (по умолчанию)</string>
     <string name="exit_node_auto_desc">Только маршрутизация внутри P2P сети. Внешний трафик идет локально.</string>
-    <string name="exit_node_custom_title">Ввести Peer ID или виртуальный IP вручную...</string>
+    <string name="exit_node_custom_title">Ввести Peer ID или виртуальный IP вручную…</string>
     <string name="section_active_peers">Активные узлы в сети</string>
     <string name="dialog_custom_exit_node_title">Пользовательский узел выхода</string>
     <string name="hint_custom_exit_node">Введите Peer ID или виртуальный IP (напр. 10.0.0.1)</string>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap LAN Virtual</string>
     <string name="action_settings">Ajustes</string>
     <string name="status_disconnected">Desconectado</string>
-    <string name="status_connecting">Conectando...</string>
+    <string name="status_connecting">Conectando…</string>
     <string name="status_connected">Conectado</string>
-    <string name="status_stopping">Deteniendo...</string>
+    <string name="status_stopping">Deteniendo…</string>
     <string name="status_timeout">Tiempo de espera agotado</string>
     <string name="status_error">Error de conexión</string>
     <string name="status_hint_idle">Toca conectar para unirte a la red virtual P2P</string>
     <string name="status_hint_connected">Malla virtual P2P activa y enrutando con cifrado</string>
-    <string name="status_hint_starting">Estableciendo túnel y descubriendo nodos...</string>
-    <string name="status_hint_stopping">Liberando túnel y deteniendo motor...</string>
+    <string name="status_hint_starting">Estableciendo túnel y descubriendo nodos…</string>
+    <string name="status_hint_stopping">Liberando túnel y deteniendo motor…</string>
     <string name="status_hint_timeout">No se pudo establecer conexión con el par/relé en el tiempo límite</string>
     <string name="btn_connect">Conectar</string>
     <string name="btn_disconnect">Desconectar</string>
@@ -73,7 +73,7 @@
     <string name="switch_discover_boot_mesh">Descubrir malla dorsal de Boot</string>
     <string name="switch_webui_enable">Habilitar consola Web integrada</string>
     <string name="title_log_viewer">Registros de diagnóstico</string>
-    <string name="hint_search_logs">Buscar en registros por palabra, IP...</string>
+    <string name="hint_search_logs">Buscar en registros por palabra, IP…</string>
     <string name="filter_all">TODO</string>
     <string name="filter_info">INFO</string>
     <string name="filter_warn">AVISO</string>
@@ -109,7 +109,7 @@
     <string name="opt_paste_clipboard">Pegar desde portapapeles</string>
     <string name="opt_choose_file">Elegir archivo JSON</string>
     <string name="prompt_vpn_not_running">Aviso: La VPN de P2PTap debe estar activa para acceder a la consola</string>
-    <string name="notification_starting">Iniciando VPN P2PTap...</string>
+    <string name="notification_starting">Iniciando VPN P2PTap…</string>
     <string name="notification_running">P2PTap LAN Virtual conectada</string>
     <string name="notification_action_disconnect">Desconectar</string>
     <string name="tile_label">P2PTap</string>
@@ -128,7 +128,7 @@
     <string name="peers_offline_hint">La VPN no está conectada. Conéctate primero.</string>
     <string name="peers_empty_title">Sin pares activos</string>
     <string name="peers_empty_offline">El nodo está desconectado.\nConéctate para descubrir pares.</string>
-    <string name="peers_waiting_hint">Esperando a que otros pares se unan...</string>
+    <string name="peers_waiting_hint">Esperando a que otros pares se unan…</string>
     <string name="peers_summary_fmt">Total %1$d pares activos (%2$d Directos, %3$d Relay)</string>
     <string name="badge_direct">⚡ Directo</string>
     <string name="badge_relay">🔁 Relay</string>
@@ -154,6 +154,7 @@
     <string name="stat_dropped_fmt">%1$d paquetes (Errores cripto: %2$d)</string>
     <plurals name="stat_packets_unit">
         <item quantity="one">%d paquete</item>
+        <item quantity="many">%d paquetes</item>
         <item quantity="other">%d paquetes</item>
     </plurals>
     <string name="stat_ipv4">Paquetes IPv4</string>
@@ -198,7 +199,7 @@
     <string name="btn_paste_clip">📋 Pegar y añadir</string>
     <string name="btn_switch_text_mode">📝 Modo texto por lotes</string>
     <string name="btn_switch_list_mode">📇 Modo lista de tarjetas</string>
-    <string name="hint_input_address">Introduce /ip4/.../udp/.../p2p/... o IP/CIDR</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">Introduce /ip4/.../udp/.../p2p/... o IP/CIDR</string>
     <string name="dialog_edit_address_title">Editar dirección</string>
     <string name="dialog_add_address_title">Añadir nueva dirección</string>
     <string name="msg_address_added">Nueva dirección añadida</string>
@@ -230,7 +231,7 @@
     <string name="dialog_exit_node_desc">Selecciona un nodo par para enrutar el tráfico de Internet</string>
     <string name="exit_node_auto_title">Modo Malla Automático (Predeterminado)</string>
     <string name="exit_node_auto_desc">Solo enrutamiento en la red P2P. El tráfico externo usa la red local.</string>
-    <string name="exit_node_custom_title">Ingresar Peer ID o IP virtual manualmente...</string>
+    <string name="exit_node_custom_title">Ingresar Peer ID o IP virtual manualmente…</string>
     <string name="section_active_peers">Pares activos en la red</string>
     <string name="dialog_custom_exit_node_title">Nodo de salida personalizado</string>
     <string name="hint_custom_exit_node">Introduce Peer ID o IP virtual (ej. 10.0.0.1)</string>
@@ -250,6 +251,7 @@
     <string name="err_invalid_ipv4">Ingrese una dirección IPv4 válida (ej. 10.0.0.88/24)</string>
     <plurals name="msg_filtered_logs_fmt">
         <item quantity="one">Mostrando %1$d / %2$d línea de registro</item>
+        <item quantity="many">Mostrando %1$d / %2$d líneas de registro</item>
         <item quantity="other">Mostrando %1$d / %2$d líneas de registro</item>
     </plurals>
     <string name="msg_clipboard_empty">El portapapeles está vacío</string>
@@ -260,6 +262,7 @@
     <string name="hint_tls_sni_suffix">Sufijo SNI TLS por nodo (opcional)</string>
     <plurals name="active_peers_fmt">
         <item quantity="one">%1$d nodo\n%2$d directos · %3$d retransmitidos</item>
+        <item quantity="many">%1$d nodos\n%2$d directos · %3$d retransmitidos</item>
         <item quantity="other">%1$d nodos\n%2$d directos · %3$d retransmitidos</item>
     </plurals>
 </resources>

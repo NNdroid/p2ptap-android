@@ -4,15 +4,15 @@
 
     <!-- Status -->
     <string name="status_disconnected">Disconnected</string>
-    <string name="status_connecting">Connecting...</string>
+    <string name="status_connecting">Connecting…</string>
     <string name="status_connected">Connected</string>
-    <string name="status_stopping">Stopping...</string>
+    <string name="status_stopping">Stopping…</string>
     <string name="status_timeout">Connection Timeout</string>
     <string name="status_error">Connection Error</string>
     <string name="status_hint_idle">Tap connect to join the P2P overlay</string>
     <string name="status_hint_connected">P2P virtual mesh is active and routing</string>
-    <string name="status_hint_starting">Establishing tunnel and discovering peers...</string>
-    <string name="status_hint_stopping">Releasing tunnel and stopping engine...</string>
+    <string name="status_hint_starting">Establishing tunnel and discovering peers…</string>
+    <string name="status_hint_stopping">Releasing tunnel and stopping engine…</string>
     <string name="status_hint_timeout">Unable to establish peer/relay connection within timeout</string>
 
     <!-- Buttons & Actions -->
@@ -87,7 +87,7 @@
 
     <!-- Log Viewer -->
     <string name="title_log_viewer">Diagnostic Logs</string>
-    <string name="hint_search_logs">Search logs by keyword, IP, peer...</string>
+    <string name="hint_search_logs">Search logs by keyword, IP, peer…</string>
     <string name="filter_all">ALL</string>
     <string name="filter_info">INFO</string>
     <string name="filter_warn">WARN</string>
@@ -127,7 +127,7 @@
     <string name="opt_paste_clipboard">Paste from Clipboard</string>
     <string name="opt_choose_file">Select JSON File</string>
     <string name="prompt_vpn_not_running">Notice: P2PTap VPN must be running to access the console</string>
-    <string name="notification_starting">Starting P2PTap VPN...</string>
+    <string name="notification_starting">Starting P2PTap VPN…</string>
     <string name="notification_running">P2PTap Connected</string>
     <string name="notification_action_disconnect">Disconnect</string>
     <string name="tile_label">P2PTap</string>
@@ -146,7 +146,7 @@
     <string name="peers_offline_hint">VPN is not connected. Tap Connect on home screen first.</string>
     <string name="peers_empty_title">No Active Peers</string>
     <string name="peers_empty_offline">Node is currently offline.\nTap Connect on home screen to discover and connect to peers.</string>
-    <string name="peers_waiting_hint">Waiting for other peers to join the virtual mesh...</string>
+    <string name="peers_waiting_hint">Waiting for other peers to join the virtual mesh…</string>
     <string name="peers_summary_fmt">Total %1$d Active Peers (%2$d Direct, %3$d Relay)</string>
     <string name="badge_direct">⚡ Direct</string>
     <string name="badge_relay">🔁 Relay</string>
@@ -216,7 +216,7 @@
     <string name="btn_paste_clip">📋 Paste Append</string>
     <string name="btn_switch_text_mode">📝 Batch Text Mode</string>
     <string name="btn_switch_list_mode">📇 Card List Mode</string>
-    <string name="hint_input_address">Enter /ip4/.../udp/.../p2p/... or IP/CIDR</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">Enter /ip4/.../udp/.../p2p/... or IP/CIDR</string>
     <string name="dialog_edit_address_title">Edit Address</string>
     <string name="dialog_add_address_title">Add New Address</string>
     <string name="msg_address_added">New address added</string>
@@ -248,7 +248,7 @@
     <string name="dialog_exit_node_desc">Select a peer node to relay internet or default gateway traffic through</string>
     <string name="exit_node_auto_title">Auto Mesh Mode (Default)</string>
     <string name="exit_node_auto_desc">Direct P2P overlay routing only. External internet traffic uses local network.</string>
-    <string name="exit_node_custom_title">Manual Enter Peer ID or Virtual IP...</string>
+    <string name="exit_node_custom_title">Manual Enter Peer ID or Virtual IP…</string>
     <string name="section_active_peers">Active Peers in Overlay</string>
     <string name="dialog_custom_exit_node_title">Custom Exit Node Gateway</string>
     <string name="hint_custom_exit_node">Enter Exit Node Peer ID or Virtual IP (e.g. 10.0.0.1)</string>

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap 仮想LAN</string>
     <string name="action_settings">設定</string>
     <string name="status_disconnected">切断済み</string>
-    <string name="status_connecting">接続中...</string>
+    <string name="status_connecting">接続中…</string>
     <string name="status_connected">接続完了</string>
-    <string name="status_stopping">停止中...</string>
+    <string name="status_stopping">停止中…</string>
     <string name="status_timeout">接続タイムアウト</string>
     <string name="status_error">接続エラー</string>
     <string name="status_hint_idle">接続をタップしてP2P仮想ネットワークに参加</string>
     <string name="status_hint_connected">P2P仮想メッシュ稼働中 (暗号化ルーティング)</string>
-    <string name="status_hint_starting">トンネルを確立し、ピアを検出中...</string>
-    <string name="status_hint_stopping">トンネルを切断しエンジンを停止中...</string>
+    <string name="status_hint_starting">トンネルを確立し、ピアを検出中…</string>
+    <string name="status_hint_stopping">トンネルを切断しエンジンを停止中…</string>
     <string name="status_hint_timeout">タイムアウト時間内にピアまたはリレー接続を確立できませんでした</string>
     <string name="btn_connect">接続開始</string>
     <string name="btn_disconnect">切断</string>
@@ -74,7 +74,7 @@
     <string name="switch_discover_boot_mesh">Bootノード中継メッシュを自動検出</string>
     <string name="switch_webui_enable">組み込みWebコンソールを有効化</string>
     <string name="title_log_viewer">リアルタイム診断ログ</string>
-    <string name="hint_search_logs">ログをキーワード・IP・Peerで検索...</string>
+    <string name="hint_search_logs">ログをキーワード・IP・Peerで検索…</string>
     <string name="filter_all">すべて</string>
     <string name="filter_info">情報 (INFO)</string>
     <string name="filter_warn">警告 (WARN)</string>
@@ -109,7 +109,7 @@
     <string name="opt_paste_clipboard">クリップボードから貼り付け</string>
     <string name="opt_choose_file">JSONファイルを選択</string>
     <string name="prompt_vpn_not_running">注意: WebコンソールにはVPN起動が必要です</string>
-    <string name="notification_starting">P2PTap VPN起動中...</string>
+    <string name="notification_starting">P2PTap VPN起動中…</string>
     <string name="notification_running">P2PTap 仮想ネットワーク稼働中</string>
     <string name="notification_action_disconnect">切断</string>
     <string name="tile_label">P2PTap</string>
@@ -128,7 +128,7 @@
     <string name="peers_offline_hint">VPNが接続されていません。ホーム画面で接続してください。</string>
     <string name="peers_empty_title">アクティブピアなし</string>
     <string name="peers_empty_offline">ノードはオフラインです。\n接続を開始すると自動的にピアを検出します。</string>
-    <string name="peers_waiting_hint">他のピアの参加を待機中...</string>
+    <string name="peers_waiting_hint">他のピアの参加を待機中…</string>
     <string name="peers_summary_fmt">合計 %1$d 個のアクティブピア (%2$d ダイレクト, %3$d リレー)</string>
     <string name="badge_direct">⚡ ダイレクト</string>
     <string name="badge_relay">🔁 リレー</string>
@@ -153,7 +153,6 @@
     <string name="stat_dropped_pkts">ドロップパケット数</string>
     <string name="stat_dropped_fmt">%1$d パケット (暗号エラー: %2$d)</string>
     <plurals name="stat_packets_unit">
-        <item quantity="one">%d パケット</item>
         <item quantity="other">%d パケット</item>
     </plurals>
     <string name="stat_ipv4">IPv4 パケット</string>
@@ -198,7 +197,7 @@
     <string name="btn_paste_clip">📋 貼り付け追記</string>
     <string name="btn_switch_text_mode">📝 一括テキストモード</string>
     <string name="btn_switch_list_mode">📇 カードリストモード</string>
-    <string name="hint_input_address">/ip4/.../udp/.../p2p/... または IP/CIDR を入力</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">/ip4/.../udp/.../p2p/... または IP/CIDR を入力</string>
     <string name="dialog_edit_address_title">アドレス編集</string>
     <string name="dialog_add_address_title">新しいアドレスを追加</string>
     <string name="msg_address_added">新しいアドレスを追加しました</string>
@@ -230,7 +229,7 @@
     <string name="dialog_exit_node_desc">インターネット/デフォルトゲートウェイのトラフィックを中継するノードを選択</string>
     <string name="exit_node_auto_title">自動メッシュモード (デフォルト)</string>
     <string name="exit_node_auto_desc">P2Pオーバーレイ内ルーティングのみ。外部通信はローカルを使用します。</string>
-    <string name="exit_node_custom_title">Peer ID または仮想 IP を手動入力...</string>
+    <string name="exit_node_custom_title">Peer ID または仮想 IP を手動入力…</string>
     <string name="section_active_peers">オンラインピア一覧</string>
     <string name="dialog_custom_exit_node_title">カスタム出口ノード</string>
     <string name="hint_custom_exit_node">Peer ID または仮想 IP を入力 (例: 10.0.0.1)</string>
@@ -249,7 +248,6 @@
     <string name="err_key_load_fmt">IDキーの読み込みに失敗しました: %s</string>
     <string name="err_invalid_ipv4">有効なIPv4アドレスを入力してください（例: 10.0.0.88/24）</string>
     <plurals name="msg_filtered_logs_fmt">
-        <item quantity="one">%1$d / %2$d 行のログを表示中</item>
         <item quantity="other">%1$d / %2$d 行のログを表示中</item>
     </plurals>
     <string name="msg_clipboard_empty">クリップボードが空です</string>
@@ -259,7 +257,6 @@
     <string name="hint_tls_sni">TLS/QUIC SNI（送信、任意）</string>
     <string name="hint_tls_sni_suffix">ピア別 TLS SNI サフィックス（任意）</string>
     <plurals name="active_peers_fmt">
-        <item quantity="one">%1$d ノード\n%2$d 直接 · %3$d リレー</item>
         <item quantity="other">%1$d ノード\n%2$d 直接 · %3$d リレー</item>
     </plurals>
 </resources>

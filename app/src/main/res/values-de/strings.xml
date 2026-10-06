@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">P2PTap Virtuelles LAN</string>
     <string name="action_settings">Einstellungen</string>
     <string name="status_disconnected">Getrennt</string>
-    <string name="status_connecting">Verbindung wird hergestellt...</string>
+    <string name="status_connecting">Verbindung wird hergestellt…</string>
     <string name="status_connected">Verbunden</string>
-    <string name="status_stopping">Wird gestoppt...</string>
+    <string name="status_stopping">Wird gestoppt…</string>
     <string name="status_timeout">Verbindungs-Timeout</string>
     <string name="status_error">Verbindungsfehler</string>
     <string name="status_hint_idle">Tippen Sie auf Verbinden, um dem P2P-Netzwerk beizutreten</string>
     <string name="status_hint_connected">P2P-Mesh aktiv und verschlüsselt geroutet</string>
-    <string name="status_hint_starting">Tunnel wird aufgebaut und Peers werden gesucht...</string>
-    <string name="status_hint_stopping">Tunnel wird getrennt und Engine gestoppt...</string>
+    <string name="status_hint_starting">Tunnel wird aufgebaut und Peers werden gesucht…</string>
+    <string name="status_hint_stopping">Tunnel wird getrennt und Engine gestoppt…</string>
     <string name="status_hint_timeout">Keine Peer-/Relay-Verbindung innerhalb des Zeitfensters möglich</string>
     <string name="btn_connect">Verbinden</string>
     <string name="btn_disconnect">Trennen</string>
@@ -73,7 +73,7 @@
     <string name="switch_discover_boot_mesh">Boot-Backbone-Mesh erkennen</string>
     <string name="switch_webui_enable">Integrierte Web-Konsole aktivieren</string>
     <string name="title_log_viewer">Diagnoseprotokoll</string>
-    <string name="hint_search_logs">Suche nach Begriff, IP, Peer...</string>
+    <string name="hint_search_logs">Suche nach Begriff, IP, Peer…</string>
     <string name="filter_all">ALLE</string>
     <string name="filter_info">INFO</string>
     <string name="filter_warn">WARNUNG</string>
@@ -109,7 +109,7 @@
     <string name="opt_paste_clipboard">Aus Zwischenablage einfügen</string>
     <string name="opt_choose_file">JSON-Datei auswählen</string>
     <string name="prompt_vpn_not_running">Hinweis: P2PTap VPN muss laufen, um die Konsole zu öffnen</string>
-    <string name="notification_starting">P2PTap VPN wird gestartet...</string>
+    <string name="notification_starting">P2PTap VPN wird gestartet…</string>
     <string name="notification_running">P2PTap Virtuelles LAN aktiv</string>
     <string name="notification_action_disconnect">Trennen</string>
     <string name="tile_label">P2PTap</string>
@@ -128,7 +128,7 @@
     <string name="peers_offline_hint">VPN ist nicht verbunden. Bitte zuerst verbinden.</string>
     <string name="peers_empty_title">Keine aktiven Peers</string>
     <string name="peers_empty_offline">Knoten ist offline.\nVerbinden Sie sich, um Peers zu erkennen.</string>
-    <string name="peers_waiting_hint">Warten auf Beitritt anderer Peers...</string>
+    <string name="peers_waiting_hint">Warten auf Beitritt anderer Peers…</string>
     <string name="peers_summary_fmt">Gesamt %1$d Aktive Peers (%2$d Direkt, %3$d Relais)</string>
     <string name="badge_direct">⚡ Direkt</string>
     <string name="badge_relay">🔁 Relais</string>
@@ -198,7 +198,7 @@
     <string name="btn_paste_clip">📋 Aus Zwischenablage anfügen</string>
     <string name="btn_switch_text_mode">📝 Stapel-Textmodus</string>
     <string name="btn_switch_list_mode">📇 Kartenlistenmodus</string>
-    <string name="hint_input_address">/ip4/.../udp/.../p2p/... oder IP/CIDR eingeben</string>
+    <string name="hint_input_address" tools:ignore="TypographyEllipsis">/ip4/.../udp/.../p2p/... oder IP/CIDR eingeben</string>
     <string name="dialog_edit_address_title">Adresse bearbeiten</string>
     <string name="dialog_add_address_title">Neue Adresse hinzufügen</string>
     <string name="msg_address_added">Neue Adresse hinzugefügt</string>
@@ -230,7 +230,7 @@
     <string name="dialog_exit_node_desc">Wählen Sie einen Peer-Knoten als Gateway für Internetverkehr</string>
     <string name="exit_node_auto_title">Auto-Mesh-Modus (Standard)</string>
     <string name="exit_node_auto_desc">Nur P2P-Netzwerkverkehr. Externer Datenverkehr nutzt lokales Netzwerk.</string>
-    <string name="exit_node_custom_title">Peer ID oder virtuelle IP manuell eingeben...</string>
+    <string name="exit_node_custom_title">Peer ID oder virtuelle IP manuell eingeben…</string>
     <string name="section_active_peers">Aktive Peers im Netzwerk</string>
     <string name="dialog_custom_exit_node_title">Benutzerdefinierter Exit-Knoten</string>
     <string name="hint_custom_exit_node">Peer ID oder virtuelle IP eingeben (z.B. 10.0.0.1)</string>
@@ -242,7 +242,7 @@
     <string name="hint_dns_servers">DNS-Server (Leer lassen für Systemstandard-DNS)</string>
     <string name="dialog_manage_dns">DNS-Server verwalten</string>
     <string name="vpn_permission_denied">VPN-Berechtigung verweigert</string>
-    <string name="badge_connecting">Verbinde...</string>
+    <string name="badge_connecting">Verbinde…</string>
     <string name="badge_error">Fehler</string>
     <string name="auto_lowest_latency">Automatisch (Geringste Latenz)</string>
     <string name="msg_key_loaded_fmt">Identitätsschlüssel geladen, Peer-ID: %s</string>
