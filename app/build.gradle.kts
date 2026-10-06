@@ -17,39 +17,41 @@ android {
         applicationId = "app.fjj.p2ptap"
         minSdk = 31
         targetSdk = 37
-        // APK build sequence, monotonic with this repo's history so every
-        // rebuild gets a higher code. APP_VERSION_CODE overrides it for an
+        // versionCode tracks releases, not commits: it is the number of
+        // published v* tags plus one, so it goes up once per release and stays
+        // put for every commit in between (two builds of the same pending
+        // release produce the same code). Counting commits instead made every
+        // stray commit bump it. APP_VERSION_CODE overrides it for an
         // Android-only release that must not reuse the previous code.
-        val appRevision = providers.exec {
+        // NOTE: this counts *local* tags. CI sees them only because
+        // actions/checkout fetches tags at fetch-depth 0; a tag that was never
+        // pushed is invisible there and would make CI compute a lower code.
+        val releaseTagCount = providers.exec {
+            workingDir(rootDir)
+            commandLine("git", "tag", "--list", "v*")
+        }.standardOutput.asText.get().lineSequence().filter { it.isNotBlank() }.count()
+        versionCode = System.getenv("APP_VERSION_CODE")?.toIntOrNull()
+            ?: (releaseTagCount + 1).coerceAtLeast(1)
+
+        // versionName names the app, so it is derived from this repo, not from
+        // p2ptap-core: the APK version, the release tag and the About card
+        // (MainActivity reads PackageInfo.versionName) should all track the
+        // Android build. The Go engine still carries its own version, stamped
+        // into p2ptap.aar via P2PTAP_VERSION, and is unaffected by this.
+        // APP_VERSION_NAME remains as an override for a one-off release.
+        val repoCount = providers.exec {
             workingDir(rootDir)
             commandLine("git", "rev-list", "--count", "HEAD")
-        }.standardOutput.asText.get().trim().toInt()
-        versionCode = System.getenv("APP_VERSION_CODE")?.toIntOrNull() ?: appRevision.coerceAtLeast(1)
-
-        // Identical to what the Go engine reports, so the APK metadata and the
-        // About card can never disagree. CI exports APP_VERSION_NAME straight
-        // from p2ptap-core/scripts/get_version.sh; local builds derive the same
-        // format from the core submodule below, so keep the two in sync. The
-        // last resort is the older 1.0-<hash> form, which still names the
-        // engine the supplied AAR was built from.
-        val coreDir = rootDir.resolve("p2ptap-core")
-        val coreVersion: String? = if (coreDir.isDirectory) {
-            val coreCount = providers.exec {
-                workingDir(coreDir)
-                commandLine("git", "rev-list", "--count", "HEAD")
-            }.standardOutput.asText.get().trim()
-            val coreHash = providers.exec {
-                workingDir(coreDir)
-                commandLine("git", "rev-parse", "--short=7", "HEAD")
-            }.standardOutput.asText.get().trim()
-            "v1.0.${ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMdd"))}.${coreCount}-${coreHash}"
-        } else {
-            null
-        }
+        }.standardOutput.asText.get().trim()
+        val repoHash = providers.exec {
+            workingDir(rootDir)
+            commandLine("git", "rev-parse", "--short=7", "HEAD")
+        }.standardOutput.asText.get().trim()
+        val repoVersion =
+            "v1.0.${ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMdd"))}.${repoCount}-${repoHash}"
         versionName = System.getenv("APP_VERSION_NAME")
             ?: project.findProperty("APP_VERSION_NAME")?.toString()
-            ?: coreVersion
-            ?: "1.0-${System.getenv("GO_COMMIT_HASH") ?: project.findProperty("GO_COMMIT_HASH")?.toString() ?: "dev"}"
+            ?: repoVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

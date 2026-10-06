@@ -78,7 +78,6 @@ jobs:
             GO_COMMIT="dev"
           fi
 
-          echo "GO_COMMIT_HASH=${GO_COMMIT}" >> $GITHUB_ENV
           echo "go_commit=${GO_COMMIT}" >> $GITHUB_OUTPUT
           echo "Go Engine Commit Hash: ${GO_COMMIT}"
 
@@ -99,12 +98,14 @@ jobs:
             # actually sees it. It is required because github.com/wlynxg/anet
             # (pulled in by pion/transport/v3) //go:linkname's into net.zoneCache,
             # which the Go 1.23+ linker rejects as "invalid reference".
-            # Stamp the APK with the exact engine version: build-aar.sh injects
-            # this into the Go binary, and APP_VERSION_NAME hands the same value
-            # to gradle for versionName. Passing it as P2PTAP_VERSION keeps the
-            # two byte-identical instead of letting get_version.sh run twice.
+            # Stamp the engine with its exact version: build-aar.sh injects this
+            # into the Go binary via P2PTAP_VERSION. It is deliberately NOT
+            # exported as APP_VERSION_NAME any more — versionName is the app's
+            # version and gradle derives it from this repo (app/build.gradle.kts),
+            # so the APK/About card track the Android build, not the engine.
+            # Running get_version.sh once here keeps the two values from
+            # disagreeing if the engine were rebuilt separately.
             CORE_VERSION="$(bash "${GO_DIR}/scripts/get_version.sh")"
-            echo "APP_VERSION_NAME=${CORE_VERSION}" >> $GITHUB_ENV
             echo "Core version: ${CORE_VERSION}"
             P2PTAP_VERSION="${CORE_VERSION}" bash "${GO_DIR}/scripts/build-aar.sh"
             mkdir -p app/libs
@@ -151,7 +152,6 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          GO_COMMIT_HASH: ${{ steps.build_go.outputs.go_commit }}
         run: |
           if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
             ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease
@@ -169,13 +169,12 @@ jobs:
           INPUT_CREATE_RELEASE="${{ github.event.inputs.create_release }}"
 
           # Gradle is the single source of truth for the version pair, set in
-          # app/build.gradle.kts: versionCode is APP_VERSION_CODE or this repo's
-          # revision count; versionName is APP_VERSION_NAME, which this workflow
-          # exports from p2ptap-core/scripts/get_version.sh as
-          # "v1.0.YYYYMMDD.<coreCount>-<coreHash>" and passes to build-aar.sh as
-          # P2PTAP_VERSION so the Go engine carries the same string. Read both
-          # back out of the APK that is about to be published, so the file and
-          # release names can never drift from what the APK actually carries.
+          # app/build.gradle.kts from *this* repo: versionCode is
+          # APP_VERSION_CODE or the number of v* tags plus one, and versionName
+          # is "v1.0.YYYYMMDD.<repoCount>-<repoHash>". The Go engine carries its
+          # own version separately (P2PTAP_VERSION, stamped into the AAR). Read
+          # both back out of the APK that is about to be published, so the file
+          # and release names can never drift from what the APK actually carries.
           AAPT2="${ANDROID_HOME}/build-tools/$(ls -1 "${ANDROID_HOME}/build-tools" | sort -V | tail -1)/aapt2"
           # With splits { abi { isEnable = true } } AGP names the all-ABI output
           # app-universal-release.apk, not app-release.apk. Match both so this

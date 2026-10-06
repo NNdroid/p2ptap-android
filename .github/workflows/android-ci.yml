@@ -35,7 +35,6 @@ jobs:
           bash p2ptap-core/scripts/build-aar.sh
           mkdir -p app/libs
           cp p2ptap-core/bin/p2ptap.aar app/libs/p2ptap.aar
-          echo "GO_COMMIT_HASH=$(git -C p2ptap-core rev-parse --short HEAD)" >> "$GITHUB_ENV"
       - uses: gradle/actions/setup-gradle@v4
       - name: Test, lint and build both variants
         run: |
