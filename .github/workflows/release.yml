@@ -81,19 +81,17 @@ jobs:
             gomobile init
             
             echo "Building p2ptap.aar from ${GO_DIR}..."
-            cd "${GO_DIR}"
-            BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-            VERSION="dev-${GO_COMMIT}"
-            export GOFLAGS="-ldflags=-checklinkname=0"
-            export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
-            gomobile bind \
-              -target=android \
-              -androidapi=21 \
-              -javapkg com.p2ptap \
-              -ldflags="-s -w -X p2ptap/pkg/version.Version=${VERSION} -X p2ptap/pkg/version.BuildTime=${BUILD_TIME} -X p2ptap/pkg/version.GitCommit=${GO_COMMIT} -extldflags '-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384'" \
-              -o ../app/libs/p2ptap.aar \
-              ./pkg/android
-            cd ..
+            # Build through the same script Android validation runs, so the
+            # gomobile flags can only drift in one place. An earlier inline copy
+            # of this invocation kept -checklinkname=0 in GOFLAGS, but gomobile
+            # overrode it with its own explicit `go build -ldflags`; the script
+            # carries the flag inside that -ldflags string, where the linker
+            # actually sees it. It is required because github.com/wlynxg/anet
+            # (pulled in by pion/transport/v3) //go:linkname's into net.zoneCache,
+            # which the Go 1.23+ linker rejects as "invalid reference".
+            bash "${GO_DIR}/scripts/build-aar.sh"
+            mkdir -p app/libs
+            cp "${GO_DIR}/bin/p2ptap.aar" app/libs/p2ptap.aar
             echo "p2ptap.aar built successfully!"
           else
             echo "No Go source directory found, using existing app/libs/p2ptap.aar"
