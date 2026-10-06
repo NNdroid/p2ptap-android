@@ -25,6 +25,30 @@ P2PTap supports **NAT traversal direct connections**, **dynamic exit node gatewa
 
 ---
 
+## Screenshots
+
+<sub>Android 12 · 1080 × 2400 · dark theme — the layout is identical in all ten locales, only the strings change.</sub>
+
+<table>
+<tr>
+<th width="30%" align="center"><img src="screenshots/01-home.png" alt="Home screen" width="230"><br><br>Home screen — connect, live throughput, active peers</th>
+<th width="30%" align="center"><img src="screenshots/02-home-more.png" alt="Home screen, lower half" width="230"><br><br>Node identity, exit gateway, Web Console entry, release info</th>
+</tr>
+<tr>
+<th width="30%" align="center"><img src="screenshots/03-config.png" alt="Node settings" width="230"><br><br>Node settings — identity keys, virtual CIDR, MTU, DNS, peer lists</th>
+<th width="30%" align="center"><img src="screenshots/04-qr-share.png" alt="Connection QR" width="230"><br><br>Node identity &amp; connection QR — scan from another device to join the mesh</th>
+</tr>
+<tr>
+<th width="30%" align="center"><img src="screenshots/05-logs.png" alt="Diagnostic logs" width="230"><br><br>Diagnostic logs — search, level filters, pause, share, copy</th>
+<th width="30%" align="center"><img src="screenshots/06-exit-node.png" alt="Exit node selector" width="230"><br><br>Exit-node gateway — auto mesh, or route traffic through any peer</th>
+</tr>
+<tr>
+<th width="30%" align="center"><img src="screenshots/07-peer-manager.png" alt="Address and peer manager" width="230"><br><br>Address &amp; peer manager — card, batch text, scan and clipboard import</th>
+</tr>
+</table>
+
+---
+
 ## Key Features
 
 ### 🚀 High-Performance P2P Mesh & Transports
