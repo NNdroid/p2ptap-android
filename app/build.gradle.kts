@@ -1,3 +1,7 @@
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -13,20 +17,39 @@ android {
         applicationId = "app.fjj.p2ptap"
         minSdk = 31
         targetSdk = 37
+        // APK build sequence, monotonic with this repo's history so every
+        // rebuild gets a higher code. APP_VERSION_CODE overrides it for an
+        // Android-only release that must not reuse the previous code.
         val appRevision = providers.exec {
             workingDir(rootDir)
             commandLine("git", "rev-list", "--count", "HEAD")
         }.standardOutput.asText.get().trim().toInt()
         versionCode = System.getenv("APP_VERSION_CODE")?.toIntOrNull() ?: appRevision.coerceAtLeast(1)
 
-        val baseVersionName = "1.0"
-        // The AAR may be supplied by a sibling checkout, so the submodule HEAD
-        // is not proof of the embedded engine version. Build scripts and CI set
-        // GO_COMMIT_HASH from the exact source used for gomobile bind.
-        val goCommitHash = System.getenv("GO_COMMIT_HASH")
-            ?: project.findProperty("GO_COMMIT_HASH")?.toString()
-            ?: "dev"
-        versionName = "$baseVersionName-$goCommitHash"
+        // Identical to what the Go engine reports, so the APK metadata and the
+        // About card can never disagree. CI exports APP_VERSION_NAME straight
+        // from p2ptap-core/scripts/get_version.sh; local builds derive the same
+        // format from the core submodule below, so keep the two in sync. The
+        // last resort is the older 1.0-<hash> form, which still names the
+        // engine the supplied AAR was built from.
+        val coreDir = rootDir.resolve("p2ptap-core")
+        val coreVersion: String? = if (coreDir.isDirectory) {
+            val coreCount = providers.exec {
+                workingDir(coreDir)
+                commandLine("git", "rev-list", "--count", "HEAD")
+            }.standardOutput.asText.get().trim()
+            val coreHash = providers.exec {
+                workingDir(coreDir)
+                commandLine("git", "rev-parse", "--short=7", "HEAD")
+            }.standardOutput.asText.get().trim()
+            "v1.0.${ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMdd"))}.${coreCount}-${coreHash}"
+        } else {
+            null
+        }
+        versionName = System.getenv("APP_VERSION_NAME")
+            ?: project.findProperty("APP_VERSION_NAME")?.toString()
+            ?: coreVersion
+            ?: "1.0-${System.getenv("GO_COMMIT_HASH") ?: project.findProperty("GO_COMMIT_HASH")?.toString() ?: "dev"}"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

@@ -99,7 +99,14 @@ jobs:
             # actually sees it. It is required because github.com/wlynxg/anet
             # (pulled in by pion/transport/v3) //go:linkname's into net.zoneCache,
             # which the Go 1.23+ linker rejects as "invalid reference".
-            bash "${GO_DIR}/scripts/build-aar.sh"
+            # Stamp the APK with the exact engine version: build-aar.sh injects
+            # this into the Go binary, and APP_VERSION_NAME hands the same value
+            # to gradle for versionName. Passing it as P2PTAP_VERSION keeps the
+            # two byte-identical instead of letting get_version.sh run twice.
+            CORE_VERSION="$(bash "${GO_DIR}/scripts/get_version.sh")"
+            echo "APP_VERSION_NAME=${CORE_VERSION}" >> $GITHUB_ENV
+            echo "Core version: ${CORE_VERSION}"
+            P2PTAP_VERSION="${CORE_VERSION}" bash "${GO_DIR}/scripts/build-aar.sh"
             mkdir -p app/libs
             cp "${GO_DIR}/bin/p2ptap.aar" app/libs/p2ptap.aar
             echo "p2ptap.aar built successfully!"
@@ -169,11 +176,13 @@ jobs:
           # create missing tags. A v* tag push publishes the pushed tag; a manual
           # build publishes release_tag when create_release is enabled, falling
           # back to the gradle version.
-          RELEASE_TAG="v${VERSION_NAME}"
+          # VERSION_NAME is already the full tag scheme (v1.0.YYYYMMDD.N-hash),
+          # so the tag, the release and the APK all key off the same string.
+          RELEASE_TAG="${VERSION_NAME}"
           if [[ "${TAG_NAME}" == v* ]]; then
             RELEASE_TAG="${TAG_NAME}"
           elif [ "${INPUT_CREATE_RELEASE}" = "true" ]; then
-            RELEASE_TAG="${INPUT_RELEASE_TAG:-v${VERSION_NAME}}"
+            RELEASE_TAG="${INPUT_RELEASE_TAG:-${VERSION_NAME}}"
             if ! git rev-parse -q --verify "refs/tags/${RELEASE_TAG}" >/dev/null \
                 && ! git ls-remote --exit-code --quiet --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null; then
               echo "::error::create_release is enabled but tag '${RELEASE_TAG}' does not exist on origin"
@@ -182,7 +191,7 @@ jobs:
             fi
           fi
           RELEASE_NAME="${RELEASE_TAG}"
-          APK_NAME="P2PTap-${VERSION_NAME}-${VERSION_CODE}.apk"
+          APK_NAME="P2PTap-${VERSION_NAME}.apk"
           
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
