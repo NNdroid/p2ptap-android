@@ -1,16 +1,32 @@
 # ====================================================================
 # P2PTap Release ProGuard / R8 Obfuscation & Keep Rules
 # ====================================================================
+#
+# Principle: only keep what an *external* party addresses by name — the Go
+# engine (gomobile/JNI), the Android framework (manifest), or third-party
+# libraries that reflect. Everything under app.fjj.p2ptap is plain Kotlin with
+# no reflection, no Gson/Moshi/kotlinx.serialization, no Parcelable, no
+# addJavascriptInterface and no reflection-driven JSONObject(bean), so R8 may
+# rename it freely. Keeping more than that only hands an attacker a readable
+# map of the VPN's internals.
 
 # 1. Keep Go Native Engine (P2PTap JNI & Gomobile Bindings)
-# Critical: Go C-shared library calls JNI methods by exact class/method signature.
+# Critical: the Go C-shared library calls into Java by exact class/method
+# signature, so a renamed member is not a build error — it is a silent runtime
+# failure inside the engine's callback path.
 -keep class com.p2ptap.P2PTap.** { *; }
 -keep interface com.p2ptap.P2PTap.** { *; }
+-keep class go.** { *; }
 
-# Keep all classes implementing P2PTap JNI interfaces
+# P2PTapVpnService implements Protector/StateListener/InterfaceProvider itself
+# and also hands the engine anonymous StateListener and ConfigStore instances
+# (P2PTapVpnService.kt:213 and :229). ConfigStore was missing from this list:
+# the anonymous class is named P2PTapVpnService$N, so the "implements" match
+# below is the only thing protecting it.
 -keep class * implements com.p2ptap.P2PTap.Protector { *; }
 -keep class * implements com.p2ptap.P2PTap.StateListener { *; }
 -keep class * implements com.p2ptap.P2PTap.InterfaceProvider { *; }
+-keep class * implements com.p2ptap.P2PTap.ConfigStore { *; }
 
 # Keep native methods in all classes
 -keepclasseswithmembernames class * {
@@ -23,15 +39,7 @@
 -keep public class * extends android.content.BroadcastReceiver { *; }
 -keep public class * extends android.service.quicksettings.TileService { *; }
 
-# 3. Keep P2PTap Configuration & State Models (Serialized via JSONObject)
--keep class app.fjj.p2ptap.config.P2PConfig { *; }
--keep class app.fjj.p2ptap.service.NodeMetrics { *; }
--keep class app.fjj.p2ptap.service.P2PStateRepository { *; }
-
-# 4. Keep View Binding Classes
--keep class app.fjj.p2ptap.databinding.** { *; }
-
-# 5. Keep ZXing Barcode & QR Code Scanner
+# 3. Keep ZXing Barcode & QR Code Scanner
 -keep class com.google.zxing.Result { *; }
 -keep class com.google.zxing.ResultPoint { *; }
 -keep class com.google.zxing.BarcodeFormat { *; }
@@ -41,6 +49,8 @@
 -keep class com.google.zxing.RGBLuminanceSource { *; }
 -keep class com.journeyapps.barcodescanner.** { *; }
 
-# 6. Preserve Line Numbers & Attributes for Crash Stack Traces
+# 4. Preserve Line Numbers & Attributes for Crash Stack Traces
+# Only useful together with the mapping.txt release.yml now publishes; on its
+# own this does not make a release stack trace readable.
 -keepattributes Signature, InnerClasses, EnclosingMethod, Annotation, *Annotation*
 -keepattributes SourceFile, LineNumberTable

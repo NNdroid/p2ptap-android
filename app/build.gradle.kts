@@ -75,6 +75,26 @@ android {
         }
     }
 
+    // The Go engine ships one ~34 MB libgojni.so per ABI, which made the single
+    // universal APK ~143 MB. Publish a ~37 MB APK per ABI alongside it.
+    // isUniversalApk keeps the all-ABI APK on disk: release.yml reads the
+    // version pair out of it (aapt2 dump badging), so dropping it would break
+    // version naming.
+    //
+    // All the outputs intentionally share one versionCode. Play Store requires
+    // a distinct code per APK, but these ship as GitHub Release downloads, where
+    // a shared code is what lets a user switch variants in place: installing a
+    // lower code over a higher one is blocked as a downgrade, which would force
+    // uninstalling the app — and that drops the VPN profile with it.
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+            isUniversalApk = true
+        }
+    }
+
     signingConfigs {
         create("release") {
             val storeFilePath = System.getenv("KEYSTORE_FILE") ?: project.findProperty("KEYSTORE_FILE")?.toString()

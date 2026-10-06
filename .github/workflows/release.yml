@@ -177,7 +177,17 @@ jobs:
           # back out of the APK that is about to be published, so the file and
           # release names can never drift from what the APK actually carries.
           AAPT2="${ANDROID_HOME}/build-tools/$(ls -1 "${ANDROID_HOME}/build-tools" | sort -V | tail -1)/aapt2"
-          BADGING="$("$AAPT2" dump badging app/build/outputs/apk/release/app-release.apk | head -1)"
+          # With splits { abi { isEnable = true } } AGP names the all-ABI output
+          # app-universal-release.apk, not app-release.apk. Match both so this
+          # step keeps working if splits are ever turned off again.
+          RELEASE_APK_DIR="app/build/outputs/apk/release"
+          UNIVERSAL_APK="$(ls "${RELEASE_APK_DIR}"/app-release.apk "${RELEASE_APK_DIR}"/app-universal-release.apk 2>/dev/null | head -1)"
+          if [ -z "${UNIVERSAL_APK}" ]; then
+            echo "::error::no universal release APK found under ${RELEASE_APK_DIR}"
+            ls -1 "${RELEASE_APK_DIR}" || true
+            exit 1
+          fi
+          BADGING="$("$AAPT2" dump badging "$UNIVERSAL_APK" | head -1)"
           VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionCode='\([0-9][0-9]*\)'.*/\1/p")"
           VERSION_NAME="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
           if [ -z "${VERSION_CODE}" ] || [ -z "${VERSION_NAME}" ]; then
@@ -214,16 +224,37 @@ jobs:
           echo "APK_NAME=${APK_NAME}" >> $GITHUB_ENV
           
           if [ "${{ github.event.inputs.build_type }}" != "debug" ]; then
-            cp app/build/outputs/apk/release/app-release.apk "outputs/${APK_NAME}"
+            cp "$UNIVERSAL_APK" "outputs/${APK_NAME}"
+
+            # Per-ABI APKs from splits { abi { isEnable = true } } in
+            # app/build.gradle.kts: ~37 MB each instead of the ~136 MB universal
+            # one, because each carries only its own libgojni.so. The universal
+            # build is already copied above, so skip it here.
+            for apk in "${RELEASE_APK_DIR}"/app-*-release.apk; do
+              [ -e "$apk" ] || continue
+              base="$(basename "$apk" .apk)"
+              abi="${base#app-}"
+              abi="${abi%-release}"
+              [ "${abi}" = "universal" ] && continue
+              cp "$apk" "outputs/${APK_NAME%.apk}-${abi}.apk"
+            done
+
+            # Required to deobfuscate crash reports. R8 rewrites every app
+            # symbol, so a release stack trace is unreadable without this file;
+            # keep it next to the APKs so it ships with the release.
+            cp app/build/outputs/mapping/release/mapping.txt "outputs/${APK_NAME%.apk}-mapping.txt"
           fi
-          cp app/build/outputs/apk/debug/app-debug.apk "outputs/${APK_NAME%.apk}-debug.apk"
+          # Splits apply to the debug variant too, so its all-ABI output is
+          # app-universal-debug.apk rather than app-debug.apk.
+          DEBUG_APK="$(ls app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/app-universal-debug.apk 2>/dev/null | head -1)"
+          cp "$DEBUG_APK" "outputs/${APK_NAME%.apk}-debug.apk"
 
       - name: Upload Build Artifact (Manual Workflow Dispatch / Non-Tag)
         if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v4
         with:
           name: P2PTap-Android-APK
-          path: outputs/*.apk
+          path: outputs/*
           retention-days: 14
 
       - name: Create GitHub Release (v* Tag Push or create_release)
@@ -244,7 +275,7 @@ jobs:
             
             ---
             *Automated Release build by GitHub Actions.*
-          files: outputs/*.apk
+          files: outputs/*
           draft: false
           prerelease: false
         env:
