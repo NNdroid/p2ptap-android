@@ -13,8 +13,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import app.fjj.p2ptap.R
 import app.fjj.p2ptap.config.AppConfigManager
+import app.fjj.p2ptap.config.P2PConfig
 import app.fjj.p2ptap.databinding.DialogQrEnhancedBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -22,6 +24,9 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import java.net.URLEncoder
 import java.util.EnumMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class QrDialog : BottomSheetDialogFragment() {
 
@@ -72,37 +77,53 @@ class QrDialog : BottomSheetDialogFragment() {
             binding.layoutQrSubnets.visibility = View.GONE
         }
 
-        var multiaddrsStr = ""
-        if (P2PTapVpnService.isRunning()) {
-            try {
-                multiaddrsStr = com.p2ptap.P2PTap.P2PTap.getMultiaddrs() ?: ""
-            } catch (_: Exception) {}
-        }
-
-        val qrUri = buildString {
-            append("p2ptap://")
-            append(URLEncoder.encode(cfg.nodeName, "UTF-8"))
-            append("?peerid=").append(peerId)
-            append("&ip=").append(URLEncoder.encode(cfg.tapIp, "UTF-8"))
-            if (cfg.tapIpv6.isNotBlank()) {
-                append("&ipv6=").append(URLEncoder.encode(cfg.tapIpv6, "UTF-8"))
-            }
-            if (multiaddrsStr.isNotBlank()) {
-                val list = multiaddrsStr.lines().map { it.trim() }.filter { it.isNotEmpty() }
-                if (list.isNotEmpty()) {
-                    append("&addrs=").append(URLEncoder.encode(list.joinToString(","), "UTF-8"))
+        // getMultiaddrs() takes the engine's global lock, which an in-progress
+        // stop holds for several seconds — calling it here froze the sheet, and
+        // the 512x512 setPixel loop below adds tens of milliseconds on top.
+        // Both run off the main thread; the node info above is already on screen.
+        viewLifecycleOwner.lifecycleScope.launch {
+            val multiaddrsStr = withContext(Dispatchers.IO) {
+                if (!P2PTapVpnService.isRunning()) return@withContext ""
+                try {
+                    com.p2ptap.P2PTap.P2PTap.getMultiaddrs().orEmpty()
+                } catch (_: Exception) {
+                    ""
                 }
             }
-            if (cfg.advertisedSubnets.isNotEmpty()) {
-                append("&subnets=").append(URLEncoder.encode(cfg.advertisedSubnets.joinToString(","), "UTF-8"))
+            val qrUri = buildQrUri(cfg, peerId, multiaddrsStr)
+            try {
+                binding.ivQrCode.setImageBitmap(withContext(Dispatchers.Default) { generateQrBitmap(qrUri, 512) })
+            } catch (_: Exception) {}
+            wireQrActions(ctx, cfg, peerId, multiaddrsStr, qrUri)
+        }
+    }
+
+    private fun buildQrUri(cfg: P2PConfig, peerId: String, multiaddrsStr: String): String = buildString {
+        append("p2ptap://")
+        append(URLEncoder.encode(cfg.nodeName, "UTF-8"))
+        append("?peerid=").append(peerId)
+        append("&ip=").append(URLEncoder.encode(cfg.tapIp, "UTF-8"))
+        if (cfg.tapIpv6.isNotBlank()) {
+            append("&ipv6=").append(URLEncoder.encode(cfg.tapIpv6, "UTF-8"))
+        }
+        if (multiaddrsStr.isNotBlank()) {
+            val list = multiaddrsStr.lines().map { it.trim() }.filter { it.isNotEmpty() }
+            if (list.isNotEmpty()) {
+                append("&addrs=").append(URLEncoder.encode(list.joinToString(","), "UTF-8"))
             }
         }
+        if (cfg.advertisedSubnets.isNotEmpty()) {
+            append("&subnets=").append(URLEncoder.encode(cfg.advertisedSubnets.joinToString(","), "UTF-8"))
+        }
+    }
 
-        try {
-            val qrBitmap = generateQrBitmap(qrUri, 512)
-            binding.ivQrCode.setImageBitmap(qrBitmap)
-        } catch (_: Exception) {}
-
+    private fun wireQrActions(
+        ctx: Context,
+        cfg: P2PConfig,
+        peerId: String,
+        multiaddrsStr: String,
+        qrUri: String
+    ) {
         binding.ivCopyPeerId.setOnClickListener {
             copyToClipboard(getString(R.string.label_peer_id), peerId)
         }

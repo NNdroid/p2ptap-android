@@ -33,6 +33,7 @@ import com.p2ptap.P2PTap.ConfigStore
 import java.net.NetworkInterface
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import org.json.JSONArray
 
@@ -55,6 +56,12 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         const val STATE_STOPPING = "STOPPING"
         const val STATE_TIMEOUT = "TIMEOUT"
         const val STATE_ERROR = "ERROR"
+
+        // Gives up on the native teardown this long after a stop was requested.
+        // The engine's Close() is bounded (worst case ~17s of sequential caps),
+        // so this only trips if something genuinely wedged — and a wedged stop
+        // is worse than leaving the native teardown to finish unobserved.
+        const val STOP_TIMEOUT_MS = 15_000L
 
         @Volatile
         var currentState = STATE_IDLE
@@ -85,8 +92,8 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     private val networkChangeHandler = Handler(Looper.getMainLooper())
     private val activeUnderlyingNetwork = AtomicLong(-1L)
     @Volatile private var desiredRunning = false
-    @Volatile private var lastStartId = 0
     @Volatile private var destroyed = false
+    private val stopFinalized = AtomicBoolean(false)
 
     private val networkChangeRunnable = Runnable {
         if (!destroyed && desiredRunning && currentState == STATE_RUNNING) {
@@ -99,13 +106,22 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         }
     }
 
+    // Fires on the main looper, deliberately OFF the lifecycle executor: if the
+    // executor is blocked inside P2PTap.stop(), only an executor-independent
+    // path can end the stop. Runs directly (not via submitLifecycle) for the
+    // same reason.
+    private val stopWatchdogRunnable = Runnable {
+        if (destroyed || desiredRunning || currentState != STATE_STOPPING) return@Runnable
+        Log.w(TAG, "Native teardown exceeded ${STOP_TIMEOUT_MS}ms; finalizing stop without waiting for it")
+        finalizeStop(stopService = true)
+    }
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        lastStartId = maxOf(lastStartId, startId)
         when (intent?.action) {
             ACTION_STOP -> {
                 requestStop()
@@ -150,6 +166,10 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
 
     private fun requestStart() {
         if (desiredRunning && (currentState == STATE_RUNNING || currentState == STATE_STARTING)) return
+        // A stop in flight may still be blocked inside P2PTap.stop(); its
+        // watchdog must not tear down the service that this start just created.
+        networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
+        stopFinalized.set(false)
         desiredRunning = true
         val generation = lifecycleGeneration.incrementAndGet()
         val config = snapshotConfig(AppConfigManager.load(this))
@@ -245,28 +265,39 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             cleanup()
             if (desiredRunning && generation == lifecycleGeneration.get()) {
                 desiredRunning = false
+                networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
                 val msg = e.message ?: "Unknown error"
                 val isTimeout = msg.contains("timeout", ignoreCase = true) || msg.contains("deadline", ignoreCase = true)
                 updateState(if (isTimeout) STATE_TIMEOUT else STATE_ERROR, UiMessages.describe(this, e))
                 stopForeground(STOP_FOREGROUND_REMOVE)
-                stopSelfResult(lastStartId)
+                stopSelf()
             }
         }
     }
 
     private fun requestStop() {
         desiredRunning = false
+        stopFinalized.set(false)
         lifecycleGeneration.incrementAndGet()
         if (currentState != STATE_IDLE) updateState(STATE_STOPPING)
-        submitLifecycle { stopVpnInternal() }
+        submitLifecycle { stopVpnInternal(finalizeService = true) }
+        // Belt and braces: P2PTap.stop() blocks the executor for the whole
+        // native teardown, so without this the service would sit in STOPPING
+        // (button disabled, notification pinned) until it returns on its own.
+        networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
+        networkChangeHandler.postDelayed(stopWatchdogRunnable, STOP_TIMEOUT_MS)
     }
 
-    private fun stopVpnInternal() {
+    private fun stopVpnInternal(finalizeService: Boolean) {
+        val startedAt = android.os.SystemClock.elapsedRealtime()
         try {
             Log.i(TAG, "Stopping P2PTap native engine...")
             P2PTap.stop()
             Log.i(TAG, "P2PTap native engine stopped")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // Throwable, not Exception: an UnsatisfiedLinkError from a torn-down
+            // native library must still reach finalizeStop, otherwise the
+            // service is stuck in STOPPING with the notification pinned.
             Log.e(TAG, "Error stopping P2PTap native engine", e)
         } finally {
             clearNativeCallbacks()
@@ -277,9 +308,36 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         // the same executor. Keep the service alive and let that command run.
         if (desiredRunning) return
 
+        Log.i(TAG, "P2PTap native engine stopped in ${android.os.SystemClock.elapsedRealtime() - startedAt}ms")
+        finalizeStop(stopService = finalizeService)
+    }
+
+    /**
+     * Ends the stop. Runs at most once per stop request: the normal path calls
+     * it after the native teardown returns, [stopWatchdogRunnable] calls it if
+     * that teardown overruns. It may therefore run on the main looper while the
+     * lifecycle executor is still inside P2PTap.stop(), so it only does
+     * main-thread-safe work and no native call that would need the engine's
+     * global mutex (the Go setters in clearNativeCallbacks() are independent of
+     * it).
+     *
+     * [stopService] is false when the system already destroyed the service,
+     * where stopForeground/stopSelf would be wrong.
+     */
+    private fun finalizeStop(stopService: Boolean) {
+        if (!stopFinalized.compareAndSet(false, true)) return
+        if (desiredRunning) {
+            // A start superseded this stop; let that request own the service.
+            stopFinalized.set(false)
+            return
+        }
+        clearNativeCallbacks()
+        cleanup()
         updateState(STATE_IDLE)
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelfResult(lastStartId)
+        if (stopService) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
     }
 
     private fun requestReload(newConfig: P2PConfig, forceRestart: Boolean = false) {
@@ -564,7 +622,10 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         desiredRunning = false
         lifecycleGeneration.incrementAndGet()
         networkChangeHandler.removeCallbacks(networkChangeRunnable)
-        submitLifecycle { stopVpnInternal() }
+        networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
+        // finalizeService=false: the service is already being destroyed, so only
+        // the state reset is wanted — stopForeground/stopSelf would be wrong.
+        submitLifecycle { stopVpnInternal(finalizeService = false) }
         lifecycleExecutor.shutdown()
         super.onDestroy()
     }
