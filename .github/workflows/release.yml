@@ -122,14 +122,27 @@ jobs:
 
       - name: Prepare Keystore File from Secret
         id: prepare_keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          PUBLISHING_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == 'true' }}
         run: |
-          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
-            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+          # A published APK is signature-locked for whoever installed it: one
+          # signed with the Android test key can never be updated in place by a
+          # build signed with the production key, so the signature mismatch forces
+          # a full reinstall that drops the user's config. Publishing without a
+          # real keystore therefore fails hard; artifact-only dispatches may still
+          # fall back to the test key, since nothing gets published there.
+          if [ -n "${KEYSTORE_BASE64}" ]; then
+            echo "${KEYSTORE_BASE64}" | base64 -d > app/keystore.jks
             echo "KEYSTORE_FILE=keystore.jks" >> $GITHUB_ENV
             echo "keystore_available=true" >> $GITHUB_OUTPUT
+          elif [ "${PUBLISHING_RELEASE}" = "true" ]; then
+            echo "::error::KEYSTORE_BASE64 is missing, but this build publishes a GitHub Release"
+            echo "::error::add KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS and KEY_PASSWORD as repository secrets"
+            exit 1
           else
             echo "keystore_available=false" >> $GITHUB_OUTPUT
-            echo "::warning ::No production signing key configured; release uses the Android test key."
+            echo "::warning ::No production signing key configured; test-signing this artifact-only build."
           fi
 
       - name: Build Android Release APK
@@ -156,10 +169,13 @@ jobs:
           INPUT_CREATE_RELEASE="${{ github.event.inputs.create_release }}"
 
           # Gradle is the single source of truth for the version pair, set in
-          # app/build.gradle.kts: versionCode is APP_VERSION_CODE or the repo
-          # revision count, versionName is "1.0-<GO_COMMIT_HASH>". Read both back
-          # out of the APK that is about to be published, so the file and release
-          # names can never drift from what the APK actually carries.
+          # app/build.gradle.kts: versionCode is APP_VERSION_CODE or this repo's
+          # revision count; versionName is APP_VERSION_NAME, which this workflow
+          # exports from p2ptap-core/scripts/get_version.sh as
+          # "v1.0.YYYYMMDD.<coreCount>-<coreHash>" and passes to build-aar.sh as
+          # P2PTAP_VERSION so the Go engine carries the same string. Read both
+          # back out of the APK that is about to be published, so the file and
+          # release names can never drift from what the APK actually carries.
           AAPT2="${ANDROID_HOME}/build-tools/$(ls -1 "${ANDROID_HOME}/build-tools" | sort -V | tail -1)/aapt2"
           BADGING="$("$AAPT2" dump badging app/build/outputs/apk/release/app-release.apk | head -1)"
           VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionCode='\([0-9][0-9]*\)'.*/\1/p")"
