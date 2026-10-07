@@ -120,13 +120,6 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     @Volatile private var destroyed = false
     private val stopFinalized = AtomicBoolean(false)
 
-    // Tracks whether the lifecycle executor is inside stopVpnInternal (i.e.
-    // blocked in P2PTap.stop() holding Go's mu). onDestroy() checks this to
-    // avoid calling stopVpnInternal synchronously on the main thread: if a
-    // stop is already in flight, the main thread would block on mu waiting for
-    // the executor's stop to finish, and the system may kill the app as
-    // unresponsive before it returns.
-    @Volatile private var stopInFlight = false
 
     // Ticks on its own thread so that a slow JNI call can never stall the main
     // looper or the lifecycle executor.
@@ -359,7 +352,6 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     }
 
     private fun stopVpnInternal(finalizeService: Boolean) {
-        stopInFlight = true
         val startedAt = android.os.SystemClock.elapsedRealtime()
         try {
             Log.i(TAG, "Stopping P2PTap native engine...")
@@ -373,7 +365,6 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         } finally {
             clearNativeCallbacks()
             cleanup()
-            stopInFlight = false
         }
 
         // A START received while Stop() was releasing Go resources is queued on
@@ -862,27 +853,15 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
         cancelHeartbeat()
 
-        // If a stop is already in flight on the lifecycle executor, do NOT call
-        // stopVpnInternal here: it would block the main thread on Go's mu while
-        // the executor's P2PTap.stop() still holds it, and the system may kill
-        // the app as unresponsive. The executor's stop finishes on its own; the
-        // engine's TAP fd is torn down by Android's VpnService contract when
-        // stopSelf() was called, so a stale fd is harmless.
-        //
-        // If no stop is in flight, call synchronously: the process may die the
-        // moment this method returns, and a teardown left queued on the executor
-        // could still be running the engine. Go's Stop() takes its own mutex, so
-        // a stop already in flight on the executor simply serializes and returns
-        // nil — no double-close.
-        if (stopInFlight) {
-            Log.i(TAG, "onDestroy: stop already in flight on lifecycle executor, skipping synchronous teardown")
-        } else {
-            try {
-                stopVpnInternal(finalizeService = false)
-            } catch (e: Throwable) {
-                Log.e(TAG, "Failed to stop P2PTap during onDestroy", e)
-            }
-        }
+        // Always queue the stop on the lifecycle executor — never call
+        // stopVpnInternal synchronously here: it would block the main thread
+        // on Go's mu for the entire native teardown (~17s worst case), and
+        // the watchdog (which runs on the main looper) cannot fire while the
+        // main thread is blocked. The executor's shutdownNow() below
+        // interrupts any in-flight stop, but Android's VpnService contract
+        // tears down the TAP interface when stopSelf() was called, so a stale
+        // engine is harmless.
+        submitLifecycle { stopVpnInternal(finalizeService = false) }
         clearNativeCallbacks()
         cleanup()
 
