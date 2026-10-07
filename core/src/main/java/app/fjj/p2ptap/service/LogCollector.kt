@@ -21,6 +21,12 @@ import java.util.concurrent.atomic.AtomicReference
  * sink (see [isAttached]). When it does, callers must show that fact instead
  * of showing an empty list that reads as "nothing happened".
  *
+ * Implementation: `android.util.LogWriter` and `Log.setLogWriter()` are
+ * hidden APIs not present in the public SDK, so we use `Runtime.exec("logcat")`
+ * instead. A background thread reads logcat output and parses each line into
+ * the buffer. This works on all devices where `logcat` is available (which is
+ * all of them), and falls back gracefully when the shell is denied.
+ *
  * Installation is explicit, not a side effect of loading this class. A class-
  * level `init` block would register the sink the first time any code touched
  * LogCollector — including a unit test that never wants a log sink — and the
@@ -68,9 +74,25 @@ object LogCollector {
         Regex(esc.toString() + "\\[[;\\d]*[a-zA-Z]|\\[[0-9;]+m")
     }
 
+    // Parse logcat -v time format:
+    // MM-DD HH:MM:SS.mmm L/TAG(PID): MESSAGE
+    private val LOGCAT_PATTERN: Regex by lazy {
+        Regex(
+            "^(\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3})\\s+" +
+                "([VDIWEF])/(.+?)\\(\\s*(\\d+)\\):\\s(.*)$"
+        )
+    }
+
     private val buffer = LogBuffer(CAPACITY)
     private val dropped = AtomicLong(0)
     private val installed = AtomicReference<InstallResult?>(null)
+
+    @Volatile
+    private var logcatProcess: Process? = null
+    @Volatile
+    private var logcatThread: Thread? = null
+    @Volatile
+    private var stopped = false
 
     /**
      * Register the sink. Safe to call repeatedly; only the first call takes
@@ -84,23 +106,103 @@ object LogCollector {
         synchronized(installed) {
             installed.get()?.let { return if (it == InstallResult.REFUSED) it else InstallResult.ALREADY_ATTACHED }
 
-            // Register a real LogWriter so the platform actually calls sink().
-            // The old code only probed with Log.println and never registered
-            // a writer, so sink() was dead code and the buffer stayed empty.
-            Log.setLogWriter(object : android.util.LogWriter() {
-                override fun write(pri: Int, tag: String?, msg: String?): Int =
-                    if (sink(pri, tag, msg)) 0 else 1
-            })
-
-            // Probe at WARN level — VERBOSE is the most aggressively filtered
-            // level and OEM ROMs most often disable it.
-            val rc = Log.println(Log.WARN, "P2PTapLogCollector", "sink request")
-            val outcome = if (rc == 0) InstallResult.ATTACHED else InstallResult.REFUSED
+            stopped = false
+            val outcome = startLogcatReader()
             installed.set(outcome)
             if (outcome == InstallResult.REFUSED) {
-                Log.w("P2PTapLogCollector", "log sink refused by the platform (rc=$rc)")
+                Log.w("P2PTapLogCollector", "log capture unavailable (logcat refused)")
             }
             return outcome
+        }
+    }
+
+    /**
+     * Stop the logcat reader. Resets state so [install] can be called again.
+     */
+    @JvmStatic
+    fun stop() {
+        synchronized(installed) {
+            stopped = true
+            logcatThread?.interrupt()
+            logcatProcess?.destroy()
+            logcatThread = null
+            logcatProcess = null
+            installed.set(null)
+        }
+    }
+
+    /**
+     * Start a logcat subprocess to read logs. This replaces the hidden-API
+     * LogWriter approach: `android.util.LogWriter` and `Log.setLogWriter()`
+     * are not available in the public SDK, so the previous implementation
+     * could not compile against it.
+     */
+    private fun startLogcatReader(): InstallResult {
+        return try {
+            val tags = CAPTURED_TAGS.joinToString(" ") { "$it:*" }
+            val process = Runtime.getRuntime().exec(arrayOf("logcat", "-v", "time", "-s", tags))
+
+            logcatThread = Thread("P2PTap-LogcatReader") {
+                try {
+                    process.inputStream.bufferedReader().useLines { lines ->
+                        for (line in lines) {
+                            processLogLine(line)
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Process exited or was destroyed; log capture stops.
+                } finally {
+                    if (!stopped) {
+                        // Process died unexpectedly, not stopped by caller.
+                        // Mark as REFUSED so install() can be retried.
+                        installed.set(InstallResult.REFUSED)
+                    }
+                    logcatThread = null
+                    logcatProcess = null
+                }
+            }
+            logcatThread!!.start()
+            logcatProcess = process
+
+            InstallResult.ATTACHED
+        } catch (e: Exception) {
+            Log.w("P2PTapLogCollector", "logcat unavailable: ${e.message}")
+            InstallResult.REFUSED
+        }
+    }
+
+    /**
+     * Parse a single logcat line in time format and add to buffer.
+     * Format: `MM-DD HH:MM:SS.mmm LEVEL/TAG(PID): MESSAGE`
+     */
+    private fun processLogLine(line: String) {
+        val match = LOGCAT_PATTERN.find(line) ?: return
+
+        val level = match.groupValues[2]
+        val tag = match.groupValues[3]
+        val message = match.groupValues[5]
+
+        val priority = when (level) {
+            "V" -> Log.VERBOSE
+            "D" -> Log.DEBUG
+            "I" -> Log.INFO
+            "W" -> Log.WARN
+            "E" -> Log.ERROR
+            "F" -> Log.ASSERT
+            else -> return
+        }
+
+        val clean = message.replace(ANSI, "").trimEnd()
+        if (clean.isEmpty()) return
+
+        val truncated = if (clean.length > MAX_MESSAGE_CHARS) {
+            clean.substring(0, MAX_MESSAGE_CHARS) + "…[+" +
+                (clean.length - MAX_MESSAGE_CHARS) + " chars]"
+        } else clean
+
+        val entry = LogEntry(currentTimeMillis(), priority, tag, truncated)
+        if (buffer.add(entry) != null) {
+            dropped.incrementAndGet()
         }
     }
 
@@ -144,33 +246,4 @@ object LogCollector {
     /** Plain text for clipboard and share intents. */
     @JvmStatic
     fun text(): String = LogFormat.formatAll(buffer.snapshot())
-
-    /**
-     * The registered sink. It receives every line this process writes, tagged
-     * or untagged, so the tag filter is mandatory — without it this buffer
-     * would be filled by the platform's own chatter rather than the tunnel's.
-     *
-     * Not called directly: the platform invokes it from whatever thread wrote
-     * the line. That is why every field touched here is either an Atomic*
-     * type or confined to LogBuffer's own monitor.
-     */
-    internal fun sink(priority: Int, tag: String?, message: String?): Boolean {
-        if (installed.get() != InstallResult.ATTACHED) return false
-        val t = tag ?: return false
-        if (t !in CAPTURED_TAGS) return false
-        val body = message ?: return false
-        val clean = body.replace(ANSI, "").trimEnd()
-        if (clean.isEmpty()) return false
-
-        val truncated = if (clean.length > MAX_MESSAGE_CHARS) {
-            clean.substring(0, MAX_MESSAGE_CHARS) + "…[+" +
-                (clean.length - MAX_MESSAGE_CHARS) + " chars]"
-        } else clean
-
-        val entry = LogEntry(currentTimeMillis(), priority, t, truncated)
-        if (buffer.add(entry) != null) {
-            dropped.incrementAndGet()
-        }
-        return true
-    }
 }
