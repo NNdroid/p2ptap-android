@@ -131,7 +131,7 @@ jobs:
           # real keystore therefore fails hard; artifact-only dispatches may still
           # fall back to the test key, since nothing gets published there.
           if [ -n "${KEYSTORE_BASE64}" ]; then
-            echo "${KEYSTORE_BASE64}" | base64 -d > app/keystore.jks
+            echo "${KEYSTORE_BASE64}" | base64 -d > mobile/keystore.jks
             echo "KEYSTORE_FILE=keystore.jks" >> $GITHUB_ENV
             echo "keystore_available=true" >> $GITHUB_OUTPUT
           elif [ "${PUBLISHING_RELEASE}" = "true" ]; then
@@ -151,9 +151,9 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
-            ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease
           else
-            ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease -PTEST_SIGNING=true
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease -PTEST_SIGNING=true
           fi
 
       - name: Prepare APK Outputs & Version Naming
