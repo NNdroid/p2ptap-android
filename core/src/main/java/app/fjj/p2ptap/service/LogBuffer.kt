@@ -101,7 +101,7 @@ class LogBuffer(capacity: Int) {
             val n = minOf(maxLines, count)
             // Start at the n-th entry before the tail and walk forward.
             // This avoids the O(capacity) copy that snapshot() performs.
-            var i = oldest + ((count - n + cap) % cap)
+            var i = (oldest + (count - n)) % cap
             val out = ArrayList<LogEntry>(n)
             var k = 0
             while (k < n) {
