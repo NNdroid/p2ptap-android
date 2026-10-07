@@ -1,9 +1,6 @@
 name: Build & Release P2PTap APK
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       build_type:
@@ -15,7 +12,7 @@ on:
           - release
           - debug
       create_release:
-        description: 'Publish a GitHub Release for this build; tag pushes always publish'
+        description: 'Publish a GitHub Release; this run creates and pushes the version tag'
         required: true
         default: false
         type: boolean
@@ -125,7 +122,7 @@ jobs:
         id: prepare_keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          PUBLISHING_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == 'true' }}
+          PUBLISHING_RELEASE: ${{ github.event.inputs.create_release == 'true' }}
         run: |
           # A published APK is signature-locked for whoever installed it: one
           # signed with the Android test key can never be updated in place by a
@@ -164,7 +161,6 @@ jobs:
         run: |
           mkdir -p outputs
           
-          TAG_NAME="${{ github.ref_name }}"
           INPUT_RELEASE_TAG="${{ github.event.inputs.release_tag }}"
           INPUT_CREATE_RELEASE="${{ github.event.inputs.create_release }}"
 
@@ -197,22 +193,25 @@ jobs:
           echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
           echo "Gradle version: ${VERSION_NAME} (${VERSION_CODE})"
           
-          # A GitHub Release is keyed by a tag, and action-gh-release does not
-          # create missing tags. A v* tag push publishes the pushed tag; a manual
-          # build publishes release_tag when create_release is enabled, falling
-          # back to the gradle version.
-          # VERSION_NAME is already the full tag scheme (v1.0.YYYYMMDD.N-hash),
-          # so the tag, the release and the APK all key off the same string.
+          # A GitHub Release is keyed by a tag, and action-gh-release will not
+          # create one. This workflow runs from a branch, so the run names the
+          # tag from the version gradle just stamped and pushes it here, at the
+          # commit that was built; without that a click in the Actions UI could
+          # never publish a release on its own. VERSION_NAME is already the full
+          # scheme (v1.0.YYYYMMDD.N-hash), so tag, release and APK share a string.
+          # Tag pushes are deliberately NOT a trigger: such a run would already
+          # see the new tag, so its tag-count versionCode came out one higher and
+          # it republished the same commit under a different code.
           RELEASE_TAG="${VERSION_NAME}"
-          if [[ "${TAG_NAME}" == v* ]]; then
-            RELEASE_TAG="${TAG_NAME}"
-          elif [ "${INPUT_CREATE_RELEASE}" = "true" ]; then
+          if [ "${INPUT_CREATE_RELEASE}" = "true" ]; then
             RELEASE_TAG="${INPUT_RELEASE_TAG:-${VERSION_NAME}}"
             if ! git rev-parse -q --verify "refs/tags/${RELEASE_TAG}" >/dev/null \
                 && ! git ls-remote --exit-code --quiet --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null; then
-              echo "::error::create_release is enabled but tag '${RELEASE_TAG}' does not exist on origin"
-              echo "::error::pass release_tag, or push the tag before dispatching"
-              exit 1
+              git tag -a -m "P2PTap Android ${RELEASE_TAG}" "${RELEASE_TAG}" "${GITHUB_SHA}"
+              git push origin "refs/tags/${RELEASE_TAG}"
+              echo "Created and pushed tag ${RELEASE_TAG} at ${GITHUB_SHA}"
+            else
+              echo "Tag ${RELEASE_TAG} already exists"
             fi
           fi
           RELEASE_NAME="${RELEASE_TAG}"
@@ -248,16 +247,16 @@ jobs:
           DEBUG_APK="$(ls app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/app-universal-debug.apk 2>/dev/null | head -1)"
           cp "$DEBUG_APK" "outputs/${APK_NAME%.apk}-debug.apk"
 
-      - name: Upload Build Artifact (Manual Workflow Dispatch / Non-Tag)
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+      - name: Upload Build Artifact (artifact-only builds)
+        if: ${{ github.event.inputs.create_release != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: P2PTap-Android-APK
           path: outputs/*
           retention-days: 14
 
-      - name: Create GitHub Release (v* Tag Push or create_release)
-        if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.create_release == 'true' }}
+      - name: Create GitHub Release (create_release)
+        if: ${{ github.event.inputs.create_release == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.RELEASE_NAME }}
