@@ -41,7 +41,9 @@ jobs:
       - name: Test, lint and build both variants
         run: |
           chmod +x gradlew
-          ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --console=plain
+          # Lint the app modules only: :core has a local AAR dependency that
+          # prevents AGP from producing the AAR lint needs to analyze.
+          ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug assembleDebug assembleRelease --console=plain
       - uses: actions/upload-artifact@v4
         with:
           name: android-apks
