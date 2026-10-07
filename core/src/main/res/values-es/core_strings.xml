@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Locale variants for the strings that live in :core. The
+     default locale ships in values/core_strings.xml. -->
+<resources>
+    <string name="error_peer_address_fmt">La dirección %1$d no es válida. Usa una multiaddr completa terminada en /p2p/PeerID.</string>
+    <string name="error_save_config">No se pudo guardar la configuración. Revisa el espacio libre.</string>
+    <string name="error_strategy">La estrategia debe ser best_path, redundant o fallback.</string>
+    <string name="config_invalid_fmt">Configuración no aplicada: %1$s</string>
+    <string name="error_timeout">La conexión agotó el tiempo. Revisa la red y las direcciones.</string>
+    <string name="error_engine_stalled">El motor dejó de reportar. Reconecta para restaurar la estadística de tráfico.</string>
+    <string name="error_vpn_establish">No se pudo crear el túnel VPN. Revisa el permiso VPN y reintenta.</string>
+    <string name="error_vpn_session_ended">La sesión VPN terminó. Vuelve a conectar antes de guardar.</string>
+    <string name="notification_action_disconnect">Desconectar</string>
+    <string name="notification_channel_description">Estado y tráfico de la conexión VPN</string>
+    <string name="notification_channel_name">Conexión VPN P2PTap</string>
+    <string name="notification_running">P2PTap LAN Virtual conectada</string>
+    <string name="notification_starting">Iniciando VPN P2PTap…</string>
+    <string name="detail_relay_control_failed">Falló la conexión de control del retransmisor; consulta los registros</string>
+    <string name="detail_relay_hop">Conexión de control del retransmisor activa</string>
+    <string name="detail_wait_data">Listo; esperando tráfico</string>
+    <string name="detail_wait_encryption">Esperando la negociación de cifrado</string>
+    <string name="detail_wait_protocol">Esperando el protocolo de aplicación</string>
+    <string name="detail_wait_ready">Esperando a que el nodo esté listo</string>
+    <string name="error_config_field_fmt">Campo de configuración no válido: %1$s. Revisa su valor y los registros.</string>
+    <string name="error_identity_key">Clave de identidad no válida. Importa una clave válida o restaura una copia.</string>
+    <string name="error_invalid_configuration">Configuración no válida. Revisa los ajustes y los registros.</string>
+    <string name="error_invalid_json">JSON no válido. Revisa el archivo de configuración o copia.</string>
+    <string name="error_io">No se pueden leer o escribir datos. Revisa el acceso y el espacio libre.</string>
+    <string name="error_unknown">La operación falló. Consulta los registros de diagnóstico.</string>
+    <string name="hint_obfuscation_mode">Modo de ofuscación</string>
+    <string name="priority_lan">Conexión LAN directa</string>
+    <string name="priority_loopback">Bucle local</string>
+    <string name="priority_overlay">Red superpuesta</string>
+    <string name="priority_wan">Conexión WAN directa</string>
+    <string name="protocol_relay">Retransmisión</string>
+    <string name="rtt_libp2p_ping">Ping de transporte libp2p</string>
+    <string name="rtt_p2p_echo">Sonda de eco P2P</string>
+    <string name="rtt_tap_icmp">Sonda ICMP de la red virtual</string>
+    <string name="security_active_fmt">Activo (%1$s, %2$s B)</string>
+    <string name="security_psk_bound">Red vinculada a PSK</string>
+    <string name="security_public">Red pública (sin PSK)</string>
+    <string name="stat_obf_disabled">Deshabilitada</string>
+    <string name="telemetry_crypto_failed">Error de negociación de cifrado</string>
+    <string name="telemetry_enabled">Activado</string>
+    <string name="telemetry_unknown">Sin datos</string>
+    <string name="telemetry_unmeasured">Sin medir</string>
+    <string name="telemetry_unreachable">Inaccesible</string>
+</resources>

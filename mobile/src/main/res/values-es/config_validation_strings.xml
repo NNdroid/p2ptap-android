@@ -1,0 +1,5 @@
+<resources>
+    <string name="config_peer_endpoint_required">Este código QR no tiene una dirección de nodo válida. Incluya IP/DNS, transporte y /p2p/PeerID.</string>
+    <string name="config_strategy_help">best_path elige una ruta existente según la topología y el rendimiento de escritura; redundant duplica por los flujos existentes; fallback prueba las rutas existentes en orden. Los cambios requieren reiniciar la VPN.</string>
+    <string name="config_static_help">Use multiaddrs completas que terminen en /p2p/PeerID. Los nodos estáticos también pueden usar retransmisores. Los cambios reinician la VPN.</string>
+</resources>

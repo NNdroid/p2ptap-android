@@ -1,0 +1,23 @@
+<resources>
+    <string name="telemetry_loading">正在讀取引擎資料…</string>
+    <string name="telemetry_refresh_failed">重新整理失敗，請點擊重試。</string>
+    <string name="telemetry_live">即時引擎資料 · TAP 有效負載位元組，不含加密與填充開銷</string>
+    <string name="telemetry_dedup">去重丟棄封包數</string>
+    <string name="telemetry_ndp">NDP 封包數</string>
+    <string name="telemetry_other">其他協定封包數</string>
+    <string name="telemetry_psk">PSK 狀態</string>
+    <string name="telemetry_pending">待套用 / 暫不可用</string>
+    <string name="telemetry_saved">已儲存</string>
+    <string name="telemetry_applied">路由已安裝</string>
+    <string name="telemetry_exit_gateway">出口閘道</string>
+    <string name="telemetry_not_gateway">未宣告出口能力</string>
+    <string name="telemetry_exit_select_hint">僅可選擇宣告出口能力且在線的節點。亦可手動填寫目標。</string>
+    <string name="telemetry_link_traffic">本機鏈路累計：↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">選擇已儲存；VPN 執行時已要求套用。</string>
+    <string name="telemetry_invalid_exit">請輸入有效的 IPv4 / IPv6 位址或 Peer ID。</string>
+    <string name="telemetry_proto_mismatch">協定不相容</string>
+    <string name="telemetry_peer_summary">在線 %1$d（直連 %2$d · 中繼 %3$d）· 已知 %4$d</string>
+    <string name="telemetry_replay_drops">重放丟棄封包數</string>
+    <string name="telemetry_disabling">正在移除出口路由…</string>
+    <string name="btn_refresh">重新整理</string>
+</resources>

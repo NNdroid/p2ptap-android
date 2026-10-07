@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The ON/OFF pill. Only two states: the card already carries the focus ring. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:drawable="@drawable/tv_bg_settings_on" />
+    <item android:state_enabled="false" android:drawable="@drawable/tv_bg_settings_unavailable" />
+    <item android:drawable="@drawable/tv_bg_settings_off" />
+</selector>

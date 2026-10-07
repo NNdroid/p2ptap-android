@@ -1,0 +1,23 @@
+<resources>
+    <string name="telemetry_loading">Загрузка данных движка…</string>
+    <string name="telemetry_refresh_failed">Не удалось обновить. Нажмите обновление для повтора.</string>
+    <string name="telemetry_live">Данные движка · полезные байты TAP без шифрования и заполнения</string>
+    <string name="telemetry_dedup">Отброшенные дубликаты</string>
+    <string name="telemetry_ndp">Пакеты NDP</string>
+    <string name="telemetry_other">Другие пакеты</string>
+    <string name="telemetry_psk">Состояние PSK</string>
+    <string name="telemetry_pending">Ожидание / недоступно</string>
+    <string name="telemetry_saved">Сохранено</string>
+    <string name="telemetry_applied">Маршрут установлен</string>
+    <string name="telemetry_exit_gateway">Выходной шлюз</string>
+    <string name="telemetry_not_gateway">Без функции выхода</string>
+    <string name="telemetry_exit_select_hint">Можно выбрать только узлы в сети с заявленной функцией выхода. Доступен ручной ввод.</string>
+    <string name="telemetry_link_traffic">Всего по локальному каналу: ↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">Выбор сохранён; при работающем VPN запрошено применение.</string>
+    <string name="telemetry_invalid_exit">Введите корректный числовой адрес IPv4/IPv6 или ID узла.</string>
+    <string name="telemetry_proto_mismatch">Несовместимый протокол</string>
+    <string name="telemetry_peer_summary">В сети %1$d (%2$d напрямую · %3$d через реле) · Известно %4$d</string>
+    <string name="telemetry_replay_drops">Отброшенные повторы</string>
+    <string name="telemetry_disabling">Удаление выходного маршрута…</string>
+    <string name="btn_refresh">Обновить</string>
+</resources>

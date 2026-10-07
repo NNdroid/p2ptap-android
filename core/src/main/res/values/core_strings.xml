@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Default-locale (English) strings for code that lives in :core: the VPN
+    service, the config layer and UiMessages.
+
+    Locale variants deliberately stay in each app's res/values-*/ files.
+    :core ships only the default config, and a library's resources merge
+    underneath an app's, so an app's values-zh entry still wins for zh while
+    :core's default covers English. Both apps therefore keep their full
+    translation tables without :core needing to duplicate them.
+-->
+<resources>
+
+    <!-- Notification UI, P2PTapVpnService -->
+    <string name="notification_channel_name">P2PTap VPN connection</string>
+    <string name="notification_channel_description">VPN connection status and traffic</string>
+    <string name="notification_starting">Starting P2PTap VPN…</string>
+    <string name="notification_running">P2PTap Connected</string>
+    <string name="notification_action_disconnect">Disconnect</string>
+
+    <!-- Engine and VPN errors -->
+    <string name="error_engine_stalled">Engine stopped reporting. Reconnect to restore traffic statistics.</string>
+    <string name="error_timeout">Connection timed out. Check the network and peer addresses.</string>
+    <string name="error_vpn_establish">Unable to create the VPN tunnel. Check VPN permission and retry.</string>
+    <string name="error_vpn_session_ended">VPN session ended. Reconnect before saving engine settings.</string>
+
+    <!-- Config layer, AppConfig / AppConfigManager -->
+    <string name="config_invalid_fmt">Configuration was not applied: %1$s</string>
+    <string name="error_peer_address_fmt">Address %1$d is invalid. Use a complete multiaddr ending in /p2p/PeerID.</string>
+    <string name="error_save_config">Unable to save configuration. Check available storage.</string>
+    <string name="error_strategy">Transport strategy must be best_path, redundant or fallback.</string>
+    <string name="error_config_field_fmt">Invalid configuration field: %1$s. Check its value; details are in diagnostic logs.</string>
+    <string name="error_identity_key">Invalid identity key. Import a valid key or restore a backup.</string>
+    <string name="error_invalid_configuration">Invalid configuration. Review settings and diagnostic logs.</string>
+    <string name="error_invalid_json">Invalid JSON. Check the configuration or backup file.</string>
+    <string name="error_io">Unable to read or write data. Check file access and available storage.</string>
+    <string name="error_unknown">Operation failed. See diagnostic logs for details.</string>
+
+    <!-- Telemetry and diagnostics labels, UiMessages -->
+    <string name="rtt_tap_icmp">Virtual network ICMP probe</string>
+    <string name="rtt_libp2p_ping">libp2p transport ping</string>
+    <string name="rtt_p2p_echo">P2P echo probe</string>
+    <string name="telemetry_unmeasured">Not measured</string>
+    <string name="telemetry_unknown">No data</string>
+    <string name="telemetry_enabled">Enabled</string>
+    <string name="telemetry_crypto_failed">Encryption negotiation failed</string>
+    <string name="telemetry_unreachable">Unreachable</string>
+    <string name="security_active_fmt">Active (%1$s, %2$s B)</string>
+    <string name="security_psk_bound">PSK-bound mesh</string>
+    <string name="security_public">Public mesh (no PSK)</string>
+    <string name="stat_obf_disabled">Disabled</string>
+    <string name="hint_obfuscation_mode">Obfuscation Mode</string>
+    <string name="protocol_relay">Relay</string>
+    <string name="priority_loopback">Loopback</string>
+    <string name="priority_lan">LAN direct</string>
+    <string name="priority_wan">WAN direct</string>
+    <string name="priority_overlay">Overlay</string>
+    <string name="detail_relay_control_failed">Relay control connection failed; see diagnostic logs</string>
+    <string name="detail_relay_hop">Relay control connection is active</string>
+    <string name="detail_wait_data">Ready; waiting for traffic</string>
+    <string name="detail_wait_encryption">Waiting for encryption negotiation</string>
+    <string name="detail_wait_protocol">Waiting for the application protocol</string>
+    <string name="detail_wait_ready">Waiting for peer readiness</string>
+
+</resources>

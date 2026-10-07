@@ -130,7 +130,7 @@ cd p2ptap
 ./gradlew assembleRelease
 ```
 
-Generated APKs will be located at `app/build/outputs/apk/`.
+Generated APKs will be located at `mobile/build/outputs/apk/`.
 
 ---
 

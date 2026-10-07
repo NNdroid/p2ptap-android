@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginBottom="@dimen/tv_gap_s"
+  android:background="@drawable/tv_bg_row"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:gravity="center_vertical"
+  android:orientation="vertical"
+  android:padding="@dimen/tv_row_padding">
+
+  <TextView
+    android:id="@+id/tvMetricLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+  <TextView
+    android:id="@+id/tvMetricValue"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeroValue" />
+</LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_description">설정과 식별 키를 백업하거나 기존 노드를 가져옵니다.</string>
+    <string name="backup_export_group">📤 내보내기 및 공유</string>
+    <string name="backup_import_group">📥 가져오기 및 복원</string>
+    <string name="backup_scan_qr">📷 QR 스캔 (설정, 식별 정보 또는 노드)</string>
+    <string name="backup_gallery_qr">🖼️ 갤러리에서 QR 이미지 가져오기</string>
+    <string name="msg_identity_restored_fmt">설정과 식별 정보를 복원했습니다. Peer ID: %1$s</string>
+    <string name="peer_id_fmt">Peer ID: %1$s</string>
+    <string name="identity_not_generated">생성되지 않음</string>
+    <string name="scan_node_unknown">검색된 노드</string>
+    <string name="scan_ip_unknown">가상 IP가 지정되지 않음</string>
+    <string name="scan_import_method">가져오기 방법 선택:</string>
+    <string name="hint_allowed_peer_entry">Peer ID (예: 12D3…) 또는 모두 허용하는 * 입력</string>
+    <string name="hint_dns_entry">DNS 서버 IP (예: 1.1.1.1) 입력, 비우면 시스템 기본값 사용</string>
+    <string name="protocol_all">모두</string>
+    <string name="protocol_endpoint">엔드포인트</string>
+    <string name="qr_connection_card_title">P2PTap 연결 카드</string>
+    <string name="label_connection_uri">연결 URI</string>
+    <string name="qr_share_subject_fmt">P2PTap 노드: %1$s</string>
+    <string name="msg_copied_label_fmt">%1$s 클립보드에 복사됨</string>
+    <string name="logs_initializing">진단 로그 초기화 중…</string>
+    <string name="logs_initial_state_fmt">[Info] 실시간 P2P 상태: %1$s (%2$s)</string>
+    <string name="logs_empty">일치하는 로그 없음</string>
+    <string name="logs_reader_failed">로그 읽기가 중지되었습니다. 페이지를 다시 여세요.</string>
+    <string name="logs_collector_unavailable">이 빌드에서는 로그 캡처를 사용할 수 없습니다</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selected tier chip. The value itself is the point of a tier, so this is
+     the strongest fill in the set and carries no focus ring of its own. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#064E3B" />
+    <stroke android:width="2dp" android:color="#10B981" />
+    <corners android:radius="10dp" />
+</shape>

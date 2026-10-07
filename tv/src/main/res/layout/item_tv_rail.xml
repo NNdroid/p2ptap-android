@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One item in the left navigation rail.
+
+    Uses a plain LinearLayout (not MaterialButton) because the
+    MaterialButton static-init check for colorPrimary throws
+    IllegalArgumentException at runtime on this device's Material
+    theme resolution. A LinearLayout with an ImageView and TextView
+    gives us the same visual result with no Material dependency.
+
+    The rail item is focusable so the TV remote can move between
+    items. Focus is handled by TvFocusAnimation.attachTo in the
+    adapter.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tv_rail_item"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    android:background="@drawable/bg_tv_rail_item"
+    android:elevation="0dp"
+    app:layout_constraintStart_toStartOf="parent"
+    tools:ignore="HardcodedText"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/tv_rail_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_tv_power"
+        app:tint="@color/md_theme_onSurfaceVariant"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/tv_rail_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+        android:textColor="@color/md_theme_onSurfaceVariant"
+        android:textAllCaps="false"
+        android:singleLine="true"
+        android:ellipsize="end"
+        tools:text="Home" />
+
+</LinearLayout>

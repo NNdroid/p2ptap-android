@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24"
+  android:tint="#FFFFFF">
+  <!-- WebTransport: a message bubble, streaming on a web socket. -->
+  <path
+    android:pathData="M3.5,4.5 L20.5,4.5 L20.5,15.5 L11,15.5 L6.5,19.5 L6.5,15.5 L3.5,15.5 Z"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineJoin="round"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M8,9 L16,9 M8,12 L13,12"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineCap="round"
+    android:fillColor="#00000000" />
+</vector>

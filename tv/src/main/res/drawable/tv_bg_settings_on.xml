@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selected state of a toggle card. Carries the accent stroke so a viewer can
+     read "this is on" without looking at the text. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#064E3B" />
+    <stroke android:width="2dp" android:color="#10B981" />
+    <corners android:radius="10dp" />
+</shape>

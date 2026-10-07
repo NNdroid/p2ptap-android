@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One action card: an icon, a title, and one line saying what it does.
+
+    Used twice on the import screen and nowhere else, but kept as its own layout
+    because the card's size and padding have to be identical whether it sits in
+    the left or the right column, and two copies of the same 60 lines are how a
+    settings screen starts disagreeing with itself.
+
+    The height is fixed and generous. A focused card has to clear the platform
+    focus glow, and the card carries two text lines rather than one, so it is
+    taller than the settings toggle cards.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/tv_action_card_h"
+  android:background="@drawable/tv_bg_action_card"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:gravity="center_vertical"
+  android:orientation="horizontal"
+  android:padding="@dimen/tv_nav_padding">
+
+  <ImageView
+    android:id="@+id/tvActionIcon"
+    android:layout_width="@dimen/tv_icon_40"
+    android:layout_height="@dimen/tv_icon_40"
+    android:contentDescription="@null" />
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/tv_gap_m"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/tvActionTitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+
+    <TextView
+      android:id="@+id/tvActionDesc"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+  </LinearLayout>
+</LinearLayout>

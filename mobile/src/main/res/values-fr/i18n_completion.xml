@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_description">Sauvegardez la configuration et les clés d’identité ou importez un nœud existant.</string>
+    <string name="backup_export_group">📤 Exporter et partager</string>
+    <string name="backup_import_group">📥 Importer et restaurer</string>
+    <string name="backup_scan_qr">📷 Scanner un QR (configuration, identité ou nœud)</string>
+    <string name="backup_gallery_qr">🖼️ Importer une image QR de la galerie</string>
+    <string name="msg_identity_restored_fmt">Configuration et identité restaurées. Peer ID : %1$s</string>
+    <string name="peer_id_fmt">Peer ID : %1$s</string>
+    <string name="identity_not_generated">Non généré</string>
+    <string name="scan_node_unknown">Nœud détecté</string>
+    <string name="scan_ip_unknown">Aucune IP virtuelle indiquée</string>
+    <string name="scan_import_method">Choisissez le mode d’importation :</string>
+    <string name="hint_allowed_peer_entry">Saisissez un Peer ID (ex. 12D3…) ou * pour tout autoriser</string>
+    <string name="hint_dns_entry">Saisissez l’IP DNS (ex. 1.1.1.1) ; laissez vide pour utiliser celle du système</string>
+    <string name="protocol_all">Tous</string>
+    <string name="protocol_endpoint">Point de connexion</string>
+    <string name="qr_connection_card_title">Fiche de connexion P2PTap</string>
+    <string name="label_connection_uri">URI de connexion</string>
+    <string name="qr_share_subject_fmt">Nœud P2PTap : %1$s</string>
+    <string name="msg_copied_label_fmt">%1$s copié dans le presse-papiers</string>
+    <string name="logs_initializing">Initialisation des journaux de diagnostic…</string>
+    <string name="logs_initial_state_fmt">[Info] État P2P en temps réel : %1$s (%2$s)</string>
+    <string name="logs_empty">Aucune entrée correspondante</string>
+    <string name="logs_reader_failed">La lecture du journal s’est arrêtée. Rouvrez cette page.</string>
+    <string name="logs_collector_unavailable">Capture du journal indisponible dans cette version</string>
+</resources>

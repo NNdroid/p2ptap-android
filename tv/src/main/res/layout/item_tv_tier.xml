@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A tier: one setting with a small closed set of values.
+
+    The label sits in the same row as its chips rather than above them. A row
+    with its label on top costs about 30dp, and a settings screen only has
+    slack for two of those, so the label takes the left column and the chips
+    take the rest of the row.
+
+    Chips are inflated per option by the activity, so a tier can have three or
+    five rungs without touching this layout.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/tv_tier_chip_h"
+  android:gravity="center_vertical"
+  android:orientation="horizontal">
+
+  <TextView
+    android:id="@+id/tvTierLabel"
+    android:layout_width="@dimen/tv_tier_label_w"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body" />
+
+  <LinearLayout
+    android:id="@+id/tvTierChips"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/tv_gap_s"
+    android:layout_weight="1"
+    android:gravity="center"
+    android:orientation="horizontal" />
+</LinearLayout>

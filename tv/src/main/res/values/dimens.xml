@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    10-foot sizing, budgeted against a real display.
+
+    The floor is a 1080p set at xhdpi: 1920x1080px at 2.0 = 960x540dp. Every
+    fixed height on a screen has to fit inside 540dp, because a TV has no
+    scrolling and the clipped half of a layout is simply gone. A 4K set is
+    1280x720dp and gets the slack back as breathing room.
+
+    The home screen is the reference budget:
+
+        padding       24 + 24 =  48
+        header        icon row        48
+        hero card     content        ~210
+        button        96 + margin 20  116
+        nav rail      92 + margin 24  116
+        footnote      label           22
+
+    That is about 560dp of fixed content, so the weighted Space above the hero
+    takes the difference rather than the layout overflowing. The sizes below
+    are the ones that make that work on 540dp, not a hope that a set is taller.
+
+    The one hard number is tv_button_h: a focused button has to be tall enough
+    that the platform's focus glow does not sit on top of the label. 96dp
+    clears that; below about 80dp the glow eats the text.
+-->
+<resources>
+    <dimen name="tv_screen_padding_h">72dp</dimen>
+    <dimen name="tv_screen_padding_v">24dp</dimen>
+    <dimen name="tv_gap_l">24dp</dimen>
+    <dimen name="tv_gap_m">16dp</dimen>
+    <dimen name="tv_gap_s">8dp</dimen>
+
+    <dimen name="tv_hero_width">720dp</dimen>
+    <dimen name="tv_hero_padding">20dp</dimen>
+    <dimen name="tv_hero_corner">24dp</dimen>
+
+    <dimen name="tv_status_dot">22dp</dimen>
+
+    <dimen name="tv_button_w">300dp</dimen>
+    <dimen name="tv_button_h">96dp</dimen>
+
+    <!-- Rail cards are weighted, not fixed width, so the row fills whatever
+         the set is wide enough for. Height is fixed and budgeted above. -->
+    <dimen name="tv_nav_card_h">92dp</dimen>
+    <dimen name="tv_nav_corner">16dp</dimen>
+    <dimen name="tv_nav_padding">14dp</dimen>
+
+    <dimen name="tv_row_padding">16dp</dimen>
+    <dimen name="tv_row_corner">12dp</dimen>
+
+    <dimen name="tv_icon_40">40dp</dimen>
+    <dimen name="tv_icon_32">32dp</dimen>
+
+    <!-- QR code, budgeted the same way as the rest: header 48 + gap 16 + code
+         300 + gap 16 + bottom padding 24 is 404dp, leaving the right-hand
+         column room for four mode chips and two buttons on a 540dp set. -->
+    <dimen name="tv_qr_size">300dp</dimen>
+
+    <!-- Import action cards. Taller than the settings toggle cards because each
+         one carries two text lines, and two rows of them plus the header, the
+         note and the status line fit in 540dp. -->
+    <dimen name="tv_action_card_h">120dp</dimen>
+
+    <!-- Settings cards. Shorter than tv_nav_card_h because a settings screen
+         lists rather than navigates: ten cards have to sit in the same 540dp.
+         10 + 34 (the state pill) + 10 = 54dp per card, 62dp with the row
+         margin, so ten cards in two columns are five rows at 310dp. -->
+    <dimen name="tv_card_padding_v">10dp</dimen>
+
+    <!-- Keep-alive layer rows. Three rows plus header, note and the honest
+         footer have to fit in 540dp: 48 + 48 + 16 + 36 + 16 + 3x84 + 2x12 + 16
+         + 44 = 500, with 40dp of slack for a footer that wraps to two lines. -->
+    <dimen name="tv_ka_row_h">84dp</dimen>
+    <dimen name="tv_ka_action_w">220dp</dimen>
+    <dimen name="tv_ka_action_h">60dp</dimen>
+
+    <!-- Tier rail: a row of value chips beside a label. The chip height is
+         deliberately close to the nav card height, because a focused chip has
+         the same glow-clearance problem as a focused button. -->
+    <dimen name="tv_tier_chip_h">68dp</dimen>
+    <dimen name="tv_tier_label_w">140dp</dimen>
+</resources>

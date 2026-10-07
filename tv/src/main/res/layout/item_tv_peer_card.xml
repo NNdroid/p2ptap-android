@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One mesh peer card, MD3-styled. A MaterialCardView wrapped in a FrameLayout
+    so the RecyclerView's focus search finds the card (not the frame) as the
+    focusable target.
+
+    Layout in two rows:
+    - Row 1 (identity): name, TAP IP, transport chip, exit badge (conditional)
+    - Row 2 (metrics): RTT, path, up, down
+
+    The exit badge is hidden when the peer is not an exit node.
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/tv_peer_card"
+        style="@style/Widget.P2ptap.Tv.Card.Focusable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Row 1: identity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_peer_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+                        android:textColor="@color/md_theme_onBackground"
+                        tools:text="Living room" />
+
+                    <TextView
+                        android:id="@+id/tv_peer_tap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium"
+                        android:textColor="@color/md_theme_onSurface"
+                        tools:text="10.0.0.12" />
+
+                    <TextView
+                        android:id="@+id/tv_peer_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
+                        android:textColor="@color/md_theme_onSurfaceVariant"
+                        tools:text="12D3Koo…abc123" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_peer_transport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/tv_bg_chip"
+                        android:backgroundTint="@color/tv_prot_quic"
+                        android:paddingStart="20dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="8dp"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
+                        android:textColor="@android:color/white"
+                        tools:text="QUIC" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Row 2: metrics -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:divider="@color/md_theme_outlineVariant"
+                android:dividerPadding="20dp"
+                android:showDividers="middle">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_peer_rtt"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_peer_rtt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
+                        android:textColor="@color/md_theme_onBackground"
+                        tools:text="12 ms" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_peer_path"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_peer_path"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
+                        android:textColor="@color/md_theme_primary"
+                        tools:text="Direct" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_peer_tx"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_peer_tx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
+                        android:textColor="@color/md_theme_onBackground"
+                        tools:text="1.2 GB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_peer_rx"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_peer_rx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
+                        android:textColor="@color/md_theme_onBackground"
+                        tools:text="4.5 GB" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

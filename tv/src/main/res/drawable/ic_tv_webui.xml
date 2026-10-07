@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24"
+  android:tint="#FFFFFF">
+  <!-- Web UI: a four-panel dashboard. -->
+  <path
+    android:pathData="M3.5,3.5 L10,3.5 L10,10 L3.5,10 Z"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineJoin="round"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M14,3.5 L20.5,3.5 L20.5,10 L14,10 Z"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineJoin="round"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M3.5,14 L10,14 L10,20.5 L3.5,20.5 Z"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineJoin="round"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M14,14 L20.5,14 L20.5,20.5 L14,20.5 Z"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineJoin="round"
+    android:fillColor="#00000000" />
+</vector>

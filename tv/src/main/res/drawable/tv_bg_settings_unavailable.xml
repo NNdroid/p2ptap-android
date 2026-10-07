@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dimmed card. Used for a setting that is present but not the one to change:
+     a transport that is the last one enabled would strand the node with no
+     network, so it is shown and explained rather than hidden. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#0B1220" />
+    <stroke android:width="1dp" android:color="#1E293B" />
+    <corners android:radius="10dp" />
+</shape>

@@ -1,6 +1,0 @@
-<resources>
-    <string name="config_invalid_fmt">Configuration was not applied: %1$s</string>
-    <string name="config_peer_endpoint_required">This QR code has no dialable peer address. Include the IP/DNS, transport, and /p2p/PeerID.</string>
-    <string name="config_strategy_help">best_path selects an existing path using topology priority and write performance; redundant duplicates over existing streams; fallback tries existing paths in order. Changes require a VPN restart.</string>
-    <string name="config_static_help">Use complete multiaddrs ending in /p2p/PeerID. Static peers can also connect through relays. Changes restart the VPN.</string>
-</resources>

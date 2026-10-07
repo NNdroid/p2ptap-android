@@ -1,0 +1,5 @@
+<resources>
+    <string name="config_peer_endpoint_required">此 QR 碼沒有可連線的節點位址。請包含 IP/DNS、傳輸協定與 /p2p/PeerID。</string>
+    <string name="config_strategy_help">best_path 依拓撲優先順序與寫入效能選擇現有路徑；redundant 透過現有串流重複傳送；fallback 依序嘗試現有路徑。變更需要重新啟動 VPN。</string>
+    <string name="config_static_help">使用以 /p2p/PeerID 結尾的完整 multiaddr。靜態節點也可透過中繼連線。變更會重新啟動 VPN。</string>
+</resources>

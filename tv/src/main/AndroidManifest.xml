@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        VPN and network permissions are declared in :core's manifest, which the
+        merger unions in here. App-private permissions stay per app: the TV build
+        has no camera at all, so there is nothing to declare.
+
+        exported="true" on the boot receiver is required, not optional: the
+        receiver match is keyed on the sender's uid, and BOOT_COMPLETED comes
+        from the system (uid 1000), which is never this app's uid. The
+        permission side is already safe — BOOT_COMPLETED is a protected
+        broadcast, so only the system can send it.
+    -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <!--
+        Localized strings are in res/values-<locale>/strings.xml for
+        de, es, fr, ja, ko, ru, zh, zh-rCN, zh-rHK and zh-rTW, with the
+        default resources in res/values/ as English. Android infers the
+        supported locales from those directories — there is no manifest
+        attribute to declare them — so the directory set is the contract,
+        enforced by scripts/check-i18n.sh.
+    -->
+    <application
+        android:allowBackup="true"
+        android:banner="@drawable/ic_banner"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:resizeableActivity="false"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.P2ptap.Tv"
+        android:roundIcon="@mipmap/ic_launcher">
+
+        <activity
+            android:name=".TvMainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.P2ptap.Tv">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            Declared by full name: the class lives in :core, whose package is
+            app.fjj.p2ptap.service, while this module's namespace is
+            app.fjj.p2ptap.tv. A relative name would resolve to a class that
+            does not exist.
+        -->
+        <service
+            android:name="app.fjj.p2ptap.service.P2PTapVpnService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="P2PTap VPN Tunnel" />
+        </service>
+
+        <!--
+            L2. The second specialUse foreground service this app can hold.
+            permission="" is not a typo: it is the explicit statement that no
+            bind permission is required, which is what the platform asks for to
+            justify a specialUse type that is not a VPN service.
+        -->
+        <service
+            android:name=".TvWatchdogService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:permission="">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="P2PTap tunnel watchdog" />
+        </service>
+
+        <!--
+            L3 is intentionally NOT declared here. Shizuku loads TvKeeperService
+            reflectively by class name (Class.forName) and instantiates it with
+            a Context-taking constructor, so it is not an android.app.Service and
+            a <service> entry would be both wrong and misleading. See the class
+            for the shape that is correct.
+        -->
+
+        <!--
+            The Shizuku client provider. Without it Shizuku cannot reach this
+            app at all, and every pingBinder() returns false. authorities must be
+            unique per package; the ${applicationId} substitution keeps this true
+            if the applicationId is ever forked for a different build.
+        -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!--
+            QUICKBOOT_POWERON is HTC's proprietary power-on action; most boxes
+            never emit it, but declaring it is free and catches the handful of
+            sets that do. POWER_CONNECTED covers a set coming back from an
+            unplanned power loss, which is exactly the case a boot flag exists
+            for.
+        -->
+        <receiver
+            android:name=".TvBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.POWER_CONNECTED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+            L3's receiving end. exported is required because the sender holds
+            shell uid, which the broadcast framework treats as a different
+            package. See TvKeeperReceiver for why that export is inert.
+        -->
+        <receiver
+            android:name=".TvKeeperReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="app.fjj.p2ptap.tv.action.KEEPER_RESTORE" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+            L2's self-rearm. Not exported: the only sender is this app's own
+            AlarmManager PendingIntent, and an exported receiver that starts a
+            foreground service on demand is a background-launch surface this app
+            does not need.
+        -->
+        <receiver
+            android:name=".TvAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="app.fjj.p2ptap.tv.WATCHDOG_TICK" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

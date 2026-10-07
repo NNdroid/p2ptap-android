@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    MD3 semantic color tokens. Every value below is dark because TV is a dark-only
+    environment (the whole app lives in the values/ folder; there is no -night
+    folder, so the tokens are the base). Material widgets that render against
+    these tokens (MaterialCardView, MaterialButton, MaterialSwitch, ...) pick up
+    their colour automatically from the theme that references them, so no widget
+    has to hardcode a colour.
+
+    Naming rule: md_theme_* follows the MD3 spec (so MD3 components resolve them
+    by name), while tv_* stays for legacy / TV-specific references (state
+    indicators, protocol badges, QR panel).
+-->
+<resources>
+
+    <!-- ── Surface / background ─────────────────────────────────────── -->
+    <!-- The room, the frame, and every depth layer inside it. -->
+    <color name="md_theme_background">#070A10</color>
+    <color name="md_theme_onBackground">#F8FAFC</color>
+
+    <color name="md_theme_surface">#0F172A</color>
+    <color name="md_theme_onSurface">#F8FAFC</color>
+    <color name="md_theme_surfaceVariant">#1E293B</color>
+    <color name="md_theme_onSurfaceVariant">#CBD5E1</color>
+
+    <!-- MD3 surface-container ramp. Used by MaterialCardView's elevation
+         overlay so a card at elevation 4dp reads as a distinct card against
+         its neighbour without a hard edge. -->
+    <color name="md_theme_surfaceContainerLowest">#0A0F1E</color>
+    <color name="md_theme_surfaceContainerLow">#141B2E</color>
+    <color name="md_theme_surfaceContainer">#1B2438</color>
+    <color name="md_theme_surfaceContainerHigh">#232E45</color>
+    <color name="md_theme_surfaceContainerHighest">#2B3548</color>
+
+    <!-- ── Primary ──────────────────────────────────────────────────── -->
+    <!-- Cyan: the brand's primary hue, from the mobile hero gradient. Picked
+         brighter than the phone build because it renders on the smaller tile
+         of a rail item, where the darker #06B6D4 reads as grey. -->
+    <color name="md_theme_primary">#22D3EE</color>
+    <color name="md_theme_onPrimary">#06121A</color>
+    <color name="md_theme_primaryContainer">#0E7490</color>
+    <color name="md_theme_onPrimaryContainer">#CFFAFE</color>
+
+    <!-- ── Secondary ────────────────────────────────────────────────── -->
+    <!-- Slate: neutral chrome, chrome that supports but never competes. -->
+    <color name="md_theme_secondary">#94A3B8</color>
+    <color name="md_theme_onSecondary">#1E293B</color>
+    <color name="md_theme_secondaryContainer">#334155</color>
+    <color name="md_theme_onSecondaryContainer">#E2E8F0</color>
+
+    <!-- ── Tertiary ─────────────────────────────────────────────────── -->
+    <!-- Green: the mesh accent, from the banner gradient end. -->
+    <color name="md_theme_tertiary">#34D399</color>
+    <color name="md_theme_onTertiary">#04231A</color>
+    <color name="md_theme_tertiaryContainer">#064E3B</color>
+    <color name="md_theme_onTertiaryContainer">#D1FAE5</color>
+
+    <!-- ── Error ────────────────────────────────────────────────────── -->
+    <color name="md_theme_error">#F87171</color>
+    <color name="md_theme_onError">#3D0A0A</color>
+    <color name="md_theme_errorContainer">#7F1D1D</color>
+    <color name="md_theme_onErrorContainer">#FEE2E2</color>
+
+    <!-- ── Outline ──────────────────────────────────────────────────── -->
+    <color name="md_theme_outline">#475569</color>
+    <color name="md_theme_outlineVariant">#1E293B</color>
+
+    <!-- ── Scrims / overlays ────────────────────────────────────────── -->
+    <color name="md_theme_scrim">#99070A10</color>
+    <color name="md_theme_inverseOnSurface">#0F172A</color>
+    <color name="md_theme_inverseSurface">#F8FAFC</color>
+    <color name="md_theme_inversePrimary">#0E7490</color>
+
+    <!-- ── Focus ────────────────────────────────────────────────────── -->
+    <!-- Rail item, card and button focus rings. Distinct from primary so the
+         focus state reads as "this one", not "this one is brand". -->
+    <color name="md_theme_focusRing">#22D3EE</color>
+    <color name="md_theme_focusRingSoft">#4D22D3EE</color>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Legacy tv_* names, kept because a large number of existing drawables
+         and screens reference them by name. They are TV-specific and are NOT
+         part of the MD3 spec — do not replace them with md_theme_*.
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <!-- Old theme references, kept for backward compatibility. -->
+    <color name="tv_window_bg">#070A10</color>
+    <color name="tv_card_bg">#0F172A</color>
+    <color name="tv_card_elevated">#1E293B</color>
+    <color name="tv_stroke">#334155</color>
+    <color name="tv_stroke_soft">#1E293B</color>
+    <color name="tv_scrim">#99070A10</color>
+
+    <color name="tv_text_primary">#F8FAFC</color>
+    <color name="tv_text_secondary">#94A3B8</color>
+    <color name="tv_text_muted">#64748B</color>
+
+    <color name="tv_brand_primary">#22D3EE</color>
+    <color name="tv_brand_primary_dark">#0E7490</color>
+    <color name="tv_brand_secondary">#6366F1</color>
+
+    <!-- Connection state, same semantics as the phone build. -->
+    <color name="tv_status_connected">#10B981</color>
+    <color name="tv_status_connecting">#F59E0B</color>
+    <color name="tv_status_stopping">#8B5CF6</color>
+    <color name="tv_status_timeout">#F97316</color>
+    <color name="tv_status_error">#EF4444</color>
+    <color name="tv_status_disconnected">#64748B</color>
+
+    <!-- Protocol badges. Rendered as filled chips, not emoji. -->
+    <color name="tv_prot_quic">#0891B2</color>
+    <color name="tv_prot_webrtc">#10B981</color>
+    <color name="tv_prot_wt">#6366F1</color>
+    <color name="tv_prot_tcp">#F59E0B</color>
+    <color name="tv_prot_relay">#8B5CF6</color>
+    <color name="tv_prot_unknown">#475569</color>
+
+    <!-- QR quiet zone. -->
+    <color name="tv_qr_panel">#F8FAFC</color>
+
+    <!-- Banner gradient stops. -->
+    <color name="tv_banner_start">#00F2FE</color>
+    <color name="tv_banner_mid">#38BDF8</color>
+    <color name="tv_banner_end">#10B981</color>
+</resources>

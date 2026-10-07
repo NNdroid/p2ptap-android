@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Focused state of a toggle card. Cyan, to match tv_bg_row, so "where am I
+     looking" and "what is on" stay visually distinct. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#164E63" />
+    <stroke android:width="2dp" android:color="#06B6D4" />
+    <corners android:radius="10dp" />
+</shape>

@@ -1,0 +1,23 @@
+<resources>
+    <string name="telemetry_loading">正在读取引擎数据…</string>
+    <string name="telemetry_refresh_failed">刷新失败，点击刷新重试。</string>
+    <string name="telemetry_live">实时引擎数据 · TAP 有效载荷字节，不含加密及填充开销</string>
+    <string name="telemetry_dedup">去重丢弃包数</string>
+    <string name="telemetry_ndp">NDP 包数</string>
+    <string name="telemetry_other">其他协议包数</string>
+    <string name="telemetry_psk">PSK 状态</string>
+    <string name="telemetry_pending">待应用 / 暂不可用</string>
+    <string name="telemetry_saved">已保存</string>
+    <string name="telemetry_applied">路由已安装</string>
+    <string name="telemetry_exit_gateway">出口网关</string>
+    <string name="telemetry_not_gateway">未声明出口能力</string>
+    <string name="telemetry_exit_select_hint">仅可选择声明出口能力且在线的节点。也可手动填写目标。</string>
+    <string name="telemetry_link_traffic">本机链路累计：↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">选择已保存；VPN 运行时已请求应用。</string>
+    <string name="telemetry_invalid_exit">请输入有效的 IPv4 / IPv6 地址或 Peer ID。</string>
+    <string name="telemetry_proto_mismatch">协议不兼容</string>
+    <string name="telemetry_peer_summary">在线 %1$d（直连 %2$d · 中继 %3$d）· 已知 %4$d</string>
+    <string name="telemetry_replay_drops">重放丢弃包数</string>
+    <string name="telemetry_disabling">正在移除出口路由…</string>
+    <string name="btn_refresh">刷新</string>
+</resources>

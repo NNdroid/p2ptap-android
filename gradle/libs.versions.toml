@@ -12,6 +12,11 @@ navigationFragmentKtx = "2.10.2"
 navigationUiKtx = "2.10.2"
 zxingCore = "3.5.4"
 zxingAndroid = "4.3.0"
+orgJson = "20240303"
+leanback = "1.2.0"
+leanbackGrid = "1.0.0"
+recyclerview = "1.4.0"
+shizuku = "13.1.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,7 +31,23 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxingCore" }
 zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingAndroid" }
+org-json = { group = "org.json", name = "json", version.ref = "orgJson" }
+androidx-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanback" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+# Leanback 1.2.0 split the grid widgets into their own artifact: VerticalGridView
+# lives in leanback-grid, not in leanback itself.
+androidx-leanback-grid = { group = "androidx.leanback", name = "leanback-grid", version.ref = "leanbackGrid" }
+
+# Shizuku: api is what the app calls into, provider is the ContentProvider the
+# app must declare so Shizuku can reach it. Same version for both, always — the
+# provider talks to the client over a versioned protocol.
+# api alone is enough here: it carries the AIDL stubs too, and this build writes
+# its own service AIDL rather than taking Shizuku's, so the api-compiler
+# annotation processor and the aidl-compiler gradle plugin are not needed.
+shizuku-api = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku" }
+shizuku-provider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    S6 Keep-Alive. A vertical stack of three cards, one per layer. Each card
+    has a title, a one-line description, a status indicator, and (for L3)
+    an action button.
+
+    The cards are ordered top-to-bottom by reliability: L1 (always works),
+    L2 (works within the app's process), L3 (works after a process kill,
+    but only if Shizuku is activated).
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_background"
+    android:padding="32dp">
+
+    <TextView
+        android:id="@+id/tv_screen_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_screen_keepalive"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineMedium"
+        android:textColor="@color/md_theme_onBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/tv_ka_layers"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:divider="@color/md_theme_outlineVariant"
+        android:dividerPadding="16dp"
+        android:orientation="vertical"
+        android:showDividers="middle"
+        app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- L1 Boot restore -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.P2ptap.Tv.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/md_theme_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_tv_key"
+                    android:contentDescription="@null"
+                    app:tint="@color/md_theme_primary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_ka_l1_title"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+                        android:textColor="@color/md_theme_onBackground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/tv_ka_l1_desc"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_ka_l1_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tv_bg_chip"
+                    android:backgroundTint="@color/tv_status_connected"
+                    android:paddingStart="20dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="8dp"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
+                    android:textColor="@android:color/white"
+                    tools:text="Always on" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- L2 Watchdog -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.P2ptap.Tv.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/md_theme_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_tv_shield"
+                    android:contentDescription="@null"
+                    app:tint="@color/md_theme_primary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_ka_l2_title"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+                        android:textColor="@color/md_theme_onBackground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/tv_ka_l2_desc"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_ka_l2_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tv_bg_chip"
+                    android:backgroundTint="@color/tv_status_connected"
+                    android:paddingStart="20dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="8dp"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
+                    android:textColor="@android:color/white"
+                    tools:text="Active" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- L3 Shizuku keeper -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.P2ptap.Tv.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/md_theme_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_tv_keepalive"
+                    android:contentDescription="@null"
+                    app:tint="@color/md_theme_tertiary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_ka_l3_title"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+                        android:textColor="@color/md_theme_onBackground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/tv_ka_l3_desc"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_ka_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
+                        android:textColor="@color/md_theme_onSurface"
+                        tools:text="v13 · uid 2000" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_ka_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/tv_bg_chip"
+                        android:backgroundTint="@color/tv_status_disconnected"
+                        android:paddingStart="20dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="8dp"
+                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
+                        android:textColor="@android:color/white"
+                        tools:text="Not installed" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/tv_ka_activate"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/tv_ka_activate" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/tv_ka_recover"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_ka_recover" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

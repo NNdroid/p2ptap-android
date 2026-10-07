@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One rung of a tier rail. Inflated per option, so the number of rungs can
+    change without touching any layout.
+
+    The value text is the label here: "AUTO" or "CHACHA20" says both what the
+    option is and that it is a value of a bigger setting.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/tvTierValue"
+  android:layout_width="0dp"
+  android:layout_height="match_parent"
+  android:background="@drawable/tv_bg_tier_chip"
+  android:ellipsize="end"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:gravity="center"
+  android:maxLines="1"
+  android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body" />

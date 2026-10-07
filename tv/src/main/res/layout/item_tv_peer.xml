@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One mesh peer. Everything the user needs to identify the node and judge the
+    link: who, where, over what protocol, how fast, which way, and how much
+    traffic it carries. No free-text editing here — that is not a TV affordance.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginBottom="@dimen/tv_gap_s"
+  android:background="@drawable/tv_bg_row"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:orientation="vertical"
+  android:padding="@dimen/tv_row_padding">
+
+    <!-- Row 1: identity, protocol, latency, active exit gateway -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+          android:id="@+id/tvPeerName"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:ellipsize="middle"
+          android:maxLines="1"
+          android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+
+        <TextView
+          android:id="@+id/tvPeerTap"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="4dp"
+          android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+      </LinearLayout>
+
+      <TextView
+        android:id="@+id/tvPeerProtocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tv_bg_chip"
+        android:paddingStart="20dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvPeerRtt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_m"
+        android:gravity="center"
+        android:minWidth="140dp"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body" />
+
+      <TextView
+        android:id="@+id/tvPeerPath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_m"
+        android:gravity="center"
+        android:minWidth="140dp"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body" />
+
+      <TextView
+        android:id="@+id/tvPeerExitBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_m"
+        android:background="@drawable/tv_bg_chip"
+        android:paddingStart="20dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="8dp"
+        android:text="@string/tv_peer_exit_badge"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label"
+        android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Row 2: per-peer traffic and origin -->
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="12dp"
+      android:orientation="horizontal">
+
+      <TextView
+        android:id="@+id/tvPeerTx"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvPeerRx"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvPeerOs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+    </LinearLayout>
+
+    <!-- Row 3: the endpoint the node is reachable at -->
+    <TextView
+      android:id="@+id/tvPeerAddr"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:ellipsize="middle"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+</LinearLayout>

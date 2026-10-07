@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Navigation graph for the TV shell. Seven destinations, one per left-rail
+    entry. Home is the startDestination and the only top-level destination
+    (backQueue is empty here); every other fragment can navigate back to it
+    via BACK.
+
+    The id of each <fragment> matches the R.id used in TvNavDestination, so
+    TvMainActivity can compare navController.currentDestination?.id directly
+    with the destination.id in the rail.
+
+    Each fragment's layout is declared via tools:layout so the Android Studio
+    preview resolves it; the actual inflation happens when the fragment is
+    constructed and calls inflate().
+-->
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_nav_graph"
+    app:startDestination="@id/tvHomeFragment">
+
+    <fragment
+        android:id="@+id/tvHomeFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvHomeFragment"
+        android:label="@string/tv_screen_home"
+        tools:layout="@layout/fragment_tv_home" />
+
+    <fragment
+        android:id="@+id/tvPeersFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvPeersFragment"
+        android:label="@string/tv_screen_peers"
+        tools:layout="@layout/fragment_tv_peers" />
+
+    <fragment
+        android:id="@+id/tvTransferFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvTransferFragment"
+        android:label="@string/tv_screen_transfer"
+        tools:layout="@layout/fragment_tv_transfer" />
+
+    <fragment
+        android:id="@+id/tvSettingsFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvSettingsFragment"
+        android:label="@string/tv_screen_settings"
+        tools:layout="@layout/fragment_tv_settings" />
+
+    <fragment
+        android:id="@+id/tvDiagnosticsFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvDiagnosticsFragment"
+        android:label="@string/tv_screen_diagnostics"
+        tools:layout="@layout/fragment_tv_diagnostics" />
+
+    <fragment
+        android:id="@+id/tvKeepAliveFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvKeepAliveFragment"
+        android:label="@string/tv_screen_keepalive"
+        tools:layout="@layout/fragment_tv_keepalive" />
+
+    <fragment
+        android:id="@+id/tvAboutFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvAboutFragment"
+        android:label="@string/tv_screen_about"
+        tools:layout="@layout/fragment_tv_about" />
+
+</navigation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_description">Konfiguration und Identitätsschlüssel sichern oder vorhandenen Knoten importieren.</string>
+    <string name="backup_export_group">📤 Exportieren und teilen</string>
+    <string name="backup_import_group">📥 Importieren und wiederherstellen</string>
+    <string name="backup_scan_qr">📷 QR-Code scannen (Konfiguration, Identität oder Knoten)</string>
+    <string name="backup_gallery_qr">🖼️ QR-Bild aus Galerie importieren</string>
+    <string name="msg_identity_restored_fmt">Konfiguration und Identität wiederhergestellt. Peer ID: %1$s</string>
+    <string name="peer_id_fmt">Peer ID: %1$s</string>
+    <string name="identity_not_generated">Noch nicht erstellt</string>
+    <string name="scan_node_unknown">Gefundener Knoten</string>
+    <string name="scan_ip_unknown">Keine virtuelle IP angegeben</string>
+    <string name="scan_import_method">Importmethode auswählen:</string>
+    <string name="hint_allowed_peer_entry">Peer ID eingeben (z. B. 12D3…) oder * für alle</string>
+    <string name="hint_dns_entry">DNS-Server-IP eingeben (z. B. 1.1.1.1); leer für Systemstandard</string>
+    <string name="protocol_all">Alle</string>
+    <string name="protocol_endpoint">Endpunkt</string>
+    <string name="qr_connection_card_title">P2PTap-Verbindungskarte</string>
+    <string name="label_connection_uri">Verbindungs-URI</string>
+    <string name="qr_share_subject_fmt">P2PTap-Knoten: %1$s</string>
+    <string name="msg_copied_label_fmt">%1$s in die Zwischenablage kopiert</string>
+    <string name="logs_initializing">Diagnoseprotokoll wird initialisiert…</string>
+    <string name="logs_initial_state_fmt">[Info] P2P-Status in Echtzeit: %1$s (%2$s)</string>
+    <string name="logs_empty">Keine passenden Protokolleinträge</string>
+    <string name="logs_reader_failed">Protokollleser angehalten. Seite erneut öffnen.</string>
+    <string name="logs_collector_unavailable">Protokollierung in diesem Build nicht verfügbar</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Locale variants for the strings that live in :core. The
+     default locale ships in values/core_strings.xml. -->
+<resources>
+    <string name="error_peer_address_fmt">アドレス %1$d が無効です。/p2p/PeerID で終わる完全な multiaddr を使用してください。</string>
+    <string name="error_save_config">設定を保存できません。空き容量を確認してください。</string>
+    <string name="error_strategy">転送戦略は best_path、redundant、fallback のいずれかです。</string>
+    <string name="config_invalid_fmt">設定は適用されませんでした：%1$s</string>
+    <string name="error_timeout">接続がタイムアウトしました。ネットワークとノードのアドレスを確認してください。</string>
+    <string name="error_engine_stalled">エンジンが報告を停止しました。トラフィック統計を復元するには再接続してください。</string>
+    <string name="error_vpn_establish">VPN トンネルを作成できません。VPN の許可を確認してください。</string>
+    <string name="error_vpn_session_ended">VPN セッションが終了しました。再接続してから設定を保存してください。</string>
+    <string name="notification_action_disconnect">切断</string>
+    <string name="notification_channel_description">VPN の接続状態と通信量</string>
+    <string name="notification_channel_name">P2PTap VPN 接続</string>
+    <string name="notification_running">P2PTap 仮想ネットワーク稼働中</string>
+    <string name="notification_starting">P2PTap VPN起動中…</string>
+    <string name="detail_relay_control_failed">リレー制御接続に失敗しました。診断ログを確認してください</string>
+    <string name="detail_relay_hop">リレー制御接続は有効です</string>
+    <string name="detail_wait_data">準備完了、通信待機中</string>
+    <string name="detail_wait_encryption">暗号化ネゴシエーション待機中</string>
+    <string name="detail_wait_protocol">アプリケーションプロトコル待機中</string>
+    <string name="detail_wait_ready">ノードの準備完了を待機中</string>
+    <string name="error_config_field_fmt">設定項目 %1$s が無効です。値と診断ログを確認してください。</string>
+    <string name="error_identity_key">識別鍵が無効です。有効な鍵をインポートするかバックアップを復元してください。</string>
+    <string name="error_invalid_configuration">設定が無効です。設定内容と診断ログを確認してください。</string>
+    <string name="error_invalid_json">JSON が無効です。設定またはバックアップファイルを確認してください。</string>
+    <string name="error_io">データを読み書きできません。アクセス権と空き容量を確認してください。</string>
+    <string name="error_unknown">操作に失敗しました。詳細は診断ログを確認してください。</string>
+    <string name="hint_obfuscation_mode">難読化モード</string>
+    <string name="priority_lan">LAN 直接接続</string>
+    <string name="priority_loopback">ループバック</string>
+    <string name="priority_overlay">オーバーレイ</string>
+    <string name="priority_wan">WAN 直接接続</string>
+    <string name="protocol_relay">リレー</string>
+    <string name="rtt_libp2p_ping">libp2p 転送層 ping</string>
+    <string name="rtt_p2p_echo">P2P エコープローブ</string>
+    <string name="rtt_tap_icmp">仮想ネットワーク ICMP プローブ</string>
+    <string name="security_active_fmt">有効（%1$s、%2$s B）</string>
+    <string name="security_psk_bound">PSK に紐付くメッシュ</string>
+    <string name="security_public">公開メッシュ（PSK なし）</string>
+    <string name="stat_obf_disabled">無効</string>
+    <string name="telemetry_crypto_failed">暗号化ネゴシエーション失敗</string>
+    <string name="telemetry_enabled">有効</string>
+    <string name="telemetry_unknown">データなし</string>
+    <string name="telemetry_unmeasured">未測定</string>
+    <string name="telemetry_unreachable">到達不可</string>
+</resources>

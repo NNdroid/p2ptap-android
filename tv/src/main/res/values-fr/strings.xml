@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    French TV strings. Shared service/config strings live in :core.
+    Deliberately emoji-free, like the default.
+-->
+<resources>
+    <string name="app_name">P2PTap TV</string>
+
+    <!-- Screens -->
+    <string name="tv_screen_peers">Nœuds de maillage</string>
+    <string name="tv_screen_diagnostics">Diagnostic</string>
+
+    <!-- Home hero -->
+    <string name="tv_hero_title">Nœud de maillage</string>
+    <string name="tv_node_label">Nœud</string>
+    <string name="tv_addresses_label">Adresses</string>
+    <string name="tv_addresses_none">Aucune adresse virtuelle</string>
+
+    <string name="tv_status_running">CONNECTÉ</string>
+    <string name="tv_status_starting">CONNEXION</string>
+    <string name="tv_status_stopping">ARRÊT</string>
+    <string name="tv_status_idle">DÉCONNECTÉ</string>
+    <string name="tv_status_timeout">DÉLAI EXP.</string>
+    <string name="tv_status_error">ERREUR</string>
+
+    <string name="tv_connect">CONNECTER</string>
+    <string name="tv_disconnect">DÉCONNECTER</string>
+
+    <string name="tv_tx_label">Envoi</string>
+    <string name="tv_rx_label">Réception</string>
+    <string name="tv_total_tx_fmt">Total ↑ %1$s</string>
+    <string name="tv_total_rx_fmt">Total ↓ %1$s</string>
+    <plurals name="tv_peer_count">
+        <item quantity="one">%d nœud</item>
+        <item quantity="other">%d nœuds</item>
+    </plurals>
+    <string name="tv_peers_summary_fmt">%1$s · %2$s %3$d · %4$s %5$d</string>
+    <string name="tv_no_telemetry">Aucune donnée de trafic</string>
+    <string name="tv_speed_zero">0 B/s</string>
+
+    <!-- Home nav rail -->
+    <string name="tv_nav_peers">Nœuds</string>
+    <string name="tv_nav_peers_desc">Nœuds de maillage et passerelle de sortie</string>
+    <string name="tv_nav_diagnostics">Statistiques</string>
+    <string name="tv_nav_diagnostics_desc">Trafic et compteurs de nœud</string>
+    <string name="tv_nav_settings">Configuration</string>
+
+    <!-- Peers screen -->
+    <string name="tv_peers_empty">Aucun nœud connecté</string>
+    <string name="tv_peers_empty_hint">Le nœud est en ligne, mais aucun autre nœud ne l\'a encore trouvé.</string>
+    <string name="tv_peers_offline">VPN désactivé. Connectez-vous pour voir les nœuds.</string>
+    <string name="tv_peer_transport">Transport</string>
+    <string name="tv_peer_rtt">RTT</string>
+    <string name="tv_peer_path">Chemin</string>
+    <string name="tv_peer_tx">↑</string>
+    <string name="tv_peer_rx">↓</string>
+    <string name="tv_peer_tap">Adresse TAP</string>
+    <string name="tv_peer_id">ID du nœud</string>
+    <string name="tv_peer_multicast_note">Adresse</string>
+    <string name="tv_peer_exit_badge">Nœud de sortie</string>
+    <string name="tv_peer_os">Système</string>
+    <string name="tv_rtt_fmt">%1$s ms</string>
+    <string name="tv_rtt_unmeasured">non mesuré</string>
+
+    <string name="tv_path_direct">Direct</string>
+    <string name="tv_path_relay">Relay</string>
+    <string name="tv_path_unknown">Inconnu</string>
+
+    <string name="tv_prot_quic">QUIC</string>
+    <string name="tv_prot_webrtc">WebRTC</string>
+    <string name="tv_prot_wt">WebTransport</string>
+    <string name="tv_prot_tcp">TCP</string>
+    <string name="tv_prot_relay">Relay</string>
+    <string name="tv_prot_unknown">Inconnu</string>
+
+    <!-- Diagnostics screen -->
+    <string name="tv_diag_offline">Connectez-vous pour voir les compteurs</string>
+    <string name="tv_diag_empty">Aucun compteur pour l\'instant</string>
+    <string name="tv_diag_empty_hint">Le tunnel est actif, mais le moteur n\'a encore rien rapporté.</string>
+    <string name="tv_diag_bytes_sent">Octets envoyés</string>
+    <string name="tv_diag_bytes_recv">Octets reçus</string>
+    <string name="tv_diag_packets_sent">Paquets envoyés</string>
+    <string name="tv_diag_packets_recv">Paquets reçus</string>
+    <string name="tv_diag_dispatch_drops">Perte à l\'expédition</string>
+    <string name="tv_diag_dedup">Doublons éliminés</string>
+    <string name="tv_diag_replay_drops">Rejeux écartés</string>
+    <string name="tv_diag_synced_peers">Nœuds synchronisés</string>
+    <string name="tv_diag_ipv4">IPv4</string>
+    <string name="tv_diag_ipv6">IPv6</string>
+    <string name="tv_diag_arp">ARP</string>
+    <string name="tv_diag_ndp">NDP</string>
+    <string name="tv_diag_tcp">TCP</string>
+    <string name="tv_diag_udp">UDP</string>
+    <string name="tv_diag_icmp">ICMP</string>
+    <string name="tv_diag_other">Autres</string>
+    <string name="tv_diag_section_protocol">Compteurs de protocole</string>
+    <string name="tv_diag_section_security">Sécurité</string>
+    <string name="tv_diag_section_node">Nœud</string>
+    <string name="tv_diag_obfuscation">Obscurcissement</string>
+    <string name="tv_diag_psk">PSK</string>
+    <string name="tv_diag_exit_node">Nœud de sortie actif</string>
+    <string name="tv_version_engine_fmt">Moteur %1$s</string>
+    <string name="tv_version_app_fmt">App %1$s</string>
+
+    <!-- Boot keep-alive -->
+    <string name="tv_autostart_title">Démarrer le VPN à l\'allumage</string>
+    <string name="tv_autostart_on">Suit l\'état précédent : activé</string>
+    <string name="tv_autostart_off">Suit l\'état précédent : désactivé</string>
+
+    <!-- Logs -->
+    <string name="tv_screen_logs">Journal du tunnel</string>
+    <string name="tv_nav_logs">Journaux</string>
+    <string name="tv_nav_logs_desc">Sortie du tunnel en direct</string>
+    <string name="tv_logs_live_fmt">En direct · %1$d lignes</string>
+    <string name="tv_logs_truncated_fmt">En direct · %1$d lignes · %2$d évincées</string>
+    <string name="tv_logs_unavailable">Capture indisponible dans cette version</string>
+    <string name="tv_logs_empty">Aucune ligne de journal pour l\'instant</string>
+    <string name="tv_logs_errors_only">Erreurs uniquement</string>
+    <string name="tv_logs_all">Tout afficher</string>
+    <string name="tv_logs_clear">Effacer</string>
+    <string name="tv_logs_none_matching">Aucune alerte ni erreur</string>
+
+    <!-- About -->
+    <string name="tv_screen_about">À propos</string>
+    <string name="tv_nav_about">À propos</string>
+    <string name="tv_about_identity_note">Cet appareil est un nœud à part entière, avec son propre identifiant, stocké dans son propre espace.</string>
+    <string name="tv_about_versions">Versions</string>
+    <string name="tv_about_tunnel">Tunnel</string>
+    <string name="tv_about_node_name">Nom du nœud</string>
+    <string name="tv_about_dns">DNS</string>
+    <string name="tv_about_repository">Dépôt</string>
+    <string name="tv_about_repo_url">https://github.com/NNdroid/p2ptap</string>
+
+    <!-- Settings -->
+    <string name="tv_screen_settings">Paramètres</string>
+    <string name="tv_screen_advanced">Avancé</string>
+    <string name="tv_nav_advanced">Avancé</string>
+    <string name="tv_advanced_note">Tout changement redémarre le tunnel.</string>
+
+    <string name="tv_toggle_on">OUI</string>
+    <string name="tv_toggle_off">NON</string>
+
+    <string name="tv_set_obfuscation">Obscurcissement</string>
+    <string name="tv_set_strict_keys">Clés strictes</string>
+    <string name="tv_set_quic">QUIC</string>
+    <string name="tv_set_webrtc">WebRTC</string>
+    <string name="tv_set_webtransport">WebTransport</string>
+    <string name="tv_set_tcp">TCP</string>
+    <string name="tv_set_relay">Relay</string>
+    <string name="tv_set_mdns">mDNS</string>
+    <string name="tv_set_mesh">Découverte du maillage</string>
+    <string name="tv_set_subnets">Sous-réseaux acceptés</string>
+    <string name="tv_set_webui">Console web</string>
+
+    <string name="tv_tier_obfuscation">Obscurcissement</string>
+    <string name="tv_tier_transport">Transport</string>
+    <string name="tv_tier_log_level">Niveau de journal</string>
+    <string name="tv_tier_mtu">MTU</string>
+    <string name="tv_set_save_failed">Impossible d\'enregistrer les paramètres</string>
+
+    <string name="tv_unknown">—</string>
+    <string name="tv_nav_transfer">Transfert</string>
+    <string name="tv_screen_import">Importer</string>
+    <string name="tv_screen_qr">Code QR</string>
+    <string name="tv_import_note">Un décodeur n\'a pas de clavier, donc une configuration arrive comme fichier, depuis le presse-papiers ou sous forme de code.</string>
+    <string name="tv_import_config">Importer la configuration</string>
+    <string name="tv_import_config_desc">Paquet de sauvegarde ou JSON de configuration</string>
+    <string name="tv_import_identity">Importer l\'identité</string>
+    <string name="tv_import_identity_desc">Clé de nœud, base64</string>
+    <string name="tv_import_clipboard">Depuis le presse-papiers</string>
+    <string name="tv_import_clipboard_desc">Paquet, configuration ou clé</string>
+    <string name="tv_import_new">Nouvelle identité</string>
+    <string name="tv_import_new_desc">Un nouveau nœud dans le maillage</string>
+    <string name="tv_import_new_confirm">Appuyez à nouveau pour effacer</string>
+    <string name="tv_import_done_cfg">Configuration importée</string>
+    <string name="tv_import_done_identity">Identité restaurée : %1$s</string>
+    <string name="tv_import_done_new">Nouvelle identité : %1$s</string>
+    <string name="tv_import_failed">L\'import a échoué</string>
+    <string name="tv_import_read_failed">Impossible de lire ce fichier</string>
+    <string name="tv_import_unrecognized">Ce n\'est pas une configuration ni une clé d\'identité p2ptap</string>
+    <string name="tv_import_empty_clip">Le presse-papiers est vide</string>
+    <string name="tv_qr_hint">Pointez l\'appareil photo du téléphone vers le code</string>
+    <string name="tv_qr_mode_bundle">Sauvegarde</string>
+    <string name="tv_qr_mode_config">Config</string>
+    <string name="tv_qr_mode_uri">Connecter</string>
+    <string name="tv_qr_mode_key">Identité</string>
+    <string name="tv_qr_peer_fmt">ID %1$s</string>
+    <string name="tv_qr_tap_fmt">TAP %1$s</string>
+    <string name="tv_qr_node_unknown">nœud sans nom</string>
+    <string name="tv_qr_peer_unknown">identité indisponible</string>
+    <string name="tv_qr_copy">Copier</string>
+    <string name="tv_qr_copied">Copié dans le presse-papiers</string>
+    <string name="tv_qr_save">Enregistrer dans un fichier</string>
+    <string name="tv_qr_saved">Sauvegarde enregistrée</string>
+    <string name="tv_qr_failed">Impossible de préparer le code</string>
+    <string name="tv_screen_keepalive">Rester actif</string>
+    <string name="tv_nav_keepalive">Rester actif</string>
+    <string name="tv_ka_note">Trois couches, chacune utilisable à part.</string>
+    <string name="tv_ka_boot">Restauration au démarrage</string>
+    <string name="tv_ka_boot_desc">Relance le tunnel après un redémarrage du décodeur</string>
+    <string name="tv_ka_watchdog">Surveillant</string>
+    <string name="tv_ka_watchdog_desc">Relance le tunnel si cette app est tuée</string>
+    <string name="tv_ka_shizuku">Shizuku</string>
+    <string name="tv_ka_shizuku_desc">Fait revivre le tunnel depuis le shell ; à reprogrammer après redémarrage</string>
+    <string name="tv_ka_start">Démarrer</string>
+    <string name="tv_ka_stop">Arrêter</string>
+    <string name="tv_ka_running">actif</string>
+    <string name="tv_ka_stopped">arrêté</string>
+    <string name="tv_ka_disabled">désactivé</string>
+    <string name="tv_ka_missing">non installé</string>
+    <string name="tv_ka_needs_activation">installé, activation requise</string>
+    <string name="tv_ka_activate">Activer Shizuku</string>
+    <string name="tv_ka_activate_failed">Impossible d\'ouvrir Shizuku</string>
+    <string name="tv_ka_keeper">Surveillant shell</string>
+    <string name="tv_ka_recover">Restaurer le tunnel</string>
+    <string name="tv_ka_recover_done">Tunnel restauré</string>
+    <string name="tv_ka_ver_fmt">%1$s · uid %2$d</string>
+    <string name="tv_ka_foot">Sans Shizuku, le tunnel revient après un redémarrage, mais pas si l\'équipement tue tous les processus.</string>
+    <string name="tv_screen_home">Accueil</string>
+    <string name="tv_screen_transfer">Transfert</string>
+    <string name="tv_hero_eyebrow">CHEMINEMENT P2P</string>
+    <string name="tv_speed_tx_label">ENVOI</string>
+    <string name="tv_speed_rx_label">RÉCEPTION</string>
+    <string name="tv_total_label">TOTAL</string>
+    <string name="tv_screen_peers_hint">Nœuds de maillage et passerelle de sortie</string>
+    <string name="tv_screen_transfer_hint">Importer la configuration et l\'identité</string>
+    <string name="tv_screen_settings_hint">Interrupteurs et niveaux</string>
+    <string name="tv_screen_diagnostics_hint">Trafic et journaux</string>
+    <string name="tv_transfer_from_file">Depuis un fichier</string>
+    <string name="tv_transfer_from_clipboard">Depuis le presse-papiers</string>
+    <string name="tv_transfer_via_qr">Via code QR</string>
+    <string name="tv_transfer_new_identity">Nouvelle identité</string>
+    <string name="tv_diag_refresh">Actualiser</string>
+    <string name="tv_ka_l1_title">Restauration au démarrage</string>
+    <string name="tv_ka_l1_desc">Après chaque redémarrage, le tunnel revient automatiquement. Toujours activé.</string>
+    <string name="tv_ka_l1_state_on">Toujours activé</string>
+    <string name="tv_ka_l2_title">Surveillance</string>
+    <string name="tv_ka_l2_desc">Un second service en premier plan surveille le tunnel dans le processus de cette app.</string>
+    <string name="tv_ka_l2_state_active">Actif</string>
+    <string name="tv_ka_l3_title">Gardien Shizuku</string>
+    <string name="tv_ka_l3_desc">Seule couche qui survit si l\'appareil tue tous les processus P2PTap. Nécessite Shizuku.</string>
+    <string name="tv_ka_up">En marche</string>
+    <string name="tv_ka_down">Hors ligne</string>
+    <string name="tv_about_engine_label">Moteur</string>
+    <string name="tv_about_peer_label">ID de pair</string>
+    <string name="tv_about_arch_label">ABI</string>
+    <string name="tv_about_footer">Code source ouvert. Voir le dépôt pour la licence.</string>
+</resources>

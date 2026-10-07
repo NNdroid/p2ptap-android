@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    S7: what this box is, and what it is connected as.
+
+    Nothing on this screen is an action. There are deliberately no links and
+    no buttons: most sets have no browser to receive an ACTION_VIEW, so a
+    "Visit GitHub" card would focus, do nothing, and read as broken. The
+    addresses are shown as text, which is the honest offering.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:paddingStart="@dimen/tv_screen_padding_h"
+  android:paddingTop="@dimen/tv_screen_padding_v"
+  android:paddingEnd="@dimen/tv_screen_padding_h"
+  android:paddingBottom="@dimen/tv_screen_padding_v">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+      android:layout_width="@dimen/tv_icon_40"
+      android:layout_height="@dimen/tv_icon_40"
+      android:contentDescription="@null"
+      android:src="@drawable/ic_tv_about" />
+
+    <TextView
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/tv_gap_s"
+      android:layout_weight="1"
+      android:text="@string/tv_screen_about"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.ScreenTitle" />
+  </LinearLayout>
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/tv_gap_s"
+    android:text="@string/tv_about_identity_note"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body" />
+
+  <Space
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/tv_gap_m" />
+
+  <androidx.leanback.widget.VerticalGridView
+    android:id="@+id/tvAboutGrid"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:clipToPadding="false"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:isScrollContainer="true"
+    android:overScrollMode="never" />
+</LinearLayout>

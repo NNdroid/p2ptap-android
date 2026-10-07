@@ -1,6 +1,0 @@
-<resources>
-    <string name="config_invalid_fmt">설정이 적용되지 않았습니다: %1$s</string>
-    <string name="config_peer_endpoint_required">이 QR 코드에는 연결 가능한 피어 주소가 없습니다. IP/DNS, 전송 프로토콜 및 /p2p/PeerID를 포함하세요.</string>
-    <string name="config_strategy_help">best_path는 토폴로지와 쓰기 성능으로 기존 경로를 선택합니다. redundant는 기존 스트림에 복제하고 fallback은 기존 경로를 순서대로 시도합니다. 변경하려면 VPN을 다시 시작해야 합니다.</string>
-    <string name="config_static_help">/p2p/PeerID로 끝나는 완전한 multiaddr를 사용하세요. 정적 피어도 릴레이로 연결할 수 있습니다. 변경하면 VPN이 다시 시작됩니다.</string>
-</resources>

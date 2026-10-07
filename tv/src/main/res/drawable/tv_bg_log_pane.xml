@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The log pane is a display surface, not a control, so it has no focus state.
+    A focus ring here would imply the viewer can select it, which they cannot.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shape="rectangle">
+    <solid android:color="#0B1220" />
+    <stroke android:width="1dp" android:color="#1E293B" />
+    <corners android:radius="@dimen/tv_row_corner" />
+</shape>

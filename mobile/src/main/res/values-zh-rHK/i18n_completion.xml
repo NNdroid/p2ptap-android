@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_description">備份設定與身分金鑰，或匯入現有節點。</string>
+    <string name="backup_export_group">📤 匯出與分享</string>
+    <string name="backup_import_group">📥 匯入與還原</string>
+    <string name="backup_scan_qr">📷 掃碼匯入（設定、身分或節點）</string>
+    <string name="backup_gallery_qr">🖼️ 從相簿匯入 QR 碼圖片</string>
+    <string name="msg_identity_restored_fmt">設定與身分已還原，Peer ID：%1$s</string>
+    <string name="peer_id_fmt">Peer ID：%1$s</string>
+    <string name="identity_not_generated">尚未產生</string>
+    <string name="scan_node_unknown">探索到的節點</string>
+    <string name="scan_ip_unknown">未指定虛擬 IP</string>
+    <string name="scan_import_method">選擇匯入方式：</string>
+    <string name="hint_allowed_peer_entry">輸入 Peer ID（如 12D3…），或 * 允許所有節點</string>
+    <string name="hint_dns_entry">輸入 DNS 伺服器 IP（如 1.1.1.1），留空使用系統預設值</string>
+    <string name="protocol_all">全部</string>
+    <string name="protocol_endpoint">端點</string>
+    <string name="qr_connection_card_title">P2PTap 節點連線卡片</string>
+    <string name="label_connection_uri">連線 URI</string>
+    <string name="qr_share_subject_fmt">P2PTap 節點：%1$s</string>
+    <string name="msg_copied_label_fmt">已複製%1$s到剪貼簿</string>
+    <string name="logs_initializing">正在初始化診斷日誌…</string>
+    <string name="logs_initial_state_fmt">[Info] 即時 P2P 狀態：%1$s（%2$s）</string>
+    <string name="logs_empty">沒有符合的日誌記錄</string>
+    <string name="logs_reader_failed">日誌讀取已停止，請重新開啟此頁面重試。</string>
+    <string name="logs_collector_unavailable">此版本不支持日誌捕獲</string>
+</resources>

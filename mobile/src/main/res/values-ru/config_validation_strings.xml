@@ -1,0 +1,5 @@
+<resources>
+    <string name="config_peer_endpoint_required">В QR-коде нет доступного адреса узла. Укажите IP/DNS, транспорт и /p2p/PeerID.</string>
+    <string name="config_strategy_help">best_path выбирает существующий путь по топологии и скорости записи; redundant дублирует по существующим потокам; fallback пробует существующие пути по порядку. Изменения требуют перезапуска VPN.</string>
+    <string name="config_static_help">Используйте полные multiaddr, заканчивающиеся на /p2p/PeerID. Статические узлы также могут подключаться через ретрансляторы. Изменения перезапускают VPN.</string>
+</resources>

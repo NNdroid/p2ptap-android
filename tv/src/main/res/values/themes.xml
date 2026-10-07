@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--
+        Parent is Theme.Material3.DayNight.NoActionBar, so every widget that
+        looks up md_theme_* tokens (MaterialCardView, MaterialButton, Material
+        Switch, Material Chip, ...) resolves them from the values in
+        colors.xml. DayNight is used only so the SDK compiles against both
+        palettes at build time; the app ships dark exclusively because TV is a
+        dark-only environment (there is no values-night/ folder here).
+
+        AppCompat is the transitive parent of Material3, so AppCompatActivity
+        still resolves every AppCompat attr — no IllegalStateException on
+        setContentView.
+
+        The three Leanback widget-style attrs (baseCardViewStyle, etc.) are
+        re-declared below because Material3's parent is no longer Theme.Leanback;
+        without them the Leanback VerticalGridView would crash at inflate.
+        They only matter if a screen uses a Leanback view, which only the
+        pre-redesign screens did.
+    -->
+    <style name="Theme.P2ptap.Tv" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- ── Colour roles ──────────────────────────────────────────── -->
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_error</item>
+        <item name="colorOnError">@color/md_theme_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer</item>
+
+        <!-- ── Surface / background ──────────────────────────────────── -->
+        <item name="android:colorBackground">@color/md_theme_background</item>
+        <item name="android:windowBackground">@color/md_theme_background</item>
+        <item name="android:textColorPrimary">@color/md_theme_onBackground</item>
+        <item name="android:textColorSecondary">@color/md_theme_onSurfaceVariant</item>
+        <item name="android:colorAccent">@color/md_theme_primary</item>
+
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_inverseSurface</item>
+
+        <item name="colorOutline">@color/md_theme_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_outlineVariant</item>
+
+        <!-- ── Type scale: MD3 names, TV-sized ─────────────────────────
+             The MD3 base scale is designed for phone (bodyMedium is 16sp).
+             TV renders at 10 ft, so every size below is larger than the MD3
+             default by roughly 1.3–1.5x. Component lookups by name still
+             resolve to these values. -->
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.P2ptap.Tv.DisplaySmall</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.P2ptap.Tv.DisplayMedium</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.P2ptap.Tv.DisplayLarge</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.P2ptap.Tv.HeadlineSmall</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.P2ptap.Tv.HeadlineMedium</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.P2ptap.Tv.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.P2ptap.Tv.TitleMedium</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.P2ptap.Tv.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.P2ptap.Tv.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.P2ptap.Tv.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.P2ptap.Tv.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.P2ptap.Tv.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.P2ptap.Tv.LabelSmall</item>
+
+        <!-- ── Shape scale: TV-friendly corner radii ───────────────────
+             Material3 declares shapeAppearance* as theme attrs, but this
+             AGP version doesn't resolve them when the parent is a Material3
+             theme. The ShapeAppearance.P2ptap.Tv.* styles below remain
+             declared and are used per-widget via app:shapeAppearance
+             attribute (see fragment_tv_*.xml). -->
+
+        <!-- ── Window chrome ─────────────────────────────────────────── -->
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">@color/md_theme_background</item>
+        <item name="android:navigationBarColor">@color/md_theme_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+
+        <!-- ── Leanback widget styles ──────────────────────────────────
+             These are declared because the theme's parent is no longer
+             Theme.Leanback; Material3 doesn't carry Leanback's widget-style
+             attrs, so an inflate of VerticalGridView without them would throw.
+             They only matter on screens that use Leanback views (Peers, Import).
+        -->
+        <item name="baseCardViewStyle">@style/Widget.Leanback.BaseCardViewStyle</item>
+        <item name="headersVerticalGridStyle">@style/Widget.Leanback.Headers.VerticalGridView</item>
+        <item name="rowsVerticalGridStyle">@style/Widget.Leanback.Rows.VerticalGridView</item>
+        <item name="itemsVerticalGridStyle">@style/Widget.Leanback.GridItems.VerticalGridView</item>
+
+        <!-- ── Defaults ──────────────────────────────────────────────── -->
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:buttonStyle">@style/Widget.P2ptap.Tv.Button</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Type scale. Sized for 10 ft at 1080p. All styles use MD3's semantic
+         color roles so a token change in colors.xml propagates everywhere.
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <style name="TextAppearance.P2ptap.Tv.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">56sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:textSize">44sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">26sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/md_theme_onBackground</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/md_theme_onSurface</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/md_theme_onSurface</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/md_theme_onSurfaceVariant</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/md_theme_onPrimaryContainer</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/md_theme_onSurface</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.Tv.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/md_theme_onSurfaceVariant</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <!-- Legacy type appearances kept because many pre-redesign drawables
+         still reference them by name. They now alias to the MD3-scale versions. -->
+    <style name="TextAppearance.P2ptap.Tv.HeroStatus" parent="TextAppearance.P2ptap.Tv.DisplaySmall" />
+    <style name="TextAppearance.P2ptap.Tv.HeroValue" parent="TextAppearance.P2ptap.Tv.TitleLarge" />
+    <style name="TextAppearance.P2ptap.Tv.Body" parent="TextAppearance.P2ptap.Tv.BodyMedium" />
+    <style name="TextAppearance.P2ptap.Tv.Label" parent="TextAppearance.P2ptap.Tv.LabelSmall" />
+    <style name="TextAppearance.P2ptap.Tv.NavTitle" parent="TextAppearance.P2ptap.Tv.TitleLarge" />
+    <style name="TextAppearance.P2ptap.Tv.ScreenTitle" parent="TextAppearance.P2ptap.Tv.TitleLarge" />
+    <style name="TextAppearance.P2ptap.Tv.Log" parent="TextAppearance.P2ptap.Tv.BodySmall">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Shape scale.
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <style name="ShapeAppearance.P2ptap.Tv.ExtraSmall" parent="ShapeAppearance.Material3.Corner.ExtraSmall">
+        <item name="cornerSize">6dp</item>
+    </style>
+
+    <style name="ShapeAppearance.P2ptap.Tv.Small" parent="ShapeAppearance.Material3.Corner.Small">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.P2ptap.Tv.Medium" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.P2ptap.Tv.Large" parent="ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="ShapeAppearance.P2ptap.Tv.ExtraLarge" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSize">36dp</item>
+    </style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Component styles.
+         ══════════════════════════════════════════════════════════════════ -->
+
+    <!--
+        The rail item is a MaterialButton. It is not a button in the interaction
+        sense — it is a tab — but the shape, ripple and state resolution come
+        free from MD3, which is more than the pre-redesign ButtonBorderless
+        base offered.
+    -->
+    <style name="Widget.P2ptap.Tv.RailItem" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">24dp</item>
+        <item name="iconSize">40dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.P2ptap.Tv.TitleLarge</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Tv.Medium</item>
+    </style>
+
+    <!-- The classic TV button, kept for the hero toggle. Big, chunky,
+         stateless — the shape carries the focus look. -->
+    <style name="Widget.P2ptap.Tv.Button" parent="Widget.Material3.Button">
+        <item name="android:minWidth">360dp</item>
+        <item name="android:minHeight">108dp</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/TextAppearance.P2ptap.Tv.LabelLarge</item>
+        <item name="android:gravity">center</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Tv.Medium</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!--
+        Used on MaterialCardView instances. elevationOverlayColor defaults to
+        colorOnSurface in MD3, which lightens the card when elevated. For a dark
+        TV theme that produces visible halos, so we zero the overlay and rely on
+        explicit surfaceContainer values instead.
+    -->
+    <style name="Widget.P2ptap.Tv.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardBackgroundColor">@color/md_theme_surface</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="Widget.P2ptap.Tv.Card.Focusable" parent="Widget.P2ptap.Tv.Card">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+</resources>

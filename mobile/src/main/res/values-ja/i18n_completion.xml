@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_description">設定と識別鍵をバックアップするか、既存のノードをインポートします。</string>
+    <string name="backup_export_group">📤 エクスポートと共有</string>
+    <string name="backup_import_group">📥 インポートと復元</string>
+    <string name="backup_scan_qr">📷 QR をスキャン（設定、識別情報、ノード）</string>
+    <string name="backup_gallery_qr">🖼️ ギャラリーから QR 画像をインポート</string>
+    <string name="msg_identity_restored_fmt">設定と識別情報を復元しました。Peer ID: %1$s</string>
+    <string name="peer_id_fmt">Peer ID: %1$s</string>
+    <string name="identity_not_generated">未生成</string>
+    <string name="scan_node_unknown">検出されたノード</string>
+    <string name="scan_ip_unknown">仮想 IP が指定されていません</string>
+    <string name="scan_import_method">インポート方法を選択：</string>
+    <string name="hint_allowed_peer_entry">Peer ID（例：12D3…）または全許可の * を入力</string>
+    <string name="hint_dns_entry">DNS サーバーの IP（例：1.1.1.1）を入力。空欄はシステム既定</string>
+    <string name="protocol_all">すべて</string>
+    <string name="protocol_endpoint">エンドポイント</string>
+    <string name="qr_connection_card_title">P2PTap 接続カード</string>
+    <string name="label_connection_uri">接続 URI</string>
+    <string name="qr_share_subject_fmt">P2PTap ノード: %1$s</string>
+    <string name="msg_copied_label_fmt">%1$s をクリップボードにコピーしました</string>
+    <string name="logs_initializing">診断ログを初期化しています…</string>
+    <string name="logs_initial_state_fmt">[Info] リアルタイム P2P 状態：%1$s（%2$s）</string>
+    <string name="logs_empty">一致するログはありません</string>
+    <string name="logs_reader_failed">ログの読み取りが停止しました。このページを開き直してください。</string>
+    <string name="logs_collector_unavailable">このビルドではログキャプチャは利用できません</string>
+</resources>

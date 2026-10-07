@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A toggle card's background. state is_selected carries the value,
+    state_focused carries the pointer, and state_enabled=false is the case where
+    a value cannot be changed at all.
+
+    A card that is focused and on shows cyan rather than green. The pill keeps
+    its green, so the state is still visible; the ring just answers "where am I
+    looking", which is the question a focused card has to answer first.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:drawable="@drawable/tv_bg_settings_unavailable" />
+    <item android:state_selected="true" android:state_focused="true" android:drawable="@drawable/tv_bg_settings_focused" />
+    <item android:state_selected="true" android:drawable="@drawable/tv_bg_settings_on" />
+    <item android:state_focused="true" android:drawable="@drawable/tv_bg_settings_focused" />
+    <item android:drawable="@drawable/tv_bg_settings_off" />
+</selector>

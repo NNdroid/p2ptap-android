@@ -98,18 +98,18 @@ jobs:
             # Stamp the engine with its exact version: build-aar.sh injects this
             # into the Go binary via P2PTAP_VERSION. It is deliberately NOT
             # exported as APP_VERSION_NAME any more — versionName is the app's
-            # version and gradle derives it from this repo (app/build.gradle.kts),
+            # version and gradle derives it from this repo (mobile/build.gradle.kts),
             # so the APK/About card track the Android build, not the engine.
             # Running get_version.sh once here keeps the two values from
             # disagreeing if the engine were rebuilt separately.
             CORE_VERSION="$(bash "${GO_DIR}/scripts/get_version.sh")"
             echo "Core version: ${CORE_VERSION}"
             P2PTAP_VERSION="${CORE_VERSION}" bash "${GO_DIR}/scripts/build-aar.sh"
-            mkdir -p app/libs
-            cp "${GO_DIR}/bin/p2ptap.aar" app/libs/p2ptap.aar
+            mkdir -p core/libs
+            cp "${GO_DIR}/bin/p2ptap.aar" core/libs/p2ptap.aar
             echo "p2ptap.aar built successfully!"
           else
-            echo "No Go source directory found, using existing app/libs/p2ptap.aar"
+            echo "No Go source directory found, using existing core/libs/p2ptap.aar"
           fi
 
       - name: Setup Gradle
@@ -165,7 +165,7 @@ jobs:
           INPUT_CREATE_RELEASE="${{ github.event.inputs.create_release }}"
 
           # Gradle is the single source of truth for the version pair, set in
-          # app/build.gradle.kts from *this* repo: versionCode is
+          # mobile/build.gradle.kts from *this* repo: versionCode is
           # APP_VERSION_CODE or the number of v* tags plus one, and versionName
           # is "v1.0.YYYYMMDD.<repoCount>-<repoHash>". The Go engine carries its
           # own version separately (P2PTAP_VERSION, stamped into the AAR). Read
@@ -175,7 +175,7 @@ jobs:
           # With splits { abi { isEnable = true } } AGP names the all-ABI output
           # app-universal-release.apk, not app-release.apk. Match both so this
           # step keeps working if splits are ever turned off again.
-          RELEASE_APK_DIR="app/build/outputs/apk/release"
+          RELEASE_APK_DIR="mobile/build/outputs/apk/release"
           UNIVERSAL_APK="$(ls "${RELEASE_APK_DIR}"/app-release.apk "${RELEASE_APK_DIR}"/app-universal-release.apk 2>/dev/null | head -1)"
           if [ -z "${UNIVERSAL_APK}" ]; then
             echo "::error::no universal release APK found under ${RELEASE_APK_DIR}"
@@ -229,7 +229,7 @@ jobs:
             cp "$UNIVERSAL_APK" "outputs/${APK_NAME}"
 
             # Per-ABI APKs from splits { abi { isEnable = true } } in
-            # app/build.gradle.kts: ~37 MB each instead of the ~136 MB universal
+            # mobile/build.gradle.kts: ~37 MB each instead of the ~136 MB universal
             # one, because each carries only its own libgojni.so. The universal
             # build is already copied above, so skip it here.
             for apk in "${RELEASE_APK_DIR}"/app-*-release.apk; do
@@ -244,11 +244,11 @@ jobs:
             # Required to deobfuscate crash reports. R8 rewrites every app
             # symbol, so a release stack trace is unreadable without this file;
             # keep it next to the APKs so it ships with the release.
-            cp app/build/outputs/mapping/release/mapping.txt "outputs/${APK_NAME%.apk}-mapping.txt"
+            cp mobile/build/outputs/mapping/release/mapping.txt "outputs/${APK_NAME%.apk}-mapping.txt"
           fi
           # Splits apply to the debug variant too, so its all-ABI output is
           # app-universal-debug.apk rather than app-debug.apk.
-          DEBUG_APK="$(ls app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/app-universal-debug.apk 2>/dev/null | head -1)"
+          DEBUG_APK="$(ls mobile/build/outputs/apk/debug/app-debug.apk mobile/build/outputs/apk/debug/app-universal-debug.apk 2>/dev/null | head -1)"
           cp "$DEBUG_APK" "outputs/${APK_NAME%.apk}-debug.apk"
 
       - name: Upload Build Artifact (artifact-only builds)

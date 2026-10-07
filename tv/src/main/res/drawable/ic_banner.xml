@@ -1,0 +1,63 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt"
+  android:width="384dp"
+  android:height="192dp"
+  android:viewportWidth="384"
+  android:viewportHeight="192">
+
+  <!-- Field gradient, the same stops as the launcher foreground. -->
+  <path android:pathData="M0,0 L384,0 L384,192 L0,192 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient
+        android:type="linear"
+        android:startX="0"
+        android:startY="0"
+        android:endX="384"
+        android:endY="192">
+        <item android:offset="0.0" android:color="#6600F2FE" />
+        <item android:offset="0.5" android:color="#4D38BDF8" />
+        <item android:offset="1.0" android:color="#6610B981" />
+      </gradient>
+    </aapt:attr>
+  </path>
+
+  <!-- Deep scrim behind the mark so the launcher's own label stays legible. -->
+  <path android:pathData="M0,0 L384,0 L384,192 L0,192 Z" android:fillColor="#B3070A10" />
+
+  <!-- Shield, centred at 120dp. Vector text is not supported, so the app
+       label is supplied by the launcher next to the banner. -->
+  <group
+    android:scaleX="2.5"
+    android:scaleY="2.5"
+    android:translateX="108"
+    android:translateY="24">
+    <path
+      android:pathData="M24,4 L40,11 L40,25 L24,44 L8,25 L8,11 Z"
+      android:strokeWidth="2.5"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round">
+      <aapt:attr name="android:strokeColor">
+        <gradient
+          android:type="linear"
+          android:startX="8"
+          android:startY="4"
+          android:endX="40"
+          android:endY="44">
+          <item android:offset="0.0" android:color="#00F2FE" />
+          <item android:offset="0.5" android:color="#38BDF8" />
+          <item android:offset="1.0" android:color="#10B981" />
+        </gradient>
+      </aapt:attr>
+    </path>
+    <path
+      android:pathData="M24,12 L15,28 L33,28 Z"
+      android:strokeWidth="1.8"
+      android:strokeColor="#38BDF8"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+    <path android:pathData="M25,14 L18,24 L23,24 L22,34 L30,22 L25,22 Z" android:fillColor="#00F2FE" />
+    <path android:pathData="M24,12m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0" android:fillColor="#FFFFFF" />
+    <path android:pathData="M15,28m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0" android:fillColor="#38BDF8" />
+    <path android:pathData="M33,28m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0" android:fillColor="#10B981" />
+  </group>
+</vector>

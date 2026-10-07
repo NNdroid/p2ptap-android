@@ -1,0 +1,23 @@
+<resources>
+    <string name="telemetry_loading">엔진 데이터 로딩 중…</string>
+    <string name="telemetry_refresh_failed">새로 고침에 실패했습니다. 다시 시도하세요.</string>
+    <string name="telemetry_live">실시간 엔진 데이터 · 암호화 및 패딩을 제외한 TAP 페이로드 바이트</string>
+    <string name="telemetry_dedup">중복으로 버린 패킷</string>
+    <string name="telemetry_ndp">NDP 패킷</string>
+    <string name="telemetry_other">기타 패킷</string>
+    <string name="telemetry_psk">PSK 상태</string>
+    <string name="telemetry_pending">적용 대기 / 사용 불가</string>
+    <string name="telemetry_saved">저장됨</string>
+    <string name="telemetry_applied">경로 설치됨</string>
+    <string name="telemetry_exit_gateway">출구 게이트웨이</string>
+    <string name="telemetry_not_gateway">출구 기능 없음</string>
+    <string name="telemetry_exit_select_hint">출구 기능을 알리는 온라인 노드만 선택할 수 있습니다. 수동 입력도 가능합니다.</string>
+    <string name="telemetry_link_traffic">로컬 링크 누계: ↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">선택을 저장했습니다. VPN 실행 중이면 적용을 요청합니다.</string>
+    <string name="telemetry_invalid_exit">유효한 숫자 IPv4/IPv6 주소 또는 피어 ID를 입력하세요.</string>
+    <string name="telemetry_proto_mismatch">프로토콜 불일치</string>
+    <string name="telemetry_peer_summary">온라인 %1$d (직접 %2$d · 릴레이 %3$d) · 알려진 노드 %4$d</string>
+    <string name="telemetry_replay_drops">리플레이로 버린 패킷</string>
+    <string name="telemetry_disabling">출구 경로 제거 중…</string>
+    <string name="btn_refresh">새로 고침</string>
+</resources>

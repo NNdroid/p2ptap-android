@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Adaptive icon: the launcher applies its own mask and scale, so the 108dp
+    art carries 66dp of live area plus safe padding.
+
+    No <monochrome> layer on purpose. The foreground is a multi-hue stroke
+    design (cyan + purple shield and mesh paths on transparent), so tinting it
+    into one colour yields a muddy silhouette on Android 13+ themed launchers
+    rather than a better one. A real monochrome variant needs redrawn art,
+    which belongs in a design pass, not here. The MonochromeLauncherIcon lint
+    warning is the price of that decision.
+
+    Lives in mipmap-anydpi-v26, not mipmap-anydpi. The unqualified form is
+    legal for aapt2 compile but the AGP link step drops it, so the manifest
+    reports "resource mipmap/ic_launcher not found". The -v26 qualifier trips
+    ObsoleteSdkInt (minSdk is 31) — an informational warning, and cheaper than
+    a missing launcher icon.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>

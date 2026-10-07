@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One setting, one press. The label is on the left and the state is a pill on
+    the right: from ten feet the pill is what is read and the label is what is
+    scanned, so they must be separable at a glance.
+
+    The pill is a TextView rather than an ImageView, because the word it shows
+    ("ON" / "OFF") is the state and a viewer must not have to guess at a glyph.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginBottom="@dimen/tv_gap_s"
+  android:background="@drawable/tv_bg_toggle"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:gravity="center_vertical"
+  android:orientation="horizontal"
+  android:paddingStart="@dimen/tv_row_padding"
+  android:paddingTop="@dimen/tv_card_padding_v"
+  android:paddingEnd="@dimen/tv_row_padding"
+  android:paddingBottom="@dimen/tv_card_padding_v">
+
+  <ImageView
+    android:id="@+id/tvToggleIcon"
+    android:layout_width="@dimen/tv_icon_32"
+    android:layout_height="@dimen/tv_icon_32"
+    android:contentDescription="@null" />
+
+  <TextView
+    android:id="@+id/tvToggleLabel"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/tv_gap_s"
+    android:layout_weight="1"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body" />
+
+  <TextView
+    android:id="@+id/tvToggleState"
+    android:layout_width="wrap_content"
+    android:layout_height="34dp"
+    android:layout_marginStart="@dimen/tv_gap_s"
+    android:background="@drawable/tv_bg_toggle_state"
+    android:gravity="center"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+</LinearLayout>

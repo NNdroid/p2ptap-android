@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Locale variants for the strings that live in :core. The
+     default locale ships in values/core_strings.xml. -->
+<resources>
+    <string name="error_peer_address_fmt">주소 %1$d이(가) 잘못되었습니다. /p2p/PeerID로 끝나는 완전한 multiaddr를 사용하세요.</string>
+    <string name="error_save_config">설정을 저장할 수 없습니다. 여유 공간을 확인하세요.</string>
+    <string name="error_strategy">전송 전략은 best_path, redundant 또는 fallback이어야 합니다.</string>
+    <string name="config_invalid_fmt">설정이 적용되지 않았습니다: %1$s</string>
+    <string name="error_timeout">연결 시간이 초과되었습니다. 네트워크와 노드 주소를 확인하세요.</string>
+    <string name="error_engine_stalled">엔진이 보고를 중단했습니다. 트래픽 통계를 복원하려면 다시 연결하세요.</string>
+    <string name="error_vpn_establish">VPN 터널을 만들 수 없습니다. VPN 권한을 확인하고 다시 시도하세요.</string>
+    <string name="error_vpn_session_ended">VPN 세션이 종료되었습니다. 다시 연결한 후 설정을 저장하세요.</string>
+    <string name="notification_action_disconnect">연결 끊기</string>
+    <string name="notification_channel_description">VPN 연결 상태 및 트래픽</string>
+    <string name="notification_channel_name">P2PTap VPN 연결</string>
+    <string name="notification_running">P2PTap 가상 네트워크 연결됨</string>
+    <string name="notification_starting">P2PTap VPN 시작 중…</string>
+    <string name="detail_relay_control_failed">릴레이 제어 연결 실패, 진단 로그 확인</string>
+    <string name="detail_relay_hop">릴레이 제어 연결 활성</string>
+    <string name="detail_wait_data">준비 완료, 트래픽 대기 중</string>
+    <string name="detail_wait_encryption">암호화 협상 대기 중</string>
+    <string name="detail_wait_protocol">애플리케이션 프로토콜 대기 중</string>
+    <string name="detail_wait_ready">상대 노드 준비 대기 중</string>
+    <string name="error_config_field_fmt">설정 필드 %1$s이(가) 잘못되었습니다. 값과 진단 로그를 확인하세요.</string>
+    <string name="error_identity_key">잘못된 식별 키입니다. 유효한 키를 가져오거나 백업을 복원하세요.</string>
+    <string name="error_invalid_configuration">잘못된 설정입니다. 설정과 진단 로그를 확인하세요.</string>
+    <string name="error_invalid_json">잘못된 JSON입니다. 설정 또는 백업 파일을 확인하세요.</string>
+    <string name="error_io">데이터를 읽거나 쓸 수 없습니다. 파일 접근 권한과 여유 공간을 확인하세요.</string>
+    <string name="error_unknown">작업에 실패했습니다. 자세한 내용은 진단 로그를 확인하세요.</string>
+    <string name="hint_obfuscation_mode">난독화 모드</string>
+    <string name="priority_lan">LAN 직접 연결</string>
+    <string name="priority_loopback">루프백</string>
+    <string name="priority_overlay">오버레이</string>
+    <string name="priority_wan">WAN 직접 연결</string>
+    <string name="protocol_relay">릴레이</string>
+    <string name="rtt_libp2p_ping">libp2p 전송 계층 ping</string>
+    <string name="rtt_p2p_echo">P2P 에코 측정</string>
+    <string name="rtt_tap_icmp">가상 네트워크 ICMP 측정</string>
+    <string name="security_active_fmt">활성 (%1$s, %2$s B)</string>
+    <string name="security_psk_bound">PSK 바인딩 메시</string>
+    <string name="security_public">공개 메시 (PSK 없음)</string>
+    <string name="stat_obf_disabled">비활성화됨</string>
+    <string name="telemetry_crypto_failed">암호화 협상 실패</string>
+    <string name="telemetry_enabled">활성화됨</string>
+    <string name="telemetry_unknown">데이터 없음</string>
+    <string name="telemetry_unmeasured">측정되지 않음</string>
+    <string name="telemetry_unreachable">연결 불가</string>
+</resources>

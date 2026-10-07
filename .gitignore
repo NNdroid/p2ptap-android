@@ -15,10 +15,10 @@
 local.properties
 /.idea
 
-/app/libs/p2ptap.aar
-/app/libs/p2ptap-sources.jar
-/app/debug
-/app/release
+/core/libs/p2ptap.aar
+/core/libs/p2ptap-sources.jar
+/mobile/debug
+/mobile/release
 
 /.artifacts
 .kotlin/

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One keep-alive layer: an icon, a name, a one-line description, a live state,
+    and at most one action.
+
+    The whole row is focusable and the action button inside it is not: on a TV
+    a row that can be both navigated to and pressed on is the thing that makes a
+    viewer lose track of whether a press did something. Focus lands on the row,
+    DPAD_RIGHT goes to the button, and a press on the row fires the same action
+    as the button. That is three fewer decisions per screen for a remote.
+
+    The state text sits left of the button, never below it: a 10-foot viewer
+    reads the row left to right and the state is the part of the row that
+    answers "is this working", so it has to be on that path.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="@dimen/tv_ka_row_h"
+  android:background="@drawable/tv_bg_action_card"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:gravity="center_vertical"
+  android:orientation="horizontal"
+  android:paddingStart="@dimen/tv_row_padding"
+  android:paddingEnd="@dimen/tv_row_padding">
+
+  <ImageView
+    android:id="@+id/tvKaLayerIcon"
+    android:layout_width="@dimen/tv_icon_40"
+    android:layout_height="@dimen/tv_icon_40"
+    android:contentDescription="@null" />
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/tv_gap_m"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/tvKaLayerTitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+
+    <TextView
+      android:id="@+id/tvKaLayerDesc"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+  </LinearLayout>
+
+  <TextView
+    android:id="@+id/tvKaLayerStatus"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/tv_gap_l"
+    android:ellipsize="end"
+    android:gravity="end"
+    android:maxLines="1"
+    android:maxWidth="300dp"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+  <TextView
+    android:id="@+id/tvKaLayerAction"
+    android:layout_width="@dimen/tv_ka_action_w"
+    android:layout_height="@dimen/tv_ka_action_h"
+    android:background="@drawable/tv_bg_button_action"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+</LinearLayout>

@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24"
+  android:tint="#FFFFFF">
+  <!-- Settings: three sliders at different offsets. -->
+  <path
+    android:pathData="M3,6.5 L21,6.5 M3,12 L21,12 M3,17.5 L21,17.5"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:strokeLineCap="round"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M8,6.5 m-2,0 a2,2 0 1 1 4,0 a2,2 0 1 1 -4,0"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M16,12 m-2,0 a2,2 0 1 1 4,0 a2,2 0 1 1 -4,0"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:fillColor="#00000000" />
+  <path
+    android:pathData="M10,17.5 m-2,0 a2,2 0 1 1 4,0 a2,2 0 1 1 -4,0"
+    android:strokeWidth="2"
+    android:strokeColor="#FFFFFF"
+    android:fillColor="#00000000" />
+</vector>

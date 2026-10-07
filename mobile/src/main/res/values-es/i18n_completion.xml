@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_description">Guarda la configuración y las claves de identidad o importa un nodo existente.</string>
+    <string name="backup_export_group">📤 Exportar y compartir</string>
+    <string name="backup_import_group">📥 Importar y restaurar</string>
+    <string name="backup_scan_qr">📷 Escanear QR (configuración, identidad o nodo)</string>
+    <string name="backup_gallery_qr">🖼️ Importar imagen QR de la galería</string>
+    <string name="msg_identity_restored_fmt">Configuración e identidad restauradas. Peer ID: %1$s</string>
+    <string name="peer_id_fmt">Peer ID: %1$s</string>
+    <string name="identity_not_generated">Sin generar</string>
+    <string name="scan_node_unknown">Nodo encontrado</string>
+    <string name="scan_ip_unknown">No se indicó ninguna IP virtual</string>
+    <string name="scan_import_method">Elige cómo importar:</string>
+    <string name="hint_allowed_peer_entry">Introduce un Peer ID (p. ej. 12D3…) o * para permitir todos</string>
+    <string name="hint_dns_entry">Introduce la IP DNS (p. ej. 1.1.1.1); deja vacío para usar la del sistema</string>
+    <string name="protocol_all">Todos</string>
+    <string name="protocol_endpoint">Punto de conexión</string>
+    <string name="qr_connection_card_title">Tarjeta de conexión P2PTap</string>
+    <string name="label_connection_uri">URI de conexión</string>
+    <string name="qr_share_subject_fmt">Nodo P2PTap: %1$s</string>
+    <string name="msg_copied_label_fmt">%1$s copiado al portapapeles</string>
+    <string name="logs_initializing">Inicializando registros de diagnóstico…</string>
+    <string name="logs_initial_state_fmt">[Info] Estado P2P en tiempo real: %1$s (%2$s)</string>
+    <string name="logs_empty">No hay registros coincidentes</string>
+    <string name="logs_reader_failed">El lector de registros se detuvo. Vuelve a abrir esta página.</string>
+    <string name="logs_collector_unavailable">Captura de registros no disponible en esta versión</string>
+</resources>

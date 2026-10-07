@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Korean TV strings. Shared service/config strings live in :core.
+    Deliberately emoji-free, like the default.
+-->
+<resources>
+    <string name="app_name">P2PTap TV</string>
+
+    <!-- Screens -->
+    <string name="tv_screen_peers">메시 피어</string>
+    <string name="tv_screen_diagnostics">진단</string>
+
+    <!-- Home hero -->
+    <string name="tv_hero_title">메시 노드</string>
+    <string name="tv_node_label">노드</string>
+    <string name="tv_addresses_label">주소</string>
+    <string name="tv_addresses_none">가상 주소 없음</string>
+
+    <string name="tv_status_running">연결됨</string>
+    <string name="tv_status_starting">연결 중</string>
+    <string name="tv_status_stopping">종료 중</string>
+    <string name="tv_status_idle">연결 끊김</string>
+    <string name="tv_status_timeout">시간 초과</string>
+    <string name="tv_status_error">오류</string>
+
+    <string name="tv_connect">연결</string>
+    <string name="tv_disconnect">연결 끊기</string>
+
+    <string name="tv_tx_label">업로드</string>
+    <string name="tv_rx_label">다운로드</string>
+    <string name="tv_total_tx_fmt">합계 ↑%1$s</string>
+    <string name="tv_total_rx_fmt">합계 ↓%1$s</string>
+    <plurals name="tv_peer_count">
+        <item quantity="other">%d개 피어</item>
+    </plurals>
+    <string name="tv_peers_summary_fmt">%1$s · %2$s %3$d · %4$s %5$d</string>
+    <string name="tv_no_telemetry">트래픽 데이터 없음</string>
+    <string name="tv_speed_zero">0 B/s</string>
+
+    <!-- Home nav rail -->
+    <string name="tv_nav_peers">피어</string>
+    <string name="tv_nav_peers_desc">메시 노드 및 출구 게이트웨이</string>
+    <string name="tv_nav_diagnostics">통계</string>
+    <string name="tv_nav_diagnostics_desc">트래픽 및 노드 카운터</string>
+    <string name="tv_nav_settings">설정</string>
+
+    <!-- Peers screen -->
+    <string name="tv_peers_empty">연결된 피어가 없습니다</string>
+    <string name="tv_peers_empty_hint">노드는 온라인이지만 아직 다른 노드에서 발견되지 않았습니다.</string>
+    <string name="tv_peers_offline">VPN이 꺼져 있습니다. 연결하면 메시 피어를 볼 수 있습니다.</string>
+    <string name="tv_peer_transport">전송</string>
+    <string name="tv_peer_rtt">RTT</string>
+    <string name="tv_peer_path">경로</string>
+    <string name="tv_peer_tx">↑</string>
+    <string name="tv_peer_rx">↓</string>
+    <string name="tv_peer_tap">TAP 주소</string>
+    <string name="tv_peer_id">피어 ID</string>
+    <string name="tv_peer_multicast_note">주소</string>
+    <string name="tv_peer_exit_badge">출구 노드</string>
+    <string name="tv_peer_os">OS</string>
+    <string name="tv_rtt_fmt">%1$s ms</string>
+    <string name="tv_rtt_unmeasured">미측정</string>
+
+    <string name="tv_path_direct">직접</string>
+    <string name="tv_path_relay">릴레이</string>
+    <string name="tv_path_unknown">알 수 없음</string>
+
+    <string name="tv_prot_quic">QUIC</string>
+    <string name="tv_prot_webrtc">WebRTC</string>
+    <string name="tv_prot_wt">WebTransport</string>
+    <string name="tv_prot_tcp">TCP</string>
+    <string name="tv_prot_relay">릴레이</string>
+    <string name="tv_prot_unknown">알 수 없음</string>
+
+    <!-- Diagnostics screen -->
+    <string name="tv_diag_offline">연결하면 카운터를 볼 수 있습니다</string>
+    <string name="tv_diag_empty">아직 카운터가 없습니다</string>
+    <string name="tv_diag_empty_hint">터널은 열려 있지만 엔진에서 아직 보고가 없습니다.</string>
+    <string name="tv_diag_bytes_sent">전송 바이트</string>
+    <string name="tv_diag_bytes_recv">수신 바이트</string>
+    <string name="tv_diag_packets_sent">전송 패킷</string>
+    <string name="tv_diag_packets_recv">수신 패킷</string>
+    <string name="tv_diag_dispatch_drops">디스패치 드롭</string>
+    <string name="tv_diag_dedup">중복 제거</string>
+    <string name="tv_diag_replay_drops">재생 드롭</string>
+    <string name="tv_diag_synced_peers">동기화된 피어</string>
+    <string name="tv_diag_ipv4">IPv4</string>
+    <string name="tv_diag_ipv6">IPv6</string>
+    <string name="tv_diag_arp">ARP</string>
+    <string name="tv_diag_ndp">NDP</string>
+    <string name="tv_diag_tcp">TCP</string>
+    <string name="tv_diag_udp">UDP</string>
+    <string name="tv_diag_icmp">ICMP</string>
+    <string name="tv_diag_other">기타</string>
+    <string name="tv_diag_section_protocol">프로토콜 카운터</string>
+    <string name="tv_diag_section_security">보안</string>
+    <string name="tv_diag_section_node">노드</string>
+    <string name="tv_diag_obfuscation">오블퍼케이션</string>
+    <string name="tv_diag_psk">PSK</string>
+    <string name="tv_diag_exit_node">활성 출구 노드</string>
+    <string name="tv_version_engine_fmt">엔진 %1$s</string>
+    <string name="tv_version_app_fmt">앱 %1$s</string>
+
+    <!-- Boot keep-alive -->
+    <string name="tv_autostart_title">기동 시 VPN 시작</string>
+    <string name="tv_autostart_on">마지막 상태 따름: 켬</string>
+    <string name="tv_autostart_off">마지막 상태 따름: 껌</string>
+
+    <!-- Logs -->
+    <string name="tv_screen_logs">터널 로그</string>
+    <string name="tv_nav_logs">로그</string>
+    <string name="tv_nav_logs_desc">실시간 터널 출력</string>
+    <string name="tv_logs_live_fmt">실시간 · %1$d줄</string>
+    <string name="tv_logs_truncated_fmt">실시간 · %1$d줄 · %2$d줄 폐기</string>
+    <string name="tv_logs_unavailable">이 빌드에서는 캡처 불가</string>
+    <string name="tv_logs_empty">아직 로그가 없습니다</string>
+    <string name="tv_logs_errors_only">오류만</string>
+    <string name="tv_logs_all">모두 표시</string>
+    <string name="tv_logs_clear">지우기</string>
+    <string name="tv_logs_none_matching">경고나 오류가 없습니다</string>
+
+    <!-- About -->
+    <string name="tv_screen_about">정보</string>
+    <string name="tv_nav_about">정보</string>
+    <string name="tv_about_identity_note">이 기기는 독립된 노드이며, 독립된 인증 정보를 자신의 공간에 저장합니다.</string>
+    <string name="tv_about_versions">버전</string>
+    <string name="tv_about_tunnel">터널</string>
+    <string name="tv_about_node_name">노드 이름</string>
+    <string name="tv_about_dns">DNS</string>
+    <string name="tv_about_repository">저장소</string>
+    <string name="tv_about_repo_url">https://github.com/NNdroid/p2ptap</string>
+
+    <!-- Settings -->
+    <string name="tv_screen_settings">설정</string>
+    <string name="tv_screen_advanced">고급</string>
+    <string name="tv_nav_advanced">고급</string>
+    <string name="tv_advanced_note">이 값을 바꾸면 터널이 재시작됩니다.</string>
+
+    <string name="tv_toggle_on">켬</string>
+    <string name="tv_toggle_off">껌</string>
+
+    <string name="tv_set_obfuscation">오블퍼케이션</string>
+    <string name="tv_set_strict_keys">엄격한 키</string>
+    <string name="tv_set_quic">QUIC</string>
+    <string name="tv_set_webrtc">WebRTC</string>
+    <string name="tv_set_webtransport">WebTransport</string>
+    <string name="tv_set_tcp">TCP</string>
+    <string name="tv_set_relay">릴레이</string>
+    <string name="tv_set_mdns">mDNS</string>
+    <string name="tv_set_mesh">메시 탐색</string>
+    <string name="tv_set_subnets">허용 하위망</string>
+    <string name="tv_set_webui">웹 콘솔</string>
+
+    <string name="tv_tier_obfuscation">오블퍼케이션</string>
+    <string name="tv_tier_transport">전송</string>
+    <string name="tv_tier_log_level">로그 수준</string>
+    <string name="tv_tier_mtu">MTU</string>
+    <string name="tv_set_save_failed">설정을 저장할 수 없습니다</string>
+
+    <string name="tv_unknown">—</string>
+    <string name="tv_nav_transfer">전송</string>
+    <string name="tv_screen_import">가져오기</string>
+    <string name="tv_screen_qr">QR 코드</string>
+    <string name="tv_import_note">셋톱박스는 키보드가 없으므로 설정은 파일, 클립보드, 또는 코드로 전달됩니다.</string>
+    <string name="tv_import_config">설정 가져오기</string>
+    <string name="tv_import_config_desc">백업 번들 또는 설정 JSON</string>
+    <string name="tv_import_identity">신원 가져오기</string>
+    <string name="tv_import_identity_desc">노드 키, base64</string>
+    <string name="tv_import_clipboard">클립보드에서</string>
+    <string name="tv_import_clipboard_desc">번들, 설정 또는 키</string>
+    <string name="tv_import_new">새로운 신원</string>
+    <string name="tv_import_new_desc">메시에 새로운 노드로 참여</string>
+    <string name="tv_import_new_confirm">다시 누르면 삭제됩니다</string>
+    <string name="tv_import_done_cfg">설정 가져오기 완료</string>
+    <string name="tv_import_done_identity">신원 복원됨: %1$s</string>
+    <string name="tv_import_done_new">새로운 신원: %1$s</string>
+    <string name="tv_import_failed">가져오기 실패</string>
+    <string name="tv_import_read_failed">해당 파일을 읽을 수 없습니다</string>
+    <string name="tv_import_unrecognized">p2ptap 설정 또는 신원 키가 아닙니다</string>
+    <string name="tv_import_empty_clip">클립보드가 비어 있습니다</string>
+    <string name="tv_qr_hint">휴대폰 카메라를 코드로 겨냥하세요</string>
+    <string name="tv_qr_mode_bundle">백업</string>
+    <string name="tv_qr_mode_config">설정</string>
+    <string name="tv_qr_mode_uri">연결</string>
+    <string name="tv_qr_mode_key">신원</string>
+    <string name="tv_qr_peer_fmt">ID %1$s</string>
+    <string name="tv_qr_tap_fmt">TAP %1$s</string>
+    <string name="tv_qr_node_unknown">이름 없는 노드</string>
+    <string name="tv_qr_peer_unknown">신원 사용 불가</string>
+    <string name="tv_qr_copy">복사</string>
+    <string name="tv_qr_copied">클립보드에 복사됨</string>
+    <string name="tv_qr_save">파일로 저장</string>
+    <string name="tv_qr_saved">백업 저장됨</string>
+    <string name="tv_qr_failed">코드를 준비할 수 없습니다</string>
+    <string name="tv_screen_keepalive">유지</string>
+    <string name="tv_nav_keepalive">유지</string>
+    <string name="tv_ka_note">3겹, 각각 단독 사용 가능.</string>
+    <string name="tv_ka_boot">부팅 복원</string>
+    <string name="tv_ka_boot_desc">셋톱 재부팅 후 터널 다시 시작</string>
+    <string name="tv_ka_watchdog">워치독</string>
+    <string name="tv_ka_watchdog_desc">앱이 종료되어도 터널 다시 시작</string>
+    <string name="tv_ka_shizuku">Shizuku</string>
+    <string name="tv_ka_shizuku_desc">셸에서 터널 복원, 재부팅 후 다시 설정 필요</string>
+    <string name="tv_ka_start">시작</string>
+    <string name="tv_ka_stop">정지</string>
+    <string name="tv_ka_running">실행 중</string>
+    <string name="tv_ka_stopped">정지됨</string>
+    <string name="tv_ka_disabled">비활성</string>
+    <string name="tv_ka_missing">설치 안 됨</string>
+    <string name="tv_ka_needs_activation">설치됨, 활성화 필요</string>
+    <string name="tv_ka_activate">Shizuku 활성화</string>
+    <string name="tv_ka_activate_failed">Shizuku를 열 수 없습니다</string>
+    <string name="tv_ka_keeper">셸 키퍼</string>
+    <string name="tv_ka_recover">터널 복원</string>
+    <string name="tv_ka_recover_done">터널 복원됨</string>
+    <string name="tv_ka_ver_fmt">%1$s · uid %2$d</string>
+    <string name="tv_ka_foot">Shizuku 없이도 재부팅 후에는 터널이 돌아오지만, 셋톱이 모든 프로세스를 종료시키면 돌아오지 않습니다.</string>
+    <string name="tv_screen_home">홈</string>
+    <string name="tv_screen_transfer">전송</string>
+    <string name="tv_hero_eyebrow">P2P 오버레이</string>
+    <string name="tv_speed_tx_label">업로드</string>
+    <string name="tv_speed_rx_label">다운로드</string>
+    <string name="tv_total_label">합계</string>
+    <string name="tv_screen_peers_hint">메시 노드와出口 게이트웨이</string>
+    <string name="tv_screen_transfer_hint">설정 및 ID 가져오기</string>
+    <string name="tv_screen_settings_hint">스위치와 등급</string>
+    <string name="tv_screen_diagnostics_hint">트래픽과 로그</string>
+    <string name="tv_transfer_from_file">파일에서</string>
+    <string name="tv_transfer_from_clipboard">클립보드에서</string>
+    <string name="tv_transfer_via_qr">QR 코드에서</string>
+    <string name="tv_transfer_new_identity">새 ID</string>
+    <string name="tv_diag_refresh">새로고침</string>
+    <string name="tv_ka_l1_title">부팅 복구</string>
+    <string name="tv_ka_l1_desc">모든 재부팅 후 터널이 자동으로 돌아옵니다. 항상 켜짐.</string>
+    <string name="tv_ka_l1_state_on">항상 켜짐</string>
+    <string name="tv_ka_l2_title">워치독</string>
+    <string name="tv_ka_l2_desc">이 앱의 프로세스 안에서 터널을 감시하는 두 번째 포그라운드 서비스.</string>
+    <string name="tv_ka_l2_state_active">활성</string>
+    <string name="tv_ka_l3_title">Shizuku 가드</string>
+    <string name="tv_ka_l3_desc">단말기가 모든 P2PTap 프로세스를 종료해도 살아남는 유일한 계층. Shizuku 필요.</string>
+    <string name="tv_ka_up">실행 중</string>
+    <string name="tv_ka_down">실행 안 됨</string>
+    <string name="tv_about_engine_label">엔진</string>
+    <string name="tv_about_peer_label">피어 ID</string>
+    <string name="tv_about_arch_label">ABI</string>
+    <string name="tv_about_footer">오픈소스. 라이선스는 저장소 참조.</string>
+</resources>

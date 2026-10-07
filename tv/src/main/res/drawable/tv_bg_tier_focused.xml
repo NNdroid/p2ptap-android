@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Focused tier chip: cyan over the current value. A chip that is focused and
+     already selected keeps the selected fill so selecting it does not look like
+     a rejection; the ring alone says "press will re-select this one". -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#164E63" />
+    <stroke android:width="2dp" android:color="#06B6D4" />
+    <corners android:radius="10dp" />
+</shape>

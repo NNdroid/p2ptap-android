@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A tier chip. state_selected is the chosen value; state_focused is the
+    pointer. A chip that is both keeps its selected fill and gains the ring, so
+    pressing it does not look like it was rejected.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:state_focused="true" android:drawable="@drawable/tv_bg_tier_on" />
+    <item android:state_selected="true" android:drawable="@drawable/tv_bg_tier_on" />
+    <item android:state_focused="true" android:drawable="@drawable/tv_bg_tier_focused" />
+    <item android:drawable="@drawable/tv_bg_tier_off" />
+</selector>

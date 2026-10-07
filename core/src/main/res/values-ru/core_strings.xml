@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Locale variants for the strings that live in :core. The
+     default locale ships in values/core_strings.xml. -->
+<resources>
+    <string name="error_peer_address_fmt">Адрес %1$d некорректен. Используйте полную multiaddr с окончанием /p2p/PeerID.</string>
+    <string name="error_save_config">Не удалось сохранить настройки. Проверьте свободное место.</string>
+    <string name="error_strategy">Стратегия передачи: best_path, redundant или fallback.</string>
+    <string name="config_invalid_fmt">Настройки не применены: %1$s</string>
+    <string name="error_timeout">Время подключения истекло. Проверьте сеть и адреса узлов.</string>
+    <string name="error_engine_stalled">Движок перестал передавать данные. Переподключитесь, чтобы восстановить статистику трафика.</string>
+    <string name="error_vpn_establish">Не удалось создать туннель VPN. Проверьте разрешение VPN и повторите попытку.</string>
+    <string name="error_vpn_session_ended">Сеанс VPN завершён. Подключитесь заново перед сохранением настроек.</string>
+    <string name="notification_action_disconnect">Отключить</string>
+    <string name="notification_channel_description">Состояние VPN и трафик</string>
+    <string name="notification_channel_name">VPN-подключение P2PTap</string>
+    <string name="notification_running">P2PTap Виртуальная сеть активна</string>
+    <string name="notification_starting">Запуск P2PTap VPN…</string>
+    <string name="detail_relay_control_failed">Сбой управляющего соединения ретранслятора; см. журнал</string>
+    <string name="detail_relay_hop">Управляющее соединение ретранслятора активно</string>
+    <string name="detail_wait_data">Готово; ожидание трафика</string>
+    <string name="detail_wait_encryption">Ожидание согласования шифрования</string>
+    <string name="detail_wait_protocol">Ожидание протокола приложения</string>
+    <string name="detail_wait_ready">Ожидание готовности узла</string>
+    <string name="error_config_field_fmt">Некорректное поле настроек: %1$s. Проверьте значение и журнал диагностики.</string>
+    <string name="error_identity_key">Некорректный ключ идентификации. Импортируйте ключ или восстановите резервную копию.</string>
+    <string name="error_invalid_configuration">Некорректные настройки. Проверьте параметры и журнал диагностики.</string>
+    <string name="error_invalid_json">Некорректный JSON. Проверьте файл настроек или резервной копии.</string>
+    <string name="error_io">Не удалось прочитать или записать данные. Проверьте доступ и свободное место.</string>
+    <string name="error_unknown">Операция не выполнена. Подробности в журнале диагностики.</string>
+    <string name="hint_obfuscation_mode">Режим маскировки</string>
+    <string name="priority_lan">Прямое подключение LAN</string>
+    <string name="priority_loopback">Петлевой интерфейс</string>
+    <string name="priority_overlay">Оверлейная сеть</string>
+    <string name="priority_wan">Прямое подключение WAN</string>
+    <string name="protocol_relay">Ретранслятор</string>
+    <string name="rtt_libp2p_ping">Ping транспорта libp2p</string>
+    <string name="rtt_p2p_echo">Эхо-проверка P2P</string>
+    <string name="rtt_tap_icmp">Проверка ICMP в виртуальной сети</string>
+    <string name="security_active_fmt">Активно (%1$s, %2$s B)</string>
+    <string name="security_psk_bound">Сеть с привязкой к PSK</string>
+    <string name="security_public">Общая сеть (без PSK)</string>
+    <string name="stat_obf_disabled">Выключено</string>
+    <string name="telemetry_crypto_failed">Ошибка согласования шифрования</string>
+    <string name="telemetry_enabled">Включено</string>
+    <string name="telemetry_unknown">Нет данных</string>
+    <string name="telemetry_unmeasured">Не измерено</string>
+    <string name="telemetry_unreachable">Недоступен</string>
+</resources>

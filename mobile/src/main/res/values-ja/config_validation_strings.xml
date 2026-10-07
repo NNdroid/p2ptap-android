@@ -1,0 +1,5 @@
+<resources>
+    <string name="config_peer_endpoint_required">この QR コードには接続可能なピアアドレスがありません。IP/DNS、転送プロトコル、/p2p/PeerID を含めてください。</string>
+    <string name="config_strategy_help">best_path はトポロジーと書き込み性能で既存の経路を選択します。redundant は既存のストリームに複製し、fallback は既存の経路を順に試します。変更には VPN の再起動が必要です。</string>
+    <string name="config_static_help">/p2p/PeerID で終わる完全な multiaddr を使用してください。静的ピアもリレーを利用できます。変更すると VPN が再起動します。</string>
+</resources>

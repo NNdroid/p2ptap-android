@@ -23,4 +23,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "p2ptap"
-include(":app")
+include(":core")
+include(":mobile")
+include(":tv")

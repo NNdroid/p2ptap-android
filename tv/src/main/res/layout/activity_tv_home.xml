@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    S1, the only default entry point. 10-foot rules in force:
+      * one screen, no scrolling, no BottomSheet, no IME, no WebView
+      * every hop is wired with nextFocus*, and first focus lands on the
+        CONNECT/DISCONNECT button because that is the action a TV user takes
+        most of the time
+      * no emoji; every label has a vector beside it
+      * every fixed height is budgeted to fit a 540dp-tall (1080p) set — see
+        values/dimens.xml for the arithmetic. A clipped rail is not a layout
+        quirk, it is the four most useful entry points becoming unreachable.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/tvRoot"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:clipChildren="false"
+  android:clipToPadding="false"
+  android:focusable="false"
+  android:orientation="vertical"
+  android:paddingStart="@dimen/tv_screen_padding_h"
+  android:paddingTop="@dimen/tv_screen_padding_v"
+  android:paddingEnd="@dimen/tv_screen_padding_h"
+  android:paddingBottom="@dimen/tv_screen_padding_v">
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+      android:layout_width="@dimen/tv_icon_40"
+      android:layout_height="@dimen/tv_icon_40"
+      android:contentDescription="@null"
+      android:src="@drawable/ic_p2p_shield_node" />
+
+    <TextView
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/tv_gap_s"
+      android:layout_weight="1"
+      android:text="@string/app_name"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.ScreenTitle" />
+
+    <!--
+        Right-aligned meta. The autostart line lives here rather than as a
+        footnote below the rail: a separate footnote costs a full text row of
+        the 540dp budget, and this is a status, not a call to action, so it
+        belongs with the other status text.
+    -->
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:gravity="end"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/tvAutostartStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvEngineVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvAppVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+    </LinearLayout>
+  </LinearLayout>
+
+  <Space
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1" />
+
+  <!-- ── Hero: status, identity, live traffic ───────────────────────── -->
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/tvHeroCard"
+    android:layout_width="@dimen/tv_hero_width"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/tv_bg_hero_card"
+    android:padding="@dimen/tv_hero_padding"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <View
+      android:id="@+id/tvStatusDot"
+      android:layout_width="@dimen/tv_status_dot"
+      android:layout_height="@dimen/tv_status_dot"
+      android:background="@drawable/tv_bg_status_dot"
+      app:layout_constraintBottom_toBottomOf="@id/tvStatus"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@id/tvStatus" />
+
+    <TextView
+      android:id="@+id/tvStatus"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/tv_gap_m"
+      android:text="@string/tv_status_idle"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeroStatus"
+      app:layout_constraintBottom_toBottomOf="@id/tvNodeName"
+      app:layout_constraintStart_toEndOf="@id/tvStatusDot"
+      app:layout_constraintTop_toTopOf="@id/tvNodeName" />
+
+    <TextView
+      android:id="@+id/tvNodeName"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:ellipsize="middle"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.Body"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+      android:id="@+id/tvAddresses"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/tv_gap_s"
+      android:ellipsize="middle"
+      android:maxLines="1"
+      android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/tvNodeName" />
+
+    <LinearLayout
+      android:id="@+id/tvSpeedRow"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/tv_gap_m"
+      android:baselineAligned="false"
+      android:orientation="horizontal"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/tvAddresses">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/tv_tx_label"
+          android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+        <TextView
+          android:id="@+id/tvTxSpeed"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/tv_speed_zero"
+          android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeroValue" />
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/tv_rx_label"
+          android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+        <TextView
+          android:id="@+id/tvRxSpeed"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/tv_speed_zero"
+          android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeroValue" />
+      </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tvTotalRow"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/tv_gap_s"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/tvSpeedRow">
+
+      <TextView
+        android:id="@+id/tvTotalTx"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvTotalRx"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+      <TextView
+        android:id="@+id/tvPeerCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+    </LinearLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <!-- ── The one button a TV user actually needs ─────────────────────── -->
+  <Button
+    android:id="@+id/tvToggleButton"
+    android:layout_width="@dimen/tv_button_w"
+    android:layout_height="@dimen/tv_button_h"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="@dimen/tv_gap_l"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:nextFocusDown="@id/tvNavPeers"
+    android:nextFocusRight="@id/tvNavPeers"
+    android:nextFocusUp="@id/tvNavPeers"
+    android:text="@string/tv_connect" />
+
+  <!-- ── Navigation rail: five weighted cards, one row ───────────────── -->
+  <!--
+      Weighted rather than fixed width, so the row fills whatever the set is
+      wide enough for and never overflows horizontally. At five cards each one
+      is about 150dp wide, which is why the rail labels are the short forms
+      (Stats, Config) and not the screen titles. The screen titles stay in full
+      inside each screen, where there is room for them.
+      Six cards would drop the labels under 90dp of text space, which is where
+      "Diagnostics" stops fitting. Anything past five belongs on a screen, not
+      in the rail.
+  -->
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/tv_gap_l"
+    android:orientation="horizontal">
+
+    <LinearLayout
+      android:id="@+id/tvNavPeers"
+      android:layout_width="0dp"
+      android:layout_height="@dimen/tv_nav_card_h"
+      android:layout_marginEnd="@dimen/tv_gap_m"
+      android:layout_weight="1"
+      android:background="@drawable/tv_bg_nav_card"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:gravity="center_vertical"
+      android:nextFocusLeft="@id/tvToggleButton"
+      android:nextFocusRight="@id/tvNavDiagnostics"
+      android:nextFocusUp="@id/tvToggleButton"
+      android:orientation="horizontal"
+      android:padding="@dimen/tv_nav_padding">
+
+      <ImageView
+        android:layout_width="@dimen/tv_icon_32"
+        android:layout_height="@dimen/tv_icon_32"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_tv_peers" />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_s"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/tv_nav_peers"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tvNavDiagnostics"
+      android:layout_width="0dp"
+      android:layout_height="@dimen/tv_nav_card_h"
+      android:layout_marginEnd="@dimen/tv_gap_m"
+      android:layout_weight="1"
+      android:background="@drawable/tv_bg_nav_card"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:gravity="center_vertical"
+      android:nextFocusLeft="@id/tvNavPeers"
+      android:nextFocusRight="@id/tvNavLogs"
+      android:nextFocusUp="@id/tvToggleButton"
+      android:orientation="horizontal"
+      android:padding="@dimen/tv_nav_padding">
+
+      <ImageView
+        android:layout_width="@dimen/tv_icon_32"
+        android:layout_height="@dimen/tv_icon_32"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_tv_diagnostics" />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_s"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/tv_nav_diagnostics"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tvNavLogs"
+      android:layout_width="0dp"
+      android:layout_height="@dimen/tv_nav_card_h"
+      android:layout_marginEnd="@dimen/tv_gap_m"
+      android:layout_weight="1"
+      android:background="@drawable/tv_bg_nav_card"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:gravity="center_vertical"
+      android:nextFocusLeft="@id/tvNavDiagnostics"
+      android:nextFocusRight="@id/tvNavSettings"
+      android:nextFocusUp="@id/tvToggleButton"
+      android:orientation="horizontal"
+      android:padding="@dimen/tv_nav_padding">
+
+      <ImageView
+        android:layout_width="@dimen/tv_icon_32"
+        android:layout_height="@dimen/tv_icon_32"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_tv_logs" />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_s"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/tv_nav_logs"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tvNavSettings"
+      android:layout_width="0dp"
+      android:layout_height="@dimen/tv_nav_card_h"
+      android:layout_marginEnd="@dimen/tv_gap_m"
+      android:layout_weight="1"
+      android:background="@drawable/tv_bg_nav_card"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:gravity="center_vertical"
+      android:nextFocusLeft="@id/tvNavLogs"
+      android:nextFocusRight="@id/tvNavTransfer"
+      android:nextFocusUp="@id/tvToggleButton"
+      android:orientation="horizontal"
+      android:padding="@dimen/tv_nav_padding">
+
+      <ImageView
+        android:layout_width="@dimen/tv_icon_32"
+        android:layout_height="@dimen/tv_icon_32"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_tv_settings" />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_s"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/tv_nav_settings"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tvNavTransfer"
+      android:layout_width="0dp"
+      android:layout_height="@dimen/tv_nav_card_h"
+      android:layout_weight="1"
+      android:background="@drawable/tv_bg_nav_card"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:gravity="center_vertical"
+      android:nextFocusLeft="@id/tvNavSettings"
+      android:nextFocusRight="@id/tvToggleButton"
+      android:nextFocusUp="@id/tvToggleButton"
+      android:orientation="horizontal"
+      android:padding="@dimen/tv_nav_padding">
+
+      <ImageView
+        android:layout_width="@dimen/tv_icon_32"
+        android:layout_height="@dimen/tv_icon_32"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_tv_transfer" />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tv_gap_s"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/tv_nav_transfer"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.NavTitle" />
+    </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    S5 Diagnostics. A 2x3 grid of engine counters on the left, and a
+    log pane on the right. The log pane is monospaced and 16sp — the one
+    place below body size, because the reader who needs this detail is
+    closer to the screen than the rest of the audience.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_background"
+    android:padding="32dp">
+
+    <TextView
+        android:id="@+id/tv_screen_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_screen_diagnostics"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineMedium"
+        android:textColor="@color/md_theme_onBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/tv_diag_metrics_grid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:divider="@color/md_theme_outlineVariant"
+        android:dividerPadding="16dp"
+        android:showDividers="middle"
+        app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_diag_log_card">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_speed_tx_label"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                android:textColor="@color/md_theme_onSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tv_diag_tx_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                android:textColor="@color/md_theme_primary"
+                android:fontFamily="monospace"
+                tools:text="12.4 MB/s" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/tv_speed_rx_label"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                android:textColor="@color/md_theme_onSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tv_diag_rx_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                android:textColor="@color/md_theme_tertiary"
+                android:fontFamily="monospace"
+                tools:text="3.1 MB/s" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_total_label"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                android:textColor="@color/md_theme_onSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tv_diag_total_tx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                android:textColor="@color/md_theme_onBackground"
+                android:fontFamily="monospace"
+                tools:text="1.2 GB" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/tv_speed_rx_label"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                android:textColor="@color/md_theme_onSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tv_diag_total_rx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                android:textColor="@color/md_theme_onBackground"
+                android:fontFamily="monospace"
+                tools:text="4.5 GB" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/tv_peer_path"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
+                android:textColor="@color/md_theme_onSurfaceVariant" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_diag_direct_peers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                    android:textColor="@color/md_theme_primary"
+                    android:fontFamily="monospace"
+                    tools:text="3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" / "
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                    android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/tv_diag_relay_peers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
+                    android:textColor="@color/md_theme_secondary"
+                    android:fontFamily="monospace"
+                    tools:text="1" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/tv_diag_log_card"
+        style="@style/Widget.P2ptap.Tv.Card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        app:cardBackgroundColor="@color/md_theme_surface"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_diag_metrics_grid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.55">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Live log"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleMedium"
+                    android:textColor="@color/md_theme_onBackground" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tv_diag_refresh"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_diag_refresh"
+                    app:icon="@drawable/ic_tv_logs"
+                    app:iconGravity="textStart" />
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_weight="1"
+                android:background="@color/md_theme_background"
+                android:isScrollContainer="true"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_diag_log"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Log"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    tools:text="03:12:44 [I] P2PTapVpnService: session established" />
+            </ScrollView>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

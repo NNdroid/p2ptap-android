@@ -1,0 +1,23 @@
+<resources>
+    <string name="telemetry_loading">Engine-Daten werden geladen…</string>
+    <string name="telemetry_refresh_failed">Aktualisierung fehlgeschlagen. Zum Wiederholen aktualisieren.</string>
+    <string name="telemetry_live">Live-Engine-Daten · TAP-Nutzdaten ohne Verschlüsselungs- und Füllbytes</string>
+    <string name="telemetry_dedup">Verworfene Duplikate</string>
+    <string name="telemetry_ndp">NDP-Pakete</string>
+    <string name="telemetry_other">Andere Pakete</string>
+    <string name="telemetry_psk">PSK-Status</string>
+    <string name="telemetry_pending">Ausstehend / nicht verfügbar</string>
+    <string name="telemetry_saved">Gespeichert</string>
+    <string name="telemetry_applied">Route eingerichtet</string>
+    <string name="telemetry_exit_gateway">Ausgangsgateway</string>
+    <string name="telemetry_not_gateway">Kein Ausgangsgateway</string>
+    <string name="telemetry_exit_select_hint">Nur aktive Knoten mit Ausgangsfunktion können ausgewählt werden. Manuelle Ziele sind weiterhin möglich.</string>
+    <string name="telemetry_link_traffic">Lokale Verbindung gesamt: ↑ %1$s  ↓ %2$s</string>
+    <string name="telemetry_exit_saved">Auswahl gespeichert; bei laufendem VPN wird sie angewendet.</string>
+    <string name="telemetry_invalid_exit">Gültige numerische IPv4-/IPv6-Adresse oder Peer-ID eingeben.</string>
+    <string name="telemetry_proto_mismatch">Protokoll inkompatibel</string>
+    <string name="telemetry_peer_summary">Online %1$d (%2$d direkt · %3$d Relay) · Bekannt %4$d</string>
+    <string name="telemetry_replay_drops">Verworfene Wiederholungen</string>
+    <string name="telemetry_disabling">Ausgangsroute wird entfernt…</string>
+    <string name="btn_refresh">Aktualisieren</string>
+</resources>

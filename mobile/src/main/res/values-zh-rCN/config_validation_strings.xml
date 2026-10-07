@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config_peer_endpoint_required">此二维码中没有可拨号的节点地址。请包含 IP/DNS、传输协议和 /p2p/PeerID。</string>
+    <string name="config_strategy_help">best_path 按拓扑优先级和写入性能选择已有路径；redundant 在已有流上复制发送；fallback 按顺序尝试已有路径。更改后需重启 VPN。</string>
+    <string name="config_static_help">请使用以 /p2p/PeerID 结尾的完整多地址。静态对端节点也可通过中继连接。更改后将重启 VPN。</string>
+</resources>
