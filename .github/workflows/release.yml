@@ -11,6 +11,7 @@ on:
         options:
           - release
           - debug
+          - all
       create_release:
         description: 'Publish a GitHub Release; this run creates and pushes the version tag'
         required: true
@@ -144,21 +145,30 @@ jobs:
             echo "::warning ::No production signing key configured; test-signing this artifact-only build."
           fi
 
-      - name: Build Android Release APK
+      - name: Build Android APK
         env:
           KEYSTORE_FILE: "keystore.jks"
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease
+          BUILD_TYPE="${{ github.event.inputs.build_type }}"
+          SIGNING_ARGS=""
+          if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" != "true" ]; then
+            SIGNING_ARGS="-PTEST_SIGNING=true"
+          fi
+
+          # Build debug (debug + all)
+          if [ "$BUILD_TYPE" = "debug" ] || [ "$BUILD_TYPE" = "all" ]; then
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug $SIGNING_ARGS
+          fi
+
+          # Build release (release + all)
+          if [ "$BUILD_TYPE" = "release" ] || [ "$BUILD_TYPE" = "all" ]; then
+            ./gradlew :mobile:assembleRelease :tv:assembleRelease $SIGNING_ARGS
             # AAB must be built without ABI splits: the bundle carries all ABIs
             # itself, and AGP rejects splits when building a bundle.
-            ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS
-          else
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease -PTEST_SIGNING=true
-            ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS -PTEST_SIGNING=true
+            ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS $SIGNING_ARGS
           fi
 
       - name: Prepare APK Outputs & Version Naming
@@ -230,7 +240,10 @@ jobs:
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
           echo "APK_NAME=${APK_NAME}" >> $GITHUB_ENV
           
-          if [ "${{ github.event.inputs.build_type }}" != "debug" ]; then
+          BUILD_TYPE="${{ github.event.inputs.build_type }}"
+
+          # Release APKs: only when build_type is release or all
+          if [ "$BUILD_TYPE" = "release" ] || [ "$BUILD_TYPE" = "all" ]; then
             cp "$UNIVERSAL_APK" "outputs/${APK_NAME}"
 
             # Per-ABI APKs from splits { abi { isEnable = true } } in
@@ -251,16 +264,7 @@ jobs:
             # keep it next to the APKs so it ships with the release.
             cp mobile/build/outputs/mapping/release/mapping.txt "outputs/${APK_NAME%.apk}-mapping.txt"
 
-            # AAB for Play Store publishing: universal bundle with per-ABI splits.
-            MOBILE_AAB="mobile/build/outputs/bundle/release/mobile-release.aab"
-            if [ -f "$MOBILE_AAB" ]; then
-              cp "$MOBILE_AAB" "outputs/${APK_NAME%.apk}.aab"
-            fi
-
-            # TV APKs: same structure as mobile, from the :tv module. The TV
-            # build shares mobile's applicationId (app.fjj.p2ptap), so the two
-            # APKs replace each other on the same device — TV targets leanback
-            # devices, phone targets phones, and they share one signing key.
+            # TV APKs: same structure as mobile, from the :tv module.
             TV_RELEASE_APK_DIR="tv/build/outputs/apk/release"
             TV_UNIVERSAL_APK="$(ls "${TV_RELEASE_APK_DIR}"/tv-release.apk "${TV_RELEASE_APK_DIR}"/tv-universal-release.apk 2>/dev/null | head -1)"
             if [ -n "${TV_UNIVERSAL_APK}" ]; then
@@ -277,30 +281,51 @@ jobs:
               done
 
               cp tv/build/outputs/mapping/release/mapping.txt "outputs/${TV_APK_NAME%.apk}-mapping.txt"
-
-              TV_AAB="tv/build/outputs/bundle/release/tv-release.aab"
-              if [ -f "$TV_AAB" ]; then
-                cp "$TV_AAB" "outputs/${TV_APK_NAME%.apk}.aab"
-              fi
             fi
           fi
-          # Splits apply to the debug variant too, so its all-ABI output is
-          # mobile-universal-debug.apk rather than mobile-debug.apk.
-          DEBUG_APK="$(ls mobile/build/outputs/apk/debug/mobile-debug.apk mobile/build/outputs/apk/debug/mobile-universal-debug.apk 2>/dev/null | head -1)"
-          cp "$DEBUG_APK" "outputs/${APK_NAME%.apk}-debug.apk"
 
-          # TV debug APK, same logic as mobile debug.
-          TV_DEBUG_APK="$(ls tv/build/outputs/apk/debug/tv-debug.apk tv/build/outputs/apk/debug/tv-universal-debug.apk 2>/dev/null | head -1)"
-          if [ -n "${TV_DEBUG_APK}" ]; then
-            cp "$TV_DEBUG_APK" "outputs/p2ptap-tv-${VERSION_NAME}-debug.apk"
+          # Debug APKs: only when build_type is debug or all
+          if [ "$BUILD_TYPE" = "debug" ] || [ "$BUILD_TYPE" = "all" ]; then
+            # Splits apply to the debug variant too, so its all-ABI output is
+            # mobile-universal-debug.apk rather than mobile-debug.apk.
+            DEBUG_APK="$(ls mobile/build/outputs/apk/debug/mobile-debug.apk mobile/build/outputs/apk/debug/mobile-universal-debug.apk 2>/dev/null | head -1)"
+            cp "$DEBUG_APK" "outputs/${APK_NAME%.apk}-debug.apk"
+
+            # TV debug APK, same logic as mobile debug.
+            TV_DEBUG_APK="$(ls tv/build/outputs/apk/debug/tv-debug.apk tv/build/outputs/apk/debug/tv-universal-debug.apk 2>/dev/null | head -1)"
+            if [ -n "${TV_DEBUG_APK}" ]; then
+              cp "$TV_DEBUG_APK" "outputs/p2ptap-tv-${VERSION_NAME}-debug.apk"
+            fi
           fi
 
-      - name: Upload Build Artifact (artifact-only builds)
+          # AAB files: always copy to a separate directory for artifact-only upload.
+          # AAB must never go to a public GitHub Release — it contains the full
+          # app bundle including all ABIs and native code.
+          mkdir -p aab
+          MOBILE_AAB="mobile/build/outputs/bundle/release/mobile-release.aab"
+          if [ -f "$MOBILE_AAB" ]; then
+            cp "$MOBILE_AAB" "aab/${APK_NAME%.apk}.aab"
+          fi
+          TV_AAB="tv/build/outputs/bundle/release/tv-release.aab"
+          if [ -f "$TV_AAB" ]; then
+            cp "$TV_AAB" "aab/p2ptap-tv-${VERSION_NAME}.aab"
+          fi
+
+      - name: Upload Build Artifacts (artifact-only builds)
         if: ${{ github.event.inputs.create_release != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: p2ptap-android-apk
-          path: outputs/*
+          path: |
+            outputs/*
+            aab/*
+          retention-days: 14
+
+      - name: Upload AAB Artifact (always available, never in public release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: p2ptap-android-aab
+          path: aab/*
           retention-days: 14
 
       - name: Create GitHub Release (create_release)
@@ -319,7 +344,7 @@ jobs:
             ### 📦 Phone APK (Android 8.0+)
             Download `p2ptap-mobile-*.apk` for phone and tablet devices.
             Per-ABI APKs are smaller (~37 MB each) than the universal build
-            (~136 MB). The `.aab` is for Play Store publishing.
+            (~136 MB).
             
             ### 📺 TV APK (Android TV 12+)
             Download `p2ptap-tv-*.apk` for Android TV (leanback) devices.
@@ -330,6 +355,12 @@ jobs:
             ### 🔧 Mapping files
             `*-mapping.txt` files are included for deobfuscating crash
             reports from R8-obfuscated releases.
+            
+            ### 📦 AAB (not included in this release)
+            `.aab` bundles are available as CI artifacts only (see the
+            **p2ptap-android-aab** artifact in this workflow run). They are
+            never published to GitHub Releases because the signed bundle
+            contains the full app code and native libraries.
             
             ---
             *Automated Release build by GitHub Actions.*
