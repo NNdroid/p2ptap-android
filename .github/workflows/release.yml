@@ -152,9 +152,9 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease :mobile:bundleRelease :tv:bundleRelease
           else
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease -PTEST_SIGNING=true
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease :mobile:bundleRelease :tv:bundleRelease -PTEST_SIGNING=true
           fi
 
       - name: Prepare APK Outputs & Version Naming
@@ -220,7 +220,7 @@ jobs:
             fi
           fi
           RELEASE_NAME="${RELEASE_TAG}"
-          APK_NAME="P2PTap-${VERSION_NAME}.apk"
+          APK_NAME="p2ptap-mobile-${VERSION_NAME}.apk"
           
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
           echo "RELEASE_TAG=${RELEASE_TAG}" >> $GITHUB_ENV
@@ -247,6 +247,12 @@ jobs:
             # keep it next to the APKs so it ships with the release.
             cp mobile/build/outputs/mapping/release/mapping.txt "outputs/${APK_NAME%.apk}-mapping.txt"
 
+            # AAB for Play Store publishing: universal bundle with per-ABI splits.
+            MOBILE_AAB="mobile/build/outputs/bundle/release/mobile-release.aab"
+            if [ -f "$MOBILE_AAB" ]; then
+              cp "$MOBILE_AAB" "outputs/${APK_NAME%.apk}.aab"
+            fi
+
             # TV APKs: same structure as mobile, from the :tv module. The TV
             # build shares mobile's applicationId (app.fjj.p2ptap), so the two
             # APKs replace each other on the same device — TV targets leanback
@@ -254,7 +260,7 @@ jobs:
             TV_RELEASE_APK_DIR="tv/build/outputs/apk/release"
             TV_UNIVERSAL_APK="$(ls "${TV_RELEASE_APK_DIR}"/tv-release.apk "${TV_RELEASE_APK_DIR}"/tv-universal-release.apk 2>/dev/null | head -1)"
             if [ -n "${TV_UNIVERSAL_APK}" ]; then
-              TV_APK_NAME="P2PTap-tv-${VERSION_NAME}.apk"
+              TV_APK_NAME="p2ptap-tv-${VERSION_NAME}.apk"
               cp "$TV_UNIVERSAL_APK" "outputs/${TV_APK_NAME}"
 
               for apk in "${TV_RELEASE_APK_DIR}"/tv-*-release.apk; do
@@ -267,6 +273,11 @@ jobs:
               done
 
               cp tv/build/outputs/mapping/release/mapping.txt "outputs/${TV_APK_NAME%.apk}-mapping.txt"
+
+              TV_AAB="tv/build/outputs/bundle/release/tv-release.aab"
+              if [ -f "$TV_AAB" ]; then
+                cp "$TV_AAB" "outputs/${TV_APK_NAME%.apk}.aab"
+              fi
             fi
           fi
           # Splits apply to the debug variant too, so its all-ABI output is
@@ -277,14 +288,14 @@ jobs:
           # TV debug APK, same logic as mobile debug.
           TV_DEBUG_APK="$(ls tv/build/outputs/apk/debug/tv-debug.apk tv/build/outputs/apk/debug/tv-universal-debug.apk 2>/dev/null | head -1)"
           if [ -n "${TV_DEBUG_APK}" ]; then
-            cp "$TV_DEBUG_APK" "outputs/P2PTap-tv-${VERSION_NAME}-debug.apk"
+            cp "$TV_DEBUG_APK" "outputs/p2ptap-tv-${VERSION_NAME}-debug.apk"
           fi
 
       - name: Upload Build Artifact (artifact-only builds)
         if: ${{ github.event.inputs.create_release != 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: P2PTap-Android-APK
+          name: p2ptap-android-apk
           path: outputs/*
           retention-days: 14
 
@@ -302,11 +313,12 @@ jobs:
             - **Go Engine Commit**: `${{ steps.build_go.outputs.go_commit }}`
             
             ### 📦 Phone APK (Android 8.0+)
-            Download `P2PTap-*.apk` for phone and tablet devices. Per-ABI APKs
-            are smaller (~37 MB each) than the universal build (~136 MB).
+            Download `p2ptap-mobile-*.apk` for phone and tablet devices.
+            Per-ABI APKs are smaller (~37 MB each) than the universal build
+            (~136 MB). The `.aab` is for Play Store publishing.
             
             ### 📺 TV APK (Android TV 12+)
-            Download `P2PTap-tv-*.apk` for Android TV (leanback) devices.
+            Download `p2ptap-tv-*.apk` for Android TV (leanback) devices.
             The TV build shares the same applicationId as the phone build,
             so they replace each other on the same device — choose the one
             that matches your device form factor.
