@@ -237,6 +237,10 @@
     <string name="tv_ka_l2_title">看門狗</string>
     <string name="tv_ka_l2_desc">喺本 App 行程內監視隧道的第二個前景服務。</string>
     <string name="tv_ka_l2_state_active">運行中</string>
+    <string name="tv_ka_l2_state_gone">程序已終止</string>
+    <string name="tv_ka_l2_state_degraded">降級</string>
+    <string name="tv_ka_l2_state_stopped">已停止</string>
+    <string name="tv_ka_l1_state_off">已關閉</string>
     <string name="tv_ka_l3_title">Shizuku 守護</string>
     <string name="tv_ka_l3_desc">唯一能扛過系統殺掉所有 P2PTap 行程嘅層。需要 Shizuku。</string>
     <string name="tv_ka_up">運行中</string>
