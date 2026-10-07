@@ -173,10 +173,10 @@ jobs:
           # and release names can never drift from what the APK actually carries.
           AAPT2="${ANDROID_HOME}/build-tools/$(ls -1 "${ANDROID_HOME}/build-tools" | sort -V | tail -1)/aapt2"
           # With splits { abi { isEnable = true } } AGP names the all-ABI output
-          # app-universal-release.apk, not app-release.apk. Match both so this
-          # step keeps working if splits are ever turned off again.
+          # mobile-universal-release.apk, not mobile-release.apk. Match both so
+          # this step keeps working if splits are ever turned off again.
           RELEASE_APK_DIR="mobile/build/outputs/apk/release"
-          UNIVERSAL_APK="$(ls "${RELEASE_APK_DIR}"/app-release.apk "${RELEASE_APK_DIR}"/app-universal-release.apk 2>/dev/null | head -1)"
+          UNIVERSAL_APK="$(ls "${RELEASE_APK_DIR}"/mobile-release.apk "${RELEASE_APK_DIR}"/mobile-universal-release.apk 2>/dev/null | head -1)"
           if [ -z "${UNIVERSAL_APK}" ]; then
             echo "::error::no universal release APK found under ${RELEASE_APK_DIR}"
             ls -1 "${RELEASE_APK_DIR}" || true
@@ -232,10 +232,10 @@ jobs:
             # mobile/build.gradle.kts: ~37 MB each instead of the ~136 MB universal
             # one, because each carries only its own libgojni.so. The universal
             # build is already copied above, so skip it here.
-            for apk in "${RELEASE_APK_DIR}"/app-*-release.apk; do
+            for apk in "${RELEASE_APK_DIR}"/mobile-*-release.apk; do
               [ -e "$apk" ] || continue
               base="$(basename "$apk" .apk)"
-              abi="${base#app-}"
+              abi="${base#mobile-}"
               abi="${abi%-release}"
               [ "${abi}" = "universal" ] && continue
               cp "$apk" "outputs/${APK_NAME%.apk}-${abi}.apk"
@@ -245,11 +245,39 @@ jobs:
             # symbol, so a release stack trace is unreadable without this file;
             # keep it next to the APKs so it ships with the release.
             cp mobile/build/outputs/mapping/release/mapping.txt "outputs/${APK_NAME%.apk}-mapping.txt"
+
+            # TV APKs: same structure as mobile, from the :tv module. The TV
+            # build shares mobile's applicationId (app.fjj.p2ptap), so the two
+            # APKs replace each other on the same device — TV targets leanback
+            # devices, phone targets phones, and they share one signing key.
+            TV_RELEASE_APK_DIR="tv/build/outputs/apk/release"
+            TV_UNIVERSAL_APK="$(ls "${TV_RELEASE_APK_DIR}"/tv-release.apk "${TV_RELEASE_APK_DIR}"/tv-universal-release.apk 2>/dev/null | head -1)"
+            if [ -n "${TV_UNIVERSAL_APK}" ]; then
+              TV_APK_NAME="P2PTap-tv-${VERSION_NAME}.apk"
+              cp "$TV_UNIVERSAL_APK" "outputs/${TV_APK_NAME}"
+
+              for apk in "${TV_RELEASE_APK_DIR}"/tv-*-release.apk; do
+                [ -e "$apk" ] || continue
+                base="$(basename "$apk" .apk)"
+                abi="${base#tv-}"
+                abi="${abi%-release}"
+                [ "${abi}" = "universal" ] && continue
+                cp "$apk" "outputs/${TV_APK_NAME%.apk}-${abi}.apk"
+              done
+
+              cp tv/build/outputs/mapping/release/mapping.txt "outputs/${TV_APK_NAME%.apk}-mapping.txt"
+            fi
           fi
           # Splits apply to the debug variant too, so its all-ABI output is
-          # app-universal-debug.apk rather than app-debug.apk.
-          DEBUG_APK="$(ls mobile/build/outputs/apk/debug/app-debug.apk mobile/build/outputs/apk/debug/app-universal-debug.apk 2>/dev/null | head -1)"
+          # mobile-universal-debug.apk rather than mobile-debug.apk.
+          DEBUG_APK="$(ls mobile/build/outputs/apk/debug/mobile-debug.apk mobile/build/outputs/apk/debug/mobile-universal-debug.apk 2>/dev/null | head -1)"
           cp "$DEBUG_APK" "outputs/${APK_NAME%.apk}-debug.apk"
+
+          # TV debug APK, same logic as mobile debug.
+          TV_DEBUG_APK="$(ls tv/build/outputs/apk/debug/tv-debug.apk tv/build/outputs/apk/debug/tv-universal-debug.apk 2>/dev/null | head -1)"
+          if [ -n "${TV_DEBUG_APK}" ]; then
+            cp "$TV_DEBUG_APK" "outputs/P2PTap-tv-${VERSION_NAME}-debug.apk"
+          fi
 
       - name: Upload Build Artifact (artifact-only builds)
         if: ${{ github.event.inputs.create_release != 'true' }}
@@ -272,8 +300,19 @@ jobs:
             - **APK versionName / versionCode**: `${{ env.VERSION_NAME }}` / `${{ env.VERSION_CODE }}`
             - **Go Engine Commit**: `${{ steps.build_go.outputs.go_commit }}`
             
-            ### 📦 Download & Installation
-            Download the signed APK below and install on Android 8.0+ devices.
+            ### 📦 Phone APK (Android 8.0+)
+            Download `P2PTap-*.apk` for phone and tablet devices. Per-ABI APKs
+            are smaller (~37 MB each) than the universal build (~136 MB).
+            
+            ### 📺 TV APK (Android TV 12+)
+            Download `P2PTap-tv-*.apk` for Android TV (leanback) devices.
+            The TV build shares the same applicationId as the phone build,
+            so they replace each other on the same device — choose the one
+            that matches your device form factor.
+            
+            ### 🔧 Mapping files
+            `*-mapping.txt` files are included for deobfuscating crash
+            reports from R8-obfuscated releases.
             
             ---
             *Automated Release build by GitHub Actions.*
