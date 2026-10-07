@@ -90,10 +90,10 @@ android {
     // uninstalling the app — and that drops the VPN profile with it.
     splits {
         abi {
-            isEnable = true
+            isEnable = !project.hasProperty("NO_SPLITS")
             reset()
             include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-            isUniversalApk = true
+            isUniversalApk = !project.hasProperty("NO_SPLITS")
         }
     }
 

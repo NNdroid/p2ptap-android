@@ -89,10 +89,10 @@ android {
     // user switch variants in place without a downgrade-rejected install.
     splits {
         abi {
-            isEnable = true
+            isEnable = !project.hasProperty("NO_SPLITS")
             reset()
             include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-            isUniversalApk = true
+            isUniversalApk = !project.hasProperty("NO_SPLITS")
         }
     }
 

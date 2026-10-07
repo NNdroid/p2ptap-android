@@ -152,9 +152,13 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" == "true" ]; then
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease :mobile:bundleRelease :tv:bundleRelease
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease
+            # AAB must be built without ABI splits: the bundle carries all ABIs
+            # itself, and AGP rejects splits when building a bundle.
+            ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS
           else
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease :mobile:bundleRelease :tv:bundleRelease -PTEST_SIGNING=true
+            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug :mobile:assembleRelease :tv:assembleRelease -PTEST_SIGNING=true
+            ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS -PTEST_SIGNING=true
           fi
 
       - name: Prepare APK Outputs & Version Naming
