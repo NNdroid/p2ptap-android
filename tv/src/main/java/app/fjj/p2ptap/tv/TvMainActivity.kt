@@ -1,11 +1,13 @@
 package app.fjj.p2ptap.tv
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.fjj.p2ptap.service.LogCollector
+import app.fjj.p2ptap.service.P2PTapVpnService
 import app.fjj.p2ptap.tv.databinding.ActivityTvMainBinding
 import app.fjj.p2ptap.tv.ui.TvNavDestination
 import app.fjj.p2ptap.tv.ui.TvNavRailAdapter
@@ -104,10 +106,20 @@ class TvMainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         TvTelemetry.start(this)
+        if (P2PTapVpnService.isRunning()) {
+            startService(Intent(this, P2PTapVpnService::class.java).apply {
+                action = P2PTapVpnService.ACTION_APP_FOREGROUND
+            })
+        }
     }
 
     override fun onPause() {
         TvTelemetry.stop()
+        if (P2PTapVpnService.isRunning()) {
+            startService(Intent(this, P2PTapVpnService::class.java).apply {
+                action = P2PTapVpnService.ACTION_APP_BACKGROUND
+            })
+        }
         super.onPause()
     }
 

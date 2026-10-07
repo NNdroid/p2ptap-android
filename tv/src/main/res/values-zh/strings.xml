@@ -233,9 +233,13 @@
     <string name="tv_ka_l1_title">开机恢复</string>
     <string name="tv_ka_l1_desc">每次重启后隧道会自动回来。始终开启。</string>
     <string name="tv_ka_l1_state_on">始终开启</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">看门狗</string>
     <string name="tv_ka_l2_desc">在本 App 进程内监视隧道的第二个前台服务。</string>
     <string name="tv_ka_l2_state_active">运行中</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Shizuku 守护</string>
     <string name="tv_ka_l3_desc">唯一能扛过系统杀掉所有 P2PTap 进程的层。需要 Shizuku。</string>
     <string name="tv_ka_up">运行中</string>

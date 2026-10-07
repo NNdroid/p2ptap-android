@@ -62,4 +62,10 @@
         android:label="@string/tv_screen_about"
         tools:layout="@layout/fragment_tv_about" />
 
+    <fragment
+        android:id="@+id/tvQrFragment"
+        android:name="app.fjj.p2ptap.tv.ui.TvQrFragment"
+        android:label="@string/tv_screen_qr"
+        tools:layout="@layout/fragment_tv_qr" />
+
 </navigation>

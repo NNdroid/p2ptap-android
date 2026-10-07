@@ -137,10 +137,22 @@ class MainActivity : AppCompatActivity() {
         updateUiState(P2PTapVpnService.currentState, P2PTapVpnService.lastErrorMessage)
         viewModel.refreshPeers()
 
-
+        // Resume engine callbacks when the app returns to foreground.
+        if (P2PTapVpnService.isRunning()) {
+            startService(Intent(this, P2PTapVpnService::class.java).apply {
+                action = P2PTapVpnService.ACTION_APP_FOREGROUND
+            })
+        }
     }
 
     override fun onPause() {
+        // Pause engine callbacks while the app is in background to avoid
+        // false "engine stopped reporting" alarms from the heartbeat monitor.
+        if (P2PTapVpnService.isRunning()) {
+            startService(Intent(this, P2PTapVpnService::class.java).apply {
+                action = P2PTapVpnService.ACTION_APP_BACKGROUND
+            })
+        }
         stopPulseAnimation()
         super.onPause()
     }

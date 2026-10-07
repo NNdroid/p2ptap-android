@@ -22,4 +22,10 @@
 # survive too: TvShellKeeper holds a reference to ITvKeeperService.
 -keep interface app.fjj.p2ptap.tv.keeper.ITvKeeperService { *; }
 
+# TvKeepAliveState.WatchdogState is persisted as its name string and
+# read back via valueOf(). If R8 renames an enum constant the persisted
+# value stops parsing and silently falls back to STOPPED, which disables
+# the process-death detection that L3 depends on.
+-keepnames class app.fjj.p2ptap.tv.TvKeepAliveState$WatchdogState { *; }
+
 -keepattributes SourceFile, LineNumberTable

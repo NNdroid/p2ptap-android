@@ -105,6 +105,7 @@
 
         <!-- L2 Watchdog -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/tvKaL2Card"
             style="@style/Widget.P2ptap.Tv.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

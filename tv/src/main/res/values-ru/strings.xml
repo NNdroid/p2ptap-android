@@ -236,9 +236,13 @@
     <string name="tv_ka_l1_title">Восстановление после запуска</string>
     <string name="tv_ka_l1_desc">После каждого перезапуска туннель возвращается сам. Всегда включено.</string>
     <string name="tv_ka_l1_state_on">Всегда включено</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">Watchdog</string>
     <string name="tv_ka_l2_desc">Второй фоновый сервис наблюдает за туннелем внутри процесса этого приложения.</string>
     <string name="tv_ka_l2_state_active">Активен</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Страж Shizuku</string>
     <string name="tv_ka_l3_desc">Единственный слой, который переживает, когда устройство убивает все процессы P2PTap. Требуется Shizuku.</string>
     <string name="tv_ka_up">Работает</string>

@@ -234,9 +234,13 @@
     <string name="tv_ka_l1_title">Restauration au démarrage</string>
     <string name="tv_ka_l1_desc">Après chaque redémarrage, le tunnel revient automatiquement. Toujours activé.</string>
     <string name="tv_ka_l1_state_on">Toujours activé</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">Surveillance</string>
     <string name="tv_ka_l2_desc">Un second service en premier plan surveille le tunnel dans le processus de cette app.</string>
     <string name="tv_ka_l2_state_active">Actif</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Gardien Shizuku</string>
     <string name="tv_ka_l3_desc">Seule couche qui survit si l\'appareil tue tous les processus P2PTap. Nécessite Shizuku.</string>
     <string name="tv_ka_up">En marche</string>

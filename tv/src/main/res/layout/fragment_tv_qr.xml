@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_background"
+    android:padding="32dp">
+
+    <TextView
+        android:id="@+id/tv_screen_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_screen_qr"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineMedium"
+        android:textColor="@color/md_theme_onBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvQrNodeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
+        app:layout_constraintTop_toTopOf="@id/tv_screen_title"
+        app:layout_constraintBottom_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintStart_toEndOf="@id/tv_screen_title" />
+
+    <LinearLayout
+        android:id="@+id/tvQrContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- QR code -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_bg_hero_card"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <ImageView
+                android:id="@+id/tvQrBitmap"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:adjustViewBounds="true"
+                android:background="@color/tv_qr_panel"
+                android:contentDescription="@string/tv_qr_hint"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+
+        <!-- Mode selection and actions -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_qr_hint"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvQrModeBundle"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg_tier_chip"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:text="@string/tv_qr_mode_bundle"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium" />
+
+                <TextView
+                    android:id="@+id/tvQrModeConfig"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg_tier_chip"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:text="@string/tv_qr_mode_config"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvQrModeUri"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg_tier_chip"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:text="@string/tv_qr_mode_uri"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium" />
+
+                <TextView
+                    android:id="@+id/tvQrModeKey"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/tv_bg_tier_chip"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:text="@string/tv_qr_mode_key"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvQrPeerId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium" />
+
+            <TextView
+                android:id="@+id/tvQrTap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tvQrCopy"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/tv_qr_copy" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/tvQrSave"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="@string/tv_qr_save" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

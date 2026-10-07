@@ -27,12 +27,15 @@ class TvBootReceiver : BroadcastReceiver() {
 
         // Also arm L2: a restart alone leaves the app with no watchdog to notice
         // the VPN dying again, which is how a tunnel that survived one kill
-        // usually dies on the second.
-        context.startForegroundService(
-            Intent(context, TvWatchdogService::class.java).apply {
-                action = TvWatchdogService.ACTION_ARM
-            }
-        )
+        // usually dies on the second. But if the user deliberately stopped the
+        // watchdog, a boot must not silently undo that.
+        if (TvKeepAliveState.resolve(context) != TvKeepAliveState.WatchdogState.STOPPED) {
+            context.startForegroundService(
+                Intent(context, TvWatchdogService::class.java).apply {
+                    action = TvWatchdogService.ACTION_ARM
+                }
+            )
+        }
 
         TvTunnelRestore.restoreIfNeeded(context, "after ${intent.action}")
     }

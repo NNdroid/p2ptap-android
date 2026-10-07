@@ -233,9 +233,13 @@
     <string name="tv_ka_l1_title">부팅 복구</string>
     <string name="tv_ka_l1_desc">모든 재부팅 후 터널이 자동으로 돌아옵니다. 항상 켜짐.</string>
     <string name="tv_ka_l1_state_on">항상 켜짐</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">워치독</string>
     <string name="tv_ka_l2_desc">이 앱의 프로세스 안에서 터널을 감시하는 두 번째 포그라운드 서비스.</string>
     <string name="tv_ka_l2_state_active">활성</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Shizuku 가드</string>
     <string name="tv_ka_l3_desc">단말기가 모든 P2PTap 프로세스를 종료해도 살아남는 유일한 계층. Shizuku 필요.</string>
     <string name="tv_ka_up">실행 중</string>

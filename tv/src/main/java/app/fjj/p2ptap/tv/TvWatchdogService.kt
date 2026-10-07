@@ -51,17 +51,24 @@ class TvWatchdogService : Service() {
      */
     private val poll = object : Runnable {
         override fun run() {
-            // First, unconditionally: this tick is how the keep-alive screen
-            // distinguishes "armed and working" from "armed and dead".
-            TvKeepAliveState.heartbeat(this@TvWatchdogService)
-
-            if (P2PBootFlagStore.isAutostart(this@TvWatchdogService) &&
-                !P2PTapVpnService.isRunning()
-            ) {
-                Log.w(TAG, "VPN not running while autostart is set; restoring")
-                TvTunnelRestore.restoreIfNeeded(this@TvWatchdogService, "watchdog poll")
-            }
+            // Schedule the next tick first, before any code that could throw.
+            // A watchdog whose entire purpose is surviving failures must not die
+            // from a single uncaught exception.
             handler.postDelayed(this, POLL_INTERVAL_MS)
+            try {
+                // First, unconditionally: this tick is how the keep-alive screen
+                // distinguishes "armed and working" from "armed and dead".
+                TvKeepAliveState.heartbeat(this@TvWatchdogService)
+
+                if (P2PBootFlagStore.isAutostart(this@TvWatchdogService) &&
+                    !P2PTapVpnService.isRunning()
+                ) {
+                    Log.w(TAG, "VPN not running while autostart is set; restoring")
+                    TvTunnelRestore.restoreIfNeeded(this@TvWatchdogService, "watchdog poll")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Watchdog poll failed; next tick is already scheduled", e)
+            }
         }
     }
 
@@ -127,14 +134,21 @@ class TvWatchdogService : Service() {
             TvKeepAliveState.persist(this, TvKeepAliveState.WatchdogState.RUNNING)
             return true
         } catch (e: Exception) {
-            // TooManyForegroundServicesException and its platform cousins all
-            // land here. Logged with the cause so it can be recognised on a box
-            // that hits it, rather than guessed at later.
+            // ForegroundServiceDidNotStartInTimeException,
+            // ForegroundServiceNotAllowedException, and their platform
+            // cousins all land here. Logged with the cause so it can be
+            // recognised on a box that hits it, rather than guessed at later.
             Log.e(TAG, "Foreground declaration failed; watchdog degraded to L1+L3 only", e)
             TvKeepAliveState.persist(
                 this, TvKeepAliveState.WatchdogState.DEGRADED,
                 e.javaClass.simpleName
             )
+            // Without a foreground declaration the platform may kill this
+            // service at any time. Stop it explicitly rather than leaving a
+            // live non-foreground instance that the system will eventually
+            // reap. The L1 boot restore and L3 Shizuku keeper still work.
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
             return false
         }
     }

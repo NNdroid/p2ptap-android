@@ -233,9 +233,13 @@
     <string name="tv_ka_l1_title">起動復旧</string>
     <string name="tv_ka_l1_desc">再起動後はトンネルが自動で復帰します。常にオン。</string>
     <string name="tv_ka_l1_state_on">常にオン</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">ウォッチドッグ</string>
     <string name="tv_ka_l2_desc">このアプリのプロセス内でトンネルを監視する第二のフォアグラウンドサービス。</string>
     <string name="tv_ka_l2_state_active">動作中</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Shizuku 監視</string>
     <string name="tv_ka_l3_desc">端末が全P2PTapプロセスを殺しても生き残る唯一の層。Shizuku 必須。</string>
     <string name="tv_ka_up">稼働中</string>

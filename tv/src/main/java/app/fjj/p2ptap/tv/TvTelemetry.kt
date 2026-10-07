@@ -8,12 +8,13 @@ import app.fjj.p2ptap.service.StatsSnapshot
 import app.fjj.p2ptap.service.StatsSnapshotParser
 import com.p2ptap.P2PTap.P2PTap
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.withContext
 
 /**
  * The one thing every TV screen needs besides observing the repository: a
@@ -40,7 +41,13 @@ object TvTelemetry {
      *
      * Cheap to call repeatedly and safe to call from several activities: the
      * previous job is cancelled before a new one is started, so at most one
-     * poll is ever in flight.
+     * pull is ever in flight.
+     *
+     * The pull runs on [Dispatchers.Default] rather than the main thread: the
+     * JNI call can block for up to PULL_TIMEOUT_MS when the engine is wedged,
+     * and blocking the UI thread during that window is an ANR. The repository
+     * writes are thread-safe and are also dispatched to Default, so no main-
+     * thread hop is needed.
      */
     @Synchronized
     fun start(owner: LifecycleOwner): Job {
@@ -48,15 +55,23 @@ object TvTelemetry {
         job?.cancel()
         val newJob = scope.launch {
             while (isActive) {
-                if (P2PStateRepository.state.value == P2PTapVpnService.STATE_RUNNING) {
-                    val revision = P2PStateRepository.sessionRevision
-                    if (P2PStateRepository.beginRefresh(revision)) {
-                        val snapshot = pull()
-                        P2PStateRepository.finishRefresh(snapshot, revision)
-                        if (snapshot != null) {
-                            P2PStateRepository.markSnapshotFresh(System.currentTimeMillis())
+                try {
+                    if (P2PStateRepository.state.value == P2PTapVpnService.STATE_RUNNING) {
+                        val revision = P2PStateRepository.sessionRevision
+                        if (P2PStateRepository.beginRefresh(revision)) {
+                            val snapshot = withContext(Dispatchers.Default) {
+                                pull()
+                            }
+                            P2PStateRepository.finishRefresh(snapshot, revision)
+                            if (snapshot != null) {
+                                P2PStateRepository.markSnapshotFresh(System.currentTimeMillis())
+                            }
                         }
                     }
+                } catch (_: Exception) {
+                    // Never let a failed pull kill the poll loop. The next tick
+                    // retries, and the repository keeps showing the last good
+                    // numbers — which is the right thing for a viewer to see.
                 }
                 delay(CADENCE_MS)
             }
@@ -79,11 +94,16 @@ object TvTelemetry {
      * blocks until it answers and the repository keeps showing the last good
      * numbers, which is the right thing for a viewer to see rather than a
      * screen that says "loading" forever.
+     *
+     * Parsing is wrapped in runCatching: getStatsJSON returns "{}" when no
+     * engine is up, and StatsSnapshotParser.parse() throws on that. During
+     * the auto-recovery restart window the engine can be down momentarily, so
+     * an uncaught throw would kill the poll loop permanently.
      */
-    fun pull(): StatsSnapshot? {
-        val json: String? = runBlocking {
-            withTimeoutOrNull(P2PTapVpnService.PULL_TIMEOUT_MS) { P2PTap.getStatsJSON() }
+    suspend fun pull(): StatsSnapshot? {
+        val json: String? = withTimeoutOrNull(P2PTapVpnService.PULL_TIMEOUT_MS) {
+            P2PTap.getStatsJSON()
         }
-        return json?.let { StatsSnapshotParser.parse(it) }
+        return runCatching { json?.let { StatsSnapshotParser.parse(it) } }.getOrNull()
     }
 }

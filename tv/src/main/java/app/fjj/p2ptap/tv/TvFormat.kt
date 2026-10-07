@@ -87,7 +87,7 @@ object TvFormat {
         // Round to the first decimal: below 100 ms that is the resolution the
         // engine itself reports, and it stops a number from flickering on a
         // 10 Hz refresh while the link is stable.
-        val rounded = rttMs.roundToInt() / 10.0
+        val rounded = (rttMs * 10).roundToInt() / 10.0
         return context.getString(R.string.tv_rtt_fmt, "%.1f".format(Locale.ROOT, rounded))
     }
 

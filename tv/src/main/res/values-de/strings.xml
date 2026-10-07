@@ -234,9 +234,13 @@
     <string name="tv_ka_l1_title">Startwiederherstellung</string>
     <string name="tv_ka_l1_desc">Nach jedem Neustart kommt der Tunnel automatisch zurück. Immer aktiv.</string>
     <string name="tv_ka_l1_state_on">Immer aktiv</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">Watchdog</string>
     <string name="tv_ka_l2_desc">Ein zweiter Foregrund-Service überwacht den Tunnel im Prozess dieses App.</string>
     <string name="tv_ka_l2_state_active">Aktiv</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Shizuku-Bewacher</string>
     <string name="tv_ka_l3_desc">Der einzige Schicht, die übersteht, wenn das Gerät alle P2PTap-Prozesse beendet. Benötigt Shizuku.</string>
     <string name="tv_ka_up">Läuft</string>

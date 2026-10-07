@@ -48,6 +48,8 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         const val ACTION_STOP = "app.fjj.p2ptap.STOP"
         const val ACTION_RELOAD = "app.fjj.p2ptap.RELOAD"
         const val ACTION_STATE_CHANGED = "app.fjj.p2ptap.STATE_CHANGED"
+        const val ACTION_APP_BACKGROUND = "app.fjj.p2ptap.APP_BACKGROUND"
+        const val ACTION_APP_FOREGROUND = "app.fjj.p2ptap.APP_FOREGROUND"
 
         const val EXTRA_STATE = "extra_state"
         const val EXTRA_MESSAGE = "extra_message"
@@ -131,6 +133,9 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     private val activeUnderlyingNetwork = AtomicLong(-1L)
     @Volatile private var desiredRunning = false
     @Volatile private var destroyed = false
+    @Volatile private var backgroundPaused = false
+    @Volatile private var currentNativeSession: Long = 0
+    private var activeStateListener: StateListener? = null
     private val stopFinalized = AtomicBoolean(false)
 
 
@@ -206,6 +211,14 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             }
             ACTION_RELOAD -> {
                 requestReload(snapshotConfig(AppConfigManager.load(this)), intent.getBooleanExtra(EXTRA_FORCE_RESTART, false))
+                return START_STICKY
+            }
+            ACTION_APP_BACKGROUND -> {
+                onAppBackground()
+                return START_STICKY
+            }
+            ACTION_APP_FOREGROUND -> {
+                onAppForeground()
                 return START_STICKY
             }
             ACTION_START, null -> {
@@ -288,26 +301,12 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             Log.i(TAG, "Starting P2PTap native engine")
 
             P2PTap.setProtector(this)
-            val nativeSession = nativeSessionGeneration.incrementAndGet()
-            P2PTap.setStateListener(object : StateListener {
-                override fun onStateChange(state: String?, message: String?) {
-                    if (nativeSession == nativeSessionGeneration.get() && !destroyed) {
-                        this@P2PTapVpnService.onStateChange(state, message)
-                    }
-                }
-
-                override fun onMetricsUpdate(peerCount: Int, directPeers: Int, relayPeers: Int,
-                    txSpeed: Long, rxSpeed: Long, totalTx: Long, totalRx: Long) {
-                    if (nativeSession == nativeSessionGeneration.get() && !destroyed) {
-                        this@P2PTapVpnService.onMetricsUpdate(peerCount, directPeers, relayPeers,
-                            txSpeed, rxSpeed, totalTx, totalRx)
-                    }
-                }
-            })
+            currentNativeSession = nativeSessionGeneration.incrementAndGet()
+            registerStateListener()
             P2PTap.setInterfaceProvider(this)
             P2PTap.setConfigStore(object : ConfigStore {
                 override fun saveConfig(cfgJSON: String?) {
-                    if (nativeSession != nativeSessionGeneration.get() || destroyed || !desiredRunning) {
+                    if (currentNativeSession != nativeSessionGeneration.get() || destroyed || !desiredRunning) {
                         throw app.fjj.p2ptap.i18n.LocalizedException(R.string.error_vpn_session_ended)
                     }
                     AppConfigManager.saveEngineConfig(applicationContext, requireNotNull(cfgJSON))
@@ -437,7 +436,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     }
 
     private fun runHeartbeatTick() {
-        if (destroyed || !desiredRunning) return
+        if (destroyed || !desiredRunning || backgroundPaused) return
         when (currentState) {
             STATE_RUNNING -> {
                 // Steady state: the engine is pushing and updating the
@@ -700,12 +699,81 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     private fun clearNativeCallbacks() {
         activeConfig = null
         nativeSessionGeneration.incrementAndGet()
+        backgroundPaused = false
         // gomobile exposes Java platform types, so null clears the retained
         // Service instances without requiring a new binary API method.
         P2PTap.setStateListener(null)
+        activeStateListener = null
         P2PTap.setConfigStore(null)
         P2PTap.setInterfaceProvider(null)
         P2PTap.setProtector(null)
+    }
+
+    /**
+     * Creates and registers the engine's state/metrics callback. The listener
+     * checks [currentNativeSession] against [nativeSessionGeneration] so a late
+     * callback from a previous session is ignored. It also checks
+     * [backgroundPaused]: while the app is in the background the callback is
+     * unregistered entirely, so this guard is belt-and-braces for the brief
+     * window between re-registration and the heartbeat picking up again.
+     */
+    private fun registerStateListener() {
+        val session = currentNativeSession
+        val listener = object : StateListener {
+            override fun onStateChange(state: String?, message: String?) {
+                if (session == nativeSessionGeneration.get() && !destroyed && !backgroundPaused) {
+                    this@P2PTapVpnService.onStateChange(state, message)
+                }
+            }
+
+            override fun onMetricsUpdate(peerCount: Int, directPeers: Int, relayPeers: Int,
+                txSpeed: Long, rxSpeed: Long, totalTx: Long, totalRx: Long) {
+                if (session == nativeSessionGeneration.get() && !destroyed && !backgroundPaused) {
+                    this@P2PTapVpnService.onMetricsUpdate(peerCount, directPeers, relayPeers,
+                        txSpeed, rxSpeed, totalTx, totalRx)
+                }
+            }
+        }
+        activeStateListener = listener
+        P2PTap.setStateListener(listener)
+    }
+
+    /** Unregister the engine's callback. Used when the app goes to background. */
+    private fun unregisterStateListener() {
+        P2PTap.setStateListener(null)
+        activeStateListener = null
+    }
+
+    /**
+     * Called by the Activity when it moves to the background. Unregisters the
+     * engine callback so the engine stops pushing metrics to an invisible app.
+     * The engine itself keeps running — it is a foreground service, not an
+     * Activity — so there is no need to restart it. The "engine stopped
+     * reporting" false alarm that this was causing is eliminated at the source.
+     */
+    private fun onAppBackground() {
+        if (!desiredRunning || currentState != STATE_RUNNING) return
+        if (backgroundPaused) return
+        backgroundPaused = true
+        unregisterStateListener()
+        cancelHeartbeat()
+        Log.d(TAG, "App went to background; engine callbacks paused")
+    }
+
+    /**
+     * Called by the Activity when it returns to the foreground. Re-registers
+     * the engine callback and resumes heartbeat monitoring. Resets
+     * [lastPushAtMs] so the heartbeat does not immediately fire a stale pull.
+     */
+    private fun onAppForeground() {
+        if (!desiredRunning || currentState != STATE_RUNNING) return
+        if (!backgroundPaused) return
+        backgroundPaused = false
+        lastPushAtMs = 0L
+        pushLossLogged.set(false)
+        registerStateListener()
+        scheduleHeartbeatTick()
+        Log.d(TAG, "App returned to foreground; engine callbacks resumed")
     }
 
     private fun registerNetworkCallback() {

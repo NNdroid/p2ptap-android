@@ -234,9 +234,13 @@
     <string name="tv_ka_l1_title">Restaurar tras reinicio</string>
     <string name="tv_ka_l1_desc">Después de cada reinicio, el túnel vuelve por sí solo. Siempre activo.</string>
     <string name="tv_ka_l1_state_on">Siempre activo</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">Watchdog</string>
     <string name="tv_ka_l2_desc">Un segundo servicio en primer plano vigila el túnel dentro del proceso de esta app.</string>
     <string name="tv_ka_l2_state_active">Activo</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Guardián Shizuku</string>
     <string name="tv_ka_l3_desc">Única capa que sobrevive si el dispositivo mata todos los procesos de P2PTap. Requiere Shizuku.</string>
     <string name="tv_ka_up">Activo</string>

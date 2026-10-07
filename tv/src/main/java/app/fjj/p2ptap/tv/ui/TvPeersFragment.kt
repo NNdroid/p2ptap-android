@@ -108,7 +108,10 @@ class TvPeersFragment : Fragment() {
             holder.name.text = peer.nodeName.ifBlank { peer.peerId.take(12) }
             holder.peerId.text = TvFormat.shorten(peer.peerId, 12, 8)
             holder.tap.text = peer.tapIp.ifBlank { peer.tapIpv6.ifBlank { "—" } }
-            holder.transport.text = TvFormat.transport(ctx, peer.transport, peer.isRelayed).label
+            val protocol = TvFormat.transport(ctx, peer.transport, peer.isRelayed)
+            holder.transport.text = protocol.label
+            holder.transport.backgroundTintList =
+                androidx.core.content.ContextCompat.getColorStateList(ctx, protocol.colorRes)
             holder.rtt.text = TvFormat.rtt(ctx, peer.rtt, peer.rttMeasured)
             holder.tx.text = TvFormat.bytes(peer.txBytes)
             holder.rx.text = TvFormat.bytes(peer.rxBytes)

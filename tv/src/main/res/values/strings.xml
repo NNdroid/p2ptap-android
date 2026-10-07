@@ -249,9 +249,13 @@
     <string name="tv_ka_l1_title">Boot restore</string>
     <string name="tv_ka_l1_desc">After every reboot, the tunnel comes back on its own. Always on.</string>
     <string name="tv_ka_l1_state_on">Always on</string>
+    <string name="tv_ka_l1_state_off">Off</string>
     <string name="tv_ka_l2_title">Watchdog</string>
     <string name="tv_ka_l2_desc">A second foreground service watches the tunnel from inside this app\'s process.</string>
     <string name="tv_ka_l2_state_active">Active</string>
+    <string name="tv_ka_l2_state_gone">Process gone</string>
+    <string name="tv_ka_l2_state_degraded">Degraded</string>
+    <string name="tv_ka_l2_state_stopped">Stopped</string>
     <string name="tv_ka_l3_title">Shizuku keeper</string>
     <string name="tv_ka_l3_desc">Only layer that survives the set killing every P2PTap process. Requires Shizuku.</string>
     <string name="tv_ka_up">Running</string>

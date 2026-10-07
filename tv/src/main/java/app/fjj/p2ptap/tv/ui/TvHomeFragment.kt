@@ -50,6 +50,7 @@ class TvHomeFragment : Fragment() {
      * double press would send two opposite requests to the engine.
      */
     private var pendingConnect = true
+    private var cachedAddresses: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -154,10 +155,15 @@ class TvHomeFragment : Fragment() {
 
         // The addresses line doubles as the error line: a disconnected node
         // has no addresses to show, and the slot should not read as broken.
+        // renderState is the single source of truth for this line; loadIdentity
+        // only updates cachedAddresses and re-invokes renderState.
         val detail = message.trim()
         if (detail.isNotEmpty() && !running) {
             binding.tvAddresses.visibility = View.VISIBLE
             binding.tvAddresses.text = detail
+        } else {
+            binding.tvAddresses.visibility = View.VISIBLE
+            binding.tvAddresses.text = cachedAddresses ?: getString(R.string.tv_addresses_none)
         }
 
         pendingConnect = !running && state != P2PTapVpnService.STATE_STOPPING
@@ -193,12 +199,11 @@ class TvHomeFragment : Fragment() {
                 ?.trim()
                 ?.takeIf { it.isNotEmpty() }
             launch(Dispatchers.Main) {
-                binding.tvAddresses.visibility = View.VISIBLE
-                binding.tvAddresses.text = if (addrs == null) {
-                    getString(R.string.tv_addresses_none)
-                } else {
-                    TvFormat.shorten(addrs, 56, 24)
-                }
+                cachedAddresses = addrs?.let { TvFormat.shorten(it, 56, 24) }
+                    ?: getString(R.string.tv_addresses_none)
+                // Re-render so renderState picks up the new cachedAddresses.
+                val s = P2PStateRepository.status.value
+                renderState(s.state, s.message)
             }
         }
     }
