@@ -22,6 +22,36 @@ on:
         required: false
         default: ''
         type: string
+      version_code:
+        description: 'Override versionCode (0 = auto-compute from tag count)'
+        required: false
+        default: 0
+        type: number
+      version_name:
+        description: 'Override versionName (empty = auto-compute from date/commit)'
+        required: false
+        default: ''
+        type: string
+      prerelease:
+        description: 'Mark GitHub Release as pre-release'
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: 'Create GitHub Release as draft (review before publishing)'
+        required: false
+        default: false
+        type: boolean
+      skip_tests:
+        description: 'Skip unit tests and lint (faster rebuilds)'
+        required: false
+        default: false
+        type: boolean
+      skip_aab:
+        description: 'Skip AAB bundle build (APKs only, faster)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -147,17 +177,33 @@ jobs:
 
       - name: Compute Version (single source of truth)
         id: version
+        env:
+          INPUT_VERSION_CODE: ${{ github.event.inputs.version_code }}
+          INPUT_VERSION_NAME: ${{ github.event.inputs.version_name }}
         run: |
           # Compute version ONCE here, before any Gradle invocation. Without
           # this, build.gradle.kts computes it per Gradle invocation using
           # ZonedDateTime.now(), so APK and AAB (built in separate invocations)
           # can end up with different versionName strings.
           TAG_COUNT=$(git tag --list "v*" | wc -l)
-          CODE=$((TAG_COUNT + 1))
           REPO_COUNT=$(git rev-list --count HEAD)
           REPO_HASH=$(git rev-parse --short=7 HEAD)
           DATE=$(date -u +%Y%m%d)
-          NAME="v1.0.${DATE}.${REPO_COUNT}-${REPO_HASH}"
+
+          # Version code: manual override takes priority
+          if [ "${INPUT_VERSION_CODE}" -gt 0 ] 2>/dev/null; then
+            CODE="${INPUT_VERSION_CODE}"
+          else
+            CODE=$((TAG_COUNT + 1))
+          fi
+
+          # Version name: manual override takes priority
+          if [ -n "${INPUT_VERSION_NAME}" ]; then
+            NAME="${INPUT_VERSION_NAME}"
+          else
+            NAME="v1.0.${DATE}.${REPO_COUNT}-${REPO_HASH}"
+          fi
+
           echo "APP_VERSION_CODE=${CODE}" >> $GITHUB_ENV
           echo "APP_VERSION_NAME=${NAME}" >> $GITHUB_ENV
           echo "version_code=${CODE}" >> $GITHUB_OUTPUT
@@ -172,6 +218,8 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           BUILD_TYPE="${{ github.event.inputs.build_type }}"
+          SKIP_TESTS="${{ github.event.inputs.skip_tests }}"
+          SKIP_AAB="${{ github.event.inputs.skip_aab }}"
           SIGNING_ARGS=""
           if [ "${{ steps.prepare_keystore.outputs.keystore_available }}" != "true" ]; then
             SIGNING_ARGS="-PTEST_SIGNING=true"
@@ -179,15 +227,21 @@ jobs:
 
           # Build debug (debug + all)
           if [ "$BUILD_TYPE" = "debug" ] || [ "$BUILD_TYPE" = "all" ]; then
-            ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug :mobile:assembleDebug :tv:assembleDebug $SIGNING_ARGS
+            TEST_TASKS=""
+            if [ "$SKIP_TESTS" != "true" ]; then
+              TEST_TASKS="testDebugUnitTest :mobile:lintDebug :tv:lintDebug"
+            fi
+            ./gradlew $TEST_TASKS :mobile:assembleDebug :tv:assembleDebug $SIGNING_ARGS
           fi
 
           # Build release (release + all)
           if [ "$BUILD_TYPE" = "release" ] || [ "$BUILD_TYPE" = "all" ]; then
             ./gradlew :mobile:assembleRelease :tv:assembleRelease $SIGNING_ARGS
-            # AAB must be built without ABI splits: the bundle carries all ABIs
-            # itself, and AGP rejects splits when building a bundle.
-            ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS $SIGNING_ARGS
+            if [ "$SKIP_AAB" != "true" ]; then
+              # AAB must be built without ABI splits: the bundle carries all ABIs
+              # itself, and AGP rejects splits when building a bundle.
+              ./gradlew :mobile:bundleRelease :tv:bundleRelease -PNO_SPLITS $SIGNING_ARGS
+            fi
           fi
 
       - name: Prepare APK Outputs & Version Naming
@@ -330,6 +384,7 @@ jobs:
           retention-days: 14
 
       - name: Upload AAB Artifact (always available, never in public release)
+        if: ${{ github.event.inputs.skip_aab != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: p2ptap-android-aab
@@ -373,7 +428,7 @@ jobs:
             ---
             *Automated Release build by GitHub Actions.*
           files: outputs/*
-          draft: false
-          prerelease: false
+          draft: ${{ github.event.inputs.draft == 'true' }}
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
