@@ -207,6 +207,10 @@ jobs:
             RELEASE_TAG="${INPUT_RELEASE_TAG:-${VERSION_NAME}}"
             if ! git rev-parse -q --verify "refs/tags/${RELEASE_TAG}" >/dev/null \
                 && ! git ls-remote --exit-code --quiet --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null; then
+              # Annotated tags need a committer identity, which actions/checkout
+              # does not configure (it only sets up auth).
+              git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git tag -a -m "P2PTap Android ${RELEASE_TAG}" "${RELEASE_TAG}" "${GITHUB_SHA}"
               git push origin "refs/tags/${RELEASE_TAG}"
               echo "Created and pushed tag ${RELEASE_TAG} at ${GITHUB_SHA}"
