@@ -132,6 +132,7 @@ jobs:
           # fall back to the test key, since nothing gets published there.
           if [ -n "${KEYSTORE_BASE64}" ]; then
             echo "${KEYSTORE_BASE64}" | base64 -d > mobile/keystore.jks
+            cp mobile/keystore.jks tv/keystore.jks
             echo "KEYSTORE_FILE=keystore.jks" >> $GITHUB_ENV
             echo "keystore_available=true" >> $GITHUB_OUTPUT
           elif [ "${PUBLISHING_RELEASE}" = "true" ]; then
