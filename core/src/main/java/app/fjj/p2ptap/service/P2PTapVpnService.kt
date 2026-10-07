@@ -88,6 +88,19 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         // the pull path is counted as being load-bearing. Diagnostic only.
         const val HEARTBEAT_STALE_MS = 5_000L
 
+        // Grace period before auto-restarting a dead engine, so a brief stall
+        // doesn't cause a disruptive restart.
+        const val RECOVERY_DELAY_MS = 15_000L
+
+        // Max consecutive recovery attempts before giving up and leaving the
+        // user on ERROR with a manual-reconnect message. Prevents an infinite
+        // restart loop when the engine fails to start at all.
+        const val RECOVERY_MAX_ATTEMPTS = 5
+
+        // If the engine has been running (no recovery needed) for this long,
+        // the consecutive-attempt counter resets.
+        const val RECOVERY_RESET_MS = 5 * 60_000L
+
         @Volatile
         var currentState = STATE_IDLE
             private set
@@ -135,6 +148,8 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
     @Volatile private var lastPushAtMs: Long = 0
     private val pullFailStreak = AtomicLong(0)
     private val pushLossLogged = AtomicBoolean(false)
+    @Volatile private var recoveryAttempts = 0
+    @Volatile private var lastSuccessfulRunAtMs: Long = 0
 
     private val networkChangeRunnable = Runnable {
         if (!destroyed && desiredRunning && currentState == STATE_RUNNING) {
@@ -231,6 +246,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         // A stop in flight may still be blocked inside P2PTap.stop(); its
         // watchdog must not tear down the service that this start just created.
         networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
+        heartbeatHandler.removeCallbacks(recoveryRunnable)
         stopFinalized.set(false)
         desiredRunning = true
         val generation = lifecycleGeneration.incrementAndGet()
@@ -395,6 +411,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             return
         }
         cancelHeartbeat()
+        heartbeatHandler.removeCallbacks(recoveryRunnable)
         pullFailStreak.set(0)
         lastPushAtMs = 0
         pushLossLogged.set(false)
@@ -526,8 +543,46 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         if (currentState == STATE_IDLE || currentState == STATE_STOPPING) return
         // The engine's own message is more specific than ours; keep it.
         if (currentState == STATE_ERROR && lastErrorMessage.isNotEmpty()) return
-        Log.e(TAG, "Engine unresponsive ($why); reporting ERROR")
+
+        // Auto-recovery: try a few times before giving up. If the engine has
+        // been healthy for a while, reset the counter so an old incident
+        // doesn't burn through all attempts on a new one.
+        val now = System.currentTimeMillis()
+        if (lastSuccessfulRunAtMs > 0L && now - lastSuccessfulRunAtMs > RECOVERY_RESET_MS) {
+            recoveryAttempts = 0
+        }
+        recoveryAttempts++
+        if (recoveryAttempts > RECOVERY_MAX_ATTEMPTS) {
+            Log.e(TAG, "Engine unresponsive ($why); $recoveryAttempts failed recovery attempts — giving up")
+            updateState(STATE_ERROR, getString(R.string.error_engine_stalled))
+            return
+        }
+
+        Log.w(TAG, "Engine unresponsive ($why); scheduling auto-recovery (attempt $recoveryAttempts)")
         updateState(STATE_ERROR, getString(R.string.error_engine_stalled))
+        scheduleRecovery()
+    }
+
+    /**
+     * Restarts the engine after a delay. Runs on the heartbeat thread so the
+     * blocking P2PTap.stop() inside startVpnInternal cannot stall the main
+     * looper or the lifecycle executor.
+     */
+    private fun scheduleRecovery() {
+        heartbeatHandler.removeCallbacks(recoveryRunnable)
+        heartbeatHandler.postDelayed(recoveryRunnable, RECOVERY_DELAY_MS)
+    }
+
+    private val recoveryRunnable = Runnable {
+        if (destroyed || !desiredRunning) return@Runnable
+        // If the engine came back on its own while we waited, don't restart.
+        if (currentState == STATE_RUNNING || currentState == STATE_STARTING) return@Runnable
+        val config = AppConfigManager.load(this@P2PTapVpnService)
+        Log.i(TAG, "Auto-recovery: restarting engine (attempt $recoveryAttempts)")
+        pullFailStreak.set(0)
+        lastPushAtMs = 0L
+        pushLossLogged.set(false)
+        requestStart()
     }
 
     /**
@@ -543,6 +598,8 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
      * that list also carries known, connecting and unreachable rows.
      */
     private fun publishSnapshot(snapshot: StatsSnapshot) {
+        recoveryAttempts = 0
+        lastSuccessfulRunAtMs = System.currentTimeMillis()
         val relayPeers = snapshot.peers.count { it.connState == "relay_ok" || (it.connState == "ok" && it.isRelayed) }
         val directPeers = snapshot.peers.count { it.connState == "ok" && !it.isRelayed }
         val counters = snapshot.counters
@@ -852,6 +909,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         networkChangeHandler.removeCallbacks(networkChangeRunnable)
         networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
         cancelHeartbeat()
+        heartbeatHandler.removeCallbacks(recoveryRunnable)
 
         // Always queue the stop on the lifecycle executor — never call
         // stopVpnInternal synchronously here: it would block the main thread
