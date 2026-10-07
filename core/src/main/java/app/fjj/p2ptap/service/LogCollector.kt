@@ -84,12 +84,20 @@ object LogCollector {
         synchronized(installed) {
             installed.get()?.let { return if (it == InstallResult.REFUSED) it else InstallResult.ALREADY_ATTACHED }
 
-            val rc = Log.println(Log.VERBOSE, "P2PTapLogCollector", "sink request")
+            // Register a real LogWriter so the platform actually calls sink().
+            // The old code only probed with Log.println and never registered
+            // a writer, so sink() was dead code and the buffer stayed empty.
+            Log.setLogWriter(object : android.util.LogWriter() {
+                override fun write(pri: Int, tag: String?, msg: String?): Int =
+                    if (sink(pri, tag, msg)) 0 else 1
+            })
+
+            // Probe at WARN level — VERBOSE is the most aggressively filtered
+            // level and OEM ROMs most often disable it.
+            val rc = Log.println(Log.WARN, "P2PTapLogCollector", "sink request")
             val outcome = if (rc == 0) InstallResult.ATTACHED else InstallResult.REFUSED
             installed.set(outcome)
             if (outcome == InstallResult.REFUSED) {
-                // Through the public API, not the sink, so a human on a phone
-                // can see why the TV screen reported capture as unavailable.
                 Log.w("P2PTapLogCollector", "log sink refused by the platform (rc=$rc)")
             }
             return outcome
