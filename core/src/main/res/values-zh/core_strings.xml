@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">暂无数据</string>
     <string name="telemetry_unmeasured">尚未测量</string>
     <string name="telemetry_unreachable">不可达</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">应用崩溃报告</string>
+    <string name="crash_label_time">时间</string>
+    <string name="crash_label_exception">异常</string>
+    <string name="crash_label_message">消息</string>
+    <string name="crash_label_version">版本</string>
+    <string name="crash_label_stack">堆栈跟踪</string>
+    <string name="crash_btn_report">分享报告</string>
+    <string name="crash_btn_dismiss">关闭</string>
+    <string name="crash_btn_copy">复制详情</string>
+    <string name="crash_copy_success">已复制到剪贴板</string>
+    <string name="crash_share_title">P2PTap 崩溃报告</string>
 </resources>

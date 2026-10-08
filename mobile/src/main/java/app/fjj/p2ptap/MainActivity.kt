@@ -37,6 +37,7 @@ import app.fjj.p2ptap.ui.PeersDetailDialog
 import app.fjj.p2ptap.ui.QrDialog
 import app.fjj.p2ptap.ui.TrafficDetailDialog
 import app.fjj.p2ptap.viewmodel.MainViewModel
+import app.fjj.p2ptap.crash.CrashReportDialog
 import com.p2ptap.P2PTap.P2PTap
 
 
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashReportDialog.showIfNeeded(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

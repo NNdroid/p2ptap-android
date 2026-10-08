@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">暫無資料</string>
     <string name="telemetry_unmeasured">尚未測量</string>
     <string name="telemetry_unreachable">不可達</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">應用程式崩潰報告</string>
+    <string name="crash_label_time">時間</string>
+    <string name="crash_label_exception">例外</string>
+    <string name="crash_label_message">訊息</string>
+    <string name="crash_label_version">版本</string>
+    <string name="crash_label_stack">堆疊追蹤</string>
+    <string name="crash_btn_report">分享報告</string>
+    <string name="crash_btn_dismiss">關閉</string>
+    <string name="crash_btn_copy">複製詳情</string>
+    <string name="crash_copy_success">已複製到剪貼簿</string>
+    <string name="crash_share_title">P2PTap 崩潰報告</string>
 </resources>

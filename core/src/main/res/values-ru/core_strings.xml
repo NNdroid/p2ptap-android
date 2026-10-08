@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">Нет данных</string>
     <string name="telemetry_unmeasured">Не измерено</string>
     <string name="telemetry_unreachable">Недоступен</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">Отчёт об ошибке</string>
+    <string name="crash_label_time">Время</string>
+    <string name="crash_label_exception">Исключение</string>
+    <string name="crash_label_message">Сообщение</string>
+    <string name="crash_label_version">Версия</string>
+    <string name="crash_label_stack">Стек вызовов</string>
+    <string name="crash_btn_report">Поделиться</string>
+    <string name="crash_btn_dismiss">Закрыть</string>
+    <string name="crash_btn_copy">Скопировать</string>
+    <string name="crash_copy_success">Скопировано</string>
+    <string name="crash_share_title">P2PTap отчёт об ошибке</string>
 </resources>

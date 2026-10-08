@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">データなし</string>
     <string name="telemetry_unmeasured">未測定</string>
     <string name="telemetry_unreachable">到達不可</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">アプリクラッシュ報告</string>
+    <string name="crash_label_time">時間</string>
+    <string name="crash_label_exception">例外</string>
+    <string name="crash_label_message">メッセージ</string>
+    <string name="crash_label_version">バージョン</string>
+    <string name="crash_label_stack">スタックトレース</string>
+    <string name="crash_btn_report">レポート共有</string>
+    <string name="crash_btn_dismiss">閉じる</string>
+    <string name="crash_btn_copy">詳細をコピー</string>
+    <string name="crash_copy_success">コピーしました</string>
+    <string name="crash_share_title">P2PTap クラッシュレポート</string>
 </resources>

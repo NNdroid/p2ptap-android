@@ -30,6 +30,7 @@
         enforced by scripts/check-i18n.sh.
     -->
     <application
+        android:name=".TvApp"
         android:allowBackup="true"
         android:banner="@drawable/ic_banner"
         android:hardwareAccelerated="true"

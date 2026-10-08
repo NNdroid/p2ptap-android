@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">Sin datos</string>
     <string name="telemetry_unmeasured">Sin medir</string>
     <string name="telemetry_unreachable">Inaccesible</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">Informe de fallo de la aplicación</string>
+    <string name="crash_label_time">Hora</string>
+    <string name="crash_label_exception">Excepción</string>
+    <string name="crash_label_message">Mensaje</string>
+    <string name="crash_label_version">Versión</string>
+    <string name="crash_label_stack">Pila de trazas</string>
+    <string name="crash_btn_report">Compartir informe</string>
+    <string name="crash_btn_dismiss">Descartar</string>
+    <string name="crash_btn_copy">Copiar detalles</string>
+    <string name="crash_copy_success">Informe de fallo copiado al portapapeles</string>
+    <string name="crash_share_title">Informe de fallo de P2PTap</string>
 </resources>

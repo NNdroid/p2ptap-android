@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.fjj.p2ptap.crash.CrashReportDialog
 import app.fjj.p2ptap.service.LogCollector
 import app.fjj.p2ptap.service.P2PTapVpnService
 import app.fjj.p2ptap.tv.databinding.ActivityTvMainBinding
@@ -41,6 +42,7 @@ class TvMainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashReportDialog.showIfNeeded(this)
         binding = ActivityTvMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import app.fjj.p2ptap.config.AppConfigManager
+import app.fjj.p2ptap.crash.CrashReporter
 import app.fjj.p2ptap.service.LogCollector
 import kotlin.concurrent.thread
 
@@ -16,6 +17,7 @@ class P2PTapApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashReporter.install(this)
         initNightMode()
         LogCollector.install()
         prewarmConfigCache()

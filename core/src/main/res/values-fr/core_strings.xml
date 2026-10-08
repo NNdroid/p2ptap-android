@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">Aucune donnée</string>
     <string name="telemetry_unmeasured">Non mesuré</string>
     <string name="telemetry_unreachable">Injoignable</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">Rapport de plantage</string>
+    <string name="crash_label_time">Heure</string>
+    <string name="crash_label_exception">Exception</string>
+    <string name="crash_label_message">Message</string>
+    <string name="crash_label_version">Version</string>
+    <string name="crash_label_stack">Pile</string>
+    <string name="crash_btn_report">Partager</string>
+    <string name="crash_btn_dismiss">Ignorer</string>
+    <string name="crash_btn_copy">Copier</string>
+    <string name="crash_copy_success">Copié</string>
+    <string name="crash_share_title">P2PTap plantage</string>
 </resources>

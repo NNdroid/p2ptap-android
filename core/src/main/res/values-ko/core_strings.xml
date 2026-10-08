@@ -45,4 +45,16 @@
     <string name="telemetry_unknown">데이터 없음</string>
     <string name="telemetry_unmeasured">측정되지 않음</string>
     <string name="telemetry_unreachable">연결 불가</string>
+    <!-- Crash Report Dialog -->
+    <string name="crash_dialog_title">앱 충돌 보고서</string>
+    <string name="crash_label_time">시간</string>
+    <string name="crash_label_exception">예외</string>
+    <string name="crash_label_message">메시지</string>
+    <string name="crash_label_version">버전</string>
+    <string name="crash_label_stack">스택 추적</string>
+    <string name="crash_btn_report">보고서 공유</string>
+    <string name="crash_btn_dismiss">닫기</string>
+    <string name="crash_btn_copy">세부 정보 복사</string>
+    <string name="crash_copy_success">복사했습니다</string>
+    <string name="crash_share_title">P2PTap 충돌 보고서</string>
 </resources>
