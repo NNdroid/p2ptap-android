@@ -2,6 +2,17 @@
 # live in core/consumer-rules.pro and reach this module through the library's
 # consumerProguardFiles; nothing here needs to duplicate them.
 
+# 0. Obfuscation — flatten all package names and overload methods
+# -repackageclasses '' implies -flattenpackagehierarchy ''
+-repackageclasses ''
+-overloadaggressively
+
+# 0b. Aggressively optimize: suppress verbose log output in release builds.
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int v(...);
+}
+
 # Leanback adapters and item holders are instantiated reflectively by the
 # framework's own focus/grid machinery.
 -keep class androidx.tv.widget.** { *; }

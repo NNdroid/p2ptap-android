@@ -10,6 +10,20 @@
 # rename it freely. Keeping more than that only hands an attacker a readable
 # map of the VPN's internals.
 
+# 0. Obfuscation — flatten all package names and overload methods
+# -repackageclasses '' implies -flattenpackagehierarchy ''
+-repackageclasses ''
+-overloadaggressively
+
+# 0b. Aggressively optimize: suppress verbose log output in release builds.
+# R8 eliminates calls to these Log methods, reducing both APK size and
+# per-frame overhead in the VPN data path.  debug() and verbose() are
+# stripped; info()/warn()/error() remain (they are cheap and useful).
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int v(...);
+}
+
 # 1. Keep Go Native Engine (P2PTap JNI & Gomobile Bindings)
 # Critical: the Go C-shared library calls into Java by exact class/method
 # signature, so a renamed member is not a build error — it is a silent runtime
