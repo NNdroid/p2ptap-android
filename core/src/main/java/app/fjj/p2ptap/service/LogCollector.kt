@@ -142,7 +142,7 @@ object LogCollector {
             val tags = CAPTURED_TAGS.joinToString(" ") { "$it:*" }
             val process = Runtime.getRuntime().exec(arrayOf("logcat", "-v", "time", "-s", tags))
 
-            logcatThread = Thread("P2PTap-LogcatReader") {
+            logcatThread = Thread(Runnable {
                 try {
                     process.inputStream.bufferedReader().useLines { lines ->
                         for (line in lines) {
@@ -160,7 +160,7 @@ object LogCollector {
                     logcatThread = null
                     logcatProcess = null
                 }
-            }
+            }, "P2PTap-LogcatReader")
             logcatThread!!.start()
             logcatProcess = process
 
