@@ -163,9 +163,9 @@ data class P2PConfig(
             }
         }
         root.put("dns_servers", dnsArray)
-        // Hole punching configuration
-        root.put("hole_punch_timeout", "${holePunchTimeout / 1000}s")
-        root.put("relay_upgrade_interval", "${relayUpgradeInterval / 1000}s")
+        // Hole punching configuration — Go expects time.Duration (int64 nanoseconds)
+        root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
+        root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
         val stunArray = JSONArray()
         for (server in stunServers) {
             val trimmed = server.trim()
@@ -247,6 +247,11 @@ data class P2PConfig(
         val dnsArray = JSONArray()
         dnsServers.forEach { dnsArray.put(it) }
         root.put("dns_servers", dnsArray)
+
+        // Durations stored as milliseconds (internal unit); readDurationMs handles
+        // both this format and legacy "Ns" strings from standard p2ptap configs.
+        root.put("hole_punch_timeout", holePunchTimeout)
+        root.put("relay_upgrade_interval", relayUpgradeInterval)
 
         return root.toString(2)
     }
@@ -369,10 +374,10 @@ data class P2PConfig(
                 cfg.dnsServers = list
             }
             if (root.has("hole_punch_timeout")) {
-                cfg.holePunchTimeout = root.optLong("hole_punch_timeout", 15000)
+                cfg.holePunchTimeout = readDurationMs(root, "hole_punch_timeout", 15000)
             }
             if (root.has("relay_upgrade_interval")) {
-                cfg.relayUpgradeInterval = root.optLong("relay_upgrade_interval", 30000)
+                cfg.relayUpgradeInterval = readDurationMs(root, "relay_upgrade_interval", 30000)
             }
             if (root.has("stun_servers")) {
                 val arr = root.getJSONArray("stun_servers")
@@ -385,6 +390,27 @@ data class P2PConfig(
 
             if (strict) cfg.validateStrategy()
             return cfg
+        }
+
+        /**
+         * Read a duration field that may be stored as:
+         *  - milliseconds (Number < 1 000 000) — Android export format
+         *  - nanoseconds (Number ≥ 1 000 000) — Go engine / WebUI format
+         *  - "Ns" string — legacy standard p2ptap config format
+         */
+        private fun readDurationMs(root: JSONObject, key: String, defaultMs: Long): Long {
+            val raw = root.opt(key) ?: return defaultMs
+            return when (raw) {
+                is Number -> {
+                    val num = raw.toLong()
+                    if (num >= 1_000_000) num / 1_000_000 else num
+                }
+                is String -> {
+                    val sec = raw.trim().trimEnd('s', 'S').toLongOrNull()
+                    sec?.times(1000) ?: defaultMs
+                }
+                else -> defaultMs
+            }
         }
     }
 }
