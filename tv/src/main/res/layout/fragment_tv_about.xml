@@ -108,6 +108,7 @@
                     android:ellipsize="middle"
                     android:fontFamily="monospace"
                     android:maxLines="1"
+                    android:maxWidth="360dp"
                     android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
                     android:textColor="@color/md_theme_onBackground"
                     tools:text="12D3Koo…abc123" />

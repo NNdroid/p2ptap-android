@@ -49,28 +49,34 @@
 
                     <TextView
                         android:id="@+id/tv_peer_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
                         android:textColor="@color/md_theme_onBackground"
                         tools:text="Living room" />
 
                     <TextView
                         android:id="@+id/tv_peer_tap"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:ellipsize="end"
                         android:fontFamily="monospace"
+                        android:maxLines="1"
                         android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium"
                         android:textColor="@color/md_theme_onSurface"
                         tools:text="10.0.0.12" />
 
                     <TextView
                         android:id="@+id/tv_peer_id"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
+                        android:ellipsize="middle"
                         android:fontFamily="monospace"
+                        android:maxLines="1"
                         android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
                         android:textColor="@color/md_theme_onSurfaceVariant"
                         tools:text="12D3Koo…abc123" />

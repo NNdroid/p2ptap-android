@@ -19,15 +19,17 @@
 
     <TextView
         android:id="@+id/tvQrNodeName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
         app:layout_constraintTop_toTopOf="@id/tv_screen_title"
         app:layout_constraintBottom_toBottomOf="@id/tv_screen_title"
-        app:layout_constraintStart_toEndOf="@id/tv_screen_title" />
+        app:layout_constraintStart_toEndOf="@id/tv_screen_title"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/tvQrContent"

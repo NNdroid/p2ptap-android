@@ -70,8 +70,12 @@
     android:layout_width="@dimen/tv_ka_action_w"
     android:layout_height="@dimen/tv_ka_action_h"
     android:background="@drawable/tv_bg_button_action"
+    android:ellipsize="end"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center"
+    android:maxLines="2"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
     android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
 </LinearLayout>
