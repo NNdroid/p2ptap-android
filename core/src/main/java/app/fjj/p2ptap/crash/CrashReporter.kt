@@ -40,6 +40,11 @@ object CrashReporter {
     private var appContext: Context? = null
     @Volatile
     private var appVersion: String = "unknown"
+    // Pre-consumed native crash text: read from the crash file BEFORE
+    // SetCrashFilePath truncates it. Populated by installNativeCrashHandler,
+    // consumed by CrashReportDialog.showIfNeeded.
+    @Volatile
+    private var pendingNativeCrash: String? = null
 
     /** Register the Java crash handler. Call once from Application.onCreate(). */
     @JvmStatic
@@ -67,11 +72,17 @@ object CrashReporter {
     /**
      * Configure the Go runtime to write fatal-error output and native signal
      * crashes to a file in the app's private storage. Call from
-     * Application.onCreate() after [install]. The crash file is read by
-     * [consumePendingNativeCrash] on next launch.
+     * Application.onCreate() after [install].
+     *
+     * IMPORTANT: the crash file from the previous session is consumed BEFORE
+     * SetCrashFilePath truncates it. The consumed content is stored in
+     * [pendingNativeCrash] for CrashReportDialog.showIfNeeded to display.
      */
     @JvmStatic
     fun installNativeCrashHandler(context: Context) {
+        // Read the crash file first — SetCrashFilePath opens it with O_TRUNC,
+        // which would destroy the previous session's crash info.
+        pendingNativeCrash = consumePendingNativeCrash(context)
         try {
             val path = File(
                 context.applicationContext.filesDir,
@@ -81,6 +92,18 @@ object CrashReporter {
         } catch (e: Exception) {
             Log.w(TAG, "Failed to install native crash handler", e)
         }
+    }
+
+    /**
+     * Returns the pre-consumed native crash text (read from the crash file
+     * before SetCrashFilePath truncated it), or null. Clears the value after
+     * returning. Called by CrashReportDialog.showIfNeeded.
+     */
+    @JvmStatic
+    fun takePendingNativeCrash(): String? {
+        val result = pendingNativeCrash
+        pendingNativeCrash = null
+        return result
     }
 
     /**

@@ -39,8 +39,12 @@ object CrashReportDialog {
             show(context, info)
             return true
         }
-        // Fall back to native crash (Go runtime fatal error or native signal).
-        val nativeText = CrashReporter.consumePendingNativeCrash(context)
+        // Native crash: check the pre-consumed content first (read from the
+        // crash file before SetCrashFilePath truncated it). Fall back to
+        // reading the file directly in case installNativeCrashHandler was
+        // not called (e.g. crash before Application.onCreate completed).
+        val nativeText = CrashReporter.takePendingNativeCrash()
+            ?: CrashReporter.consumePendingNativeCrash(context)
         if (nativeText != null) {
             showNative(context, nativeText)
             return true
