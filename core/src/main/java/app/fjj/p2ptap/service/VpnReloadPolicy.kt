@@ -29,6 +29,10 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
     val vpnOnlyChanged = oldConfig.copy(
         // — VPN-relevant (NOT excluded → RESTART if changed) —
         // tapIp, tapIpv6, mtu, nodeName, acceptSubnets, advertisedSubnets, dnsServers
+        // psk, transportStrategy, webUiPort, staticPeers, bootstrapPeers
+        // listenAddrs, tapName, tapMac, driverType
+        // exitNodeNatMasq, exitNodeWanInterface
+        // aclEnable, aclDefaultAction, aclRulesJson
 
         // — Go-engine-only (excluded → HOT if changed) —
         exitNode = newConfig.exitNode,
@@ -43,8 +47,6 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         discoverBootMesh = newConfig.discoverBootMesh,
         allowedSubnetPeers = newConfig.allowedSubnetPeers,
         enableMdns = newConfig.enableMdns,
-        psk = newConfig.psk,
-        transportStrategy = newConfig.transportStrategy,
         enableQuic = newConfig.enableQuic,
         enableWebrtc = newConfig.enableWebrtc,
         enableWebtransport = newConfig.enableWebtransport,
@@ -53,8 +55,24 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         tlsServerName = newConfig.tlsServerName,
         tlsSniSuffix = newConfig.tlsSniSuffix,
         webUiEnable = newConfig.webUiEnable,
-        webUiPort = newConfig.webUiPort,
         webUiToken = newConfig.webUiToken,
+        // Obfuscation tuning
+        obfuscationFixedSize = newConfig.obfuscationFixedSize,
+        obfuscationBlockSize = newConfig.obfuscationBlockSize,
+        obfuscationJitterRange = newConfig.obfuscationJitterRange,
+        obfuscationMinSize = newConfig.obfuscationMinSize,
+        obfuscationMaxSize = newConfig.obfuscationMaxSize,
+        obfuscationAutoDetectInterval = newConfig.obfuscationAutoDetectInterval,
+        obfuscationAutoThresholdBytes = newConfig.obfuscationAutoThresholdBytes,
+        obfuscationAllowModeSwitch = newConfig.obfuscationAllowModeSwitch,
+        obfuscationMaxFragSize = newConfig.obfuscationMaxFragSize,
+        // TCP brutal mode
+        enableTcpBrutal = newConfig.enableTcpBrutal,
+        tcpBrutalRate = newConfig.tcpBrutalRate,
+        // Web UI listen IPv6
+        webUiListenIpv6 = newConfig.webUiListenIpv6,
+        // Reachability forcing
+        forcePrivateReachability = newConfig.forcePrivateReachability,
     ) != newConfig
 
     if (vpnOnlyChanged) return VpnReloadPlan.RESTART
