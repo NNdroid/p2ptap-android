@@ -49,13 +49,36 @@ data class P2PConfig(
     var holePunchTimeout: Long = 15000,
     var stunServers: List<String> = listOf("/udp/stun.l.google.com/19302", "/udp/stun1.l.google.com/19302"),
     var relayUpgradeInterval: Long = 30000,
+    var forcePrivateReachability: Boolean = false,
+    var listenAddrs: List<String> = listOf(),
+    var tapName: String = "p2ptap0",
+    var tapMac: String = "",
+    var driverType: String = "auto",
+    var webUiListenIpv6: String = "",
+    var enableTcpBrutal: Boolean = false,
+    var tcpBrutalRate: String = "100Mbps",
+    var obfuscationFixedSize: Int = 1500,
+    var obfuscationBlockSize: Int = 256,
+    var obfuscationJitterRange: Int = 64,
+    var obfuscationMinSize: Int = 512,
+    var obfuscationMaxSize: Int = 1500,
+    var obfuscationAutoDetectInterval: Int = 30,
+    var obfuscationAutoThresholdBytes: Int = 65536,
+    var obfuscationAllowModeSwitch: Boolean = false,
+    var obfuscationMaxFragSize: Int = 0,
+    var exitNodeNatMasq: Boolean = true,
+    var exitNodeWanInterface: String = "auto",
+    var aclEnable: Boolean = false,
+    var aclDefaultAction: String = "allow",
+    var aclRulesJson: String = "",
     // Preserve Go settings that have no native Android editor when saving in WebUI.
     var engineConfig: String = ""
 ) {
     fun snapshot(): P2PConfig = copy(
         bootstrapPeers = bootstrapPeers.toList(), staticPeers = staticPeers.toList(),
         advertisedSubnets = advertisedSubnets.toList(), allowedSubnetPeers = allowedSubnetPeers.toList(),
-        dnsServers = dnsServers.toList(), holePunchTimeout = holePunchTimeout, stunServers = stunServers.toList(), relayUpgradeInterval = relayUpgradeInterval
+        dnsServers = dnsServers.toList(), holePunchTimeout = holePunchTimeout, stunServers = stunServers.toList(),
+        relayUpgradeInterval = relayUpgradeInterval, listenAddrs = listenAddrs.toList()
     )
 
     fun validateStrategy() {
@@ -85,6 +108,7 @@ data class P2PConfig(
         root.put("accept_advertised_subnets", acceptSubnets)
         root.put("transport_strategy", transportStrategy)
         root.put("discover_boot_mesh", discoverBootMesh)
+        root.put("force_private_reachability", forcePrivateReachability)
 
         val targetNode = exitNode.trim()
         if (targetNode.isNotBlank()) {
@@ -98,6 +122,8 @@ data class P2PConfig(
         val exitNodeObj = JSONObject()
         exitNodeObj.put("enable", false)
         exitNodeObj.put("target", targetNode)
+        exitNodeObj.put("nat_masquerade", exitNodeNatMasq)
+        exitNodeObj.put("wan_interface", exitNodeWanInterface)
         root.put("exit_node", exitNodeObj)
 
         // Transports
@@ -109,7 +135,20 @@ data class P2PConfig(
         tr.put("disable_relay", disableRelay)
         tr.put("tls_server_name", tlsServerName)
         tr.put("tls_sni_suffix", tlsSniSuffix)
+        tr.put("enable_tcp_brutal", enableTcpBrutal)
+        tr.put("tcp_brutal_rate", tcpBrutalRate)
         root.put("transports", tr)
+
+        // Listen addrs (empty = engine uses defaults)
+        if (listenAddrs.isNotEmpty()) {
+            val laArray = JSONArray()
+            listenAddrs.forEach { laArray.put(it.trim()) }
+            root.put("listen_addrs", laArray)
+        }
+
+        root.put("tap_name", tapName)
+        if (tapMac.isNotBlank()) root.put("tap_mac", tapMac)
+        root.put("driver_type", driverType)
 
         // Store private node key inside app internal storage
         root.put("node_key_file", nodeKeyPath)
@@ -181,6 +220,15 @@ data class P2PConfig(
         obf.put("mode", obfuscationMode)
         obf.put("algorithm", obfuscationAlgorithm)
         obf.put("strict_key_negotiation", strictKeyNegotiation)
+        obf.put("fixed_size", obfuscationFixedSize)
+        obf.put("block_size", obfuscationBlockSize)
+        obf.put("jitter_range", obfuscationJitterRange)
+        obf.put("min_size", obfuscationMinSize)
+        obf.put("max_size", obfuscationMaxSize)
+        obf.put("auto_detect_interval", obfuscationAutoDetectInterval)
+        obf.put("auto_threshold_bytes", obfuscationAutoThresholdBytes)
+        obf.put("allow_mode_switch", obfuscationAllowModeSwitch)
+        obf.put("max_frag_size", obfuscationMaxFragSize)
         root.put("obfuscation", obf)
 
         // WebUI config (native HTTP server)
@@ -188,10 +236,22 @@ data class P2PConfig(
         webUi.put("enable", webUiEnable)
         webUi.put("listen_ip", "127.0.0.1")
         webUi.put("port", webUiPort)
+        if (webUiListenIpv6.isNotBlank()) webUi.put("listen_ipv6", webUiListenIpv6)
         if (webUiToken.isNotBlank()) {
             webUi.put("auth_token", webUiToken.trim())
         }
         root.put("web_ui", webUi)
+
+        // ACL
+        if (aclEnable || aclRulesJson.isNotBlank()) {
+            val aclObj = JSONObject()
+            aclObj.put("enable", aclEnable)
+            aclObj.put("default_action", aclDefaultAction)
+            if (aclRulesJson.isNotBlank()) {
+                aclObj.put("rules", JSONArray(aclRulesJson))
+            }
+            root.put("acl", aclObj)
+        }
 
         return root.toString(2)
     }
@@ -211,6 +271,7 @@ data class P2PConfig(
         root.put("accept_advertised_subnets", acceptSubnets)
         root.put("transport_strategy", transportStrategy)
         root.put("discover_boot_mesh", discoverBootMesh)
+        root.put("force_private_reachability", forcePrivateReachability)
         root.put("exit_node", exitNode)
         root.put("obfuscation_enable", obfuscationEnable)
         root.put("obfuscation_mode", obfuscationMode)
@@ -223,9 +284,18 @@ data class P2PConfig(
         root.put("disable_relay", disableRelay)
         root.put("tls_server_name", tlsServerName)
         root.put("tls_sni_suffix", tlsSniSuffix)
+        root.put("enable_tcp_brutal", enableTcpBrutal)
+        root.put("tcp_brutal_rate", tcpBrutalRate)
         root.put("webui_enable", webUiEnable)
         root.put("webui_port", webUiPort)
         root.put("webui_token", webUiToken)
+        root.put("tap_name", tapName)
+        if (tapMac.isNotBlank()) root.put("tap_mac", tapMac)
+        root.put("driver_type", driverType)
+        if (webUiListenIpv6.isNotBlank()) root.put("webui_listen_ipv6", webUiListenIpv6)
+        root.put("acl_enable", aclEnable)
+        root.put("acl_default_action", aclDefaultAction)
+        if (aclRulesJson.isNotBlank()) root.put("acl_rules", JSONArray(aclRulesJson))
         if (engineConfig.isNotBlank()) root.put("_engine_config", JSONObject(engineConfig))
 
         val bsArray = JSONArray()
@@ -248,10 +318,37 @@ data class P2PConfig(
         dnsServers.forEach { dnsArray.put(it) }
         root.put("dns_servers", dnsArray)
 
+        // CRITICAL: stun_servers was previously missing from export!
+        val stunArray = JSONArray()
+        stunServers.forEach { stunArray.put(it.trim()) }
+        root.put("stun_servers", stunArray)
+
+        // Listen addrs
+        if (listenAddrs.isNotEmpty()) {
+            val laArray = JSONArray()
+            listenAddrs.forEach { laArray.put(it.trim()) }
+            root.put("listen_addrs", laArray)
+        }
+
         // Durations stored as milliseconds (internal unit); readDurationMs handles
         // both this format and legacy "Ns" strings from standard p2ptap configs.
         root.put("hole_punch_timeout", holePunchTimeout)
         root.put("relay_upgrade_interval", relayUpgradeInterval)
+
+        // Obfuscation detail fields
+        root.put("obfuscation_fixed_size", obfuscationFixedSize)
+        root.put("obfuscation_block_size", obfuscationBlockSize)
+        root.put("obfuscation_jitter_range", obfuscationJitterRange)
+        root.put("obfuscation_min_size", obfuscationMinSize)
+        root.put("obfuscation_max_size", obfuscationMaxSize)
+        root.put("obfuscation_auto_detect_interval", obfuscationAutoDetectInterval)
+        root.put("obfuscation_auto_threshold_bytes", obfuscationAutoThresholdBytes)
+        root.put("obfuscation_allow_mode_switch", obfuscationAllowModeSwitch)
+        root.put("obfuscation_max_frag_size", obfuscationMaxFragSize)
+
+        // Exit node detail
+        root.put("exit_node_nat_masquerade", exitNodeNatMasq)
+        root.put("exit_node_wan_interface", exitNodeWanInterface)
 
         return root.toString(2)
     }
@@ -276,10 +373,16 @@ data class P2PConfig(
             if (root.has("accept_advertised_subnets")) cfg.acceptSubnets = root.getBoolean("accept_advertised_subnets")
             if (root.has("transport_strategy")) cfg.transportStrategy = root.getString("transport_strategy")
             if (root.has("discover_boot_mesh")) cfg.discoverBootMesh = root.getBoolean("discover_boot_mesh")
+            if (root.has("force_private_reachability")) cfg.forcePrivateReachability = root.getBoolean("force_private_reachability")
+            if (root.has("tap_name")) cfg.tapName = root.getString("tap_name")
+            if (root.has("tap_mac")) cfg.tapMac = root.getString("tap_mac")
+            if (root.has("driver_type")) cfg.driverType = root.getString("driver_type")
             if (root.has("exit_node")) {
                 val exitVal = root.get("exit_node")
                 if (exitVal is JSONObject) {
                     cfg.exitNode = exitVal.optString("target", exitVal.optString("peer_id", ""))
+                    if (exitVal.has("nat_masquerade")) cfg.exitNodeNatMasq = exitVal.getBoolean("nat_masquerade")
+                    if (exitVal.has("wan_interface")) cfg.exitNodeWanInterface = exitVal.getString("wan_interface")
                 } else if (exitVal is String) {
                     cfg.exitNode = exitVal
                 }
@@ -294,6 +397,8 @@ data class P2PConfig(
                 if (tr.has("disable_relay")) cfg.disableRelay = tr.getBoolean("disable_relay")
                 if (tr.has("tls_server_name")) cfg.tlsServerName = tr.getString("tls_server_name")
                 if (tr.has("tls_sni_suffix")) cfg.tlsSniSuffix = tr.getString("tls_sni_suffix")
+                if (tr.has("enable_tcp_brutal")) cfg.enableTcpBrutal = tr.getBoolean("enable_tcp_brutal")
+                if (tr.has("tcp_brutal_rate")) cfg.tcpBrutalRate = tr.getString("tcp_brutal_rate")
             } else {
                 if (root.has("enable_quic")) cfg.enableQuic = root.getBoolean("enable_quic")
                 if (root.has("enable_webrtc")) cfg.enableWebrtc = root.getBoolean("enable_webrtc")
@@ -302,6 +407,8 @@ data class P2PConfig(
                 if (root.has("disable_relay")) cfg.disableRelay = root.getBoolean("disable_relay")
                 if (root.has("tls_server_name")) cfg.tlsServerName = root.getString("tls_server_name")
                 if (root.has("tls_sni_suffix")) cfg.tlsSniSuffix = root.getString("tls_sni_suffix")
+                if (root.has("enable_tcp_brutal")) cfg.enableTcpBrutal = root.getBoolean("enable_tcp_brutal")
+                if (root.has("tcp_brutal_rate")) cfg.tcpBrutalRate = root.getString("tcp_brutal_rate")
             }
 
             if (root.has("obfuscation")) {
@@ -310,6 +417,15 @@ data class P2PConfig(
                 if (obf.has("mode")) cfg.obfuscationMode = obf.getString("mode")
                 if (obf.has("algorithm")) cfg.obfuscationAlgorithm = obf.getString("algorithm")
                 if (obf.has("strict_key_negotiation")) cfg.strictKeyNegotiation = obf.getBoolean("strict_key_negotiation")
+                if (obf.has("fixed_size")) cfg.obfuscationFixedSize = obf.getInt("fixed_size")
+                if (obf.has("block_size")) cfg.obfuscationBlockSize = obf.getInt("block_size")
+                if (obf.has("jitter_range")) cfg.obfuscationJitterRange = obf.getInt("jitter_range")
+                if (obf.has("min_size")) cfg.obfuscationMinSize = obf.getInt("min_size")
+                if (obf.has("max_size")) cfg.obfuscationMaxSize = obf.getInt("max_size")
+                if (obf.has("auto_detect_interval")) cfg.obfuscationAutoDetectInterval = obf.getInt("auto_detect_interval")
+                if (obf.has("auto_threshold_bytes")) cfg.obfuscationAutoThresholdBytes = obf.getInt("auto_threshold_bytes")
+                if (obf.has("allow_mode_switch")) cfg.obfuscationAllowModeSwitch = obf.getBoolean("allow_mode_switch")
+                if (obf.has("max_frag_size")) cfg.obfuscationMaxFragSize = obf.getInt("max_frag_size")
             } else {
                 if (root.has("obfuscation_enable")) cfg.obfuscationEnable = root.getBoolean("obfuscation_enable")
                 if (root.has("obfuscation_mode")) cfg.obfuscationMode = root.getString("obfuscation_mode")
@@ -322,11 +438,13 @@ data class P2PConfig(
                 if (webUi.has("enable")) cfg.webUiEnable = webUi.getBoolean("enable")
                 if (webUi.has("port")) cfg.webUiPort = webUi.getInt("port")
                 if (webUi.has("auth_token")) cfg.webUiToken = webUi.getString("auth_token")
+                if (webUi.has("listen_ipv6")) cfg.webUiListenIpv6 = webUi.getString("listen_ipv6")
             } else {
                 if (root.has("webui_enable")) cfg.webUiEnable = root.getBoolean("webui_enable")
                 if (root.has("webui_port")) cfg.webUiPort = root.getInt("webui_port")
                 if (root.has("webui_token")) cfg.webUiToken = root.getString("webui_token")
                 if (root.has("auth_token")) cfg.webUiToken = root.getString("auth_token")
+                if (root.has("webui_listen_ipv6")) cfg.webUiListenIpv6 = root.getString("webui_listen_ipv6")
             }
 
             if (root.has("bootstrap_peers")) {
@@ -386,6 +504,43 @@ data class P2PConfig(
                     list.add(arr.getString(i))
                 }
                 cfg.stunServers = list
+            }
+
+            // Listen addrs
+            if (root.has("listen_addrs")) {
+                val arr = root.getJSONArray("listen_addrs")
+                val list = mutableListOf<String>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getString(i))
+                }
+                cfg.listenAddrs = list
+            }
+
+            // Flat key obfuscation detail fields
+            if (root.has("obfuscation_fixed_size")) cfg.obfuscationFixedSize = root.getInt("obfuscation_fixed_size")
+            if (root.has("obfuscation_block_size")) cfg.obfuscationBlockSize = root.getInt("obfuscation_block_size")
+            if (root.has("obfuscation_jitter_range")) cfg.obfuscationJitterRange = root.getInt("obfuscation_jitter_range")
+            if (root.has("obfuscation_min_size")) cfg.obfuscationMinSize = root.getInt("obfuscation_min_size")
+            if (root.has("obfuscation_max_size")) cfg.obfuscationMaxSize = root.getInt("obfuscation_max_size")
+            if (root.has("obfuscation_auto_detect_interval")) cfg.obfuscationAutoDetectInterval = root.getInt("obfuscation_auto_detect_interval")
+            if (root.has("obfuscation_auto_threshold_bytes")) cfg.obfuscationAutoThresholdBytes = root.getInt("obfuscation_auto_threshold_bytes")
+            if (root.has("obfuscation_allow_mode_switch")) cfg.obfuscationAllowModeSwitch = root.getBoolean("obfuscation_allow_mode_switch")
+            if (root.has("obfuscation_max_frag_size")) cfg.obfuscationMaxFragSize = root.getInt("obfuscation_max_frag_size")
+
+            // Exit node detail (flat keys)
+            if (root.has("exit_node_nat_masquerade")) cfg.exitNodeNatMasq = root.getBoolean("exit_node_nat_masquerade")
+            if (root.has("exit_node_wan_interface")) cfg.exitNodeWanInterface = root.getString("exit_node_wan_interface")
+
+            // ACL
+            if (root.has("acl")) {
+                val aclObj = root.getJSONObject("acl")
+                if (aclObj.has("enable")) cfg.aclEnable = aclObj.getBoolean("enable")
+                if (aclObj.has("default_action")) cfg.aclDefaultAction = aclObj.getString("default_action")
+                if (aclObj.has("rules")) cfg.aclRulesJson = aclObj.getJSONArray("rules").toString()
+            } else {
+                if (root.has("acl_enable")) cfg.aclEnable = root.getBoolean("acl_enable")
+                if (root.has("acl_default_action")) cfg.aclDefaultAction = root.getString("acl_default_action")
+                if (root.has("acl_rules")) cfg.aclRulesJson = root.getJSONArray("acl_rules").toString()
             }
 
             if (strict) cfg.validateStrategy()
