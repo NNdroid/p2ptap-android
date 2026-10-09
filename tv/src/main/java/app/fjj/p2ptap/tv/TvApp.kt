@@ -7,5 +7,6 @@ class TvApp : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashReporter.install(this)
+        CrashReporter.installNativeCrashHandler(this)
     }
 }

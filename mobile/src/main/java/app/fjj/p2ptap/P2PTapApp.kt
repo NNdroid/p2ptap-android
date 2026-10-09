@@ -18,6 +18,7 @@ class P2PTapApp : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashReporter.install(this)
+        CrashReporter.installNativeCrashHandler(this)
         initNightMode()
         LogCollector.install()
         prewarmConfigCache()

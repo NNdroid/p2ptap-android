@@ -26,11 +26,26 @@ import java.util.Locale
  */
 object CrashReportDialog {
 
-    /** Show the crash dialog if there is a pending crash. Returns true if a dialog was shown. */
+    /**
+     * Show the crash dialog if there is a pending crash — either a Java
+     * exception (from SharedPreferences) or a native/Go runtime crash (from
+     * the crash file). Returns true if a dialog was shown.
+     */
     fun showIfNeeded(context: Context): Boolean {
-        val info = CrashReporter.consumePendingCrash(context) ?: return false
-        show(context, info)
-        return true
+        // Java crash takes priority: it has structured info (exception class,
+        // message, thread name) that the dialog can label per-field.
+        val info = CrashReporter.consumePendingCrash(context)
+        if (info != null) {
+            show(context, info)
+            return true
+        }
+        // Fall back to native crash (Go runtime fatal error or native signal).
+        val nativeText = CrashReporter.consumePendingNativeCrash(context)
+        if (nativeText != null) {
+            showNative(context, nativeText)
+            return true
+        }
+        return false
     }
 
     /** Show the crash dialog for the given crash info. */
@@ -62,6 +77,49 @@ object CrashReportDialog {
             .setNegativeButton(R.string.crash_btn_dismiss, null)
             .create()
         dialog.show()
+    }
+
+    /**
+     * Show a crash dialog for a native/Go runtime crash. [text] is the raw
+     * content of the crash file written by the Go runtime (goroutine stacks,
+     * "fatal error: ..." lines, signal info). It is displayed as-is inside
+     * a scrollable text view.
+     */
+    fun showNative(context: Context, text: String) {
+        val body = buildString {
+            append(context.getString(R.string.crash_label_stack))
+            append('\n')
+            append(text)
+        }
+
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.crash_dialog_title)
+            .setView(makeBodyView(context, body))
+            .setPositiveButton(R.string.crash_btn_report) { _, _ -> shareRaw(context, body) }
+            .setNeutralButton(R.string.crash_btn_copy) { _, _ -> copyRaw(context, body) }
+            .setNegativeButton(R.string.crash_btn_dismiss, null)
+            .create()
+        dialog.show()
+    }
+
+    private fun shareRaw(context: Context, text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.crash_share_title))
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        if (hasChooser(context, intent)) {
+            context.startActivity(
+                Intent.createChooser(intent, context.getString(R.string.crash_btn_report))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
+    }
+
+    private fun copyRaw(context: Context, text: String) {
+        val cb = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        cb.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.crash_share_title), text))
+        showSnackBar(context, context.getString(R.string.crash_copy_success))
     }
 
     private fun makeBodyView(context: Context, text: String): View {
