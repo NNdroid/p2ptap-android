@@ -171,6 +171,14 @@ class ConfigActivity : AppCompatActivity() {
         binding.tilDnsServers.setEndIconOnClickListener {
             openAddressManager(AddressListType.DNS_SERVERS)
         }
+
+        // STUN Servers List Manager
+        binding.btnManageStun.setOnClickListener {
+            openAddressManager(AddressListType.STUN_SERVERS)
+        }
+        binding.tilStunServers.setEndIconOnClickListener {
+            openAddressManager(AddressListType.STUN_SERVERS)
+        }
     }
 
     private fun openAddressManager(type: AddressListType) {
@@ -191,6 +199,9 @@ class ConfigActivity : AppCompatActivity() {
             AddressListType.DNS_SERVERS -> {
                 binding.etDnsServers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
             }
+            AddressListType.STUN_SERVERS -> {
+                binding.etStunServers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+            }
         }
 
         AddressListManagerDialog.newInstance(type, currentList) { updatedList ->
@@ -210,6 +221,9 @@ class ConfigActivity : AppCompatActivity() {
                 }
                 AddressListType.DNS_SERVERS -> {
                     binding.etDnsServers.setText(updatedList.joinToString("\n"))
+                }
+                AddressListType.STUN_SERVERS -> {
+                    binding.etStunServers.setText(updatedList.joinToString("\n"))
                 }
             }
         }.show(supportFragmentManager, AddressListManagerDialog.TAG)
@@ -294,6 +308,8 @@ class ConfigActivity : AppCompatActivity() {
         binding.etWebUiPort.setText(config.webUiPort.toString())
         binding.etWebUiToken.setText(config.webUiToken)
         binding.actvLogLevel.setText(config.logLevel, false)
+        binding.etHolePunchTimeout.setText(config.holePunchTimeout.toString())
+        binding.etStunServers.setText(config.stunServers.joinToString("\n"))
     }
 
     private fun collectConfigFromUi(): P2PConfig {
@@ -328,6 +344,9 @@ class ConfigActivity : AppCompatActivity() {
         val aspList = aspString.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
         val dnsString = binding.etDnsServers.text?.toString() ?: ""
         val dnsList = dnsString.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        val holePunchTimeout = binding.etHolePunchTimeout.text?.toString()?.toLongOrNull() ?: 15000
+        val stunString = binding.etStunServers.text?.toString() ?: ""
+        val stunList = stunString.lines().map { it.trim() }.filter { it.isNotEmpty() }
         val webUiEnable = binding.switchWebUi.isChecked
         val webUiPort = binding.etWebUiPort.text?.toString()?.toIntOrNull() ?: 15858
         val webUiToken = binding.etWebUiToken.text?.toString()?.trim() ?: ""
@@ -357,6 +376,8 @@ class ConfigActivity : AppCompatActivity() {
             advertisedSubnets = advList,
             allowedSubnetPeers = if (aspList.isEmpty()) listOf("*") else aspList,
             dnsServers = dnsList,
+            holePunchTimeout = holePunchTimeout,
+            stunServers = stunList,
             transportStrategy = strategy,
             discoverBootMesh = discoverBootMesh,
             // Exit-node selection is managed by ExitNodeSelectorDialog. Saving

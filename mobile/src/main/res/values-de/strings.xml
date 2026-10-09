@@ -236,6 +236,7 @@
     <string name="msg_exit_node_hot_reloaded">Exit-Routing wurde nahtlos angewendet</string>
     <string name="hint_dns_servers">DNS-Server (Leer lassen für Systemstandard-DNS)</string>
     <string name="dialog_manage_dns">DNS-Server verwalten</string>
+<string name="dialog_manage_stun">STUN-Server verwalten</string>
     <string name="vpn_permission_denied">VPN-Berechtigung verweigert</string>
     <string name="badge_connecting">Verbinde…</string>
     <string name="badge_error">Fehler</string>
@@ -262,4 +263,8 @@
     <string name="theme_light">Hell</string>
     <string name="theme_dark">Dunkel</string>
     <string name="theme_system">Systemstandard</string>
+    <string name="group_hole_punching">Lochtreiben &amp; Verbindung</string>
+    <string name="hint_hole_punch_timeout">Lochtreiben-Timeout (Sekunden)</string>
+    <string name="help_hole_punch_timeout">Bereich 10-30. Höherer Wert wartet länger auf direkte Verbindung.</string>
+    <string name="hint_stun_servers">STUN-Server (je einen pro Zeile)</string>
 </resources>

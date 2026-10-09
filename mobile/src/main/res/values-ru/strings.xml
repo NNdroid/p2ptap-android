@@ -238,6 +238,7 @@
     <string name="msg_exit_node_hot_reloaded">Маршрут выхода успешно обновлен</string>
     <string name="hint_dns_servers">DNS-серверы (Оставьте пустым для системного DNS по умолчанию)</string>
     <string name="dialog_manage_dns">Управление DNS-серверами</string>
+<string name="dialog_manage_stun">Управление STUN-серверами</string>
     <string name="vpn_permission_denied">В разрешении на VPN отказано</string>
     <string name="badge_connecting">Подключение</string>
     <string name="badge_error">Ошибка</string>
@@ -268,4 +269,8 @@
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Тёмная</string>
     <string name="theme_system">Системная</string>
+    <string name="group_hole_punching">Броски и подключение</string>
+    <string name="hint_hole_punch_timeout">Тайм-аут бросков (секунды)</string>
+    <string name="help_hole_punch_timeout">Диапазон 10-30. Большие значения дольше ждут прямое подключение.</string>
+    <string name="hint_stun_servers">STUN-серверы (по одному на строку)</string>
 </resources>

@@ -34,7 +34,8 @@ enum class AddressListType {
     STATIC_PEERS,
     ADVERTISED_SUBNETS,
     ALLOWED_SUBNET_PEERS,
-    DNS_SERVERS
+    DNS_SERVERS,
+    STUN_SERVERS
 }
 
 class AddressListManagerDialog : BottomSheetDialogFragment() {
@@ -132,6 +133,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             AddressListType.ADVERTISED_SUBNETS -> R.string.dialog_manage_subnets
             AddressListType.ALLOWED_SUBNET_PEERS -> R.string.dialog_manage_allowed_peers
             AddressListType.DNS_SERVERS -> R.string.dialog_manage_dns
+            AddressListType.STUN_SERVERS -> R.string.dialog_manage_stun
         }
         binding.tvDialogTitle.text = getString(titleRes)
     }

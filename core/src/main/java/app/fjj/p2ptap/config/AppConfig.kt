@@ -46,13 +46,16 @@ data class P2PConfig(
     var webUiToken: String = "p2ptap-admin",
     var logLevel: String = "info",
     var dnsServers: List<String> = listOf(),
+    var holePunchTimeout: Long = 15000,
+    var stunServers: List<String> = listOf("/udp/stun.l.google.com/19302", "/udp/stun1.l.google.com/19302"),
+    var relayUpgradeInterval: Long = 30000,
     // Preserve Go settings that have no native Android editor when saving in WebUI.
     var engineConfig: String = ""
 ) {
     fun snapshot(): P2PConfig = copy(
         bootstrapPeers = bootstrapPeers.toList(), staticPeers = staticPeers.toList(),
         advertisedSubnets = advertisedSubnets.toList(), allowedSubnetPeers = allowedSubnetPeers.toList(),
-        dnsServers = dnsServers.toList()
+        dnsServers = dnsServers.toList(), holePunchTimeout = holePunchTimeout, stunServers = stunServers.toList(), relayUpgradeInterval = relayUpgradeInterval
     )
 
     fun validateStrategy() {
@@ -160,6 +163,17 @@ data class P2PConfig(
             }
         }
         root.put("dns_servers", dnsArray)
+        // Hole punching configuration
+        root.put("hole_punch_timeout", "${holePunchTimeout / 1000}s")
+        root.put("relay_upgrade_interval", "${relayUpgradeInterval / 1000}s")
+        val stunArray = JSONArray()
+        for (server in stunServers) {
+            val trimmed = server.trim()
+            if (trimmed.isNotEmpty()) {
+                stunArray.put(trimmed)
+            }
+        }
+        root.put("stun_servers", stunArray)
 
         // Obfuscation
         val obf = root.optJSONObject("obfuscation") ?: JSONObject()
@@ -353,6 +367,20 @@ data class P2PConfig(
                     list.add(arr.getString(i))
                 }
                 cfg.dnsServers = list
+            }
+            if (root.has("hole_punch_timeout")) {
+                cfg.holePunchTimeout = root.optLong("hole_punch_timeout", 15000)
+            }
+            if (root.has("relay_upgrade_interval")) {
+                cfg.relayUpgradeInterval = root.optLong("relay_upgrade_interval", 30000)
+            }
+            if (root.has("stun_servers")) {
+                val arr = root.getJSONArray("stun_servers")
+                val list = mutableListOf<String>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getString(i))
+                }
+                cfg.stunServers = list
             }
 
             if (strict) cfg.validateStrategy()

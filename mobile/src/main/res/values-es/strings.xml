@@ -237,6 +237,7 @@
     <string name="msg_exit_node_hot_reloaded">Ruta de salida actualizada de forma fluida</string>
     <string name="hint_dns_servers">Servidores DNS (Dejar en blanco para DNS predeterminado del sistema)</string>
     <string name="dialog_manage_dns">Administrar servidores DNS</string>
+<string name="dialog_manage_stun">Gestionar servidores STUN</string>
     <string name="vpn_permission_denied">Permiso de VPN denegado</string>
     <string name="badge_connecting">Conectando</string>
     <string name="badge_error">Error</string>
@@ -265,5 +266,9 @@
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Oscuro</string>
     <string name="theme_system">Predeterminado del sistema</string>
+    <string name="group_hole_punching">Perforación &amp; Conexión</string>
+    <string name="hint_hole_punch_timeout">Tiempo de espera de perforación (segundos)</string>
+    <string name="help_hole_punch_timeout">Rango 10-30. Un valor mayor espera más tiempo para una conexión directa.</string>
+    <string name="hint_stun_servers">Servidores STUN (uno por línea)</string>
 </resources>
 

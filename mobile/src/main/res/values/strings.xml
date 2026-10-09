@@ -254,6 +254,7 @@
     <string name="msg_exit_node_hot_reloaded">Exit node routing updated seamlessly in active VPN</string>
     <string name="hint_dns_servers">DNS Servers (Leave empty for Android System Default DNS)</string>
     <string name="dialog_manage_dns">Manage DNS Servers</string>
+<string name="dialog_manage_stun">Manage STUN Servers</string>
     <string name="vpn_permission_denied">VPN permission denied</string>
     <string name="badge_connecting">Connecting</string>
     <string name="badge_error">Error</string>
@@ -279,4 +280,8 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System Default</string>
+    <string name="group_hole_punching">Hole Punching &amp; Connection</string>
+    <string name="hint_hole_punch_timeout">Hole Punch Timeout (seconds)</string>
+    <string name="help_hole_punch_timeout">Range 10-30. Higher waits longer for direct connection.</string>
+    <string name="hint_stun_servers">STUN Servers (one per line)</string>
 </resources>

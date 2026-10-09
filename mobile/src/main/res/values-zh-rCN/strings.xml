@@ -251,6 +251,7 @@
     <string name="msg_exit_node_hot_reloaded">出口路由已实时平滑生效</string>
     <string name="hint_dns_servers">DNS 服务器 (留空默认使用系统默认 DNS)</string>
     <string name="dialog_manage_dns">管理 DNS 服务器列表</string>
+<string name="dialog_manage_stun">管理 STUN 服务器列表</string>
     <string name="vpn_permission_denied">VPN 权限被拒绝</string>
     <string name="badge_connecting">连接中</string>
     <string name="badge_error">错误</string>
@@ -275,4 +276,8 @@
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>
     <string name="theme_system">跟随系统</string>
+    <string name="group_hole_punching">打洞与连接</string>
+    <string name="hint_hole_punch_timeout">打洞超时（秒）</string>
+    <string name="help_hole_punch_timeout">范围 10-30，较大值会等待更长的直连连接。</string>
+    <string name="hint_stun_servers">STUN 服务器（每行一个）</string>
 </resources>

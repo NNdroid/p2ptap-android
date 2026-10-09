@@ -235,6 +235,7 @@
     <string name="msg_exit_node_hot_reloaded">出口ルーティングが即座に反映されました</string>
     <string name="hint_dns_servers">DNS サーバー (空欄でシステムデフォルト DNS を使用)</string>
     <string name="dialog_manage_dns">DNS サーバー一覧の管理</string>
+<string name="dialog_manage_stun">STUN サーバー管理</string>
     <string name="vpn_permission_denied">VPN権限が拒否されました</string>
     <string name="badge_connecting">接続中</string>
     <string name="badge_error">エラー</string>
@@ -259,4 +260,8 @@
     <string name="theme_light">ライト</string>
     <string name="theme_dark">ダーク</string>
     <string name="theme_system">システム既定</string>
+    <string name="group_hole_punching">ホールパンチングと接続</string>
+    <string name="hint_hole_punch_timeout">ホールパンチタイムアウト（秒）</string>
+    <string name="help_hole_punch_timeout">範囲 10-30。大きな値ほど直接接続をより長く待ちます。</string>
+    <string name="hint_stun_servers">STUN サーバー（1行に1つ）</string>
 </resources>

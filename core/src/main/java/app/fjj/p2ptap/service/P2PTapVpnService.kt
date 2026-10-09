@@ -31,6 +31,7 @@ import com.p2ptap.P2PTap.InterfaceProvider
 import com.p2ptap.P2PTap.Protector
 import com.p2ptap.P2PTap.StateListener
 import com.p2ptap.P2PTap.ConfigStore
+import com.p2ptap.P2PTap.LogCallback
 import java.net.NetworkInterface
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
@@ -40,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import org.json.JSONArray
 
-class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvider {
+class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvider, LogCallback {
 
     companion object {
         const val TAG = "P2PTapVpnService"
@@ -301,6 +302,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             Log.i(TAG, "Starting P2PTap native engine")
 
             P2PTap.setProtector(this)
+            P2PTap.setLogCallback(this)
             currentNativeSession = nativeSessionGeneration.incrementAndGet()
             registerStateListener()
             P2PTap.setInterfaceProvider(this)
@@ -664,6 +666,13 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                         if (newConfig.exitNode.isBlank()) P2PTap.clearExitNode()
                         else P2PTap.setExitNode(newConfig.exitNode, "", "")
                     }
+                    // Publish the full config atomically so the Go data plane
+                    // observes the new obfuscation, hole-punch, relay-upgrade,
+                    // subnet-advertisement and transport settings without a VPN
+                    // teardown.  applyHotReload is idempotent; it re-applies
+                    // obfuscation packer, exit-node NAT, and peer re-announce.
+                    val cfgJSON = newConfig.toJsonString(applicationContext)
+                    P2PTap.applyHotReload(cfgJSON)
                     cachedConfig = snapshotConfig(newConfig)
                     activeConfig = snapshotConfig(newConfig)
                     Log.i(TAG, "Applied hot-reloadable P2PTap configuration")
@@ -707,6 +716,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         P2PTap.setConfigStore(null)
         P2PTap.setInterfaceProvider(null)
         P2PTap.setProtector(null)
+        P2PTap.setLogCallback(null)
     }
 
     /**
@@ -931,12 +941,13 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             }
         }
 
-        // If Exit Node is designated, route ALL default IPv4 and IPv6 traffic + DNS through TUN
+        // If Exit Node is designated, route ALL default IPv4 and IPv6 traffic through TUN.
+        // Using 0.0.0.0/0 and ::/0 (instead of split-default /1 routes) is safe on
+        // Android because addDisallowedApplication() already keeps P2PTap's own traffic
+        // off the TUN, so the physical gateway stays reachable for P2P transport.
         if (config.exitNode.isNotBlank()) {
-            addRouteSafe(builder, "0.0.0.0", 1)
-            addRouteSafe(builder, "128.0.0.0", 1)
-            addRouteSafe(builder, "::", 1)
-            addRouteSafe(builder, "8000::", 1)
+            addRouteSafe(builder, "0.0.0.0", 0)
+            addRouteSafe(builder, "::", 0)
         }
 
         // Configure custom DNS servers if specified by user.
@@ -1142,6 +1153,32 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         lastPushAtMs = System.currentTimeMillis()
         pushLossLogged.set(false)
         notifyRunningStats(txSpeed, rxSpeed, activePeerCount)
+    }
+
+    /**
+     * com.p2ptap.P2PTap.LogCallback implementation. Receives structured log
+     * entries from the Go engine with the correct android.util.Log priority.
+     * Without this, every Go log line goes through stderr→logcat and arrives at
+     * a single indistinguishable level, so INFO messages show up as ERROR.
+     *
+     * The tag is "GoLog" (already in LogCollector.CAPTURED_TAGS) and the module
+     * name is embedded in the message so the in-process viewer can still
+     * distinguish log sources.
+     */
+    override fun onLog(priority: Int, module: String?, message: String?) {
+        val tag = "GoLog"
+        val mod = module ?: "unknown"
+        val msg = message ?: ""
+        val formatted = "[$mod] $msg"
+
+        when (priority) {
+            Log.VERBOSE -> Log.v(tag, formatted)
+            Log.DEBUG -> Log.d(tag, formatted)
+            Log.INFO -> Log.i(tag, formatted)
+            Log.WARN -> Log.w(tag, formatted)
+            Log.ERROR -> Log.e(tag, formatted)
+            else -> Log.w(tag, formatted)
+        }
     }
 
     /**
