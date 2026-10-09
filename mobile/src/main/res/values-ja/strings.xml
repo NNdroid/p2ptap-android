@@ -254,4 +254,9 @@
     <plurals name="active_peers_fmt">
         <item quantity="other">%1$d ノード\n%2$d 直接 · %3$d リレー</item>
     </plurals>
+    <string name="group_appearance">表示</string>
+    <string name="hint_theme_mode">テーマ</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="theme_system">システム既定</string>
 </resources>

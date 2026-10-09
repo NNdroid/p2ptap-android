@@ -254,4 +254,9 @@
     <plurals name="active_peers_fmt">
         <item quantity="other">%1$d 노드\n%2$d 직접 · %3$d 릴레이</item>
     </plurals>
+    <string name="group_appearance">화면</string>
+    <string name="hint_theme_mode">테마</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+    <string name="theme_system">시스템 기본값</string>
 </resources>

@@ -273,4 +273,10 @@
         <item quantity="one">%1$d peer\n%2$d direct · %3$d relay</item>
         <item quantity="other">%1$d peers\n%2$d direct · %3$d relay</item>
     </plurals>
+    <!-- Theme / Appearance -->
+    <string name="group_appearance">Appearance</string>
+    <string name="hint_theme_mode">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System Default</string>
 </resources>

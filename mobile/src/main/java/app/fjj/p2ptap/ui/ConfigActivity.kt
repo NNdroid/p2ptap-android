@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import app.fjj.p2ptap.R
@@ -68,6 +69,7 @@ class ConfigActivity : AppCompatActivity() {
 
         setupDropdownAdapters()
         loadConfig()
+        loadThemeMode()
         refreshPeerIdDisplay()
         setupListeners()
     }
@@ -88,11 +90,17 @@ class ConfigActivity : AppCompatActivity() {
         val obfAlgos = arrayOf("auto", "chacha20", "aes-gcm", "none")
         val strategies = arrayOf("best_path", "redundant", "fallback")
         val logLevels = arrayOf("debug", "info", "warn", "error")
+        val themeModes = arrayOf(
+            getString(R.string.theme_light),
+            getString(R.string.theme_dark),
+            getString(R.string.theme_system)
+        )
 
         binding.actvObfuscationMode.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, obfModes))
         binding.actvObfuscationAlgo.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, obfAlgos))
         binding.actvTransportStrategy.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, strategies))
         binding.actvLogLevel.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, logLevels))
+        binding.actvThemeMode.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, themeModes))
     }
 
     private fun setupListeners() {
@@ -234,6 +242,28 @@ class ConfigActivity : AppCompatActivity() {
         displayConfig(config)
     }
 
+    private fun loadThemeMode() {
+        val prefs = getSharedPreferences("p2ptap_ui_prefs", Context.MODE_PRIVATE)
+        val mode = prefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        val label = when (mode) {
+            AppCompatDelegate.MODE_NIGHT_NO -> getString(R.string.theme_light)
+            AppCompatDelegate.MODE_NIGHT_YES -> getString(R.string.theme_dark)
+            else -> getString(R.string.theme_system)
+        }
+        binding.actvThemeMode.setText(label, false)
+    }
+
+    private fun saveThemeMode() {
+        val prefs = getSharedPreferences("p2ptap_ui_prefs", Context.MODE_PRIVATE)
+        val mode = when (binding.actvThemeMode.text?.toString()?.trim()) {
+            getString(R.string.theme_light) -> AppCompatDelegate.MODE_NIGHT_NO
+            getString(R.string.theme_dark) -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        prefs.edit().putInt("night_mode", mode).apply()
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
+
     private fun displayConfig(config: P2PConfig) {
         binding.etNodeName.setText(config.nodeName)
         binding.etTapIp.setText(config.tapIp)
@@ -341,6 +371,7 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun saveConfig() {
+        saveThemeMode()
         val config = collectConfigFromUi()
         if (config.tapIp.isEmpty() || !config.tapIp.contains(".")) {
             Toast.makeText(this, getString(R.string.err_invalid_ipv4), Toast.LENGTH_SHORT).show()

@@ -260,5 +260,10 @@
         <item quantity="many">%1$d nodos\n%2$d directos · %3$d retransmitidos</item>
         <item quantity="other">%1$d nodos\n%2$d directos · %3$d retransmitidos</item>
     </plurals>
+    <string name="group_appearance">Apariencia</string>
+    <string name="hint_theme_mode">Tema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="theme_system">Predeterminado del sistema</string>
 </resources>
 

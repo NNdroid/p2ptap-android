@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_light_base"
+    android:background="@color/window_bg"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -111,7 +111,7 @@
                 android:foreground="?attr/selectableItemBackground"
                 app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/surface_light_stroke"
+                app:strokeColor="@color/card_stroke"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -177,7 +177,7 @@
                 android:foreground="?attr/selectableItemBackground"
                 app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/surface_light_stroke"
+                app:strokeColor="@color/card_stroke"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -240,7 +240,7 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/surface_light_stroke"
+            app:strokeColor="@color/card_stroke"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -469,7 +469,7 @@
             android:foreground="?attr/selectableItemBackground"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/surface_light_stroke"
+            app:strokeColor="@color/card_stroke"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -530,7 +530,7 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/surface_light_stroke"
+            app:strokeColor="@color/card_stroke"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -645,8 +645,8 @@
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/surface_light_card"
-            app:strokeColor="@color/surface_light_stroke"
+            app:cardBackgroundColor="@color/card_bg"
+            app:strokeColor="@color/card_stroke"
             app:strokeWidth="1dp">
 
             <LinearLayout

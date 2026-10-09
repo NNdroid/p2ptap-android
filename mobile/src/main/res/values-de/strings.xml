@@ -257,4 +257,9 @@
         <item quantity="one">%1$d Knoten\n%2$d direkt · %3$d Relay</item>
         <item quantity="other">%1$d Knoten\n%2$d direkt · %3$d Relay</item>
     </plurals>
+    <string name="group_appearance">Darstellung</string>
+    <string name="hint_theme_mode">Design</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="theme_system">Systemstandard</string>
 </resources>

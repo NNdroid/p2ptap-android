@@ -260,4 +260,9 @@
         <item quantity="many">%1$d pairs\n%2$d directs · %3$d relais</item>
         <item quantity="other">%1$d pairs\n%2$d directs · %3$d relais</item>
     </plurals>
+    <string name="group_appearance">Apparence</string>
+    <string name="hint_theme_mode">Thème</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_system">Défaut du système</string>
 </resources>

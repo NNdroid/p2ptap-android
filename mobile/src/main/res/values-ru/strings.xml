@@ -263,4 +263,9 @@
         <item quantity="many">%1$d узлов\n%2$d напрямую · %3$d через ретранслятор</item>
         <item quantity="other">%1$d узла\n%2$d напрямую · %3$d через ретранслятор</item>
     </plurals>
+    <string name="group_appearance">Внешний вид</string>
+    <string name="hint_theme_mode">Тема</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_system">Системная</string>
 </resources>
