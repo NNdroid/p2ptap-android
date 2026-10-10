@@ -47,8 +47,25 @@ data class P2PConfig(
     var logLevel: String = "info",
     var dnsServers: List<String> = listOf(),
     var holePunchTimeout: Long = 15000,
-    var stunServers: List<String> = listOf("/udp/stun.l.google.com/19302", "/udp/stun1.l.google.com/19302"),
-    var turnServers: List<String> = listOf(),
+    var stunServers: List<String> = listOf(
+        "/udp/stun.l.google.com/19302",
+        "/udp/stun1.l.google.com/19302",
+        "/udp/stun.cloudflare.com/3478",
+        "/udp/turn.cloudflare.com/3478",
+        "/udp/stun.nextcloud.com/3478",
+        "/udp/stun.chat.bilibili.com/3478",
+        "/udp/stun.sipnet.com/3478",
+        "/udp/stun.freeswitch.org/3478",
+        "/tcp/turn.cloudflare.com/80",
+        "/tcp/stun.cloudflare.com/3478",
+        "/tcp/stun.l.google.com/3478",
+    ),
+    var turnServers: List<String> = listOf(
+        "turn:turn.cloudflare.com:3478",
+        "turn:relay1.expressturn.com:3478",
+        "turn:relay2.expressturn.com:3478",
+        "turn:global.turn.twilio.com:3478",
+    ),
     var relayUpgradeInterval: Long = 30000,
     var forcePrivateReachability: Boolean = false,
     var listenAddrs: List<String> = listOf(),
@@ -599,6 +616,25 @@ object AppConfigManager {
     @Volatile
     private var cachedConfig: P2PConfig? = null
 
+    /**
+     * Loads default configuration from the Go engine (p2ptap-core) so that
+     * STUN/TURN server lists and other settings stay in sync with the Go
+     * source of truth. Falls back to Kotlin defaults if the native call fails.
+     */
+    private fun loadDefaultConfig(): P2PConfig {
+        try {
+            val goDefaultJson = com.p2ptap.P2PTap.P2PTap.getDefaultConfigJSON()
+            if (goDefaultJson.isNotEmpty()) {
+                val cfg = P2PConfig.fromJson(goDefaultJson, strict = false)
+                android.util.Log.i("AppConfig", "Loaded Go engine defaults (${goDefaultJson.length} bytes)")
+                return cfg
+            }
+        } catch (e: Exception) {
+            android.util.Log.w("AppConfig", "Failed to load Go defaults, using Kotlin defaults", e)
+        }
+        return P2PConfig()
+    }
+
     fun getNodeKeyPath(context: Context): String {
         return context.getFileStreamPath("node.key").absolutePath
     }
@@ -737,7 +773,7 @@ object AppConfigManager {
                 P2PConfig()
             }
         } else {
-            val defaultCfg = P2PConfig()
+            val defaultCfg = loadDefaultConfig()
             save(context, defaultCfg)
             defaultCfg
         }
