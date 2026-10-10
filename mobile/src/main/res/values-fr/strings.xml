@@ -271,7 +271,7 @@
     <string name="help_hole_punch_timeout">Plage 10-30. Une valeur plus élevée attend plus longtemps pour une connexion directe.</string>
     <string name="hint_stun_servers">Serveurs STUN (un par ligne)</string>
     <string name="hint_turn_servers">Serveurs TURN (un par ligne)</string>
-    <string name="help_turn_servers">Format : turn:hôte:port?username=USER&credential=PASS. Laisser vide pour désactiver le relais TURN.</string>
+    <string name="help_turn_servers">Format : turn:hôte:port?username=USER&amp;credential=PASS. Laisser vide pour désactiver le relais TURN.</string>
     <string name="dialog_manage_turn">Gérer les serveurs TURN</string>
     <string name="label_nat_status">Statut NAT</string>
 </resources>

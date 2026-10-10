@@ -38,7 +38,7 @@ object UiMessages {
         "web_ui.pcap_sample_every" to R.string.hint_web_ui_pcap_sample_every,
         "web_ui.pcap_max_rate_per_sec" to R.string.hint_web_ui_pcap_max_rate_per_sec,
         "exit_node.wan_interface" to R.string.hint_exit_node_wan_interface,
-        "obfuscation.mode" to R.string.hint_obfuscation_mode,
+        "obfuscation.mode" to R.string.err_obfuscation_mode,
         "obfuscation.fixed_size" to R.string.hint_obfuscation_fixed_size,
         "obfuscation.block_size" to R.string.hint_obfuscation_block_size,
         "obfuscation.jitter_range" to R.string.hint_obfuscation_jitter_range,

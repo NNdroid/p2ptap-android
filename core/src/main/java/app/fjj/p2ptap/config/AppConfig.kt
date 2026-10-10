@@ -11,83 +11,64 @@ import com.p2ptap.P2PTap.P2PTap
 import app.fjj.p2ptap.service.P2PTapVpnService
 
 data class P2PConfig(
-    var nodeName: String = "Android-" + (Build.MODEL ?: "Node").replace(" ", "-").take(14),
-    var tapIp: String = "10.0.0.88/24",
-    var tapIpv6: String = "fd00::88/64",
-    var mtu: Int = 1500,
-    var bootstrapPeers: List<String> = listOf(
-        "/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTmoXMY5PeBKyy1EicV2g7HQ1b18423b",
-        "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCUEtxvUDMfWiStEwcBsQ55nsnH7tKNiLB5ns3RNr41J",
-        "/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
-        "/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa"
-    ),
-    var staticPeers: List<String> = listOf(),
+    var nodeName: String = "",
+    var tapIp: String = "",
+    var tapIpv6: String = "",
+    var mtu: Int = 0,
+    var bootstrapPeers: List<String> = emptyList(),
+    var staticPeers: List<String> = emptyList(),
     var psk: String = "",
-    var enableMdns: Boolean = true,
-    var obfuscationEnable: Boolean = true,
-    var obfuscationMode: String = "auto",
-    var obfuscationAlgorithm: String = "auto",
+    var enableMdns: Boolean = false,
+    var obfuscationEnable: Boolean = false,
+    var obfuscationMode: String = "",
+    var obfuscationAlgorithm: String = "",
     var strictKeyNegotiation: Boolean = false,
-    var enableQuic: Boolean = true,
-    var enableWebrtc: Boolean = true,
-    var enableWebtransport: Boolean = true,
-    var enableTcp: Boolean = true,
+    var enableQuic: Boolean = false,
+    var enableWebrtc: Boolean = false,
+    var enableWebtransport: Boolean = false,
+    var enableTcp: Boolean = false,
     var disableRelay: Boolean = false,
     var tlsServerName: String = "",
     var tlsSniSuffix: String = "",
-    var acceptSubnets: Boolean = true,
-    var advertisedSubnets: List<String> = listOf(),
-    var allowedSubnetPeers: List<String> = listOf("*"),
+    var acceptSubnets: Boolean = false,
+    var advertisedSubnets: List<String> = emptyList(),
+    var allowedSubnetPeers: List<String> = emptyList(),
+    // Must be a valid enum: Go Validate() rejects empty string.
     var transportStrategy: String = "best_path",
-    var discoverBootMesh: Boolean = true,
+    var discoverBootMesh: Boolean = false,
     var exitNode: String = "",
-    var webUiEnable: Boolean = true,
+    var webUiEnable: Boolean = false,
+    // Android-specific port: Go DefaultConfig uses 80, but Android needs a high port.
+    // load() overrides to 15858 if the stored value is 0, 80, or 8080.
     var webUiPort: Int = 15858,
-    var webUiToken: String = "p2ptap-admin",
-    var logLevel: String = "info",
-    var dnsServers: List<String> = listOf(),
-    var holePunchTimeout: Long = 15000,
-    var stunServers: List<String> = listOf(
-        "/udp/stun.l.google.com/19302",
-        "/udp/stun1.l.google.com/19302",
-        "/udp/stun.cloudflare.com/3478",
-        "/udp/turn.cloudflare.com/3478",
-        "/udp/stun.nextcloud.com/3478",
-        "/udp/stun.chat.bilibili.com/3478",
-        "/udp/stun.sipnet.com/3478",
-        "/udp/stun.freeswitch.org/3478",
-        "/tcp/turn.cloudflare.com/80",
-        "/tcp/stun.cloudflare.com/3478",
-        "/tcp/stun.l.google.com/3478",
-    ),
-    var turnServers: List<String> = listOf(
-        "turn:turn.cloudflare.com:3478",
-        "turn:relay1.expressturn.com:3478",
-        "turn:relay2.expressturn.com:3478",
-        "turn:global.turn.twilio.com:3478",
-    ),
-    var relayUpgradeInterval: Long = 30000,
+    var webUiToken: String = "",
+    var logLevel: String = "",
+    var dnsServers: List<String> = emptyList(),
+    var holePunchTimeout: Long = 0,
+    var stunServers: List<String> = emptyList(),
+    var turnServers: List<String> = emptyList(),
+    var relayUpgradeInterval: Long = 0,
     var forcePrivateReachability: Boolean = false,
-    var listenAddrs: List<String> = listOf(),
-    var tapName: String = "p2ptap0",
+    var listenAddrs: List<String> = emptyList(),
+    var tapName: String = "",
     var tapMac: String = "",
-    var driverType: String = "auto",
+    var driverType: String = "",
     var webUiListenIpv6: String = "",
     var enableTcpBrutal: Boolean = false,
-    var tcpBrutalRate: String = "100Mbps",
-    var obfuscationFixedSize: Int = 1500,
-    var obfuscationBlockSize: Int = 256,
-    var obfuscationJitterRange: Int = 64,
-    var obfuscationMinSize: Int = 512,
-    var obfuscationMaxSize: Int = 1500,
-    var obfuscationAutoDetectInterval: Int = 30,
-    var obfuscationAutoThresholdBytes: Int = 65536,
+    var tcpBrutalRate: String = "",
+    var obfuscationFixedSize: Int = 0,
+    var obfuscationBlockSize: Int = 0,
+    var obfuscationJitterRange: Int = 0,
+    var obfuscationMinSize: Int = 0,
+    var obfuscationMaxSize: Int = 0,
+    var obfuscationAutoDetectInterval: Int = 0,
+    var obfuscationAutoThresholdBytes: Int = 0,
     var obfuscationAllowModeSwitch: Boolean = false,
     var obfuscationMaxFragSize: Int = 0,
-    var exitNodeNatMasq: Boolean = true,
-    var exitNodeWanInterface: String = "auto",
+    var exitNodeNatMasq: Boolean = false,
+    var exitNodeWanInterface: String = "",
     var aclEnable: Boolean = false,
-    var aclDefaultAction: String = "allow",
+    var aclDefaultAction: String = "",
     var aclRulesJson: String = "",
     // Preserve Go settings that have no native Android editor when saving in WebUI.
     var engineConfig: String = ""
@@ -617,22 +598,19 @@ object AppConfigManager {
     private var cachedConfig: P2PConfig? = null
 
     /**
-     * Loads default configuration from the Go engine (p2ptap-core) so that
-     * STUN/TURN server lists and other settings stay in sync with the Go
-     * source of truth. Falls back to Kotlin defaults if the native call fails.
+     * Loads default configuration from the Go engine (p2ptap-core).
+     * The Go engine is the single source of truth for all defaults —
+     * STUN/TURN servers, transport settings, obfuscation params, etc.
+     * Throws if the native call fails: there is no Kotlin fallback.
      */
     private fun loadDefaultConfig(): P2PConfig {
-        try {
-            val goDefaultJson = com.p2ptap.P2PTap.P2PTap.getDefaultConfigJSON()
-            if (goDefaultJson.isNotEmpty()) {
-                val cfg = P2PConfig.fromJson(goDefaultJson, strict = false)
-                android.util.Log.i("AppConfig", "Loaded Go engine defaults (${goDefaultJson.length} bytes)")
-                return cfg
-            }
-        } catch (e: Exception) {
-            android.util.Log.w("AppConfig", "Failed to load Go defaults, using Kotlin defaults", e)
+        val goDefaultJson = com.p2ptap.P2PTap.P2PTap.getDefaultConfigJSON()
+        if (goDefaultJson.isEmpty()) {
+            throw LocalizedException(R.string.error_invalid_configuration)
         }
-        return P2PConfig()
+        val cfg = P2PConfig.fromJson(goDefaultJson, strict = false)
+        android.util.Log.i("AppConfig", "Loaded Go engine defaults (${goDefaultJson.length} bytes)")
+        return cfg
     }
 
     fun getNodeKeyPath(context: Context): String {
@@ -770,7 +748,7 @@ object AppConfigManager {
                 }
                 parsed
             } catch (_: Exception) {
-                P2PConfig()
+                loadDefaultConfig()
             }
         } else {
             val defaultCfg = loadDefaultConfig()

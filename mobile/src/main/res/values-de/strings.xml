@@ -268,7 +268,7 @@
     <string name="help_hole_punch_timeout">Bereich 10-30. Höherer Wert wartet länger auf direkte Verbindung.</string>
     <string name="hint_stun_servers">STUN-Server (je einen pro Zeile)</string>
     <string name="hint_turn_servers">TURN-Server (je einen pro Zeile)</string>
-    <string name="help_turn_servers">Format: turn:host:port?username=USER&credential=PASS. Leer lassen, um TURN-Relay zu deaktivieren.</string>
+    <string name="help_turn_servers">Format: turn:host:port?username=USER&amp;credential=PASS. Leer lassen, um TURN-Relay zu deaktivieren.</string>
     <string name="dialog_manage_turn">TURN-Server verwalten</string>
     <string name="label_nat_status">NAT-Status</string>
 </resources>

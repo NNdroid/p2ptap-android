@@ -50,7 +50,7 @@
     <string name="hint_web_ui_pcap_sample_every">PCAP sample interval must be 1 or greater.</string>
     <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP max rate must be 0 or greater.</string>
     <string name="hint_exit_node_wan_interface">WAN interface must be 16 chars or fewer; only letters, digits, - _ . are allowed.</string>
-    <string name="hint_obfuscation_mode">Obfuscation mode must be fixed, block, random, dynamic or auto.</string>
+    <string name="err_obfuscation_mode">Obfuscation mode must be fixed, block, random, dynamic or auto.</string>
     <string name="hint_obfuscation_fixed_size">Fixed size must be greater than 0 when mode is fixed.</string>
     <string name="hint_obfuscation_block_size">Block size must be greater than 0 when mode is block.</string>
     <string name="hint_obfuscation_jitter_range">Jitter range must be 0 or greater.</string>

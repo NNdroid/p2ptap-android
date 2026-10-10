@@ -371,7 +371,7 @@ class ConfigActivity : AppCompatActivity() {
         val logLevel = binding.actvLogLevel.text?.toString()?.trim() ?: "info"
 
         return P2PConfig(
-            nodeName = if (nodeName.isEmpty()) "Android-Node" else nodeName,
+            nodeName = nodeName,
             tapIp = tapIp,
             tapIpv6 = tapIpv6,
             mtu = mtu,
@@ -392,7 +392,7 @@ class ConfigActivity : AppCompatActivity() {
             disableRelay = disableRelay,
             acceptSubnets = acceptSubnets,
             advertisedSubnets = advList,
-            allowedSubnetPeers = if (aspList.isEmpty()) listOf("*") else aspList,
+            allowedSubnetPeers = aspList,
             dnsServers = dnsList,
             holePunchTimeout = holePunchTimeout,
             stunServers = stunList,
