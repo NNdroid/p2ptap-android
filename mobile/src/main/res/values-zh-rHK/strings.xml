@@ -267,6 +267,10 @@
     <string name="hint_hole_punch_timeout">打洞逾時（秒）</string>
     <string name="help_hole_punch_timeout">範圍 10-30，較大值會等待更長的直連連線。</string>
     <string name="hint_stun_servers">STUN 伺服器（每行一個）</string>
+    <string name="hint_turn_servers">TURN 伺服器（每行一個）</string>
+    <string name="help_turn_servers">格式：turn:host:port?username=USER&amp;credential=PASS。留空以禁用 TURN 中繼。</string>
+    <string name="dialog_manage_turn">管理 TURN 伺服器</string>
+    <string name="label_nat_status">NAT 狀態</string>
     <string name="err_invalid_block_size">塊大小在混淆模式為 block 時必須大於 0</string>
     <string name="err_invalid_dns_fmt">DNS 伺服器無效：%1$s</string>
     <string name="err_invalid_fixed_size">固定大小在混淆模式為 fixed 時必須大於 0</string>
