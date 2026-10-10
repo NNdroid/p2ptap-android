@@ -239,6 +239,7 @@
     <string name="label_exit_node">Exit Node / Gateway</string>
     <string name="exit_node_auto_display">🌐 Auto Mesh Mode (No Exit Relay)</string>
     <string name="exit_node_active_fmt">🚀 Gateway: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">🚀 Gateway: %1$s</string>
     <string name="dialog_exit_node_title">Select Exit Node / Gateway</string>
     <string name="dialog_exit_node_desc">Select a peer node to relay internet or default gateway traffic through</string>
     <string name="exit_node_auto_title">Auto Mesh Mode (Default)</string>

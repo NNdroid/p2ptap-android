@@ -403,11 +403,14 @@ class MainActivity : AppCompatActivity() {
         } else {
             val node = config.exitNode.trim()
             val shortNode = if (node.length > 20) node.take(8) + "..." + node.takeLast(6) else node
-            binding.contentMain.tvExitNodeStatus.text = getString(R.string.exit_node_active_fmt, shortNode, getString(when {
-                P2PTapVpnService.currentState != P2PTapVpnService.STATE_RUNNING -> R.string.telemetry_saved
-                viewModel.telemetry.value.snapshot?.matchesExit(node) == true -> R.string.telemetry_applied
-                else -> R.string.telemetry_pending
-            }))
+            binding.contentMain.tvExitNodeStatus.text = when {
+                P2PTapVpnService.currentState != P2PTapVpnService.STATE_RUNNING ->
+                    getString(R.string.exit_node_idle_fmt, shortNode)
+                viewModel.telemetry.value.snapshot?.matchesExit(node) == true ->
+                    getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_applied))
+                else ->
+                    getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_pending))
+            }
         }
     }
 

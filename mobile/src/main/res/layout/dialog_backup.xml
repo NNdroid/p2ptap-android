@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dialog_backup_title"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"
             android:text="@string/backup_description"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
 
         <!-- Group 1: Export -->
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@string/backup_export_group"
-            android:textColor="@color/brand_primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="13sp"
             android:textStyle="bold" />
 
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="16dp"
-            android:background="@color/card_stroke" />
+            android:background="?attr/colorOutlineVariant" />
 
         <!-- Group 2: Import -->
         <TextView

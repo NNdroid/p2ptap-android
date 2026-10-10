@@ -223,6 +223,7 @@
     <string name="label_exit_node">Узел выхода / Шлюз</string>
     <string name="exit_node_auto_display">🌐 Авто-режим сети (без реле выхода)</string>
     <string name="exit_node_active_fmt">🚀 Шлюз: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 Шлюз: %1$s (%2$s)</string></string>
     <string name="dialog_exit_node_title">Выбор узла выхода</string>
     <string name="dialog_exit_node_desc">Выберите узел для ретрансляции трафика интернета</string>
     <string name="exit_node_auto_title">Авто-режим Mesh (по умолчанию)</string>

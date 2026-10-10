@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_bg"
+    android:background="?attr/colorSurfaceContainerLow"
     android:orientation="vertical"
     android:padding="20dp">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/dialog_traffic_title"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -33,12 +33,12 @@
             android:layout_height="40dp"
             android:contentDescription="@string/btn_refresh"
             app:icon="@drawable/ic_refresh"
-            app:iconTint="@color/brand_primary" />
+            app:iconTint="?attr/colorPrimary" />
     </LinearLayout>
 
     <TextView android:id="@+id/tvDataStatus"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="@string/telemetry_loading" android:textColor="@color/text_secondary"
+        android:text="@string/telemetry_loading" android:textColor="?attr/colorOnSurfaceVariant"
         android:paddingBottom="12dp" android:accessibilityLiveRegion="polite" />
 
 
@@ -56,7 +56,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="1dp"
-                app:strokeColor="@color/card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
                         android:text="@string/section_live_throughput"
-                        android:textColor="@color/brand_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -92,7 +92,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="1dp"
-                app:strokeColor="@color/card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -106,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
                         android:text="@string/section_protocol_stats"
-                        android:textColor="@color/brand_secondary"
+                        android:textColor="?attr/colorSecondary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -128,7 +128,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="1dp"
-                app:strokeColor="@color/card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -142,7 +142,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
                         android:text="@string/section_security_stats"
-                        android:textColor="@color/brand_accent"
+                        android:textColor="?attr/colorTertiary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 

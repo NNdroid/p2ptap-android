@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_bg"
+    android:background="?attr/colorSurfaceContainerLow"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/status_disconnected"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -70,7 +70,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="20dp"
                     android:text="@string/status_hint_idle"
-                    android:textColor="@color/text_muted"
+                    android:textColor="?attr/colorOutline"
                     android:textSize="13sp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -78,14 +78,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:text="@string/btn_connect"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:backgroundTint="@color/brand_primary"
+                    app:backgroundTint="?attr/colorPrimary"
                     app:cornerRadius="16dp"
                     app:icon="@drawable/ic_play"
                     app:iconGravity="textStart"
-                    app:iconTint="@color/white" />
+                    app:iconTint="?attr/colorOnPrimary" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -111,7 +111,7 @@
                 android:foreground="?attr/selectableItemBackground"
                 app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -130,7 +130,7 @@
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:src="@drawable/ic_speed"
-                            app:tint="@color/brand_cyan" />
+                            app:tint="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -138,7 +138,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="6dp"
                             android:text="@string/label_live_speed"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -146,7 +146,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_muted"
+                            android:textColor="?attr/colorOutline"
                             android:textSize="15sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -159,7 +159,7 @@
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -178,7 +178,7 @@
                 android:foreground="?attr/selectableItemBackground"
                 app:cardCornerRadius="18dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/card_stroke"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -197,7 +197,7 @@
                             android:layout_width="18dp"
                             android:layout_height="18dp"
                             android:src="@drawable/ic_peers"
-                            app:tint="@color/brand_emerald" />
+                            app:tint="?attr/colorTertiary" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -205,7 +205,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="6dp"
                             android:text="@string/label_active_peers"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -213,7 +213,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_muted"
+                            android:textColor="?attr/colorOutline"
                             android:textSize="15sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -226,7 +226,7 @@
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/label_active_peers"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -241,7 +241,7 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -262,7 +262,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/node_info_title"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -273,7 +273,7 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         app:icon="@drawable/ic_qr_code"
-                        app:iconTint="@color/brand_primary" />
+                        app:iconTint="?attr/colorPrimary" />
 
                     <!-- Backup / Restore Button -->
                     <com.google.android.material.button.MaterialButton
@@ -282,7 +282,7 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         app:icon="@drawable/ic_backup"
-                        app:iconTint="@color/brand_secondary" />
+                        app:iconTint="?attr/colorSecondary" />
                 </LinearLayout>
 
                 <!-- Node Name -->
@@ -298,7 +298,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_node_name"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp" />
 
                     <TextView
@@ -306,7 +306,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -329,7 +329,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_peer_id"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp" />
 
                     <TextView
@@ -343,7 +343,7 @@
                         android:paddingVertical="3dp"
                         android:singleLine="true"
                         android:text="-"
-                        android:textColor="@color/brand_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -352,7 +352,7 @@
                         android:layout_height="16dp"
                         android:layout_marginStart="6dp"
                         android:src="@drawable/ic_copy"
-                        app:tint="@color/brand_primary" />
+                        app:tint="?attr/colorPrimary" />
                 </LinearLayout>
 
                 <!-- Virtual IPv4 with Copy -->
@@ -373,7 +373,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_tap_ip"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp" />
 
                     <TextView
@@ -381,7 +381,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="@color/brand_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -390,7 +390,7 @@
                         android:layout_height="14dp"
                         android:layout_marginStart="6dp"
                         android:src="@drawable/ic_copy"
-                        app:tint="@color/brand_primary" />
+                        app:tint="?attr/colorPrimary" />
                 </LinearLayout>
 
                 <!-- Virtual IPv6 with Copy -->
@@ -412,7 +412,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_tap_ipv6"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp" />
 
                     <TextView
@@ -420,7 +420,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="@color/brand_secondary"
+                        android:textColor="?attr/colorSecondary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -429,7 +429,7 @@
                         android:layout_height="14dp"
                         android:layout_marginStart="6dp"
                         android:src="@drawable/ic_copy"
-                        app:tint="@color/brand_secondary" />
+                        app:tint="?attr/colorSecondary" />
                 </LinearLayout>
 
                 <!-- Total Traffic -->
@@ -445,7 +445,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_traffic"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp" />
 
                     <TextView
@@ -453,7 +453,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="@color/text_muted"
+                        android:textColor="?attr/colorOutline"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -469,7 +469,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_nat_status"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="13sp" />
 
                     <TextView
@@ -477,7 +477,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="@color/text_muted"
+                        android:textColor="?attr/colorOutline"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -495,7 +495,7 @@
             android:foreground="?attr/selectableItemBackground"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -509,7 +509,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_p2p_shield_node"
-                    app:tint="@color/brand_primary" />
+                    app:tint="?attr/colorPrimary" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -522,7 +522,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/label_exit_node"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -532,7 +532,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:text="@string/exit_node_auto_display"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -541,7 +541,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="›"
-                    android:textColor="@color/text_muted"
+                    android:textColor="?attr/colorOutline"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -554,7 +554,7 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -574,7 +574,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_terminal"
-                        app:tint="@color/brand_primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -582,7 +582,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:text="@string/label_multiaddrs"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -593,7 +593,7 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         app:icon="@drawable/ic_copy"
-                        app:iconTint="@color/brand_primary" />
+                        app:iconTint="?attr/colorPrimary" />
                 </LinearLayout>
 
                 <TextView
@@ -605,7 +605,7 @@
                     android:fontFamily="monospace"
                     android:padding="12dp"
                     android:text="@string/multiaddrs_empty_hint"
-                    android:textColor="@color/text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="11sp"
                     android:textIsSelectable="true"
                     android:lineSpacingExtra="3dp" />
@@ -670,8 +670,8 @@
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/card_bg"
-            app:strokeColor="@color/card_stroke"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -697,7 +697,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="@string/app_name"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
@@ -710,7 +710,7 @@
                         android:paddingHorizontal="6dp"
                         android:paddingVertical="2dp"
                         tools:text="v1.0"
-                        android:textColor="@color/brand_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -722,7 +722,7 @@
                     android:layout_marginBottom="14dp"
                     android:gravity="center"
                     android:text="@string/about_desc"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="12sp" />
 
                 <!-- Action Links: GitHub & Author -->
@@ -740,13 +740,13 @@
                         android:layout_weight="1"
                         android:layout_marginEnd="5dp"
                         android:text="@string/label_github_repo"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:cornerRadius="12dp"
                         app:icon="@drawable/ic_github"
                         app:iconSize="16dp"
-                        app:iconTint="@color/text_primary" />
+                        app:iconTint="?attr/colorOnSurface" />
 
                     <!-- Developer Link -->
                     <com.google.android.material.button.MaterialButton
@@ -757,13 +757,13 @@
                         android:layout_weight="1"
                         android:layout_marginStart="5dp"
                         android:text="@string/label_developer"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         app:cornerRadius="12dp"
                         app:icon="@drawable/ic_person"
                         app:iconSize="16dp"
-                        app:iconTint="@color/text_primary" />
+                        app:iconTint="?attr/colorOnSurface" />
                 </LinearLayout>
 
             </LinearLayout>

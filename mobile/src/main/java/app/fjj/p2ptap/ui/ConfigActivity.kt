@@ -529,8 +529,6 @@ class ConfigActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.config_invalid_fmt, UiMessages.describe(this, e)), Toast.LENGTH_LONG).show()
             return
         }
-        Toast.makeText(this, getString(R.string.msg_config_saved), Toast.LENGTH_SHORT).show()
-
         AppConfigManager.reloadRunningService(this)
 
         finish()

@@ -77,12 +77,14 @@ class ExitNodeSelectorDialog : LiveDataSheet() {
         b.cardAutoMode.strokeColor = if (target.isBlank()) primary else stroke
         b.ivAutoChecked.visibility = if (target.isBlank()) View.VISIBLE else View.GONE
         b.btnRefreshPeers.isEnabled = state == "RUNNING" && !data.refreshing
-        b.tvSelection.text = if (target.isBlank()) getString(R.string.exit_node_auto_display)
-            else getString(R.string.exit_node_active_fmt, target, getString(when {
-                state != "RUNNING" -> R.string.telemetry_saved
-                data.snapshot?.matchesExit(target) == true -> R.string.telemetry_applied
-                else -> R.string.telemetry_pending
-            }))
+        b.tvSelection.text = when {
+            target.isBlank() -> getString(R.string.exit_node_auto_display)
+            state != "RUNNING" -> getString(R.string.exit_node_idle_fmt, target)
+            data.snapshot?.matchesExit(target) == true ->
+                getString(R.string.exit_node_active_fmt, target, getString(R.string.telemetry_applied))
+            else ->
+                getString(R.string.exit_node_active_fmt, target, getString(R.string.telemetry_pending))
+        }
         // Kept in a local: TelemetryState lives in :core, and a public
         // cross-module property is not smart-castable after a null check.
         val snap = data.snapshot

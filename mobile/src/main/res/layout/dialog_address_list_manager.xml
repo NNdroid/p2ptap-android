@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/dialog_manage_addresses"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -47,13 +47,13 @@
             android:contentDescription="@string/btn_cancel"
             android:padding="6dp"
             android:src="@drawable/ic_delete"
-            app:tint="@color/text_secondary" />
+            app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/card_stroke" />
+        android:background="?attr/colorOutlineVariant" />
 
     <!-- Scrollable Middle Section -->
     <FrameLayout
@@ -98,7 +98,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_peers"
-                    app:tint="@color/text_muted" />
+                    app:tint="?attr/colorOutline" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="@string/empty_address_list"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -186,13 +186,13 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/card_stroke" />
+        android:background="?attr/colorOutlineVariant" />
 
     <!-- Fixed Bottom Sticky Footer (Always Visible) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/card_bg"
+        android:background="?attr/colorSurface"
         android:gravity="end"
         android:orientation="horizontal"
         android:paddingStart="20dp"

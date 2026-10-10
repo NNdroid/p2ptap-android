@@ -220,6 +220,7 @@
     <string name="label_exit_node">出口ノード / ゲートウェイ</string>
     <string name="exit_node_auto_display">🌐 自動メッシュモード (出口リレーなし)</string>
     <string name="exit_node_active_fmt">🚀 ゲートウェイ: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 ゲートウェイ: %1$s (%2$s)</string></string>
     <string name="dialog_exit_node_title">出口ノードの選択</string>
     <string name="dialog_exit_node_desc">インターネット/デフォルトゲートウェイのトラフィックを中継するノードを選択</string>
     <string name="exit_node_auto_title">自動メッシュモード (デフォルト)</string>

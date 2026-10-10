@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Expressive Shape Appearances — MD3 Expressive 2025              -->
+    <!-- Larger, softer corner radii per the 2025 shape scale.           -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <style name="ShapeAppearance.P2ptap.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.P2ptap.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.P2ptap.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Type Scale — MD3 2025 type proportions                          -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <style name="TextAppearance.P2ptap.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textSize">57sp</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:textSize">45sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">36sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">28sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.04</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.P2ptap.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Component Styles                                                 -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+
+    <!-- Filled button — expressive pill shape -->
+    <style name="Widget.P2ptap.Button" parent="Widget.Material3.Button">
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <!-- Text button -->
+    <style name="Widget.P2ptap.Button.TextButton" parent="Widget.Material3.Button.TextButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <!-- Outlined button -->
+    <style name="Widget.P2ptap.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="strokeColor">?attr/colorOutline</item>
+    </style>
+
+    <!-- Filled tonal button -->
+    <style name="Widget.P2ptap.Button.FilledTonalButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:minHeight">44dp</item>
+    </style>
+
+    <!-- Card — expressive elevation -->
+    <style name="Widget.P2ptap.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Medium</item>
+        <item name="cardElevation">1dp</item>
+        <item name="cardCornerRadius">16dp</item>
+    </style>
+
+    <!-- Alert dialog overlay -->
+    <style name="ThemeOverlay.P2ptap.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.P2ptap.Medium</item>
+        <item name="dialogCornerRadius">16dp</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.P2ptap.TitleMedium</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.P2ptap.BodyMedium</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.P2ptap.Button.TextButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.P2ptap.Button.TextButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.P2ptap.Button.TextButton</item>
+    </style>
+
+</resources>

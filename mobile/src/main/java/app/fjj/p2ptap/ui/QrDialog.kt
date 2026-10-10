@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -188,8 +189,8 @@ class QrDialog : BottomSheetDialogFragment() {
         val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, size, size, hints)
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
-        val primaryColor = Color.parseColor("#0F172A")
-        val accentColor = Color.parseColor("#0891B2")
+        val primaryColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+        val accentColor = ContextCompat.getColor(requireContext(), R.color.brand_primary_dark)
 
         for (x in 0 until size) {
             for (y in 0 until size) {

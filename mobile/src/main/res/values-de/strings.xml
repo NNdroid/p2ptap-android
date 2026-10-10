@@ -221,6 +221,7 @@
     <string name="label_exit_node">Exit-Knoten / Gateway</string>
     <string name="exit_node_auto_display">🌐 Auto-Mesh-Modus (Kein Exit-Relais)</string>
     <string name="exit_node_active_fmt">🚀 Gateway: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 Gateway: %1$s (%2$s)</string></string>
     <string name="dialog_exit_node_title">Exit-Knoten auswählen</string>
     <string name="dialog_exit_node_desc">Wählen Sie einen Peer-Knoten als Gateway für Internetverkehr</string>
     <string name="exit_node_auto_title">Auto-Mesh-Modus (Standard)</string>

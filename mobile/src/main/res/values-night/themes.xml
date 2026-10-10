@@ -1,14 +1,67 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme (Night / Dark Mode). -->
+    <!-- ── Base application theme (Night / Dark Mode) ───────────────── -->
     <style name="Base.Theme.P2ptap" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/brand_primary</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/brand_secondary</item>
-        <item name="colorOnSecondary">@color/white</item>
-        <item name="colorSurface">@color/card_bg</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-        <item name="colorSurfaceVariant">@color/card_elevated</item>
-        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <!-- Color roles (night) -->
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_on_primary</item>
+        <item name="colorPrimaryContainer">@color/md_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/md_on_primary_container</item>
+        <item name="colorPrimaryInverse">@color/md_primary_inverse</item>
+        <item name="colorSecondary">@color/md_secondary</item>
+        <item name="colorOnSecondary">@color/md_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/md_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/md_on_secondary_container</item>
+        <item name="colorTertiary">@color/md_tertiary</item>
+        <item name="colorOnTertiary">@color/md_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/md_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/md_on_tertiary_container</item>
+        <item name="colorError">@color/md_error</item>
+        <item name="colorOnError">@color/md_on_error</item>
+        <item name="colorErrorContainer">@color/md_error_container</item>
+        <item name="colorOnErrorContainer">@color/md_on_error_container</item>
+        <item name="android:colorBackground">@color/md_background</item>
+        <item name="colorOnBackground">@color/md_on_background</item>
+        <item name="colorSurface">@color/md_surface</item>
+        <item name="colorOnSurface">@color/md_on_surface</item>
+        <item name="colorSurfaceContainerLowest">@color/md_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/md_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/md_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/md_surface_container_highest</item>
+        <item name="colorSurfaceVariant">@color/md_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
+        <item name="colorSurfaceInverse">@color/md_surface_inverse</item>
+        <item name="colorOnSurfaceInverse">@color/md_on_surface_inverse</item>
+        <item name="colorOutline">@color/md_outline</item>
+        <item name="colorOutlineVariant">@color/md_outline_variant</item>
+        <item name="android:colorControlHighlight">@color/md_scrim</item>
+
+        <!-- Expressive shapes (same radii, night inherits from base) -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.P2ptap.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.P2ptap.Large</item>
+
+        <!-- Type scale -->
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.P2ptap.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.P2ptap.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.P2ptap.DisplaySmall</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.P2ptap.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.P2ptap.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.P2ptap.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.P2ptap.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.P2ptap.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.P2ptap.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.P2ptap.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.P2ptap.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.P2ptap.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.P2ptap.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.P2ptap.LabelSmall</item>
+
+        <!-- Component defaults -->
+        <item name="materialButtonStyle">@style/Widget.P2ptap.Button</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.P2ptap.Dialog</item>
+
+        <!-- System bars -->
         <item name="android:statusBarColor">@color/window_bg</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@color/window_bg</item>

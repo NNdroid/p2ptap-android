@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Semantic Window & Card (Night Mode) -->
+    <!-- ── Material 3 Color Tokens (Dark) ───────────────────────────── -->
+    <!-- Primary -->
+    <color name="md_primary">#06B6D4</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#003B42</color>
+    <color name="md_on_primary_container">#CFF7FF</color>
+    <color name="md_primary_inverse">#53E3F4</color>
+    <color name="md_surface_tint">#53E3F4</color>
+
+    <!-- Secondary -->
+    <color name="md_secondary">#6366F1</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#1A1E5C</color>
+    <color name="md_on_secondary_container">#E0E2FF</color>
+
+    <!-- Tertiary -->
+    <color name="md_tertiary">#10B981</color>
+    <color name="md_on_tertiary">#FFFFFF</color>
+    <color name="md_tertiary_container">#003820</color>
+    <color name="md_on_tertiary_container">#B5F5D9</color>
+
+    <!-- Error -->
+    <color name="md_error">#EF4444</color>
+    <color name="md_on_error">#FFFFFF</color>
+    <color name="md_error_container">#4A0000</color>
+    <color name="md_on_error_container">#FFE8E8</color>
+
+    <!-- Background & Surface -->
+    <color name="md_background">#070A10</color>
+    <color name="md_on_background">#F8FAFC</color>
+    <color name="md_surface">#0F172A</color>
+    <color name="md_on_surface">#F8FAFC</color>
+    <color name="md_surface_container_lowest">#070A10</color>
+    <color name="md_surface_container_low">#0F172A</color>
+    <color name="md_surface_container">#1E293B</color>
+    <color name="md_surface_container_high">#2A3744</color>
+    <color name="md_surface_container_highest">#334155</color>
+    <color name="md_surface_variant">#334155</color>
+    <color name="md_on_surface_variant">#94A3B8</color>
+    <color name="md_surface_inverse">#F8FAFC</color>
+    <color name="md_on_surface_inverse">#0F172A</color>
+    <color name="md_inverse_surface">#070A10</color>
+    <color name="md_inverse_on_surface">#F8FAFC</color>
+
+    <!-- Outline -->
+    <color name="md_outline">#475569</color>
+    <color name="md_outline_variant">#334155</color>
+
+    <!-- Scrim -->
+    <color name="md_scrim">#69000000</color>
+    <color name="md_scrap_inverse">#FFFFFF</color>
+
+    <!-- Semantic aliases (night overrides) -->
     <color name="window_bg">#070A10</color>
     <color name="card_bg">#0F172A</color>
     <color name="card_stroke">#1E293B</color>
@@ -10,10 +62,8 @@
     <color name="surface_light_card">#0F172A</color>
     <color name="surface_light_stroke">#1E293B</color>
 
-    <!-- Status Colors (Night Mode) -->
     <color name="status_timeout">#FB923C</color>
 
-    <!-- Log Viewer Colors (Night Mode) -->
     <color name="log_bg">#070A10</color>
     <color name="log_card">#0F172A</color>
     <color name="log_stroke">#1E293B</color>
@@ -25,8 +75,13 @@
     <color name="log_error">#F87171</color>
     <color name="log_debug">#94A3B8</color>
 
-    <!-- Text Colors (Night Mode) -->
     <color name="text_primary">#F8FAFC</color>
     <color name="text_secondary">#94A3B8</color>
     <color name="text_muted">#64748B</color>
+
+    <!-- Protocol Badge Colors (night) -->
+    <color name="badge_ipv6">#A78BFA</color>
+    <color name="badge_cidr">#60A5FA</color>
+    <color name="badge_relay">#A78BFA</color>
+    <color name="badge_tcp">#FBBF24</color>
 </resources>

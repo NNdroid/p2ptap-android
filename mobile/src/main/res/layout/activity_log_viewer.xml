@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/window_bg"
+    android:background="?attr/colorSurfaceContainerLow"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/window_bg"
+        android:background="?attr/colorSurfaceContainerLow"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -17,9 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/title_log_viewer"
-            app:titleTextColor="@color/text_primary"
+            app:titleTextColor="?attr/colorOnSurface"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@color/text_primary" />
+            app:navigationIconTint="?attr/colorOnSurface" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -50,9 +50,9 @@
                 app:boxCornerRadiusTopEnd="14dp"
                 app:boxCornerRadiusTopStart="14dp"
                 app:boxBackgroundMode="outline"
-                app:boxStrokeColor="@color/card_stroke"
+                app:boxStrokeColor="?attr/colorOutlineVariant"
                 app:startIconDrawable="@drawable/ic_search"
-                app:startIconTint="@color/text_secondary"
+                app:startIconTint="?attr/colorOnSurfaceVariant"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -62,7 +62,7 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:textSize="13sp"
-                    android:textColor="@color/text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,7 +74,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 app:icon="@drawable/ic_theme_mode"
-                app:iconTint="@color/text_primary" />
+                app:iconTint="?attr/colorOnSurface" />
 
             <!-- Pause / Resume Button -->
             <com.google.android.material.button.MaterialButton
@@ -84,7 +84,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="4dp"
                 app:icon="@drawable/ic_pause"
-                app:iconTint="@color/brand_primary" />
+                app:iconTint="?attr/colorPrimary" />
 
             <!-- Share Logs Button -->
             <com.google.android.material.button.MaterialButton
@@ -94,7 +94,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="4dp"
                 app:icon="@drawable/ic_share"
-                app:iconTint="@color/text_primary" />
+                app:iconTint="?attr/colorOnSurface" />
 
             <!-- Clear Logs Button -->
             <com.google.android.material.button.MaterialButton
@@ -209,7 +209,7 @@
                 android:layout_weight="1"
                 android:text="@string/telemetry_loading"
                 android:textSize="12sp"
-                android:textColor="@color/text_secondary" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCopyLogs"

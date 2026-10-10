@@ -222,6 +222,7 @@
     <string name="label_exit_node">Nodo de salida / Puerta de enlace</string>
     <string name="exit_node_auto_display">🌐 Modo Malla Automático (Sin salida enrutada)</string>
     <string name="exit_node_active_fmt">🚀 Puerta de enlace: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 Puerta de enlace: %1$s (%2$s)</string></string>
     <string name="dialog_exit_node_title">Seleccionar nodo de salida</string>
     <string name="dialog_exit_node_desc">Selecciona un nodo par para enrutar el tráfico de Internet</string>
     <string name="exit_node_auto_title">Modo Malla Automático (Predeterminado)</string>

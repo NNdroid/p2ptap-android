@@ -3,7 +3,7 @@ package app.fjj.p2ptap.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Color
+import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -119,30 +119,30 @@ class PeersDetailDialog : LiveDataSheet() {
                     "ok" -> {
                         if (item.isDirect) {
                             text = getString(R.string.badge_direct)
-                            setTextColor(Color.parseColor("#059669"))
+                            setTextColor(ContextCompat.getColor(ctx, R.color.status_connected))
                         } else if (item.isRelayed) {
                             text = getString(R.string.badge_relay)
-                            setTextColor(Color.parseColor("#0284C7"))
+                            setTextColor(ContextCompat.getColor(ctx, R.color.brand_primary_dark))
                         } else {
                             text = getString(R.string.badge_error)
-                            setTextColor(Color.parseColor("#DC2626"))
+                            setTextColor(ContextCompat.getColor(ctx, R.color.status_error))
                         }
                     }
                     "relay_ok" -> {
                         text = getString(R.string.badge_relay)
-                        setTextColor(Color.parseColor("#0284C7"))
+                        setTextColor(ContextCompat.getColor(ctx, R.color.brand_primary_dark))
                     }
                     "connecting" -> {
                         text = getString(R.string.badge_connecting)
-                        setTextColor(Color.parseColor("#D97706"))
+                        setTextColor(ContextCompat.getColor(ctx, R.color.status_connecting))
                     }
                     "obf_failed", "proto_mismatch" -> {
                         text = getString(if (item.connState == "obf_failed") R.string.telemetry_crypto_failed else R.string.telemetry_proto_mismatch)
-                        setTextColor(Color.parseColor("#DC2626"))
+                        setTextColor(ContextCompat.getColor(ctx, R.color.status_error))
                     }
                     else -> {
                         text = getString(if (item.connState == "unreachable") R.string.telemetry_unreachable else R.string.telemetry_unknown)
-                        setTextColor(Color.parseColor("#DC2626"))
+                        setTextColor(ContextCompat.getColor(ctx, R.color.status_error))
                     }
                 }
             }

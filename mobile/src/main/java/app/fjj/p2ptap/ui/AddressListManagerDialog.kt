@@ -6,7 +6,7 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Color
+import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -283,7 +283,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.dialog_edit_address_title)
             .setView(editText)
-            .setPositiveButton(R.string.msg_config_saved) { _, _ ->
+            .setPositiveButton(R.string.btn_save) { _, _ ->
                 val text = editText.text.toString().trim()
                 if (text.isNotBlank() && index in items.indices) {
                     val replacements = if (isPeerAddressList()) splitPeerAddresses(text) else listOf(text)
@@ -380,7 +380,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
 
             val badge = detectProtocolBadge(addr)
             b.tvProtocolBadge.text = badge.first
-            b.tvProtocolBadge.setBackgroundColor(Color.parseColor(badge.second))
+            b.tvProtocolBadge.setBackgroundColor(ContextCompat.getColor(requireContext(), badge.second))
 
             b.ivCopy.setOnClickListener { onCopy(addr) }
             b.ivEdit.setOnClickListener { onEdit(position, addr) }
@@ -389,19 +389,19 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
 
         override fun getItemCount(): Int = items.size
 
-        private fun detectProtocolBadge(addr: String): Pair<String, String> {
+        private fun detectProtocolBadge(addr: String): Pair<String, Int> {
             val lower = addr.lowercase()
             return when {
-                addr.trim() == "*" -> getString(R.string.protocol_all) to "#10B981"
-                addr.startsWith("12D3") || addr.startsWith("Qm") -> "Peer ID" to "#6366F1"
-                lower.contains("quic-v1") || lower.contains("quic") -> "QUIC-v1" to "#0891B2"
-                lower.contains("webrtc") -> "WebRTC" to "#10B981"
-                lower.contains("webtransport") -> "WebTransport" to "#6366F1"
-                lower.contains("p2p-circuit") -> getString(R.string.protocol_relay) to "#8B5CF6"
-                lower.contains("/tcp/") -> "TCP" to "#F59E0B"
-                lower.contains("/ip6/") || lower.contains("::") -> "IPv6" to "#7C3AED"
-                lower.contains("/") && lower.contains(".") -> "CIDR" to "#2563EB"
-                else -> getString(R.string.protocol_endpoint) to "#06B6D4"
+                addr.trim() == "*" -> getString(R.string.protocol_all) to R.color.status_connected
+                addr.startsWith("12D3") || addr.startsWith("Qm") -> "Peer ID" to R.color.brand_secondary
+                lower.contains("quic-v1") || lower.contains("quic") -> "QUIC-v1" to R.color.brand_primary_dark
+                lower.contains("webrtc") -> "WebRTC" to R.color.status_connected
+                lower.contains("webtransport") -> "WebTransport" to R.color.brand_secondary
+                lower.contains("p2p-circuit") -> getString(R.string.protocol_relay) to R.color.badge_relay
+                lower.contains("/tcp/") -> "TCP" to R.color.badge_tcp
+                lower.contains("/ip6/") || lower.contains("::") -> "IPv6" to R.color.badge_ipv6
+                lower.contains("/") && lower.contains(".") -> "CIDR" to R.color.badge_cidr
+                else -> getString(R.string.protocol_endpoint) to R.color.brand_primary
             }
         }
     }
