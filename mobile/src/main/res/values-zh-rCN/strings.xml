@@ -284,4 +284,17 @@
     <string name="help_turn_servers">格式: turn:host:port?username=USER&amp;credential=PASS。留空以禁用 TURN 中继。</string>
     <string name="dialog_manage_turn">管理 TURN 服务器列表</string>
     <string name="label_nat_status">NAT 状态</string>
+    <string name="err_invalid_block_size">块大小在混淆模式为 block 时必须大于 0</string>
+    <string name="err_invalid_dns_fmt">DNS 服务器无效：%1$s</string>
+    <string name="err_invalid_fixed_size">固定大小在混淆模式为 fixed 时必须大于 0</string>
+    <string name="err_invalid_ipv6">请输入有效的 IPv6 CIDR（如 fd00::88/64）</string>
+    <string name="err_invalid_jitter">抖动范围必须大于等于 0</string>
+    <string name="err_invalid_max_frag_size">最大分片大小必须为 0（自动）或 256–1400</string>
+    <string name="err_invalid_mtu">MTU 必须在 576 到 9000 之间</string>
+    <string name="err_invalid_node_name">节点名称必须不超过 64 个字符</string>
+    <string name="err_invalid_port">端口必须在 1 到 65535 之间</string>
+    <string name="err_invalid_stun_fmt">STUN 服务器无效：%1$s，请使用 host:port 或 stun:host:port</string>
+    <string name="err_invalid_subnet_fmt">子网无效：%1$s，请使用有效的 CIDR（如 192.168.1.0/24）</string>
+    <string name="err_invalid_timeout">超时必须在 1 到 120 秒之间</string>
+    <string name="err_invalid_turn_fmt">TURN 服务器无效：%1$s，必须以 turn: 开头</string>
 </resources>

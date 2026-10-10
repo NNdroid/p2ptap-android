@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">詳細をコピー</string>
     <string name="crash_copy_success">コピーしました</string>
     <string name="crash_share_title">P2PTap クラッシュレポート</string>
+    <string name="err_obfuscation_mode">混淆モードは fixed、block、random、dynamic または auto でなければなりません。</string>
+    <string name="hint_acl_default_action">ACL デフォルト動作は accept/allow または drop/deny でなければなりません。</string>
+    <string name="hint_acl_rules">ACL ルールフィールドを確認してください：action、direction、protocol、IP CIDR、ピア ID、ポート。</string>
+    <string name="hint_advertised_subnets">各サブネットは有効なネットワーク CIDR である必要があります（例：192.168.1.0/24）。</string>
+    <string name="hint_allowed_subnet_peers">各エントリは有効なピア ID または * である必要がありますE。</string>
+    <string name="hint_driver_type">ドライバ種別は auto、tap または wintun でなければなりません。</string>
+    <string name="hint_exit_node_wan_interface">WAN インターフェースは 16 文字以下、英数字、- _ . のみ使用可。</string>
+    <string name="hint_listen_addrs">有効な multiaddr である必要があります（例：/ip4/0.0.0.0/udp/4001）。</string>
+    <string name="hint_log_level">ログレベルは debug、info、warn または error でなければなりません。</string>
+    <string name="hint_node_name">ノード名は 64 文字以下、英数字、- _ . @ とスペースのみ使用可。</string>
+    <string name="hint_obfuscation_algorithm">混淆アルゴリズムは auto、none、aes-gcm または chacha20 でなければなりません。</string>
+    <string name="hint_obfuscation_auto_detect_interval">自動検出間隔は 0 より大きくなければなりません（秒）。</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">自動検出しきい値は 0 より大きくなければなりません（バイト）。</string>
+    <string name="hint_obfuscation_block_size">モードが block の場合、ブロックサイズは 0 より大きくなければなりません。</string>
+    <string name="hint_obfuscation_fixed_size">モードが fixed の場合、固定サイズは 0 より大きくなければなりません。</string>
+    <string name="hint_obfuscation_jitter_range">ジッター範囲は 0 以上でなければなりません。</string>
+    <string name="hint_obfuscation_max_frag_size">最大フラグメントサイズは 0（自動）または 256–1400 でなければなりませんE。</string>
+    <string name="hint_obfuscation_min_size">最小サイズは最大サイズ以下でなければなりません。</string>
+    <string name="hint_stun_servers">STUN サーバー形式：host:port、stun:host:port または /udp/host/port。</string>
+    <string name="hint_tap_ip">TAP IPv4 は 有効なネットワーク CIDR（例：10.0.0.1/24）でなければなりません。ホストアドレスは不可。</string>
+    <string name="hint_tap_ipv6">TAP IPv6 は有効な IPv6 ネットワーク CIDR（例：fd00::1/64）でなければなりません。</string>
+    <string name="hint_tap_mac">MAC アドレスは 6 オクテットでなければなりません（例：02:00:00:00:00:01）。</string>
+    <string name="hint_tap_name">TAP 名は 16 文字以下でスペース不可。</string>
+    <string name="hint_tcp_brutal_rate">TCP ブラッタルレートは 100MbpsE、1Gbps、1Kbps のような形式にしてくださいE。</string>
+    <string name="hint_tls_server_name">TLS サーバー名は有効な DNS ホスト名でなければなりません。</string>
+    <string name="hint_tls_sni_suffix">TLS SNI サフィックスは有効な DNS ホスト名でなければなりません。</string>
+    <string name="hint_transport_strategy">トランスポート戦略は best_path、redundant または fallback でなければなりません。</string>
+    <string name="hint_turn_servers">TURN サーバー形式：turn:host:port（オプション：?username=…&amp;credential=…）。</string>
+    <string name="hint_web_ui_listen_ip">WebUI リッスン IP は 有効な IPv4 アドレスでなければなりません。</string>
+    <string name="hint_web_ui_listen_ipv6">WebUI リッスン IPv6 は 有効な IPv6 アドレスでなければなりませんE。</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP 最大レートは 0 以上でなければなりません。</string>
+    <string name="hint_web_ui_pcap_sample_every">PCAP サンプリング間隔は 1 以上でなければなりませんE。</string>
+    <string name="hint_web_ui_port">WebUI ポートは 1 から 65535 の間でなければなりません。</string>
 </resources>

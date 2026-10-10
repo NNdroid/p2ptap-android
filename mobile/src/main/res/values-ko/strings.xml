@@ -268,4 +268,17 @@
     <string name="help_turn_servers">형식: turn:host:port?username=USER&amp;credential=PASS. 비워두면 TURN 릴레이 비활성화.</string>
     <string name="dialog_manage_turn">TURN 서버 관리</string>
     <string name="label_nat_status">NAT 상태</string>
+    <string name="err_invalid_block_size">모드가 block이면 블록 크기는 0보다 커야 합니다</string>
+    <string name="err_invalid_dns_fmt">잘못된 DNS 서버: %1$s</string>
+    <string name="err_invalid_fixed_size">모드가 fixed이면 고정 크기는 0보다 커야 합니다</string>
+    <string name="err_invalid_ipv6">유효한 IPv6 CIDR를 입력하세요 (예: fd00::88/64)</string>
+    <string name="err_invalid_jitter">지터 범위는 0 이상이어야 합니다</string>
+    <string name="err_invalid_max_frag_size">최대 분편 크기는 0(자동) 또는 256–1400이어야 합니다</string>
+    <string name="err_invalid_mtu">MTU는 576에서 9000 사이여야 합니다</string>
+    <string name="err_invalid_node_name">노드 이름은 64자 이하여야 합니다</string>
+    <string name="err_invalid_port">포트는 1~65535 사이여야 합니다</string>
+    <string name="err_invalid_stun_fmt">잘못된 STUN 서버: %1$s. host:port 또는 stun:host:port를 사용하세요</string>
+    <string name="err_invalid_subnet_fmt">잘못된 서브넷: %1$s. 유효한 CIDR를 사용하세요 (예: 192.168.1.0/24)</string>
+    <string name="err_invalid_timeout">타임아웃은 1~120 초 사이여야 합니다</string>
+    <string name="err_invalid_turn_fmt">잘못된 TURN 서버: %1$s. turn:으로 시작해야 합니다</string>
 </resources>

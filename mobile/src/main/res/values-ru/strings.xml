@@ -69,7 +69,7 @@
     <string name="hint_transport_strategy">Стратегия выбора транспорта</string>
     <string name="hint_log_level">Уровень логирования</string>
     <string name="switch_accept_subnets">Принимать анонсированные подсети</string>
-    <string name="switch_obfuscation">Включить маскировку трафика и E2E шифрование</string>
+    <string name="switch_obfuscation">Включить маскировку трафика и E2 шифрование</string>
     <string name="switch_discover_boot_mesh">Обнаруживать Boot релейную сеть</string>
     <string name="switch_webui_enable">Включить встроенную веб-панель</string>
     <string name="title_log_viewer">Журнал диагностики</string>
@@ -277,4 +277,17 @@
     <string name="help_turn_servers">Формат: turn:host:port?username=USER&amp;credential=PASS. Оставьте пустым, чтобы отключить TURN-ретрансляцию.</string>
     <string name="dialog_manage_turn">Управление TURN-серверами</string>
     <string name="label_nat_status">Статус NAT</string>
+    <string name="err_invalid_block_size">Размер блока должен быть больше 0, если режим block.</string>
+    <string name="err_invalid_dns_fmt">Недопустимый DNS-сервер: %1$s</string>
+    <string name="err_invalid_fixed_size">Фиксированный размер должен быть больше 0, если режим fixed.</string>
+    <string name="err_invalid_ipv6">Введите допустимую IPv6-CIDR (напр. fd00::88/64).</string>
+    <string name="err_invalid_jitter">Диапазон джиттера должен быть 0 или больше.</string>
+    <string name="err_invalid_max_frag_size">Максимальный размер фрагмента: 0 (авто) или 256–1400.</string>
+    <string name="err_invalid_mtu">MTU должен быть от 576 до 9000.</string>
+    <string name="err_invalid_node_name">Имя узла должно быть не более 64 символов.</string>
+    <string name="err_invalid_port">Порт должен быть от 1 до 65535.</string>
+    <string name="err_invalid_stun_fmt">Недопустимый STUN-сервер: %1$s. Используйте host:port или stun:host:port.</string>
+    <string name="err_invalid_subnet_fmt">Недопустимое подсет: %1$s. Используйте допустимую CIDR (напр. 192.168.1.0/24).</string>
+    <string name="err_invalid_timeout">Таймаут должен быть от 1 до 120 секунд.</string>
+    <string name="err_invalid_turn_fmt">Недопустимый TURN-сервер: %1$s. Должен начинаться с turn:.</string>
 </resources>

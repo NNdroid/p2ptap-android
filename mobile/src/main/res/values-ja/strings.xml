@@ -268,4 +268,17 @@
     <string name="help_turn_servers">形式: turn:host:port?username=USER&amp;credential=PASS。空にすると TURN レイを無効化します。</string>
     <string name="dialog_manage_turn">TURN サーバー管理</string>
     <string name="label_nat_status">NAT ステータス</string>
+    <string name="err_invalid_block_size">ブロックサイズはモードが block の場合 0 より大きくなければなりません</string>
+    <string name="err_invalid_dns_fmt">無効な DNS サーバー：%1$s</string>
+    <string name="err_invalid_fixed_size">固定サイズはモードが fixed の場合 0 より大きくなければなりません</string>
+    <string name="err_invalid_ipv6">有効な IPv6 CIDR を入力してください（例：fd00::88/64）</string>
+    <string name="err_invalid_jitter">ジッター範囲は 0 以上でなければなりません</string>
+    <string name="err_invalid_max_frag_size">最大フラグメントサイズは 0（自動）または 256–1400 でなければなりません</string>
+    <string name="err_invalid_mtu">MTU は 576 から 9000 の間でなければなりません</string>
+    <string name="err_invalid_node_name">ノード名は 64 文字以下でなければなりません</string>
+    <string name="err_invalid_port">ポートは 1 から 65535 の間でなければなりません</string>
+    <string name="err_invalid_stun_fmt">無効な STUN サーバー：%1$s。host:port または stun:host:port を使用してください</string>
+    <string name="err_invalid_subnet_fmt">無効なサブネット：%1$s。有効な CIDR を使用してください（例：192.168.1.0/24）</string>
+    <string name="err_invalid_timeout">タイムアウトは 1 から 120 秒の間でなければなりません</string>
+    <string name="err_invalid_turn_fmt">無効な TURN サーバー：%1$s。turn: で始まらなければなりません</string>
 </resources>

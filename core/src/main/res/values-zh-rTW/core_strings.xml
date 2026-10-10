@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">複製詳情</string>
     <string name="crash_copy_success">已複製到剪貼簿</string>
     <string name="crash_share_title">P2PTap 崩潰報告</string>
+    <string name="err_obfuscation_mode">特徵混淆模式必須為 fixed、block、random、dynamic 或 auto。</string>
+    <string name="hint_acl_default_action">ACL 預設動作必須為 accept/allow 或 drop/deny。</string>
+    <string name="hint_acl_rules">檢查 ACL 規則欄位：action、direction、protocol、IP CIDR、peer ID 和埠。</string>
+    <string name="hint_advertised_subnets">每個子網必須是有效的網路 CIDR（如 192.168.1.0/24）。</string>
+    <string name="hint_allowed_subnet_peers">每項必須是有效的 peer ID 或 *。</string>
+    <string name="hint_driver_type">驅動程式類型必須為 auto、tap 或 wintun。</string>
+    <string name="hint_exit_node_wan_interface">WAN 介面名稱最多 16 個字元，僅允許字母、數字、- _ .。</string>
+    <string name="hint_listen_addrs">必須是有效的 multiaddr（如 /ip4/0.0.0.0/udp/4001）。</string>
+    <string name="hint_log_level">日誌等級必須為 debug、info、warn 或 error。</string>
+    <string name="hint_node_name">節點名稱最多 64 個字元，僅允許字母、數字、- _ . @ 和空格。</string>
+    <string name="hint_obfuscation_algorithm">特徵混淆演算法必須為 auto、none、aes-gcm 或 chacha20。</string>
+    <string name="hint_obfuscation_auto_detect_interval">自動偵測間隔必須大於 0（秒）。</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">自動偵測門檻必須大於 0（位元組）。</string>
+    <string name="hint_obfuscation_block_size">模式為 block 時，區塊大小必須大於 0。</string>
+    <string name="hint_obfuscation_fixed_size">模式為 fixed 時，固定大小必須大於 0。</string>
+    <string name="hint_obfuscation_jitter_range">抖動範圍必須大於等於 0。</string>
+    <string name="hint_obfuscation_max_frag_size">最大分片大小必須為 0（自動）或 256–1400。</string>
+    <string name="hint_obfuscation_min_size">最小大小必須小於等於最大大小。</string>
+    <string name="hint_stun_servers">STUN 伺服器格式：host:port、stun:host:port 或 /udp/host/port。</string>
+    <string name="hint_tap_ip">TAP IPv4 必須是有效的網路 CIDR（如 10.0.0.1/24），不能是主机位址。</string>
+    <string name="hint_tap_ipv6">TAP IPv6 必須是有效的 IPv6 網路 CIDR（如 fd00::1/64）。</string>
+    <string name="hint_tap_mac">MAC 位址必須是 6 個八位元組（如 02:00:00:00:00:01）。</string>
+    <string name="hint_tap_name">TAP 名稱最多 16 個字元且不能包含空格。</string>
+    <string name="hint_tcp_brutal_rate">TCP 暴力速率格式如 100Mbps、1Gbps 或 1Kbps。</string>
+    <string name="hint_tls_server_name">TLS 伺服器名稱必須是有效的 DNS 主機名。</string>
+    <string name="hint_tls_sni_suffix">TLS SNI 後綴必須是有效的 DNS 主機名。</string>
+    <string name="hint_transport_strategy">傳輸策略必須為 best_path、redundant 或 fallback。</string>
+    <string name="hint_turn_servers">TURN 伺服器格式：turn:host:port（可選 ?username=…&amp;credential=…）。</string>
+    <string name="hint_web_ui_listen_ip">WebUI 監聽 IP 必須是有效的 IPv4 位址。</string>
+    <string name="hint_web_ui_listen_ipv6">WebUI 監聽 IPv6 必須是有效的 IPv6 位址。</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP 最大速率必須大於等於 0。</string>
+    <string name="hint_web_ui_pcap_sample_every">PCAP 採樣間隔必須大於等於 1。</string>
+    <string name="hint_web_ui_port">WebUI 埠必須在 1 到 65535 之間。</string>
 </resources>

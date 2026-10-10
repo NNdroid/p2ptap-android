@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">Copiar detalles</string>
     <string name="crash_copy_success">Informe de fallo copiado al portapapeles</string>
     <string name="crash_share_title">Informe de fallo de P2PTap</string>
+    <string name="err_obfuscation_mode">El modo de ofuscación debe ser fixed, block, random, dynamic o auto.</string>
+    <string name="hint_acl_default_action">La acción predeterminada ACL debe ser accept/allow o drop/deny.</string>
+    <string name="hint_acl_rules">Revise los campos de regla ACL: action, direction, protocol, CIDR de IP, peer ID y puerto.</string>
+    <string name="hint_advertised_subnets">Cada subred debe ser una CIDR de red válida (p. ej. 192.168.1.0/24).</string>
+    <string name="hint_allowed_subnet_peers">Cada entrada debe ser una peer ID válida o *.</string>
+    <string name="hint_driver_type">El tipo de controlador debe ser auto, tap o wintun.</string>
+    <string name="hint_exit_node_wan_interface">La interfaz WAN debe tener 16 caracteres o menos; solo se permiten letras, dígitos, - _ .</string>
+    <string name="hint_listen_addrs">Debe ser una multiaddr válida (p. ej. /ip4/0.0.0.0/udp/4001).</string>
+    <string name="hint_log_level">El nivel de registro debe ser debug, info, warn o error.</string>
+    <string name="hint_node_name">El nombre del nodo debe tener 64 caracteres o menos; solo se permiten letras, dígitos, - _ . @ y espacio.</string>
+    <string name="hint_obfuscation_algorithm">El algoritmo de ofuscación debe ser auto, none, aes-gcm o chacha20.</string>
+    <string name="hint_obfuscation_auto_detect_interval">El intervalo de detección automática debe ser mayor que 0 (segundos).</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">El umbral de detección automática debe ser mayor que 0 (bytes).</string>
+    <string name="hint_obfuscation_block_size">El tamaño de bloque debe ser mayor que 0 cuando el modo es block.</string>
+    <string name="hint_obfuscation_fixed_size">El tamaño fijo debe ser mayor que 0 cuando el modo es fixed.</string>
+    <string name="hint_obfuscation_jitter_range">El rango de jitter debe ser 0 o mayor.</string>
+    <string name="hint_obfuscation_max_frag_size">El tamaño máximo de fragmento debe ser 0 (auto) o 256–1400.</string>
+    <string name="hint_obfuscation_min_size">El tamaño mínimo debe ser menor o igual que el máximo.</string>
+    <string name="hint_stun_servers">Formato de servidor STUN: host:port, stun:host:port o /udp/host/port.</string>
+    <string name="hint_tap_ip">TAP IPv4 debe ser una CIDR de red válida (p. ej. 10.0.0.1/24), no una dirección de host.</string>
+    <string name="hint_tap_ipv6">TAP IPv6 debe ser una CIDR de red IPv6 válida (p. ej. fd00::1/64).</string>
+    <string name="hint_tap_mac">La dirección MAC debe tener 6 octetos (p. ej. 02:00:00:00:00:01).</string>
+    <string name="hint_tap_name">El nombre TAP debe tener 16 caracteres o menos sin espacios.</string>
+    <string name="hint_tcp_brutal_rate">La velocidad TCP brutal debe ser como 100Mbps, 1Gbps o 1Kbps.</string>
+    <string name="hint_tls_server_name">El nombre del servidor TLS debe ser un nombre de host DNS válido.</string>
+    <string name="hint_tls_sni_suffix">El sufijo TLS SNI debe ser un nombre de host DNS válido.</string>
+    <string name="hint_transport_strategy">La estrategia de transporte debe ser best_path, redundant o fallback.</string>
+    <string name="hint_turn_servers">Formato de servidor TURN: turn:host:port (opcionalmente con ?username=…&amp;credential=…).</string>
+    <string name="hint_web_ui_listen_ip">La IP de escucha WebUI debe ser una dirección IPv4 válida.</string>
+    <string name="hint_web_ui_listen_ipv6">La IPv6 de escucha WebUI debe ser una dirección IPv6 válida.</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">La tasa máxima de PCAP debe ser 0 o mayor.</string>
+    <string name="hint_web_ui_pcap_sample_every">El intervalo de muestreo PCAP debe ser 1 o mayor.</string>
+    <string name="hint_web_ui_port">El puerto de WebUI debe estar entre 1 y 65535.</string>
 </resources>

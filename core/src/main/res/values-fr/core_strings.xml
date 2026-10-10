@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">Copier</string>
     <string name="crash_copy_success">Copié</string>
     <string name="crash_share_title">P2PTap plantage</string>
+    <string name="err_obfuscation_mode">Le mode d\'obscurcissement doit être fixed, block, random, dynamic ou auto.</string>
+    <string name="hint_acl_default_action">L\'action par défaut ACL doit être accept/allow ou drop/deny.</string>
+    <string name="hint_acl_rules">Vérifiez les champs de règle ACL : action, direction, protocol, CIDR IP, identifiant peer et port.</string>
+    <string name="hint_advertised_subnets">Chaque sous-réseau doit être un CIDR réseau valide (ex. 192.168.1.0/24).</string>
+    <string name="hint_allowed_subnet_peers">Chaque entrée doit être un identifiant peer valide ou *.</string>
+    <string name="hint_driver_type">Le type de pilote doit être auto, tap ou wintun.</string>
+    <string name="hint_exit_node_wan_interface">L\'interface WAN doit avoir 16 caractères ou moins ; seulement lettres, chiffres, - _ . sont autorisés.</string>
+    <string name="hint_listen_addrs">Doit être une multiaddr valide (ex. /ip4/0.0.0.0/udp/4001).</string>
+    <string name="hint_log_level">Le niveau de journal doit être debug, info, warn ou error.</string>
+    <string name="hint_node_name">Le nom du nœud doit avoir 64 caractères ou moins ; seulement lettres, chiffres, - _ . @ et espace sont autorisés.</string>
+    <string name="hint_obfuscation_algorithm">L\'algorithme d\'obscurcissement doit être auto, none, aes-gcm ou chacha20.</string>
+    <string name="hint_obfuscation_auto_detect_interval">L\'intervalle de détection automatique doit être supérieur à 0 (secondes).</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">Le seuil de détection automatique doit être supérieur à 0 (octets).</string>
+    <string name="hint_obfuscation_block_size">La taille de bloc doit être supérieure à 0 quand le mode est block.</string>
+    <string name="hint_obfuscation_fixed_size">La taille fixe doit être supérieure à 0 quand le mode est fixed.</string>
+    <string name="hint_obfuscation_jitter_range">La plage de jitter doit être 0 ou supérieure.</string>
+    <string name="hint_obfuscation_max_frag_size">La taille de fragment maximale doit être 0 (auto) ou 256–1400.</string>
+    <string name="hint_obfuscation_min_size">La taille minimale doit être inférieure ou égale à la taille maximale.</string>
+    <string name="hint_stun_servers">Format du serveur STUN : host:port, stun:host:port ou /udp/host/port.</string>
+    <string name="hint_tap_ip">TAP IPv4 doit être un CIDR réseau valide (ex. 10.0.0.1/24), pas une adresse hôte.</string>
+    <string name="hint_tap_ipv6">TAP IPv6 doit être un CIDR réseau IPv6 valide (ex. fd00::1/64).</string>
+    <string name="hint_tap_mac">L\'adresse MAC doit avoir 6 octets (ex. 02:00:00:00:00:01).</string>
+    <string name="hint_tap_name">Le nom TAP doit avoir 16 caractères ou moins sans espace.</string>
+    <string name="hint_tcp_brutal_rate">Le débit brutal TCP doit être comme 100Mbps, 1Gbps ou 1Kbps.</string>
+    <string name="hint_tls_server_name">Le nom du serveur TLS doit être un nom d\'hôte DNS valide.</string>
+    <string name="hint_tls_sni_suffix">Le suffixe TLS SNI doit être un nom d\'hôte DNS valide.</string>
+    <string name="hint_transport_strategy">La stratégie de transport doit être best_path, redundant ou fallback.</string>
+    <string name="hint_turn_servers">Format du serveur TURN : turn:host:port (facultativement avec ?username=…&amp;credential=…).E</string>
+    <string name="hint_web_ui_listen_ip">L\'IP d\'écoute WebUI doit être une adresse IPv4 valide.</string>
+    <string name="hint_web_ui_listen_ipv6">L\'IPv6 d\'écoute WebUI doit être une adresse IPv6 valide.</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">Le débit maximal PCAP doit être 0 ou supérieur.</string>
+    <string name="hint_web_ui_pcap_sample_every">L\'intervalle d\'échantillonnage PCAP doit être 1 ou supérieur.</string>
+    <string name="hint_web_ui_port">Le port WebUI doit être entre 1 et 65535.</string>
 </resources>

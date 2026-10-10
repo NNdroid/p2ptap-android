@@ -274,4 +274,17 @@
     <string name="help_turn_servers">Format : turn:hôte:port?username=USER&amp;credential=PASS. Laisser vide pour désactiver le relais TURN.</string>
     <string name="dialog_manage_turn">Gérer les serveurs TURN</string>
     <string name="label_nat_status">Statut NAT</string>
+    <string name="err_invalid_block_size">La taille de bloc doit être supérieure à 0 quand le mode est block.</string>
+    <string name="err_invalid_dns_fmt">Serveur DNS invalide : %1$s</string>
+    <string name="err_invalid_fixed_size">La taille fixe doit être supérieure à 0 quand le mode est fixed.</string>
+    <string name="err_invalid_ipv6">Saisissez une CIDR IPv6 valide (ex. fd00::88/64).</string>
+    <string name="err_invalid_jitter">La plage de jitter doit être 0 ou supérieure.</string>
+    <string name="err_invalid_max_frag_size">La taille de fragment maximale doit être 0 (auto) ou 256–1400.</string>
+    <string name="err_invalid_mtu">La MTU doit être entre 576 et 9000.</string>
+    <string name="err_invalid_node_name">Le nom du nœud doit avoir 64 caractères ou moins.</string>
+    <string name="err_invalid_port">Le port doit être entre 1 et 65535.</string>
+    <string name="err_invalid_stun_fmt">Serveur STUN invalide : %1$s. Utilisez host:port ou stun:host:port.</string>
+    <string name="err_invalid_subnet_fmt">Sous-réseau invalide : %1$s. Utilisez une CIDR valide (ex. 192.168.1.0/24).</string>
+    <string name="err_invalid_timeout">Le délai d\'expiration doit être entre 1 et 120 secondes.</string>
+    <string name="err_invalid_turn_fmt">Serveur TURN invalide : %1$s. Doit commencer par turn:.</string>
 </resources>

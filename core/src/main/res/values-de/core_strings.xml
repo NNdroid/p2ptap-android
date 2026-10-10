@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">Details kopieren</string>
     <string name="crash_copy_success">Absturzbericht in Zwischenablage kopiert</string>
     <string name="crash_share_title">P2PTap Absturzbericht</string>
+    <string name="err_obfuscation_mode">Verschleierungsmodus muss fixed, block, random, dynamic oder auto sein.</string>
+    <string name="hint_acl_default_action">ACL-Standardaktion muss accept/allow oder drop/deny sein.</string>
+    <string name="hint_acl_rules">Prüfen Sie ACL-Regelfelder: action, direction, protocol, IP-CIDR, Peer-ID und Port.</string>
+    <string name="hint_advertised_subnets">Jedes Subnetz muss eine gültige Netz-CIDR sein (z. B. 192.168.1.0/24).</string>
+    <string name="hint_allowed_subnet_peers">Jeder Eintrag muss eine gültige Peer-ID oder * sein.</string>
+    <string name="hint_driver_type">Treiberart muss auto, tap oder wintun sein.</string>
+    <string name="hint_exit_node_wan_interface">WAN-Interface maximal 16 Zeichen; nur Buchstaben, Ziffern, - _ . erlaubt.</string>
+    <string name="hint_listen_addrs">Muss eine gültige multiaddr sein (z. B. /ip4/0.0.0.0/udp/4001).</string>
+    <string name="hint_log_level">Protokollstufe muss debug, info, warn oder error sein.</string>
+    <string name="hint_node_name">Knotenname maximal 64 Zeichen; nur Buchstaben, Ziffern, - _ . @ und Leerzeichen erlaubt.</string>
+    <string name="hint_obfuscation_algorithm">Verschleierungsalgorithmus muss auto, none, aes-gcm oder chacha20 sein.</string>
+    <string name="hint_obfuscation_auto_detect_interval">Automatisches Erkennungsintervall muss größer als 0 (Sekunden) sein.</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">Automatischer Erkennungsschwelle muss größer als 0 (Bytes) sein.</string>
+    <string name="hint_obfuscation_block_size">Blockgröße muss größer als 0 sein, wenn Modus block ist.</string>
+    <string name="hint_obfuscation_fixed_size">Feste Größe muss größer als 0 sein, wenn Modus fixed ist.</string>
+    <string name="hint_obfuscation_jitter_range">Jitter-Bereich muss 0 oder größer sein.</string>
+    <string name="hint_obfuscation_max_frag_size">Maximale Fragmentgröße muss 0 (auto) oder 256–1400 sein.</string>
+    <string name="hint_obfuscation_min_size">Mindestgröße muss kleiner oder gleich der Maximalgröße sein.</string>
+    <string name="hint_stun_servers">STUN-Server-Format: host:port, stun:host:port oder /udp/host/port.</string>
+    <string name="hint_tap_ip">TAP IPv4 muss eine gültige Netz-CIDR sein (z. B. 10.0.0.1/24), keine Host-Adresse.</string>
+    <string name="hint_tap_ipv6">TAP IPv6 muss eine gültige IPv6-Netz-CIDR sein (z. B. fd00::1/64).</string>
+    <string name="hint_tap_mac">MAC-Adresse muss 6 Oktette haben (z. B. 02:00:00:00:00:01).</string>
+    <string name="hint_tap_name">TAP-Name maximal 16 Zeichen ohne Leerzeichen.</string>
+    <string name="hint_tcp_brutal_rate">TCP-Brutal-Rate wie 100Mbps, 1Gbps oder 1Kbps.</string>
+    <string name="hint_tls_server_name">TLS-Servername muss ein gültiger DNS-Hostname sein.</string>
+    <string name="hint_tls_sni_suffix">TLS-SNI-Suffix muss ein gültiger DNS-Hostname sein.</string>
+    <string name="hint_transport_strategy">Transportstrategie muss best_path, redundant oder fallback sein.</string>
+    <string name="hint_turn_servers">TURN-Server-Format: turn:host:port (optional mit ?username=…&amp;credential=…).</string>
+    <string name="hint_web_ui_listen_ip">WebUI-Listen-IP muss eine gültige IPv4-Adresse sein.</string>
+    <string name="hint_web_ui_listen_ipv6">WebUI-Listen-IPv6 muss eine gültige IPv6-Adresse sein.</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP-Maximalrate muss 0 oder größer sein.</string>
+    <string name="hint_web_ui_pcap_sample_every">PCAP-Stichprobenintervall muss 1 oder größer sein.</string>
+    <string name="hint_web_ui_port">WebUI-Port muss zwischen 1 und 65535 liegen.</string>
 </resources>

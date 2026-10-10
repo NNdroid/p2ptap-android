@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">Скопировать</string>
     <string name="crash_copy_success">Скопировано</string>
     <string name="crash_share_title">P2PTap отчёт об ошибке</string>
+    <string name="err_obfuscation_mode">Режим маскировки должен быть fixed, block, random, dynamic или auto.</string>
+    <string name="hint_acl_default_action">Действие по умолчанию ACL должно быть accept/allow или drop/deny.</string>
+    <string name="hint_acl_rules">Проверьте поля правила ACL: action, direction, protocol, IP CIDR, ID узла и порт.</string>
+    <string name="hint_advertised_subnets">Каждое подсет должно быть допустимой сетевой CIDR (напр. 192.168.1.0/24).</string>
+    <string name="hint_allowed_subnet_peers">Каждая запись должна быть допустимым ID узла или *.</string>
+    <string name="hint_driver_type">Тип драйвера должен быть auto, tap или wintun.</string>
+    <string name="hint_exit_node_wan_interface">Интерфейс WAN: не более 16 символов; допустимы буквы, цифры, - _ .</string>
+    <string name="hint_listen_addrs">Должно быть допустимым multiaddr (напр. /ip4/0.0.0.0/udp/4001).</string>
+    <string name="hint_log_level">Уровень журнала должен быть debug, info, warn или error.</string>
+    <string name="hint_node_name">Имя узла: не более 64 символов; допустимы буквы, цифры, - _ . @ и пробел.</string>
+    <string name="hint_obfuscation_algorithm">Алгоритм маскировки: auto, none, aes-gcm или chacha20.</string>
+    <string name="hint_obfuscation_auto_detect_interval">Интервал автоопределения должен быть больше 0 (секунд).</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">Порог автоопределения должен быть больше 0 (байтов).</string>
+    <string name="hint_obfuscation_block_size">Размер блока должен быть больше 0, если режим block.</string>
+    <string name="hint_obfuscation_fixed_size">Фиксированный размер должен быть больше 0, если режим fixed.</string>
+    <string name="hint_obfuscation_jitter_range">Диапазон джиттера должен быть 0 или больше.</string>
+    <string name="hint_obfuscation_max_frag_size">Максимальный размер фрагмента: 0 (авто) или 256–1400.</string>
+    <string name="hint_obfuscation_min_size">Минимальный размер не должен превышать максимальный.</string>
+    <string name="hint_stun_servers">Формат STUN-сервера: host:port, stun:host:port или /udp/host/port.</string>
+    <string name="hint_tap_ip">TAP IPv4 должен быть допустимой сетевой CIDR (напр. 10.0.0.1/24), не адрес хоста.</string>
+    <string name="hint_tap_ipv6">TAP IPv6 должен быть допустимой сетевой CIDR IPv6 (напр. fd00::1/64).</string>
+    <string name="hint_tap_mac">MAC-адрес должен содержать 6 октетов (напр. 02:00:00:00:00:01).</string>
+    <string name="hint_tap_name">Имя TAP: не более 16 символов без пробелов.</string>
+    <string name="hint_tcp_brutal_rate">Скорость TCP brutal: например, 100Mbps, 1Gbps или 1Kbps.</string>
+    <string name="hint_tls_server_name">Имя TLS-сервера должно быть допустимым DNS-именем хоста.</string>
+    <string name="hint_tls_sni_suffix">Суффикс TLS SNI должен быть допустимым DNS-именем хоста.</string>
+    <string name="hint_transport_strategy">Стратегия транспорта: best_path, redundant или fallback.</string>
+    <string name="hint_turn_servers">Формат TURN-сервера: turn:host:port (опционально ?username=…&amp;credential=…).E</string>
+    <string name="hint_web_ui_listen_ip">IP-адрес слушания WebUI должен быть допустимым IPv4.</string>
+    <string name="hint_web_ui_listen_ipv6">IPv6-адрес слушania WebUI должен быть допустимым IPv6.</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">Максимальная скорость PCAP: 0 или больше.</string>
+    <string name="hint_web_ui_pcap_sample_every">Интервал выборки PCAP: 1 или больше.</string>
+    <string name="hint_web_ui_port">Порт WebUI должен быть от 1 до 65535.</string>
 </resources>

@@ -57,4 +57,37 @@
     <string name="crash_btn_copy">세부 정보 복사</string>
     <string name="crash_copy_success">복사했습니다</string>
     <string name="crash_share_title">P2PTap 충돌 보고서</string>
+    <string name="err_obfuscation_mode">난독화 모드: fixed, block, random, dynamic 또는 auto 여야 합니다.</string>
+    <string name="hint_acl_default_action">ACL 기본 동작: accept/allow 또는 drop/deny 여야 합니다.</string>
+    <string name="hint_acl_rules">ACL 규칙 필드를 확인하세요: action, direction, protocol, IP CIDR, 피어 ID, 포트.</string>
+    <string name="hint_advertised_subnets">각 서브넷 은 유효한 네트워크 CIDR이어야 합니다 (예: 192.168.1.0/24).</string>
+    <string name="hint_allowed_subnet_peers">각 항목 은 유효한 피어 ID 또는 * 여야 합니다.</string>
+    <string name="hint_driver_type">드라이버 유형: auto, tap 또는 wintun 여야 합니다.</string>
+    <string name="hint_exit_node_wan_interface">WAN 인터페이스는 16자 이하, 영숫자 및 - _ .만 허용됩니다.</string>
+    <string name="hint_listen_addrs">유효한 multiaddr이어야 합니다 (예: /ip4/0.0.0.0/udp/4001).</string>
+    <string name="hint_log_level">로그 수준: debug, info, warn 또는 error 여야 합니다.</string>
+    <string name="hint_node_name">노드 이름 은 64자 이하, 영숫자 및 - _ . @ 공간만 허용됩니다.</string>
+    <string name="hint_obfuscation_algorithm">난독화 알고리즘: auto, none, aes-gcm 또는 chacha20 여야 합니다.</string>
+    <string name="hint_obfuscation_auto_detect_interval">자동 감지 간격 은 0초보다 커야 합니다.</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">자동 감지 임계값은 0바이트보다 커야 합니다.</string>
+    <string name="hint_obfuscation_block_size">모드 가 block이면 블록 크기 는 0보다 커야 합니다.</string>
+    <string name="hint_obfuscation_fixed_size">모드 가 fixed이 면 고정 크기 는 0보다 커야 합니다.</string>
+    <string name="hint_obfuscation_jitter_range">지터 범위 는 0 이상이어야 합니다.</string>
+    <string name="hint_obfuscation_max_frag_size">최대 분편 크기 는 0(자동) 또는 256–1400이 어야 합니다.</string>
+    <string name="hint_obfuscation_min_size">최소 크기 는 최대 크기 보다 작거나 같아야 합니다.</string>
+    <string name="hint_stun_servers">STUN 서버 형식: host:port, stun:host:port 또는 /udp/host/port.</string>
+    <string name="hint_tap_ip">TAP IPv4 는 유효한 네트워크 CIDR이 어야 합니다 (예: 10.0.0.1/24). 호스트 주소 불가.</string>
+    <string name="hint_tap_ipv6">TAP IPv6 는 유효한 IPv6 네트워크 CIDR이 어야 합니다 (예: fd00::1/64).</string>
+    <string name="hint_tap_mac">MAC 주소 는 6개 옥텟이 어야 합니다 (예: 02:00:00:00:00:01).</string>
+    <string name="hint_tap_name">TAP 이름 은 16자 이하, 공백 불가.</string>
+    <string name="hint_tcp_brutal_rate">TCP brutal 속도 형식: 100Mbps, 1Gbps 또는 1Kbps.</string>
+    <string name="hint_tls_server_name">TLS 서버 이름 은 유효한 DNS 호스트명이어야 합니다.</string>
+    <string name="hint_tls_sni_suffix">TLS SNI 접미사 는 유효한 DNS 호스트명이어야 합니다.</string>
+    <string name="hint_transport_strategy">전달 전략: best_path, redundant 또는 fallback 여야 합니다.</string>
+    <string name="hint_turn_servers">TURN 서버 형식 : turn:host:port (선택 사항: ?username=…&amp;credential=…).E</string>
+    <string name="hint_web_ui_listen_ip">WebUI 수신 IP는 유효한 IPv4 주소여야 합니다.</string>
+    <string name="hint_web_ui_listen_ipv6">WebUI 수신 IPv6 는 유효 한 IPv6 주소여야 합니다.</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP 최대 속도 는 0 이상이어야 합니다.</string>
+    <string name="hint_web_ui_pcap_sample_every">PCAP 샘플링 간격은 1 이상이어야 합니다.</string>
+    <string name="hint_web_ui_port">WebUI 포트 는 1~65535 사이여야 합니다.</string>
 </resources>

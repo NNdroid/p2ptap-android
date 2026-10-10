@@ -266,4 +266,17 @@
     <string name="hint_hole_punch_timeout">打洞逾時（秒）</string>
     <string name="help_hole_punch_timeout">範圍 10-30，較大值會等待更長的直連連線。</string>
     <string name="hint_stun_servers">STUN 伺服器（每行一個）</string>
+    <string name="err_invalid_block_size">塊大小在混淆模式為 block 時必須大於 0</string>
+    <string name="err_invalid_dns_fmt">DNS 伺服器無效：%1$s</string>
+    <string name="err_invalid_fixed_size">固定大小在混淆模式為 fixed 時必須大於 0</string>
+    <string name="err_invalid_ipv6">請輸入有效的 IPv6 CIDR（如 fd00::88/64）</string>
+    <string name="err_invalid_jitter">抖動範圍必須大於等於 0</string>
+    <string name="err_invalid_max_frag_size">最大分片大小必須為 0（自動）或 256–1400</string>
+    <string name="err_invalid_mtu">MTU 必須在 576 到 9000 之間</string>
+    <string name="err_invalid_node_name">節點名稱必須不超過 64 個字元</string>
+    <string name="err_invalid_port">埠必須在 1 到 65535 之間</string>
+    <string name="err_invalid_stun_fmt">STUN 伺服器無效：%1$s，請使用 host:port 或 stun:host:port</string>
+    <string name="err_invalid_subnet_fmt">子網無效：%1$s，請使用有效的 CIDR（如 192.168.1.0/24）</string>
+    <string name="err_invalid_timeout">超時必須在 1 到 120 秒之間</string>
+    <string name="err_invalid_turn_fmt">TURN 伺服器無效：%1$s，必須以 turn: 開頭</string>
 </resources>
