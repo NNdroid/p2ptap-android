@@ -15,6 +15,7 @@ import app.fjj.p2ptap.tv.TvTransfer
 import app.fjj.p2ptap.tv.databinding.FragmentTvQrBinding
 import com.p2ptap.P2PTap.P2PTap
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -121,6 +122,8 @@ class TvQrFragment : Fragment() {
         repaint()
     }
 
+    private var paintJob: Job? = null
+
     private fun repaint() {
         binding.tvQrModeBundle.isSelected = mode == Mode.BUNDLE
         binding.tvQrModeConfig.isSelected = mode == Mode.CONFIG
@@ -129,20 +132,25 @@ class TvQrFragment : Fragment() {
 
         binding.tvQrBitmap.visibility = View.VISIBLE
         binding.tvQrBitmap.alpha = 0.35f
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-            val payload = runCatching { payloadFor(mode) }.getOrNull()
-            val bitmap = payload?.let { runCatching { TvTransfer.qrBitmap(it) }.getOrNull() }
-            launch(Dispatchers.Main) {
-                paintedPayload = payload
-                binding.tvQrBitmap.alpha = 1f
-                if (bitmap == null) {
-                    binding.tvQrBitmap.scaleType = android.widget.ImageView.ScaleType.CENTER
-                    binding.tvQrBitmap.setImageResource(R.drawable.ic_tv_qr)
-                } else {
-                    binding.tvQrBitmap.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
-                    binding.tvQrBitmap.setImageBitmap(bitmap)
-                }
+        paintJob?.cancel()
+        paintJob = viewLifecycleOwner.lifecycleScope.launch {
+            val payload = runCatching { payloadFor(mode) }.getOrNull() ?: return@launch
+            val bitmap = withContext(Dispatchers.Default) {
+                runCatching { TvTransfer.qrBitmap(payload) }.getOrNull()
+            } ?: return@launch
+            // Stale-check: a newer repaint may have superseded this one.
+            if (mode != this@TvQrFragment.mode) return@launch
+            binding.tvQrBitmap.alpha = 1f
+            if (bitmap == null) {
+                binding.tvQrBitmap.scaleType = android.widget.ImageView.ScaleType.CENTER
+                binding.tvQrBitmap.setImageResource(R.drawable.ic_tv_qr)
+            } else {
+                binding.tvQrBitmap.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+                binding.tvQrBitmap.setImageBitmap(bitmap)
             }
+            // Update paintedPayload only after the bitmap is on screen,
+            // so Copy never captures a stale (possibly secret) payload.
+            paintedPayload = payload
         }
     }
 

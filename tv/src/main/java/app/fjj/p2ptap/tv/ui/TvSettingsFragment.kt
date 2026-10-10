@@ -42,11 +42,13 @@ class TvSettingsFragment : Fragment() {
     private val applyHandler = Handler(Looper.getMainLooper())
 
     private val applyConfig = Runnable {
-        dirty = false
         val current = config ?: return@Runnable
         try {
             AppConfigManager.save(requireContext(), current)
             AppConfigManager.reloadRunningService(requireContext(), forceRestart = true)
+            // Only clear dirty after success — if save() throws the change
+            // must remain marked so onStop() retries it.
+            dirty = false
         } catch (e: Exception) {
             Toast.makeText(
                 requireContext(), getString(R.string.tv_set_save_failed), Toast.LENGTH_LONG

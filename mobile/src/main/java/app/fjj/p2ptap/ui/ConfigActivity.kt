@@ -257,6 +257,13 @@ class ConfigActivity : AppCompatActivity() {
                 try {
                     val newPid = AppConfigManager.generateNewIdentityKey(this)
                     refreshPeerIdDisplay()
+                    // The running tunnel keeps the old identity until restarted —
+                    // without this the user sees a new peer ID that never appears
+                    // on the wire, and every peer entry containing the old ID
+                    // goes stale the moment they reset.
+                    if (P2PTapVpnService.isRunning()) {
+                        AppConfigManager.reloadRunningService(this, forceRestart = true)
+                    }
                     Toast.makeText(this, getString(R.string.msg_key_loaded_fmt, newPid.take(12) + "..."), Toast.LENGTH_LONG).show()
                 } catch (e: Exception) {
                     Toast.makeText(this, getString(R.string.err_key_load_fmt, UiMessages.describe(this, e)), Toast.LENGTH_LONG).show()
@@ -549,10 +556,7 @@ class ConfigActivity : AppCompatActivity() {
         if (!s.contains("/")) return false
         val parts = s.split("/")
         if (parts.size != 2) return false
-        val ip = parts[0]
-        if (android.net.InetAddresses.isNumericAddress(ip)) return true // numeric IP
-        // Simple check: must contain at least one colon for IPv6
-        if (!ip.contains(":")) return false
+        if (!android.net.InetAddresses.isNumericAddress(parts[0])) return false
         val prefix = parts[1].toIntOrNull() ?: return false
         return prefix in 0..128
     }
