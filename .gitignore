@@ -14,6 +14,7 @@
 .cxx
 local.properties
 /.idea
+*.apk
 
 /core/libs/p2ptap.aar
 /core/libs/p2ptap-sources.jar
