@@ -222,7 +222,7 @@
     <string name="label_exit_node">Nœud de sortie / Passerelle</string>
     <string name="exit_node_auto_display">🌐 Mode Maillé Auto (Pas de relais de sortie)</string>
     <string name="exit_node_active_fmt">🚀 Passerelle : %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 Passerelle : %1$s (%2$s)</string></string>
+    <string name="exit_node_idle_fmt">🚀 Passerelle : %1$s</string>
     <string name="dialog_exit_node_title">Sélectionner le nœud de sortie</string>
     <string name="dialog_exit_node_desc">Sélectionnez un pair pour relayer le trafic Internet</string>
     <string name="exit_node_auto_title">Mode Maillé Auto (Par défaut)</string>

@@ -220,7 +220,7 @@
     <string name="label_exit_node">출구 노드 / 게이트웨이</string>
     <string name="exit_node_auto_display">🌐 자동 메쉬 모드 (출구 릴레이 없음)</string>
     <string name="exit_node_active_fmt">🚀 게이트웨이: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 게이트웨이: %1$s (%2$s)</string></string>
+    <string name="exit_node_idle_fmt">🚀 게이트웨이: %1$s</string>
     <string name="dialog_exit_node_title">출구 노드 선택</string>
     <string name="dialog_exit_node_desc">인터넷/기본 게이트웨이 트래픽을 중계할 노드 선택</string>
     <string name="exit_node_auto_title">자동 메쉬 모드 (기본값)</string>

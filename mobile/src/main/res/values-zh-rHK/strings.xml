@@ -213,7 +213,7 @@
     <string name="label_exit_node">出口節點 / 全域網關</string>
     <string name="exit_node_auto_display">🌐 自動 Mesh 選路 (不啟用出口中繼)</string>
     <string name="exit_node_active_fmt">🚀 出口: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">    <string name="exit_node_active_fmt">🚀 出口: %1$s (%2$s)</string></string>
+    <string name="exit_node_idle_fmt">🚀 出口: %1$s</string>
     <string name="dialog_exit_node_title">出口節點選擇</string>
     <string name="dialog_exit_node_desc">選擇通過哪台在線 Mesh 節點中轉網際網路/全域網關流量</string>
     <string name="exit_node_auto_title">自動 Mesh 直連模式 (預設)</string>
