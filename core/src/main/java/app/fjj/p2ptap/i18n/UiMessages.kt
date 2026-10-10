@@ -15,7 +15,7 @@ class LocalizedException(
 ) : IllegalArgumentException(cause?.message, cause)
 
 object UiMessages {
-    private val configField = Regex("invalid config: ([a-z_.]+(?:\\[\\d+])?):", RegexOption.IGNORE_CASE)
+    private val configField = Regex("invalid config: ([a-z_.\\[\\]0-9]+):", RegexOption.IGNORE_CASE)
     private val activeObfuscation = Regex("Active \\(([^,]+) mode, (\\d+)B\\)")
 
     /** Map engine field names to localized hint resource IDs. */

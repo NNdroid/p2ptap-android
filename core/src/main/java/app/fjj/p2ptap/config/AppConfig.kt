@@ -714,6 +714,7 @@ object AppConfigManager {
         }
     }
 
+    @Synchronized
     fun load(context: Context): P2PConfig {
         cachedConfig?.let { return it.snapshot() }
         ensureIdentityKey(context)
@@ -735,7 +736,7 @@ object AppConfigManager {
                     parsed.webUiToken = "p2ptap-admin"
                     changed = true
                 }
-                if (parsed.webUiPort <= 0 || parsed.webUiPort == 8080) {
+                if (parsed.webUiPort <= 0 || parsed.webUiPort == 8080 || parsed.webUiPort == 80) {
                     parsed.webUiPort = 15858
                     changed = true
                 }
