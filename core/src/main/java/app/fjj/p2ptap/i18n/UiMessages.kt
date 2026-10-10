@@ -15,11 +15,49 @@ class LocalizedException(
 ) : IllegalArgumentException(cause?.message, cause)
 
 object UiMessages {
-    private val configField = Regex("invalid config: ([a-z_]+(?:\\[\\d+])?):", RegexOption.IGNORE_CASE)
+    private val configField = Regex("invalid config: ([a-z_.]+(?:\\[\\d+])?):", RegexOption.IGNORE_CASE)
     private val activeObfuscation = Regex("Active \\(([^,]+) mode, (\\d+)B\\)")
 
+    /** Map engine field names to localized hint resource IDs. */
+    private val fieldHints = mapOf(
+        "node_name" to R.string.hint_node_name,
+        "tap_ip" to R.string.hint_tap_ip,
+        "tap_ipv6" to R.string.hint_tap_ipv6,
+        "tap_mac" to R.string.hint_tap_mac,
+        "tap_name" to R.string.hint_tap_name,
+        "listen_addrs" to R.string.hint_listen_addrs,
+        "transport_strategy" to R.string.hint_transport_strategy,
+        "log_level" to R.string.hint_log_level,
+        "driver_type" to R.string.hint_driver_type,
+        "transports.tcp_brutal_rate" to R.string.hint_tcp_brutal_rate,
+        "transports.tls_server_name" to R.string.hint_tls_server_name,
+        "transports.tls_sni_suffix" to R.string.hint_tls_sni_suffix,
+        "web_ui.port" to R.string.hint_web_ui_port,
+        "web_ui.listen_ip" to R.string.hint_web_ui_listen_ip,
+        "web_ui.listen_ipv6" to R.string.hint_web_ui_listen_ipv6,
+        "web_ui.pcap_sample_every" to R.string.hint_web_ui_pcap_sample_every,
+        "web_ui.pcap_max_rate_per_sec" to R.string.hint_web_ui_pcap_max_rate_per_sec,
+        "exit_node.wan_interface" to R.string.hint_exit_node_wan_interface,
+        "obfuscation.mode" to R.string.hint_obfuscation_mode,
+        "obfuscation.fixed_size" to R.string.hint_obfuscation_fixed_size,
+        "obfuscation.block_size" to R.string.hint_obfuscation_block_size,
+        "obfuscation.jitter_range" to R.string.hint_obfuscation_jitter_range,
+        "obfuscation.min_size" to R.string.hint_obfuscation_min_size,
+        "obfuscation.max_frag_size" to R.string.hint_obfuscation_max_frag_size,
+        "obfuscation.algorithm" to R.string.hint_obfuscation_algorithm,
+        "obfuscation.auto_detect_interval" to R.string.hint_obfuscation_auto_detect_interval,
+        "obfuscation.auto_threshold_bytes" to R.string.hint_obfuscation_auto_threshold_bytes,
+        "acl.default_action" to R.string.hint_acl_default_action,
+        "acl.rules" to R.string.hint_acl_rules,
+        "allowed_subnet_peers" to R.string.hint_allowed_subnet_peers,
+        "advertised_subnets" to R.string.hint_advertised_subnets,
+        "stun_servers" to R.string.hint_stun_servers,
+        "turn_servers" to R.string.hint_turn_servers,
+        "static_peers" to R.string.hint_listen_addrs,
+        "bootstrap_peers" to R.string.hint_listen_addrs,
+    )
+
     fun describe(context: Context, error: Throwable): String {
-        // Preserve the diagnostic cause, but do not leak untranslated native errors into UI text.
         Log.w("P2PTapUi", "Operation failed", error)
         return render(context, error)
     }
@@ -35,7 +73,13 @@ object UiMessages {
 
     fun nativeError(context: Context, message: String): String {
         val field = configField.find(message)?.groupValues?.get(1)
-        if (field != null) return context.getString(R.string.error_config_field_fmt, field)
+        if (field != null) {
+            // Try exact match first, then strip array index for indexed fields.
+            val baseField = field.substringBefore("[")
+            val hintRes = fieldHints[field] ?: fieldHints[baseField]
+            if (hintRes != null) return context.getString(hintRes)
+            return context.getString(R.string.error_config_field_fmt, baseField)
+        }
         val key = when {
             message.contains("timeout", true) || message.contains("deadline", true) -> R.string.error_timeout
             message.contains("invalid config", true) -> R.string.error_invalid_configuration

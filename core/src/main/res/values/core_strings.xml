@@ -30,6 +30,42 @@
     <string name="error_save_config">Unable to save configuration. Check available storage.</string>
     <string name="error_strategy">Transport strategy must be best_path, redundant or fallback.</string>
     <string name="error_config_field_fmt">Invalid configuration field: %1$s. Check its value; details are in diagnostic logs.</string>
+
+    <!-- Per-field validation hints shown when the engine rejects a config value -->
+    <string name="hint_node_name">Node name must be 64 chars or fewer; only letters, digits, - _ . @ and space are allowed.</string>
+    <string name="hint_tap_ip">TAP IPv4 must be a valid network CIDR (e.g. 10.0.0.1/24), not a host address.</string>
+    <string name="hint_tap_ipv6">TAP IPv6 must be a valid IPv6 network CIDR (e.g. fd00::1/64).</string>
+    <string name="hint_tap_mac">MAC address must be 6 octets (e.g. 02:00:00:00:00:01).</string>
+    <string name="hint_tap_name">TAP name must be 16 chars or fewer with no spaces.</string>
+    <string name="hint_listen_addrs">Must be a valid multiaddr (e.g. /ip4/0.0.0.0/udp/4001).</string>
+    <string name="hint_transport_strategy">Transport strategy must be best_path, redundant or fallback.</string>
+    <string name="hint_log_level">Log level must be debug, info, warn or error.</string>
+    <string name="hint_driver_type">Driver type must be auto, tap or wintun.</string>
+    <string name="hint_tcp_brutal_rate">TCP brutal rate must be like 100Mbps, 1Gbps, or 1Kbps.</string>
+    <string name="hint_tls_server_name">TLS server name must be a valid DNS hostname.</string>
+    <string name="hint_tls_sni_suffix">TLS SNI suffix must be a valid DNS hostname.</string>
+    <string name="hint_web_ui_port">WebUI port must be between 1 and 65535.</string>
+    <string name="hint_web_ui_listen_ip">WebUI listen IP must be a valid IPv4 address.</string>
+    <string name="hint_web_ui_listen_ipv6">WebUI listen IPv6 must be a valid IPv6 address.</string>
+    <string name="hint_web_ui_pcap_sample_every">PCAP sample interval must be 1 or greater.</string>
+    <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP max rate must be 0 or greater.</string>
+    <string name="hint_exit_node_wan_interface">WAN interface must be 16 chars or fewer; only letters, digits, - _ . are allowed.</string>
+    <string name="hint_obfuscation_mode">Obfuscation mode must be fixed, block, random, dynamic or auto.</string>
+    <string name="hint_obfuscation_fixed_size">Fixed size must be greater than 0 when mode is fixed.</string>
+    <string name="hint_obfuscation_block_size">Block size must be greater than 0 when mode is block.</string>
+    <string name="hint_obfuscation_jitter_range">Jitter range must be 0 or greater.</string>
+    <string name="hint_obfuscation_min_size">Min size must be less than or equal to max size.</string>
+    <string name="hint_obfuscation_max_frag_size">Max fragment size must be 0 (auto) or 256–1400.</string>
+    <string name="hint_obfuscation_algorithm">Obfuscation algorithm must be auto, none, aes-gcm or chacha20.</string>
+    <string name="hint_obfuscation_auto_detect_interval">Auto-detect interval must be greater than 0 (seconds).</string>
+    <string name="hint_obfuscation_auto_threshold_bytes">Auto-detect threshold must be greater than 0 (bytes).</string>
+    <string name="hint_acl_default_action">ACL default action must be accept/allow or drop/deny.</string>
+    <string name="hint_acl_rules">Check ACL rule fields: action, direction, protocol, IP CIDR, peer ID, and port.</string>
+    <string name="hint_allowed_subnet_peers">Each entry must be a valid peer ID or *.</string>
+    <string name="hint_advertised_subnets">Each subnet must be a valid network CIDR (e.g. 192.168.1.0/24).</string>
+    <string name="hint_stun_servers">STUN server format: host:port, stun:host:port, or /udp/host/port.</string>
+    <string name="hint_turn_servers">TURN server format: turn:host:port (optionally with ?username=…&amp;credential=…).</string>
+
     <string name="error_identity_key">Invalid identity key. Import a valid key or restore a backup.</string>
     <string name="error_invalid_configuration">Invalid configuration. Review settings and diagnostic logs.</string>
     <string name="error_invalid_json">Invalid JSON. Check the configuration or backup file.</string>

@@ -7,6 +7,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.InetAddresses
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -412,8 +413,81 @@ class ConfigActivity : AppCompatActivity() {
     private fun saveConfig() {
         saveThemeMode()
         val config = collectConfigFromUi()
-        if (config.tapIp.isEmpty() || !config.tapIp.contains(".")) {
+
+        // --- UI-level format validation for immediate feedback ---
+        // TAP IPv4 CIDR
+        if (!isValidIpv4Cidr(config.tapIp)) {
             Toast.makeText(this, getString(R.string.err_invalid_ipv4), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // TAP IPv6 CIDR (if non-empty)
+        if (config.tapIpv6.isNotEmpty() && !isValidIpv6Cidr(config.tapIpv6)) {
+            Toast.makeText(this, getString(R.string.err_invalid_ipv6), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // MTU range
+        if (config.mtu < 576 || config.mtu > 9000) {
+            Toast.makeText(this, getString(R.string.err_invalid_mtu), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // WebUI port
+        if (config.webUiPort < 1 || config.webUiPort > 65535) {
+            Toast.makeText(this, getString(R.string.err_invalid_port), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Hole punch timeout (1s–120s)
+        if (config.holePunchTimeout < 1000 || config.holePunchTimeout > 120000) {
+            Toast.makeText(this, getString(R.string.err_invalid_timeout), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Node name
+        if (config.nodeName.length > 64) {
+            Toast.makeText(this, getString(R.string.err_invalid_node_name), Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Advertised subnets (each line must be a valid CIDR)
+        for (sub in config.advertisedSubnets) {
+            if (sub.isNotEmpty() && !isValidCidr(sub)) {
+                Toast.makeText(this, getString(R.string.err_invalid_subnet_fmt, sub), Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+        // DNS servers (each must be a valid IP address)
+        for (dns in config.dnsServers) {
+            if (dns.isNotEmpty() && !InetAddresses.isNumericAddress(dns)) {
+                Toast.makeText(this, getString(R.string.err_invalid_dns_fmt, dns), Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+        // STUN servers (basic format check)
+        for (srv in config.stunServers) {
+            if (srv.isNotEmpty() && !isValidStunServer(srv)) {
+                Toast.makeText(this, getString(R.string.err_invalid_stun_fmt, srv), Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+        // TURN servers (must start with turn:)
+        for (srv in config.turnServers) {
+            if (srv.isNotEmpty() && !srv.startsWith("turn:")) {
+                Toast.makeText(this, getString(R.string.err_invalid_turn_fmt, srv), Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+        // Obfuscation params
+        if (config.obfuscationMode == "fixed" && config.obfuscationFixedSize <= 0) {
+            Toast.makeText(this, getString(R.string.err_invalid_fixed_size), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (config.obfuscationMode == "block" && config.obfuscationBlockSize <= 0) {
+            Toast.makeText(this, getString(R.string.err_invalid_block_size), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (config.obfuscationJitterRange < 0) {
+            Toast.makeText(this, getString(R.string.err_invalid_jitter), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (config.obfuscationMaxFragSize > 0 && config.obfuscationMaxFragSize < 256) {
+            Toast.makeText(this, getString(R.string.err_invalid_max_frag_size), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -428,5 +502,50 @@ class ConfigActivity : AppCompatActivity() {
         AppConfigManager.reloadRunningService(this)
 
         finish()
+    }
+
+    // --- Format validators (UI-level, fast checks before JNI round-trip) ---
+
+    private fun isValidIpv4Cidr(s: String): Boolean {
+        if (!s.contains("/")) return false
+        val parts = s.split("/")
+        if (parts.size != 2) return false
+        val ip = parts[0].split(".")
+        if (ip.size != 4) return false
+        for (seg in ip) {
+            val v = seg.toIntOrNull() ?: return false
+            if (v < 0 || v > 255) return false
+        }
+        val prefix = parts[1].toIntOrNull() ?: return false
+        return prefix in 0..32
+    }
+
+    private fun isValidIpv6Cidr(s: String): Boolean {
+        if (!s.contains("/")) return false
+        val parts = s.split("/")
+        if (parts.size != 2) return false
+        val ip = parts[0]
+        if (android.net.InetAddresses.isNumericAddress(ip)) return true // numeric IP
+        // Simple check: must contain at least one colon for IPv6
+        if (!ip.contains(":")) return false
+        val prefix = parts[1].toIntOrNull() ?: return false
+        return prefix in 0..128
+    }
+
+    private fun isValidCidr(s: String): Boolean {
+        return isValidIpv4Cidr(s) || isValidIpv6Cidr(s)
+    }
+
+    private fun isValidStunServer(s: String): Boolean {
+        val trimmed = s.trim()
+        if (trimmed.startsWith("/udp/") || trimmed.startsWith("/tcp/")) return true
+        val withoutPrefix = trimmed.removePrefix("stun:")
+        val colonIdx = withoutPrefix.lastIndexOf(':')
+        if (colonIdx < 0) return false
+        val host = withoutPrefix.substring(0, colonIdx)
+        val port = withoutPrefix.substring(colonIdx + 1)
+        if (host.isEmpty()) return false
+        val p = port.toIntOrNull() ?: return false
+        return p in 1..65535
     }
 }
