@@ -35,14 +35,14 @@ object TvFormat {
         if (relayed) return Protocol(context.getString(R.string.tv_prot_relay), R.color.tv_prot_relay)
         val lower = transport.lowercase(Locale.ROOT).trim()
         return when {
+            lower.contains("webtransport") -> Protocol(
+                context.getString(R.string.tv_prot_wt), R.color.tv_prot_wt
+            )
             lower.contains("quic") -> Protocol(
                 context.getString(R.string.tv_prot_quic), R.color.tv_prot_quic
             )
             lower.contains("webrtc") -> Protocol(
                 context.getString(R.string.tv_prot_webrtc), R.color.tv_prot_webrtc
-            )
-            lower.contains("webtransport") -> Protocol(
-                context.getString(R.string.tv_prot_wt), R.color.tv_prot_wt
             )
             lower.contains("tcp") -> Protocol(
                 context.getString(R.string.tv_prot_tcp), R.color.tv_prot_tcp

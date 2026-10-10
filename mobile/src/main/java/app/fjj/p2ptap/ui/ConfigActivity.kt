@@ -498,9 +498,9 @@ class ConfigActivity : AppCompatActivity() {
                 return
             }
         }
-        // TURN servers (must start with turn:)
+        // TURN servers (must start with turn: and have valid port)
         for (srv in config.turnServers) {
-            if (srv.isNotEmpty() && !srv.startsWith("turn:")) {
+            if (srv.isNotEmpty() && !isValidTurnServer(srv)) {
                 Toast.makeText(this, getString(R.string.err_invalid_turn_fmt, srv), Toast.LENGTH_SHORT).show()
                 return
             }
@@ -566,12 +566,31 @@ class ConfigActivity : AppCompatActivity() {
     private fun isValidStunServer(s: String): Boolean {
         val trimmed = s.trim()
         if (trimmed.startsWith("/udp/") || trimmed.startsWith("/tcp/")) return true
-        val withoutPrefix = trimmed.removePrefix("stun:")
+        var withoutPrefix = trimmed.removePrefix("stun:").removePrefix("turn:").removePrefix("tcp:")
         val colonIdx = withoutPrefix.lastIndexOf(':')
-        if (colonIdx < 0) return false
+        if (colonIdx < 0) {
+            // Bare hostname — Go defaults to port 3478.
+            val host = withoutPrefix
+            return host.isNotEmpty() && !host.contains(" ")
+        }
         val host = withoutPrefix.substring(0, colonIdx)
         val port = withoutPrefix.substring(colonIdx + 1)
         if (host.isEmpty()) return false
+        val p = port.toIntOrNull() ?: return false
+        return p in 1..65535
+    }
+
+    private fun isValidTurnServer(s: String): Boolean {
+        if (!s.startsWith("turn:")) return false
+        val withoutPrefix = s.removePrefix("turn:")
+        val queryIdx = withoutPrefix.indexOf('?')
+        val hostPart = if (queryIdx >= 0) withoutPrefix.substring(0, queryIdx) else withoutPrefix
+        val colonIdx = hostPart.lastIndexOf(':')
+        if (colonIdx < 0) {
+            // Bare hostname — Go defaults to port 3478.
+            return hostPart.isNotEmpty() && !hostPart.contains(" ")
+        }
+        val port = hostPart.substring(colonIdx + 1)
         val p = port.toIntOrNull() ?: return false
         return p in 1..65535
     }

@@ -61,8 +61,10 @@ class WebUIActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 binding.progressBar.visibility = View.GONE
                 if (config.webUiToken.isNotBlank()) {
-                    val safeToken = config.webUiToken.trim().replace("'", "\\'")
-                    val js = "try { localStorage.setItem('p2ptap_auth_token', '$safeToken'); } catch(e) {}"
+                    val safeToken = config.webUiToken.trim()
+                        .replace("\\", "\\\\")
+                        .replace("'", "\\'")
+                    val js = "try { localStorage.setItem('p2ptap_webui_token', '$safeToken'); } catch(e) {}"
                     view?.evaluateJavascript(js, null)
                 }
             }

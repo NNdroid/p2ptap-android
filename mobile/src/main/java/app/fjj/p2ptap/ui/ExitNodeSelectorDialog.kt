@@ -2,7 +2,6 @@ package app.fjj.p2ptap.ui
 
 import app.fjj.p2ptap.i18n.UiMessages
 
-import android.graphics.Color
 import android.net.InetAddresses
 import android.os.Bundle
 import android.view.LayoutInflater

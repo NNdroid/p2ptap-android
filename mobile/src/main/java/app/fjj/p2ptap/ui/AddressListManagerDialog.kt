@@ -393,12 +393,16 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
             val lower = addr.lowercase()
             return when {
                 addr.trim() == "*" -> getString(R.string.protocol_all) to R.color.status_connected
-                addr.startsWith("12D3") || addr.startsWith("Qm") -> "Peer ID" to R.color.brand_secondary
+                lower.contains("webtransport") -> "WebTransport" to R.color.brand_secondary
                 lower.contains("quic-v1") || lower.contains("quic") -> "QUIC-v1" to R.color.brand_primary_dark
                 lower.contains("webrtc") -> "WebRTC" to R.color.status_connected
-                lower.contains("webtransport") -> "WebTransport" to R.color.brand_secondary
                 lower.contains("p2p-circuit") -> getString(R.string.protocol_relay) to R.color.badge_relay
                 lower.contains("/tcp/") -> "TCP" to R.color.badge_tcp
+                lower.contains("/udp/") -> "UDP" to R.color.badge_tcp
+                lower.contains("turn:") -> "TURN" to R.color.badge_relay
+                lower.contains("stun:") || lower.contains("/stun") -> "STUN" to R.color.badge_relay
+                lower.contains("p2p/") && lower.contains("dnsaddr") -> "DNSADDR" to R.color.brand_secondary
+                addr.trimStart().startsWith("12D3") || addr.trimStart().startsWith("Qm") -> "Peer ID" to R.color.brand_secondary
                 lower.contains("/ip6/") || lower.contains("::") -> "IPv6" to R.color.badge_ipv6
                 lower.contains("/") && lower.contains(".") -> "CIDR" to R.color.badge_cidr
                 else -> getString(R.string.protocol_endpoint) to R.color.brand_primary
