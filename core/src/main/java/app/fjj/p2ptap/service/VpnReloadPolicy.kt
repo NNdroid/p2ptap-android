@@ -39,6 +39,7 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         logLevel = newConfig.logLevel,
         holePunchTimeout = newConfig.holePunchTimeout,
         stunServers = newConfig.stunServers,
+        turnServers = newConfig.turnServers,
         relayUpgradeInterval = newConfig.relayUpgradeInterval,
         obfuscationEnable = newConfig.obfuscationEnable,
         obfuscationMode = newConfig.obfuscationMode,

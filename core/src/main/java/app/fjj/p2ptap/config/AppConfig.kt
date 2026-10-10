@@ -48,6 +48,7 @@ data class P2PConfig(
     var dnsServers: List<String> = listOf(),
     var holePunchTimeout: Long = 15000,
     var stunServers: List<String> = listOf("/udp/stun.l.google.com/19302", "/udp/stun1.l.google.com/19302"),
+    var turnServers: List<String> = listOf(),
     var relayUpgradeInterval: Long = 30000,
     var forcePrivateReachability: Boolean = false,
     var listenAddrs: List<String> = listOf(),
@@ -78,7 +79,7 @@ data class P2PConfig(
         bootstrapPeers = bootstrapPeers.toList(), staticPeers = staticPeers.toList(),
         advertisedSubnets = advertisedSubnets.toList(), allowedSubnetPeers = allowedSubnetPeers.toList(),
         dnsServers = dnsServers.toList(), holePunchTimeout = holePunchTimeout, stunServers = stunServers.toList(),
-        relayUpgradeInterval = relayUpgradeInterval, listenAddrs = listenAddrs.toList()
+        turnServers = turnServers.toList(), relayUpgradeInterval = relayUpgradeInterval, listenAddrs = listenAddrs.toList()
     )
 
     fun validateStrategy() {
@@ -214,6 +215,15 @@ data class P2PConfig(
         }
         root.put("stun_servers", stunArray)
 
+        val turnArray = JSONArray()
+        for (server in turnServers) {
+            val trimmed = server.trim()
+            if (trimmed.isNotEmpty()) {
+                turnArray.put(trimmed)
+            }
+        }
+        root.put("turn_servers", turnArray)
+
         // Obfuscation
         val obf = root.optJSONObject("obfuscation") ?: JSONObject()
         obf.put("enable", obfuscationEnable)
@@ -322,6 +332,10 @@ data class P2PConfig(
         val stunArray = JSONArray()
         stunServers.forEach { stunArray.put(it.trim()) }
         root.put("stun_servers", stunArray)
+
+        val turnArray = JSONArray()
+        turnServers.forEach { turnArray.put(it.trim()) }
+        root.put("turn_servers", turnArray)
 
         // Listen addrs
         if (listenAddrs.isNotEmpty()) {
@@ -504,6 +518,14 @@ data class P2PConfig(
                     list.add(arr.getString(i))
                 }
                 cfg.stunServers = list
+            }
+            if (root.has("turn_servers")) {
+                val arr = root.getJSONArray("turn_servers")
+                val list = mutableListOf<String>()
+                for (i in 0 until arr.length()) {
+                    list.add(arr.getString(i))
+                }
+                cfg.turnServers = list
             }
 
             // Listen addrs

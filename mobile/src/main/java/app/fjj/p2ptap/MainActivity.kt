@@ -109,10 +109,12 @@ class MainActivity : AppCompatActivity() {
                             )
                             content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(m.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(m.rxSpeed)}"
                             content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(m.totalTx)}  ↓ ${P2PStateRepository.formatBytes(m.totalRx)}"
+                            content.tvNatStatus.text = if (snapshot.natStatus.isNotBlank()) snapshot.natStatus else unknown
                         } else {
                             content.tvActivePeers.text = getString(if (data.failed) R.string.telemetry_refresh_failed else R.string.telemetry_unknown)
                             content.tvLiveSpeed.text = "↑ $unknown\n↓ $unknown"
                             content.tvTraffic.text = "↑ $unknown  ↓ $unknown"
+                            content.tvNatStatus.text = unknown
                         }
                         refreshExitNodeDisplay()
                     }

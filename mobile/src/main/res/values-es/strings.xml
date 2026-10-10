@@ -270,5 +270,9 @@
     <string name="hint_hole_punch_timeout">Tiempo de espera de perforación (segundos)</string>
     <string name="help_hole_punch_timeout">Rango 10-30. Un valor mayor espera más tiempo para una conexión directa.</string>
     <string name="hint_stun_servers">Servidores STUN (uno por línea)</string>
+    <string name="hint_turn_servers">Servidores TURN (uno por línea)</string>
+    <string name="help_turn_servers">Formato: turn:host:port?username=USER&credential=PASS. Dejar vacío para deshabilitar el reenvío TURN.</string>
+    <string name="dialog_manage_turn">Gestionar servidores TURN</string>
+    <string name="label_nat_status">Estado NAT</string>
 </resources>
 

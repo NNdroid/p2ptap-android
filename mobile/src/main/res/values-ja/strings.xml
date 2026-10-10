@@ -264,4 +264,8 @@
     <string name="hint_hole_punch_timeout">ホールパンチタイムアウト（秒）</string>
     <string name="help_hole_punch_timeout">範囲 10-30。大きな値ほど直接接続をより長く待ちます。</string>
     <string name="hint_stun_servers">STUN サーバー（1行に1つ）</string>
+    <string name="hint_turn_servers">TURN サーバー（1行に1つ）</string>
+    <string name="help_turn_servers">形式: turn:host:port?username=USER&credential=PASS。空にすると TURN レイを無効化します。</string>
+    <string name="dialog_manage_turn">TURN サーバー管理</string>
+    <string name="label_nat_status">NAT ステータス</string>
 </resources>

@@ -284,4 +284,8 @@
     <string name="hint_hole_punch_timeout">Hole Punch Timeout (seconds)</string>
     <string name="help_hole_punch_timeout">Range 10-30. Higher waits longer for direct connection.</string>
     <string name="hint_stun_servers">STUN Servers (one per line)</string>
+    <string name="hint_turn_servers">TURN Servers (one per line)</string>
+    <string name="help_turn_servers">Format: turn:host:port?username=USER&amp;credential=PASS. Leave empty to disable TURN relay.</string>
+    <string name="dialog_manage_turn">Manage TURN Servers</string>
+    <string name="label_nat_status">NAT Status</string>
 </resources>

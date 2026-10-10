@@ -280,4 +280,8 @@
     <string name="hint_hole_punch_timeout">打洞超时（秒）</string>
     <string name="help_hole_punch_timeout">范围 10-30，较大值会等待更长的直连连接。</string>
     <string name="hint_stun_servers">STUN 服务器（每行一个）</string>
+    <string name="hint_turn_servers">TURN 服务器（每行一个）</string>
+    <string name="help_turn_servers">格式: turn:host:port?username=USER&credential=PASS。留空以禁用 TURN 中继。</string>
+    <string name="dialog_manage_turn">管理 TURN 服务器列表</string>
+    <string name="label_nat_status">NAT 状态</string>
 </resources>

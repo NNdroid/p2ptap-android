@@ -179,6 +179,14 @@ class ConfigActivity : AppCompatActivity() {
         binding.tilStunServers.setEndIconOnClickListener {
             openAddressManager(AddressListType.STUN_SERVERS)
         }
+
+        // TURN Servers List Manager
+        binding.btnManageTurn.setOnClickListener {
+            openAddressManager(AddressListType.TURN_SERVERS)
+        }
+        binding.tilTurnServers.setEndIconOnClickListener {
+            openAddressManager(AddressListType.TURN_SERVERS)
+        }
     }
 
     private fun openAddressManager(type: AddressListType) {
@@ -202,6 +210,9 @@ class ConfigActivity : AppCompatActivity() {
             AddressListType.STUN_SERVERS -> {
                 binding.etStunServers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
             }
+            AddressListType.TURN_SERVERS -> {
+                binding.etTurnServers.text?.toString()?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+            }
         }
 
         AddressListManagerDialog.newInstance(type, currentList) { updatedList ->
@@ -224,6 +235,9 @@ class ConfigActivity : AppCompatActivity() {
                 }
                 AddressListType.STUN_SERVERS -> {
                     binding.etStunServers.setText(updatedList.joinToString("\n"))
+                }
+                AddressListType.TURN_SERVERS -> {
+                    binding.etTurnServers.setText(updatedList.joinToString("\n"))
                 }
             }
         }.show(supportFragmentManager, AddressListManagerDialog.TAG)
@@ -310,6 +324,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.actvLogLevel.setText(config.logLevel, false)
         binding.etHolePunchTimeout.setText(config.holePunchTimeout.toString())
         binding.etStunServers.setText(config.stunServers.joinToString("\n"))
+        binding.etTurnServers.setText(config.turnServers.joinToString("\n"))
     }
 
     private fun collectConfigFromUi(): P2PConfig {
@@ -347,6 +362,8 @@ class ConfigActivity : AppCompatActivity() {
         val holePunchTimeout = binding.etHolePunchTimeout.text?.toString()?.toLongOrNull() ?: 15000
         val stunString = binding.etStunServers.text?.toString() ?: ""
         val stunList = stunString.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        val turnString = binding.etTurnServers.text?.toString() ?: ""
+        val turnList = turnString.lines().map { it.trim() }.filter { it.isNotEmpty() }
         val webUiEnable = binding.switchWebUi.isChecked
         val webUiPort = binding.etWebUiPort.text?.toString()?.toIntOrNull() ?: 15858
         val webUiToken = binding.etWebUiToken.text?.toString()?.trim() ?: ""
@@ -378,6 +395,7 @@ class ConfigActivity : AppCompatActivity() {
             dnsServers = dnsList,
             holePunchTimeout = holePunchTimeout,
             stunServers = stunList,
+            turnServers = turnList,
             transportStrategy = strategy,
             discoverBootMesh = discoverBootMesh,
             // Exit-node selection is managed by ExitNodeSelectorDialog. Saving

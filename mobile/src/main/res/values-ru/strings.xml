@@ -273,4 +273,8 @@
     <string name="hint_hole_punch_timeout">Тайм-аут бросков (секунды)</string>
     <string name="help_hole_punch_timeout">Диапазон 10-30. Большие значения дольше ждут прямое подключение.</string>
     <string name="hint_stun_servers">STUN-серверы (по одному на строку)</string>
+    <string name="hint_turn_servers">TURN-серверы (по одному на строку)</string>
+    <string name="help_turn_servers">Формат: turn:host:port?username=USER&credential=PASS. Оставьте пустым, чтобы отключить TURN-ретрансляцию.</string>
+    <string name="dialog_manage_turn">Управление TURN-серверами</string>
+    <string name="label_nat_status">Статус NAT</string>
 </resources>

@@ -25,7 +25,8 @@ data class StatsSnapshot(
     val encryption: List<EncryptionData>,
     val activeExitPeerId: String,
     val activeExitIpv4: String,
-    val activeExitIpv6: String
+    val activeExitIpv6: String,
+    val natStatus: String
 ) {
     fun matchesExit(target: String): Boolean = target.isNotBlank() &&
         (target == activeExitPeerId || matchesVirtualAddress(target, activeExitIpv4) || matchesVirtualAddress(target, activeExitIpv6))
@@ -90,7 +91,8 @@ object StatsSnapshotParser {
         val exit = root.optJSONObject("exit_node")
         return StatsSnapshot(peers, counters, security?.text("obfuscation").orEmpty(),
             security?.text("psk_status").orEmpty(), encryption, exit?.text("active_peer_id").orEmpty(),
-            exit?.text("active_exit_ip").orEmpty(), exit?.text("active_exit_tap_ipv6").orEmpty())
+            exit?.text("active_exit_ip").orEmpty(), exit?.text("active_exit_tap_ipv6").orEmpty(),
+            root.text("nat_status"))
     }
 
     private fun JSONObject.text(key: String): String = if (isNull(key)) "" else optString(key, "").trim()
