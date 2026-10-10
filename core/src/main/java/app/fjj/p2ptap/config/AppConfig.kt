@@ -100,7 +100,7 @@ data class P2PConfig(
         } else {
             root.put("tap_ipv6", "")
         }
-        root.put("mtu", mtu)
+        root.put("mtu", if (mtu in 576..9000) mtu else 1500)
         root.put("psk", psk)
         root.put("log_level", logLevel)
         root.put("enable_mdns", enableMdns)
@@ -251,15 +251,16 @@ data class P2PConfig(
         root.put("web_ui", webUi)
 
         // ACL
-        if (aclEnable || aclRulesJson.isNotBlank()) {
-            val aclObj = JSONObject()
-            aclObj.put("enable", aclEnable)
-            aclObj.put("default_action", aclDefaultAction)
-            if (aclRulesJson.isNotBlank()) {
-                aclObj.put("rules", JSONArray(aclRulesJson))
-            }
-            root.put("acl", aclObj)
+        // Always emit the ACL block — skipping it when disabled leaves a
+        // stale "acl" from a previous engineConfig seed, so the engine
+        // keeps enforcing rules the user already turned off.
+        val aclObj = JSONObject()
+        aclObj.put("enable", aclEnable)
+        aclObj.put("default_action", aclDefaultAction)
+        if (aclRulesJson.isNotBlank()) {
+            aclObj.put("rules", JSONArray(aclRulesJson))
         }
+        root.put("acl", aclObj)
 
         return root.toString(2)
     }
@@ -272,7 +273,7 @@ data class P2PConfig(
         root.put("node_name", nodeName)
         root.put("tap_ip", tapIp)
         root.put("tap_ipv6", tapIpv6)
-        root.put("mtu", mtu)
+        root.put("mtu", if (mtu in 576..9000) mtu else 1500)
         root.put("psk", psk)
         root.put("log_level", logLevel)
         root.put("enable_mdns", enableMdns)
@@ -665,7 +666,13 @@ object AppConfigManager {
         try {
             val keyB64 = exportIdentityKeyBase64(context)
             root.put("node_key_base64", keyB64)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            // A keyless backup restores a NEW identity on import, silently
+            // dropping the user's mesh membership. Flag it so the UI can
+            // warn, and log so the operator knows what happened.
+            android.util.Log.w("AppConfig", "Backup contains configuration only; identity key export failed", e)
+            root.put("identity_key_export_error", true)
+        }
 
         root.put("config", JSONObject(cfg.toExportJson()))
         return root.toString(2)
@@ -748,8 +755,11 @@ object AppConfigManager {
                     }
                 }
                 parsed
-            } catch (_: Exception) {
-                loadDefaultConfig()
+            } catch (e: Exception) {
+                android.util.Log.w("AppConfig", "Stored configuration unreadable; falling back to engine defaults", e)
+                val defaultCfg = loadDefaultConfig()
+                try { save(context, defaultCfg) } catch (_: Exception) { }
+                defaultCfg
             }
         } else {
             val defaultCfg = loadDefaultConfig()
@@ -778,9 +788,10 @@ object AppConfigManager {
         }
         validate(context, candidate)
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        if (!prefs.edit().putString(KEY_CONFIG_JSON, candidate.toExportJson()).commit()) {
-            throw LocalizedException(R.string.error_save_config)
-        }
+        // apply() queues the write without blocking the caller — commit()
+        // performs a synchronous disk I/O that caused ANR on locked-down
+        // set-top-box hardware when called from the main thread.
+        prefs.edit().putString(KEY_CONFIG_JSON, candidate.toExportJson()).apply()
         cachedConfig = candidate.snapshot()
     }
 

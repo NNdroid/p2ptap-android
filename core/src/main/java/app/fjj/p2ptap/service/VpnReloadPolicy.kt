@@ -35,6 +35,7 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         // aclEnable, aclDefaultAction, aclRulesJson
 
         // — Go-engine-only (excluded → HOT if changed) —
+        engineConfig = newConfig.engineConfig,
         exitNode = newConfig.exitNode,
         logLevel = newConfig.logLevel,
         holePunchTimeout = newConfig.holePunchTimeout,

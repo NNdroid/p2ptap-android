@@ -238,13 +238,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         }
     }
 
-    private fun snapshotConfig(config: P2PConfig): P2PConfig = config.copy(
-        bootstrapPeers = config.bootstrapPeers.toList(),
-        staticPeers = config.staticPeers.toList(),
-        advertisedSubnets = config.advertisedSubnets.toList(),
-        allowedSubnetPeers = config.allowedSubnetPeers.toList(),
-        dnsServers = config.dnsServers.toList()
-    )
+    private fun snapshotConfig(config: P2PConfig): P2PConfig = config.snapshot()
 
     private fun ensureForeground(config: P2PConfig) {
         val notif = buildNotification(getString(R.string.notification_starting), config.tapIp)
@@ -332,7 +326,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             val ipInfo = "IPv4: ${config.tapIp}" + if (config.tapIpv6.isNotBlank()) " | IPv6: ${config.tapIpv6}" else ""
             notifManager.notify(notificationId, buildNotification(getString(R.string.notification_running), ipInfo))
             Log.i(TAG, "P2PTap native engine running successfully")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.e(TAG, "Failed to start P2PTap VPN", e)
             if (nativeStarted || P2PTap.isRunning()) {
                 try {
@@ -685,9 +679,16 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         }
 
         updateState(STATE_STOPPING)
+        // Belt and braces: P2PTap.stop() blocks the executor for the whole
+        // native teardown (~17 s worst case). Without this the service would
+        // sit in STOPPING forever (button disabled, notification pinned)
+        // if the stop wedges — same gap requestStop() already patches.
+        networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
+        networkChangeHandler.postDelayed(stopWatchdogRunnable, STOP_TIMEOUT_MS)
         try {
             P2PTap.stop()
         } finally {
+            networkChangeHandler.removeCallbacks(stopWatchdogRunnable)
             clearNativeCallbacks()
             cleanup()
         }
@@ -990,15 +991,15 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
         cancelHeartbeat()
         heartbeatHandler.removeCallbacks(recoveryRunnable)
 
-        // Always queue the stop on the lifecycle executor — never call
-        // stopVpnInternal synchronously here: it would block the main thread
-        // on Go's mu for the entire native teardown (~17s worst case), and
-        // the watchdog (which runs on the main looper) cannot fire while the
-        // main thread is blocked. The executor's shutdownNow() below
-        // interrupts any in-flight stop, but Android's VpnService contract
-        // tears down the TAP interface when stopSelf() was called, so a stale
-        // engine is harmless.
-        submitLifecycle { stopVpnInternal(finalizeService = false) }
+        // Tear the native engine down synchronously. The lifecycle executor's
+        // shutdownNow() discards queued tasks without executing them, so the
+        // former submitLifecycle { stopVpnInternal(...) } was a coin flip:
+        // when discarded, the Go node leaked its TUN fd, libp2p host,
+        // metrics goroutine and WebUI port. Go's Stop() is bounded (~17 s
+        // worst case), and onDestroy already blocks the main thread.
+        try {
+            P2PTap.stop()
+        } catch (_: Throwable) { }
         clearNativeCallbacks()
         cleanup()
 
