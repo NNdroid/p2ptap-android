@@ -10,6 +10,8 @@ import android.content.res.Configuration
 import android.net.InetAddresses
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,18 +20,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.core.widget.doAfterTextChanged
 import app.fjj.p2ptap.R
 import app.fjj.p2ptap.config.AppConfigManager
 import app.fjj.p2ptap.config.splitPeerAddresses
 import app.fjj.p2ptap.config.P2PConfig
 import app.fjj.p2ptap.databinding.ActivityConfigBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
+import com.google.android.material.textfield.TextInputLayout
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 class ConfigActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConfigBinding
+
+    // Debounce for real-time validation: each field's latest validation replaces
+    // any pending one, so rapid typing only triggers one check after 300 ms of
+    // quiet. Without this the user sees transient errors for every intermediate
+    // keystroke ("10." is not a valid CIDR yet).
+    private val validationHandler = Handler(Looper.getMainLooper())
+    private val pendingValidations = mutableMapOf<TextInputLayout, Runnable>()
 
     private val importFileLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -188,6 +199,202 @@ class ConfigActivity : AppCompatActivity() {
         binding.tilTurnServers.setEndIconOnClickListener {
             openAddressManager(AddressListType.TURN_SERVERS)
         }
+
+        setupRealTimeValidation()
+    }
+
+    // ── Real-time field validation ──────────────────────────────────────────
+    // Fires 300 ms after the last keystroke so the user does not see transient
+    // errors for partial input (e.g. "10." while typing "10.0.0.88/24").
+    // Existing saveConfig() checks remain as a final gate.
+
+    private fun debounceValidate(
+        til: TextInputLayout,
+        validator: () -> String?
+    ) {
+        pendingValidations[til]?.let { validationHandler.removeCallbacks(it) }
+        val runnable = Runnable {
+            til.error = validator()
+            pendingValidations.remove(til)
+        }
+        pendingValidations[til] = runnable
+        validationHandler.postDelayed(runnable, 300)
+    }
+
+    private fun setupRealTimeValidation() {
+        // Node Name — max 64 characters
+        binding.etNodeName.doAfterTextChanged {
+            debounceValidate(binding.tilNodeName) {
+                val text = binding.etNodeName.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (text.length > 64) getString(R.string.err_invalid_node_name)
+                else null
+            }
+        }
+
+        // TAP IPv4 CIDR
+        binding.etTapIp.doAfterTextChanged {
+            debounceValidate(binding.tilTapIp) {
+                val text = binding.etTapIp.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (!isValidIpv4Cidr(text)) getString(R.string.err_invalid_ipv4)
+                else null
+            }
+        }
+
+        // TAP IPv6 CIDR (optional)
+        binding.etTapIpv6.doAfterTextChanged {
+            debounceValidate(binding.tilTapIpv6) {
+                val text = binding.etTapIpv6.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (!isValidIpv6Cidr(text)) getString(R.string.err_invalid_ipv6)
+                else null
+            }
+        }
+
+        // MTU range 576–9000
+        binding.etMtu.doAfterTextChanged {
+            debounceValidate(binding.tilMtu) {
+                val text = binding.etMtu.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else {
+                    val mtu = text.toIntOrNull()
+                    if (mtu == null || mtu < 576 || mtu > 9000)
+                        getString(R.string.err_invalid_mtu)
+                    else null
+                }
+            }
+        }
+
+        // DNS Servers — each line must be a valid IP
+        binding.etDnsServers.doAfterTextChanged {
+            debounceValidate(binding.tilDnsServers) {
+                val lines = binding.etDnsServers.text?.toString()
+                    ?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                val invalid = lines.firstOrNull { !InetAddresses.isNumericAddress(it) }
+                if (invalid != null) getString(R.string.err_invalid_dns_fmt, invalid)
+                else null
+            }
+        }
+
+        // Advertised Subnets — each line must be a valid CIDR
+        binding.etAdvertisedSubnets.doAfterTextChanged {
+            debounceValidate(binding.tilAdvertisedSubnets) {
+                val lines = binding.etAdvertisedSubnets.text?.toString()
+                    ?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                val invalid = lines.firstOrNull { !isValidCidr(it) }
+                if (invalid != null) getString(R.string.err_invalid_subnet_fmt, invalid)
+                else null
+            }
+        }
+
+        // Hole Punch Timeout — 1 000–120 000 ms
+        binding.etHolePunchTimeout.doAfterTextChanged {
+            debounceValidate(binding.tilHolePunchTimeout) {
+                val text = binding.etHolePunchTimeout.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else {
+                    val ms = text.toLongOrNull()
+                    if (ms == null || ms < 1000 || ms > 120000)
+                        getString(R.string.err_invalid_timeout)
+                    else null
+                }
+            }
+        }
+
+        // STUN Servers — each line must be a valid STUN address
+        binding.etStunServers.doAfterTextChanged {
+            debounceValidate(binding.tilStunServers) {
+                val lines = binding.etStunServers.text?.toString()
+                    ?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                val invalid = lines.firstOrNull { !isValidStunServer(it) }
+                if (invalid != null) getString(R.string.err_invalid_stun_fmt, invalid)
+                else null
+            }
+        }
+
+        // TURN Servers — each line must start with turn: and have a valid port
+        binding.etTurnServers.doAfterTextChanged {
+            debounceValidate(binding.tilTurnServers) {
+                val lines = binding.etTurnServers.text?.toString()
+                    ?.lines()?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                val invalid = lines.firstOrNull { !isValidTurnServer(it) }
+                if (invalid != null) getString(R.string.err_invalid_turn_fmt, invalid)
+                else null
+            }
+        }
+
+        // PSK — warning if shorter than 16 characters (weak key)
+        binding.etPsk.doAfterTextChanged {
+            debounceValidate(binding.tilPsk) {
+                val text = binding.etPsk.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (text.length < 16) getString(R.string.err_psk_too_short)
+                else null
+            }
+        }
+
+        // TLS Server Name — basic hostname format
+        binding.etTlsServerName.doAfterTextChanged {
+            debounceValidate(binding.tilTlsServerName) {
+                val text = binding.etTlsServerName.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (!isValidHostname(text)) getString(R.string.err_invalid_hostname)
+                else null
+            }
+        }
+
+        // TLS SNI Suffix — basic hostname format
+        binding.etTlsSniSuffix.doAfterTextChanged {
+            debounceValidate(binding.tilTlsSniSuffix) {
+                val text = binding.etTlsSniSuffix.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (!isValidHostname(text)) getString(R.string.err_invalid_hostname)
+                else null
+            }
+        }
+
+        // WebUI Port — 1–65535
+        binding.etWebUiPort.doAfterTextChanged {
+            debounceValidate(binding.tilWebUiPort) {
+                val text = binding.etWebUiPort.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else {
+                    val port = text.toIntOrNull()
+                    if (port == null || port < 1 || port > 65535)
+                        getString(R.string.err_invalid_port)
+                    else null
+                }
+            }
+        }
+
+        // WebUI Token — warning if shorter than 16 characters (weak token)
+        binding.etWebUiToken.doAfterTextChanged {
+            debounceValidate(binding.tilWebUiToken) {
+                val text = binding.etWebUiToken.text?.toString()?.trim().orEmpty()
+                if (text.isEmpty()) null
+                else if (text.length < 16) getString(R.string.err_token_too_short)
+                else null
+            }
+        }
+    }
+
+    // ── Helper validators (reused by real-time and save-time paths) ──────────
+
+    private fun isValidHostname(s: String): Boolean {
+        // RFC 952 / 1123 hostname: alphanumeric, hyphen, dot; no leading/trailing
+        // hyphen per label; max 253 total. Lenient — the engine enforces strict rules.
+        if (s.length > 253) return false
+        if (s.isEmpty() || s.endsWith(".") || s.startsWith(".") || s.startsWith("-")) return false
+        val labels = s.split(".")
+        for (label in labels) {
+            if (label.isEmpty() || label.length > 63) return false
+            if (label.startsWith("-") || label.endsWith("-")) return false
+            for (c in label) {
+                if (!c.isLetterOrDigit() && c != '-') return false
+            }
+        }
+        return true
     }
 
     private fun openAddressManager(type: AddressListType) {

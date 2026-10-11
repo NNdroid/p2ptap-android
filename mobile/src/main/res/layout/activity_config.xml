@@ -160,6 +160,7 @@
 
                     <!-- Node Name -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilNodeName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -175,6 +176,7 @@
 
                     <!-- Virtual IPv4 -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTapIp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -190,6 +192,7 @@
 
                     <!-- Virtual IPv6 -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTapIpv6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -205,6 +208,7 @@
 
                     <!-- MTU -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilMtu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_mtu"
@@ -439,6 +443,7 @@
 
                     <!-- PSK Security Key -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPsk"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -454,6 +459,7 @@
 
                     <!-- TLS/QUIC SNI (outgoing) -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTlsServerName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -470,6 +476,7 @@
 
                     <!-- TLS SNI suffix (per-peer) -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTlsSniSuffix"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -896,6 +903,7 @@
 
                     <!-- WebUI Port -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilWebUiPort"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -912,6 +920,7 @@
 
                     <!-- WebUI Auth Token -->
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilWebUiToken"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"

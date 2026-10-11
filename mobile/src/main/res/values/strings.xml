@@ -276,6 +276,10 @@
     <string name="err_invalid_block_size">Block size must be greater than 0 when obfuscation mode is block</string>
     <string name="err_invalid_jitter">Jitter range must be 0 or greater</string>
     <string name="err_invalid_max_frag_size">Max fragment size must be 0 (auto) or 256–1400</string>
+    <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
+    <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
+    <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
+    <string name="err_empty_required">This field is required</string>
     <plurals name="msg_filtered_logs_fmt">
         <item quantity="one">Showing %1$d / %2$d log line</item>
         <item quantity="other">Showing %1$d / %2$d log lines</item>
