@@ -298,4 +298,8 @@
     <string name="err_invalid_subnet_fmt">子网无效：%1$s，请使用有效的 CIDR（如 192.168.1.0/24）</string>
     <string name="err_invalid_timeout">超时必须在 1 到 120 秒之间</string>
     <string name="err_invalid_turn_fmt">TURN 服务器无效：%1$s，必须以 turn: 开头</string>
+    <string name="err_empty_required">此字段为必填</string>
+    <string name="err_invalid_hostname">主机名无效 — 只能使用字母、数字、连字符和点</string>
+    <string name="err_psk_too_short">PSK 至少需要 16 个字符以保证安全</string>
+    <string name="err_token_too_short">认证令牌至少需要 16 个字符以保证安全</string>
 </resources>

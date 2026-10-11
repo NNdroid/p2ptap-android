@@ -285,4 +285,8 @@
     <string name="err_invalid_subnet_fmt">Ungültiges Subnetz: %1$s. Verwenden Sie eine gültige CIDR (z. B. 192.168.1.0/24).</string>
     <string name="err_invalid_timeout">Timeout muss zwischen 1 und 120 Sekunden liegen.</string>
     <string name="err_invalid_turn_fmt">Ungültiger TURN-Server: %1$s. Muss mit turn: beginnen.</string>
+    <string name="err_empty_required">This field is required</string>
+    <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
+    <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
+    <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
 </resources>

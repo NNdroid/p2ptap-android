@@ -282,4 +282,8 @@
     <string name="err_invalid_subnet_fmt">잘못된 서브넷: %1$s. 유효한 CIDR를 사용하세요 (예: 192.168.1.0/24)</string>
     <string name="err_invalid_timeout">타임아웃은 1~120 초 사이여야 합니다</string>
     <string name="err_invalid_turn_fmt">잘못된 TURN 서버: %1$s. turn:으로 시작해야 합니다</string>
+    <string name="err_empty_required">This field is required</string>
+    <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
+    <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
+    <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
 </resources>

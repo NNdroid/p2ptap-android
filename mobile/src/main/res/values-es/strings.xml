@@ -288,4 +288,8 @@
     <string name="err_invalid_subnet_fmt">Subred inválida: %1$s. Use una CIDR válida (p. ej. 192.168.1.0/24).</string>
     <string name="err_invalid_timeout">El tiempo de espera debe estar entre 1 y 120 segundos.</string>
     <string name="err_invalid_turn_fmt">Servidor TURN inválido: %1$s. Debe comenzar con turn:.</string>
+    <string name="err_empty_required">This field is required</string>
+    <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
+    <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
+    <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
 </resources>
