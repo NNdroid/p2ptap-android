@@ -1219,7 +1219,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                 while (addrs.hasMoreElements()) {
                     val addr = addrs.nextElement()
                     if (addr.isLoopbackAddress) continue
-                    if (addr is java.net.Inet4Address && addr.isLinkLocalAddress) continue
+                    if (addr.isLinkLocalAddress) continue
                     val host = addr.hostAddress ?: continue
                     val cleanHost = host.split("%")[0].trim()
                     if (cleanHost.isNotEmpty()) {
