@@ -40,7 +40,7 @@ class VpnReloadPolicyTest {
         val old = config()
         assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(transportStrategy = "redundant")))
         assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(staticPeers = listOf("endpoint"))))
-        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(bootstrapPeers = emptyList())))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(bootstrapPeers = listOf("endpoint"))))
         // A backup can restore a new identity without changing any JSON fields.
         assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(), forceRestart = true))
     }
