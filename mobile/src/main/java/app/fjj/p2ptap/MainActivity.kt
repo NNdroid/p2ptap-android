@@ -16,8 +16,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import java.util.Locale
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +32,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import app.fjj.p2ptap.config.AppConfigManager
 import app.fjj.p2ptap.databinding.ActivityMainBinding
 import app.fjj.p2ptap.service.P2PStateRepository
+import app.fjj.p2ptap.service.ProtocolStatsData
 import app.fjj.p2ptap.service.P2PTapVpnService
 import app.fjj.p2ptap.ui.BackupDialog
 import app.fjj.p2ptap.ui.ConfigActivity
@@ -110,11 +115,24 @@ class MainActivity : AppCompatActivity() {
                             content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(m.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(m.rxSpeed)}"
                             content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(m.totalTx)}  ↓ ${P2PStateRepository.formatBytes(m.totalRx)}"
                             content.tvNatStatus.text = if (snapshot.natStatus.isNotBlank()) snapshot.natStatus else unknown
+                            // System health
+                            val sys = snapshot.systemHealth
+                            content.tvUptime.text = if (sys.uptimeSeconds > 0) P2PStateRepository.formatUptime(sys.uptimeSeconds) else unknown
+                            content.tvHeap.text = if (sys.heapAllocMB > 0f) P2PStateRepository.formatMemoryMB(sys.heapAllocMB) else unknown
+                            content.tvGoroutines.text = if (sys.goroutines > 0) sys.goroutines.toString() else unknown
+                            content.tvGcPause.text = if (sys.lastGcPauseMS > 0f) String.format(Locale.getDefault(), "%.1f ms", sys.lastGcPauseMS) else unknown
+                            // Protocol traffic composition
+                            renderProtocolStats(snapshot.protocolStats)
                         } else {
                             content.tvActivePeers.text = getString(if (data.failed) R.string.telemetry_refresh_failed else R.string.telemetry_unknown)
                             content.tvLiveSpeed.text = "↑ $unknown\n↓ $unknown"
                             content.tvTraffic.text = "↑ $unknown  ↓ $unknown"
                             content.tvNatStatus.text = unknown
+                            content.tvUptime.text = unknown
+                            content.tvHeap.text = unknown
+                            content.tvGoroutines.text = unknown
+                            content.tvGcPause.text = unknown
+                            binding.contentMain.protoContainer.removeAllViews()
                         }
                         refreshExitNodeDisplay()
                     }
@@ -389,6 +407,76 @@ class MainActivity : AppCompatActivity() {
         binding.contentMain.layoutTapIpv6.visibility = View.VISIBLE
         binding.contentMain.tvTapIpv6.text = v6Text
     }
+
+    private fun renderProtocolStats(stats: ProtocolStatsData) {
+        val container = binding.contentMain.protoContainer
+        container.removeAllViews()
+        if (stats.total == 0L) return
+        val ctx = this
+        val entries = listOf(
+            Triple(getString(R.string.proto_ipv4), stats.ipv4, "#4ade80"),
+            Triple(getString(R.string.proto_ipv6), stats.ipv6, "#60a5fa"),
+            Triple(getString(R.string.proto_tcp), stats.tcp, "#f87171"),
+            Triple(getString(R.string.proto_udp), stats.udp, "#fbbf24"),
+            Triple(getString(R.string.proto_icmp), stats.icmp, "#a78bfa"),
+            Triple(getString(R.string.proto_arp), stats.arp, "#34d399"),
+            Triple(getString(R.string.proto_other), stats.other, "#94a3b8")
+        )
+        for ((name, value, color) in entries) {
+            if (value <= 0L) continue
+            val pct = ((value * 100L) / stats.total).toInt()
+            val row = LinearLayout(ctx).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { setMargins(0, 2, 0, 2) }
+            }
+            val header = LinearLayout(ctx).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+            }
+            val label = TextView(ctx).apply {
+                text = name
+                textSize = 11f
+                setTextColor(ContextCompat.getColor(ctx, R.color.md_on_surface_variant))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+            val barSpace = View(ctx).apply {
+                layoutParams = LinearLayout.LayoutParams(0, 1, 1f)
+            }
+            val pctText = TextView(ctx).apply {
+                text = "$pct%"
+                textSize = 11f
+                setTextColor(ContextCompat.getColor(ctx, R.color.md_on_surface_variant))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { marginStart = dpToPx(4) }
+            }
+            header.addView(label)
+            header.addView(barSpace)
+            header.addView(pctText)
+            row.addView(header)
+            val progress = com.google.android.material.progressindicator.LinearProgressIndicator(ctx).apply {
+                max = 100
+                progress = pct
+                setIndicatorColor(android.graphics.Color.parseColor(color))
+                setTrackThickness(dpToPx(4))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    dpToPx(4)
+                ).apply { setMargins(0, 2, 0, 0) }
+            }
+            row.addView(progress)
+            container.addView(row)
+        }
+    }
+
+    private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
 
     private fun refreshExitNodeDisplay() {
         // Read through AppConfigManager every time: the exit node can be changed

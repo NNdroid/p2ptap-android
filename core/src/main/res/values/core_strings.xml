@@ -98,6 +98,52 @@
     <string name="detail_wait_protocol">Waiting for the application protocol</string>
     <string name="detail_wait_ready">Waiting for peer readiness</string>
 
+    <!-- Return path status -->
+    <string name="return_path_ok">Return path alive</string>
+    <string name="return_path_dead">Return path dead</string>
+    <string name="return_path_idle">Return path idle</string>
+
+    <!-- Reachability -->
+    <string name="reachability_public">Public</string>
+    <string name="reachability_private">Private</string>
+    <string name="reachability_unknown">Unknown</string>
+
+    <!-- Peer role -->
+    <string name="role_bootstrap">Bootstrap</string>
+    <string name="role_static">Static</string>
+    <string name="role_peer">Peer</string>
+
+    <!-- Encryption -->
+    <string name="encryption_active">🔒 %1$s</string>
+    <string name="encryption_plain">🔓 Plaintext</string>
+
+    <!-- Connection quality -->
+    <string name="label_jitter">Jitter</string>
+    <string name="label_loss">Loss</string>
+    <string name="label_connected_since">Connected</string>
+    <string name="label_uptime">Uptime</string>
+    <string name="label_replay_drops">Replay drops</string>
+    <string name="label_dedup_drops">Dedup drops</string>
+    <string name="label_decrypt_errors">Decrypt errors</string>
+    <string name="label_rekey_ago">Last rekey</string>
+    <string name="label_geo_location">Location</string>
+
+    <!-- System health -->
+    <string name="section_system_health">🖥 System Health</string>
+    <string name="label_heap">Memory</string>
+    <string name="label_goroutines">Goroutines</string>
+    <string name="label_gc_pause">GC Pause</string>
+
+    <!-- Protocol breakdown -->
+    <string name="section_protocol">📊 Traffic Composition</string>
+    <string name="proto_ipv4">IPv4</string>
+    <string name="proto_ipv6">IPv6</string>
+    <string name="proto_tcp">TCP</string>
+    <string name="proto_udp">UDP</string>
+    <string name="proto_icmp">ICMP</string>
+    <string name="proto_arp">ARP</string>
+    <string name="proto_other">Other</string>
+
     <!-- Crash Report Dialog -->
     <string name="crash_dialog_title">Application Crash Report</string>
     <string name="crash_label_time">Time</string>

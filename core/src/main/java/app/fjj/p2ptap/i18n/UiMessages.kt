@@ -121,6 +121,32 @@ object UiMessages {
         else -> R.string.telemetry_unknown
     })
 
+    fun returnPath(context: Context, state: String): String = context.getString(when (state) {
+        "ok" -> R.string.return_path_ok
+        "dead" -> R.string.return_path_dead
+        "idle" -> R.string.return_path_idle
+        else -> R.string.telemetry_unknown
+    })
+
+    fun reachability(context: Context, raw: String): String = context.getString(when (raw) {
+        "public" -> R.string.reachability_public
+        "private" -> R.string.reachability_private
+        "unknown" -> R.string.reachability_unknown
+        else -> R.string.telemetry_unknown
+    })
+
+    fun role(context: Context, raw: String): String = when (raw) {
+        "Bootstrap" -> context.getString(R.string.role_bootstrap)
+        "Static" -> context.getString(R.string.role_static)
+        "Peer" -> context.getString(R.string.role_peer)
+        else -> raw.ifBlank { context.getString(R.string.telemetry_unknown) }
+    }
+
+    fun encryption(context: Context, algo: String, encrypted: Boolean): String {
+        if (!encrypted || algo.isBlank() || algo == "none") return context.getString(R.string.encryption_plain)
+        return context.getString(R.string.encryption_active, algo)
+    }
+
     fun connectionDetail(context: Context, raw: String): String {
         val resource = when {
             raw.contains("control path failed") -> R.string.detail_relay_control_failed

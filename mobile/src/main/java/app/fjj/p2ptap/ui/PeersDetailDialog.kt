@@ -114,6 +114,8 @@ class PeersDetailDialog : LiveDataSheet() {
             val item = peerDataList[i]
 
             itemBinding.tvNodeName.text = item.nodeName
+
+            // Connection state badge
             itemBinding.tvBadge.apply {
                 when (item.connState) {
                     "ok" -> {
@@ -147,9 +149,84 @@ class PeersDetailDialog : LiveDataSheet() {
                 }
             }
 
-            itemBinding.tvRtt.text = if (item.rttMeasured) String.format(Locale.getDefault(), "%.1f ms", item.rtt) else getString(R.string.telemetry_unmeasured)
+            // Encryption badge
+            itemBinding.tvEncBadge.apply {
+                if (item.obfEncrypted && item.obfAlgo.isNotBlank()) {
+                    text = UiMessages.encryption(ctx, item.obfAlgo, true)
+                    setTextColor(ContextCompat.getColor(ctx, R.color.status_connected))
+                    visibility = View.VISIBLE
+                } else if (!item.obfEncrypted && item.connState == "ok") {
+                    text = UiMessages.encryption(ctx, "", false)
+                    setTextColor(ContextCompat.getColor(ctx, R.color.status_error))
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // Role badge
+            itemBinding.tvRoleBadge.apply {
+                if (item.role.isNotBlank() && item.role != "Peer") {
+                    text = UiMessages.role(ctx, item.role)
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // Geo location
+            itemBinding.tvGeoLocation.apply {
+                if (item.geoLocation.isNotBlank()) {
+                    text = item.geoLocation
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // RTT
+            itemBinding.tvRtt.text = if (item.rttMeasured) String.format(Locale.getDefault(), "RTT %.1f ms", item.rtt) else getString(R.string.telemetry_unmeasured)
             itemBinding.tvRtt.contentDescription = "${itemBinding.tvRtt.text} ${UiMessages.rttSource(ctx, item.rttSource)}"
 
+            // Jitter
+            itemBinding.tvJitter.apply {
+                if (item.jitterMeasured && item.jitterMs > 0) {
+                    text = String.format(Locale.getDefault(), "Jitter %.1f ms", item.jitterMs)
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // Loss
+            itemBinding.tvLoss.apply {
+                if (item.lossMeasured && item.lossRatePercent > 0) {
+                    text = String.format(Locale.getDefault(), "Loss %.1f%%", item.lossRatePercent)
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // Connection duration + return path
+            val durationText = buildString {
+                if (item.connectedSince.isNotBlank()) append(getString(R.string.label_connected_since) + ": " + item.connectedSince)
+                if (item.returnPath.isNotBlank()) {
+                    if (isNotEmpty()) append("  ·  ")
+                    append(UiMessages.returnPath(ctx, item.returnPath))
+                }
+            }
+            itemBinding.layoutDuration.apply {
+                if (durationText.isNotBlank()) {
+                    itemBinding.tvConnectedSince.text = item.connectedSince.ifBlank { "" }
+                    itemBinding.tvReturnPath.text = if (item.returnPath.isNotBlank()) UiMessages.returnPath(ctx, item.returnPath) else ""
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
+            // TAP IPs
             val ipText = buildString {
                 if (item.tapIp.isNotBlank()) append("IPv4: ${item.tapIp}  ")
                 if (item.tapIpv6.isNotBlank()) append("IPv6: ${item.tapIpv6}")
@@ -164,6 +241,7 @@ class PeersDetailDialog : LiveDataSheet() {
                 Toast.makeText(ctx, getString(R.string.msg_copied_clipboard) + ": $ip", Toast.LENGTH_SHORT).show()
             }
 
+            // Peer ID
             itemBinding.tvPeerId.text = getString(R.string.peer_id_fmt, item.peerId)
             itemBinding.layoutPeerId.setOnClickListener {
                 val cm = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -171,6 +249,7 @@ class PeersDetailDialog : LiveDataSheet() {
                 Toast.makeText(ctx, getString(R.string.msg_peer_id_copied_fmt, item.peerId), Toast.LENGTH_SHORT).show()
             }
 
+            // Endpoint
             val endpointText = buildString {
                 if (item.multiaddr.isNotBlank()) {
                     append(getString(R.string.label_endpoint_prefix))
@@ -186,6 +265,7 @@ class PeersDetailDialog : LiveDataSheet() {
             itemBinding.tvEndpoint.text = endpointText
             itemBinding.tvEndpoint.visibility = if (endpointText.isBlank()) View.GONE else View.VISIBLE
 
+            // Traffic + diagnostics
             val unknown = getString(R.string.telemetry_unknown)
             val tx = if (item.linkTrafficAvailable) P2PStateRepository.formatBytes(item.txBytes) else unknown
             val rx = if (item.linkTrafficAvailable) P2PStateRepository.formatBytes(item.rxBytes) else unknown
@@ -195,7 +275,23 @@ class PeersDetailDialog : LiveDataSheet() {
                 append("\n${item.os.ifBlank { unknown }} · ${item.version.ifBlank { unknown }}")
                 append("\n${UiMessages.rttSource(ctx, item.rttSource)}")
                 if (item.isExitNode) append("\n${getString(R.string.telemetry_exit_gateway)}")
+                if (item.exitNat) append(" · ${getString(R.string.label_nat_status)}")
+                if (item.relayOnly) append("\n⚠ ${getString(R.string.telemetry_relay_only)}")
+                if (item.replayDrops > 0) append("\n${getString(R.string.label_replay_drops)}: ${item.replayDrops}")
+                if (item.dedupDrops > 0) append("\n${getString(R.string.label_dedup_drops)}: ${item.dedupDrops}")
+                if (item.obfDecryptErrs > 0) append("\n${getString(R.string.label_decrypt_errors)}: ${item.obfDecryptErrs}")
+                if (item.obfLastRekeyAgo.isNotBlank()) append("\n${getString(R.string.label_rekey_ago)}: ${item.obfLastRekeyAgo}")
                 if (item.connDetail.isNotBlank()) append("\n${UiMessages.connectionDetail(ctx, item.connDetail)}")
+            }
+
+            // TAP MAC mismatch warning
+            itemBinding.tvTapMacWarning.apply {
+                if (item.tapMacMismatch) {
+                    text = "⚠ TAP MAC mismatch — broadcast address may not match actual TAP device"
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
             }
         }
 

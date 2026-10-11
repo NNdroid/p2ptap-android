@@ -605,7 +605,11 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             counters["tx_bytes_per_sec"] ?: 0L,
             counters["rx_bytes_per_sec"] ?: 0L,
             counters["bytes_sent"] ?: 0L,
-            counters["bytes_recv"] ?: 0L
+            counters["bytes_recv"] ?: 0L,
+            uptimeSeconds = snapshot.systemHealth.uptimeSeconds,
+            heapAllocMB = snapshot.systemHealth.heapAllocMB,
+            goroutines = snapshot.systemHealth.goroutines,
+            gcPauseMS = snapshot.systemHealth.lastGcPauseMS
         )
         if (P2PStateRepository.finishRefresh(snapshot, P2PStateRepository.sessionRevision)) {
             P2PStateRepository.markSnapshotFresh(System.currentTimeMillis())

@@ -12,8 +12,39 @@ data class NodeMetrics(
     val txSpeed: Long = 0,      // bytes/sec
     val rxSpeed: Long = 0,      // bytes/sec
     val totalTx: Long = 0,      // total bytes
-    val totalRx: Long = 0       // total bytes
+    val totalRx: Long = 0,      // total bytes
+    val uptimeSeconds: Long = 0,
+    val heapAllocMB: Float = 0f,
+    val goroutines: Int = 0,
+    val gcPauseMS: Float = 0f
 )
+
+data class SystemHealthData(
+    val uptimeSeconds: Long = 0,
+    val heapAllocMB: Float = 0f,
+    val heapObjects: Long = 0,
+    val stackInuseMB: Float = 0f,
+    val goroutines: Int = 0,
+    val gcCount: Int = 0,
+    val lastGcPauseMS: Float = 0f,
+    val gcCpuFraction: Float = 0f,
+    val numCpu: Int = 0,
+    val goMaxProcs: Int = 0
+)
+
+data class ProtocolStatsData(
+    val ipv4: Long = 0,
+    val ipv6: Long = 0,
+    val arp: Long = 0,
+    val ndp: Long = 0,
+    val tcp: Long = 0,
+    val udp: Long = 0,
+    val icmp: Long = 0,
+    val other: Long = 0
+) {
+    val total: Long get() = ipv4 + ipv6 + arp + ndp + tcp + udp + icmp + other
+    fun percentOf(key: Long): Int = if (total == 0L) 0 else ((key * 100L) / total).toInt()
+}
 
 data class PeerItemData(
     val peerId: String,
@@ -40,7 +71,33 @@ data class PeerItemData(
     val remoteTxBytes: Long? = null,
     val remoteRxBytes: Long? = null,
     val rttSource: String = "",
-    val connDetail: String = ""
+    val connDetail: String = "",
+    // ── P0: connection quality ──────────────────────────────────────────────
+    val connectedSince: String = "",
+    val connectedAt: String = "",
+    val uptime: String = "",
+    val returnPath: String = "",        // ok | dead | idle
+    val returnPathDetail: String = "",
+    val jitterMs: Double = 0.0,
+    val jitterMeasured: Boolean = false,
+    val lossRatePercent: Double = 0.0,
+    val lossMeasured: Boolean = false,
+    // ── P0: encryption ─────────────────────────────────────────────────────
+    val obfAlgo: String = "",
+    val obfEncrypted: Boolean = false,
+    val obfDecryptErrs: Long = 0,
+    val obfLastRekeyAgo: String = "",
+    // ── P0: TAP integrity ───────────────────────────────────────────────────
+    val tapMacMismatch: Boolean = false,
+    // ── P1: link diagnostics ────────────────────────────────────────────────
+    val replayDrops: Long = 0,
+    val dedupDrops: Long = 0,
+    // ── P1: metadata ────────────────────────────────────────────────────────
+    val geoLocation: String = "",
+    val reachability: String = "",
+    val role: String = "",
+    val relayOnly: Boolean = false,
+    val exitNat: Boolean = false
 )
 
 data class VpnStatus(val state: String = "IDLE", val message: String = "")
@@ -106,7 +163,11 @@ object P2PStateRepository {
         txSpeed: Long,
         rxSpeed: Long,
         totalTx: Long,
-        totalRx: Long
+        totalRx: Long,
+        uptimeSeconds: Long = _metrics.value.uptimeSeconds,
+        heapAllocMB: Float = _metrics.value.heapAllocMB,
+        goroutines: Int = _metrics.value.goroutines,
+        gcPauseMS: Float = _metrics.value.gcPauseMS
     ) {
         if (_state.value != "RUNNING") return
         _metrics.value = NodeMetrics(
@@ -116,7 +177,11 @@ object P2PStateRepository {
             txSpeed = txSpeed,
             rxSpeed = rxSpeed,
             totalTx = totalTx,
-            totalRx = totalRx
+            totalRx = totalRx,
+            uptimeSeconds = uptimeSeconds,
+            heapAllocMB = heapAllocMB,
+            goroutines = goroutines,
+            gcPauseMS = gcPauseMS
         )
     }
 
@@ -135,6 +200,20 @@ object P2PStateRepository {
             bytes >= 1024 -> String.format(Locale.getDefault(), "%.1f KB", bytes / 1024.0)
             else -> "$bytes B"
         }
+    }
+
+    /** Format an uptime in seconds as a human-readable duration string. */
+    fun formatUptime(seconds: Long): String {
+        return when {
+            seconds < 60 -> "$seconds s"
+            seconds < 3600 -> String.format(Locale.getDefault(), "%dm %ds", seconds / 60, seconds % 60)
+            else -> String.format(Locale.getDefault(), "%dh %dm", seconds / 3600, (seconds % 3600) / 60)
+        }
+    }
+
+    /** Format a memory value in MB with one decimal place. */
+    fun formatMemoryMB(mb: Float): String {
+        return String.format(Locale.getDefault(), "%.1f MB", mb)
     }
 
     // ── Caches for data that is expensive to obtain but rarely changes ──────

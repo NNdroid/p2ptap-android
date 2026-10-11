@@ -26,7 +26,10 @@ data class StatsSnapshot(
     val activeExitPeerId: String,
     val activeExitIpv4: String,
     val activeExitIpv6: String,
-    val natStatus: String
+    val natStatus: String,
+    val systemHealth: SystemHealthData = SystemHealthData(),
+    val protocolStats: ProtocolStatsData = ProtocolStatsData(),
+    val listenAddrs: List<String> = emptyList()
 ) {
     fun matchesExit(target: String): Boolean = target.isNotBlank() &&
         (target == activeExitPeerId || matchesVirtualAddress(target, activeExitIpv4) || matchesVirtualAddress(target, activeExitIpv6))
@@ -70,7 +73,28 @@ object StatsSnapshotParser {
                 rxSpeed = if (p.optBoolean("link_speed_measured", false)) p.counter("rx_speed") else null,
                 linkTrafficAvailable = p.counter("link_total_tx") != null && p.counter("link_total_rx") != null,
                 remoteTxBytes = p.counter("total_tx"), remoteRxBytes = p.counter("total_rx"),
-                rttSource = p.text("rtt_source"), connDetail = p.text("conn_detail"))
+                rttSource = p.text("rtt_source"), connDetail = p.text("conn_detail"),
+                connectedSince = p.text("connected_since"),
+                connectedAt = p.text("connected_at"),
+                uptime = p.text("uptime"),
+                returnPath = p.text("return_path"),
+                returnPathDetail = p.text("return_path_detail"),
+                jitterMs = if (p.optBoolean("jitter_measured", false)) p.optDouble("jitter_ms", 0.0) else 0.0,
+                jitterMeasured = p.optBoolean("jitter_measured", false),
+                lossRatePercent = if (p.optBoolean("loss_measured", false)) p.optDouble("loss_rate_percent", 0.0) else 0.0,
+                lossMeasured = p.optBoolean("loss_measured", false),
+                obfAlgo = p.text("obf_algo"),
+                obfEncrypted = p.optBoolean("obf_encrypted", false),
+                obfDecryptErrs = p.counter("obf_decrypt_errs") ?: 0,
+                obfLastRekeyAgo = p.text("obf_last_rekey_ago"),
+                tapMacMismatch = p.optBoolean("tap_mac_mismatch", false),
+                replayDrops = p.counter("replay_drops") ?: 0,
+                dedupDrops = p.counter("dedup_drops") ?: 0,
+                geoLocation = p.text("geo_location"),
+                reachability = p.text("reachability"),
+                role = p.text("role"),
+                relayOnly = p.optBoolean("relay_only", false),
+                exitNat = p.optBoolean("exit_nat", false))
         }.distinctBy { it.peerId }.sortedBy { it.peerId }
         val counters = linkedMapOf<String, Long?>()
         fun read(section: String, vararg keys: String) {
@@ -89,10 +113,35 @@ object StatsSnapshotParser {
                 p.text("algo"), if (p.has("pfs") && !p.isNull("pfs")) p.optBoolean("pfs") else null)
         }
         val exit = root.optJSONObject("exit_node")
+        // System health
+        val sys = root.optJSONObject("system")
+        val systemHealth = if (sys != null) SystemHealthData(
+            uptimeSeconds = sys.counter("uptime_seconds") ?: 0L,
+            heapAllocMB = sys.optDouble("heap_alloc_mb", 0.0).toFloat(),
+            heapObjects = sys.counter("heap_objects") ?: 0L,
+            stackInuseMB = sys.optDouble("stack_inuse_mb", 0.0).toFloat(),
+            goroutines = sys.optInt("goroutines", 0),
+            gcCount = sys.optInt("gc_count", 0),
+            lastGcPauseMS = sys.optDouble("last_gc_pause_ms", 0.0).toFloat(),
+            gcCpuFraction = sys.optDouble("gc_cpu_fraction", 0.0).toFloat(),
+            numCpu = sys.optInt("num_cpu", 0),
+            goMaxProcs = sys.optInt("gomaxprocs", 0)
+        ) else SystemHealthData()
+        // Protocol stats
+        val ps = root.optJSONObject("protocol_stats")
+        val protocolStats = if (ps != null) ProtocolStatsData(
+            ipv4 = ps.counter("ipv4") ?: 0L, ipv6 = ps.counter("ipv6") ?: 0L,
+            arp = ps.counter("arp") ?: 0L, ndp = ps.counter("ndp") ?: 0L,
+            tcp = ps.counter("tcp") ?: 0L, udp = ps.counter("udp") ?: 0L,
+            icmp = ps.counter("icmp") ?: 0L, other = ps.counter("other") ?: 0L
+        ) else ProtocolStatsData()
+        // Listen addrs
+        val la = root.optJSONArray("listen_addrs")
+        val listenAddrs = (0 until (la?.length() ?: 0)).mapNotNull { la?.optString(it)?.takeIf { s -> s.isNotBlank() } }
         return StatsSnapshot(peers, counters, security?.text("obfuscation").orEmpty(),
             security?.text("psk_status").orEmpty(), encryption, exit?.text("active_peer_id").orEmpty(),
             exit?.text("active_exit_ip").orEmpty(), exit?.text("active_exit_tap_ipv6").orEmpty(),
-            root.text("nat_status"))
+            root.text("nat_status"), systemHealth, protocolStats, listenAddrs)
     }
 
     private fun JSONObject.text(key: String): String = if (isNull(key)) "" else optString(key, "").trim()
