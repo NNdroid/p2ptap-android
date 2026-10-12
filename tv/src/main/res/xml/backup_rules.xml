@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Auto Backup rules for devices below API 31. With no rules at all every
+   domain is included, so this file has to be explicit: p2ptap_settings holds
+   mesh topology that is worth restoring, but credential material is not.
+   Same rules as mobile/src/main/res/xml/backup_rules.xml — the :core
+   AppConfigManager is shared, so the file names are the same.
+-->
+<full-backup-content>
+    <!-- p2ptap_settings stores the whole configuration as one JSON blob.
+         Secrets have been moved out of it into p2ptap_secrets (see
+         AppConfigManager), but the file is still excluded rather than trusted:
+         a legacy install whose pre-split blob is never re-saved would otherwise
+         ship its PSK and webui_token to Google Auto Backup. -->
+    <exclude domain="sharedpref" path="p2ptap_settings" />
+
+    <!-- psk and webui_token. Not worth restoring to a cloud account, and the
+         only reason they exist in a separate file at all. -->
+    <exclude domain="sharedpref" path="p2ptap_secrets" />
+
+    <!-- The libp2p identity key. Restoring it would silently resurrect a
+         retired identity on a new device; a fresh key is the safer default. -->
+    <exclude domain="file" path="node.key" />
+
+    <!-- Go-side panic output; log lines can carry configuration values. -->
+    <exclude domain="file" path="native_crash.txt" />
+</full-backup-content>

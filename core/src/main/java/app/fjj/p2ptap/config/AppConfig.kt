@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import org.json.JSONArray
 import org.json.JSONObject
+import java.security.SecureRandom
 import com.p2ptap.P2PTap.P2PTap
 import app.fjj.p2ptap.service.P2PTapVpnService
 
@@ -597,8 +598,97 @@ object AppConfigManager {
     private const val PREFS_NAME = "p2ptap_settings"
     private const val KEY_CONFIG_JSON = "full_config_json"
 
+    // Secrets live in their OWN file, never inside the exported config JSON.
+    // p2ptap_settings holds mesh topology that is worth restoring from a cloud
+    // backup; psk and webui_token are not, and the backup rules exclude both
+    // this file and node.key so they never reach Google Auto Backup or a device
+    // transfer. The rest of the app only ever sees the merged view from load().
+    private const val SECRETS_PREFS = "p2ptap_secrets"
+    private const val KEY_PSK = "psk"
+    private const val KEY_WEBUI_TOKEN = "webui_token"
+
+    // Minimum length enforced by the engine's validateSecretEntropy for both
+    // fields; keep in step with it or fresh installs fail to start.
+    private const val SECRET_MIN_LENGTH = 24
+
     @Volatile
     private var cachedConfig: P2PConfig? = null
+
+    /**
+     * Generates a random secret that satisfies the engine's entropy policy
+     * (>= SECRET_MIN_LENGTH chars and >= 2 distinct character classes). It is
+     * drawn from four disjoint pools so the character-class condition is a
+     * matter of construction rather than luck.
+     */
+    private fun generateSecret(): String {
+        val lower = "abcdefghijkmnopqrstuvwxyz"
+        val upper = "ABCDEFGHJKLMNPQRSTUVWXYZ"
+        val digits = "23456789"
+        val sep = "._-+"
+        val all = lower + upper + digits + sep
+        val rnd = SecureRandom()
+        val sb = StringBuilder(SECRET_MIN_LENGTH)
+        // One guaranteed pick per class so the >=2-class rule cannot fail.
+        sb.append(lower[rnd.nextInt(lower.length)])
+        sb.append(upper[rnd.nextInt(upper.length)])
+        sb.append(digits[rnd.nextInt(digits.length)])
+        sb.append(sep[rnd.nextInt(sep.length)])
+        while (sb.length < SECRET_MIN_LENGTH) {
+            sb.append(all[rnd.nextInt(all.length)])
+        }
+        // Shuffle so the class guarantees are not visible at fixed positions.
+        val chars = sb.toString().toCharArray()
+        for (i in chars.size - 1 downTo 1) {
+            val j = rnd.nextInt(i + 1)
+            val tmp = chars[i]
+            chars[i] = chars[j]
+            chars[j] = tmp
+        }
+        return String(chars)
+    }
+
+    private fun secretsPrefs(context: Context): SharedPreferences =
+        context.getSharedPreferences(SECRETS_PREFS, Context.MODE_PRIVATE)
+
+    /**
+     * Reads the secrets, generating and persisting whichever are missing.
+     * Values found in the exported config JSON are treated as legacy input
+     * (pre-dating this split) and promoted to the secrets store on first read.
+     */
+    private fun loadOrMigrateSecrets(context: Context, legacyPsk: String, legacyToken: String): Pair<String, String> {
+        val prefs = secretsPrefs(context)
+        var psk = prefs.getString(KEY_PSK, "")?.trim().orEmpty()
+        var token = prefs.getString(KEY_WEBUI_TOKEN, "")?.trim().orEmpty()
+        var dirty = false
+        if (psk.isEmpty()) {
+            psk = legacyPsk.trim()
+            dirty = psk.isNotEmpty()
+        }
+        if (token.isEmpty()) {
+            token = legacyToken.trim()
+            dirty = token.isNotEmpty()
+        }
+        if (psk.isEmpty()) {
+            psk = generateSecret()
+            dirty = true
+        }
+        if (token.isEmpty()) {
+            token = generateSecret()
+            dirty = true
+        }
+        if (dirty) {
+            prefs.edit().putString(KEY_PSK, psk).putString(KEY_WEBUI_TOKEN, token).apply()
+        }
+        return Pair(psk, token)
+    }
+
+    /** Serialises the config for persistence, dropping the secret fields. */
+    private fun P2PConfig.toNonSecretJson(): String {
+        val root = JSONObject(toExportJson())
+        root.remove(KEY_PSK)
+        root.remove("webui_token")
+        return root.toString(2)
+    }
 
     /**
      * Loads default configuration from the Go engine (p2ptap-core).
@@ -741,10 +831,6 @@ object AppConfigManager {
                     parsed.tapIpv6 = "fd00::$lastOctet/64"
                     changed = true
                 }
-                if (parsed.webUiToken.isBlank()) {
-                    parsed.webUiToken = "p2ptap-admin"
-                    changed = true
-                }
                 if (parsed.webUiPort <= 0 || parsed.webUiPort == 8080 || parsed.webUiPort == 80) {
                     parsed.webUiPort = 15858
                     changed = true
@@ -768,6 +854,11 @@ object AppConfigManager {
             save(context, defaultCfg)
             defaultCfg
         }
+        // Secrets are merged in last, so the value they carry always wins over
+        // whatever the exported JSON says (the JSON no longer stores them).
+        val (psk, token) = loadOrMigrateSecrets(context, cfg.psk, cfg.webUiToken)
+        cfg.psk = psk
+        cfg.webUiToken = token
         cachedConfig = cfg.snapshot()
         return cfg.snapshot()
     }
@@ -789,11 +880,18 @@ object AppConfigManager {
             bootstrapPeers = normalizePeerAddresses(bootstrapPeers)
         }
         validate(context, candidate)
+        // Secrets go to their own, backup-excluded prefs file; the exported
+        // JSON never carries them, so restoring p2ptap_settings from a cloud
+        // backup cannot resurrect a credential into this device.
+        secretsPrefs(context).edit()
+            .putString(KEY_PSK, candidate.psk)
+            .putString(KEY_WEBUI_TOKEN, candidate.webUiToken)
+            .apply()
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         // apply() queues the write without blocking the caller — commit()
         // performs a synchronous disk I/O that caused ANR on locked-down
         // set-top-box hardware when called from the main thread.
-        prefs.edit().putString(KEY_CONFIG_JSON, candidate.toExportJson()).apply()
+        prefs.edit().putString(KEY_CONFIG_JSON, candidate.toNonSecretJson()).apply()
         cachedConfig = candidate.snapshot()
     }
 

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+   Data extraction rules for API 31 and above. An empty <cloud-backup> block
+   still means "include everything", so the same exclusions as backup_rules.xml
+   have to be repeated here, and in <device-transfer> as well.
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <exclude domain="sharedpref" path="p2ptap_settings" />
+        <exclude domain="sharedpref" path="p2ptap_secrets" />
+        <exclude domain="file" path="node.key" />
+        <exclude domain="file" path="native_crash.txt" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="sharedpref" path="p2ptap_settings" />
+        <exclude domain="sharedpref" path="p2ptap_secrets" />
+        <exclude domain="file" path="node.key" />
+        <exclude domain="file" path="native_crash.txt" />
     </device-transfer>
-    -->
 </data-extraction-rules>
