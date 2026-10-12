@@ -611,6 +611,11 @@ object AppConfigManager {
     // fields; keep in step with it or fresh installs fail to start.
     private const val SECRET_MIN_LENGTH = 24
 
+    // The token older builds stamped onto a blank webui_token. During the split
+    // migration it is treated as "never configured" rather than as a credential
+    // worth keeping, so upgrading replaces it with a generated secret.
+    private const val LEGACY_DEFAULT_TOKEN = "p2ptap-admin"
+
     @Volatile
     private var cachedConfig: P2PConfig? = null
 
@@ -652,32 +657,47 @@ object AppConfigManager {
 
     /**
      * Reads the secrets, generating and persisting whichever are missing.
-     * Values found in the exported config JSON are treated as legacy input
-     * (pre-dating this split) and promoted to the secrets store on first read.
+     *
+     * `contains()` is the discriminator, not emptiness: the UI can legitimately
+     * clear the PSK to run an open mesh, so "the key holds an empty string" is an
+     * explicit decision that must survive verbatim, while "the key is absent"
+     * means the store has never been seeded for it.
+     *
+     * `legacyJson` is the pre-split config JSON, which always carried both
+     * fields (`toExportJson` emits them unconditionally). Its presence therefore
+     * carries the same meaning as an explicit clearing, and a legacy open mesh
+     * keeps its empty PSK instead of silently receiving a generated one — which
+     * would lock out every peer still running open.
      */
-    private fun loadOrMigrateSecrets(context: Context, legacyPsk: String, legacyToken: String): Pair<String, String> {
+    private fun loadOrMigrateSecrets(
+        context: Context,
+        legacyPsk: String,
+        legacyToken: String,
+        legacyJson: JSONObject,
+    ): Pair<String, String> {
         val prefs = secretsPrefs(context)
-        var psk = prefs.getString(KEY_PSK, "")?.trim().orEmpty()
-        var token = prefs.getString(KEY_WEBUI_TOKEN, "")?.trim().orEmpty()
-        var dirty = false
-        if (psk.isEmpty()) {
-            psk = legacyPsk.trim()
-            dirty = psk.isNotEmpty()
+        val psk = if (prefs.contains(KEY_PSK)) {
+            prefs.getString(KEY_PSK, "")?.trim().orEmpty()
+        } else if (legacyJson.has(KEY_PSK)) {
+            legacyPsk.trim()
+        } else {
+            generateSecret()
         }
-        if (token.isEmpty()) {
-            token = legacyToken.trim()
-            dirty = token.isNotEmpty()
+        // The old hardcoded default is a known-bad credential, not a user choice.
+        val token = if (prefs.contains(KEY_WEBUI_TOKEN)) {
+            prefs.getString(KEY_WEBUI_TOKEN, "")?.trim().orEmpty()
+        } else if (legacyJson.has(KEY_WEBUI_TOKEN) && legacyToken.trim() != LEGACY_DEFAULT_TOKEN) {
+            legacyToken.trim()
+        } else {
+            generateSecret()
         }
-        if (psk.isEmpty()) {
-            psk = generateSecret()
-            dirty = true
-        }
-        if (token.isEmpty()) {
-            token = generateSecret()
-            dirty = true
-        }
-        if (dirty) {
-            prefs.edit().putString(KEY_PSK, psk).putString(KEY_WEBUI_TOKEN, token).apply()
+        // Always end with both keys present so the next load reads the store
+        // directly instead of re-running the legacy branch.
+        if (!prefs.contains(KEY_PSK) || !prefs.contains(KEY_WEBUI_TOKEN)) {
+            prefs.edit()
+                .putString(KEY_PSK, psk)
+                .putString(KEY_WEBUI_TOKEN, token)
+                .apply()
         }
         return Pair(psk, token)
     }
@@ -837,7 +857,9 @@ object AppConfigManager {
                 }
                 if (changed) {
                     try {
-                        save(context, parsed)
+                        // Bookkeeping only: the secrets have not been resolved yet,
+                        // so this must not touch the secrets store.
+                        save(context, parsed, persistSecrets = false)
                     } catch (e: Exception) {
                         android.util.Log.w("AppConfig", "Stored configuration needs correction", e)
                     }
@@ -846,17 +868,23 @@ object AppConfigManager {
             } catch (e: Exception) {
                 android.util.Log.w("AppConfig", "Stored configuration unreadable; falling back to engine defaults", e)
                 val defaultCfg = loadDefaultConfig()
-                try { save(context, defaultCfg) } catch (_: Exception) { }
+                try { save(context, defaultCfg, persistSecrets = false) } catch (_: Exception) { }
                 defaultCfg
             }
         } else {
             val defaultCfg = loadDefaultConfig()
-            save(context, defaultCfg)
+            // Secrets are not seeded yet, so the JSON is written without them and
+            // the store is left for loadOrMigrateSecrets below to fill in.
+            save(context, defaultCfg, persistSecrets = false)
             defaultCfg
         }
-        // Secrets are merged in last, so the value they carry always wins over
-        // whatever the exported JSON says (the JSON no longer stores them).
-        val (psk, token) = loadOrMigrateSecrets(context, cfg.psk, cfg.webUiToken)
+        // Secrets are merged before the cached snapshot is taken so save() never
+        // has to guess whether an empty value means "cleared" or "unseeded" —
+        // the store's contains() bit is the only thing that can say.
+        val (psk, token) = loadOrMigrateSecrets(
+            context, cfg.psk, cfg.webUiToken,
+            if (jsonStr.isNullOrEmpty()) JSONObject() else JSONObject(jsonStr)
+        )
         cfg.psk = psk
         cfg.webUiToken = token
         cachedConfig = cfg.snapshot()
@@ -874,7 +902,7 @@ object AppConfigManager {
     }.distinct()
 
     @Synchronized
-    fun save(context: Context, config: P2PConfig) {
+    fun save(context: Context, config: P2PConfig, persistSecrets: Boolean = true) {
         val candidate = config.snapshot().apply {
             staticPeers = normalizePeerAddresses(staticPeers)
             bootstrapPeers = normalizePeerAddresses(bootstrapPeers)
@@ -883,10 +911,17 @@ object AppConfigManager {
         // Secrets go to their own, backup-excluded prefs file; the exported
         // JSON never carries them, so restoring p2ptap_settings from a cloud
         // backup cannot resurrect a credential into this device.
-        secretsPrefs(context).edit()
-            .putString(KEY_PSK, candidate.psk)
-            .putString(KEY_WEBUI_TOKEN, candidate.webUiToken)
-            .apply()
+        //
+        // persistSecrets=false is for load()'s own bookkeeping saves: those run
+        // before the secrets are resolved, so candidate.psk is still the JSON's
+        // empty value and writing it would stamp the store as deliberately
+        // cleared, suppressing the first-run generation.
+        if (persistSecrets) {
+            secretsPrefs(context).edit()
+                .putString(KEY_PSK, candidate.psk)
+                .putString(KEY_WEBUI_TOKEN, candidate.webUiToken)
+                .apply()
+        }
         val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         // apply() queues the write without blocking the caller — commit()
         // performs a synchronous disk I/O that caused ANR on locked-down
