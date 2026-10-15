@@ -666,9 +666,16 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                     }
                     // Publish the full config atomically so the Go data plane
                     // observes the new obfuscation, hole-punch, relay-upgrade,
-                    // subnet-advertisement and transport settings without a VPN
-                    // teardown.  applyHotReload is idempotent; it re-applies
-                    // obfuscation packer, exit-node NAT, and peer re-announce.
+                    // STUN/TURN and subnet-advertisement settings without a VPN
+                    // teardown.  applyHotReload is idempotent; it re-applies the
+                    // obfuscation packer, exit-node NAT and peer re-announce.
+                    //
+                    // It does NOT change what the node listens on. The plan
+                    // classifier above keeps the four transport switches OUT of
+                    // the hot-reloadable set precisely because the listeners are
+                    // bound once at node construction and never removed on
+                    // reload, so a switch flip here would change only dialing
+                    // behaviour while the old listeners stay open.
                     val cfgJSON = newConfig.toJsonString(applicationContext)
                     P2PTap.applyHotReload(cfgJSON)
                     cachedConfig = snapshotConfig(newConfig)

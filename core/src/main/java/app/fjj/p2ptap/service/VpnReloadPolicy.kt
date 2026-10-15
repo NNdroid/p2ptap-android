@@ -31,6 +31,7 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         // tapIp, tapIpv6, mtu, nodeName, acceptSubnets, advertisedSubnets, dnsServers
         // psk, transportStrategy, webUiPort, staticPeers, bootstrapPeers
         // listenAddrs, tapName, tapMac, driverType
+        // enableQuic, enableWebrtc, enableWebtransport, enableTcp  ← RESTART, see below
         // exitNodeNatMasq, exitNodeWanInterface
         // aclEnable, aclDefaultAction, aclRulesJson
 
@@ -49,10 +50,12 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         discoverBootMesh = newConfig.discoverBootMesh,
         allowedSubnetPeers = newConfig.allowedSubnetPeers,
         enableMdns = newConfig.enableMdns,
-        enableQuic = newConfig.enableQuic,
-        enableWebrtc = newConfig.enableWebrtc,
-        enableWebtransport = newConfig.enableWebtransport,
-        enableTcp = newConfig.enableTcp,
+        // The four transport switches stay OUT of this exclusion list on purpose.
+        // applyHotReload publishes the config snapshot but never touches the
+        // libp2p listeners — there is no RemoveListenAddr in it — so flipping a
+        // switch in place only changes what the node dials, never what it binds.
+        // A user who turns TCP off would keep the listener that was bound at
+        // startup, which reads as "I disabled it and peers can still connect".
         disableRelay = newConfig.disableRelay,
         tlsServerName = newConfig.tlsServerName,
         tlsSniSuffix = newConfig.tlsSniSuffix,

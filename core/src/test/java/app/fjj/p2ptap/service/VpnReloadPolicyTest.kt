@@ -44,4 +44,24 @@ class VpnReloadPolicyTest {
         // A backup can restore a new identity without changing any JSON fields.
         assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(), forceRestart = true))
     }
+
+    @Test
+    fun transportSwitchesRestartBecauseListenersCannotBeRemovedOnReload() {
+        val old = config().copy(enableQuic = true, enableWebrtc = true, enableWebtransport = true, enableTcp = true)
+        // applyHotReload publishes the config snapshot but never touches the
+        // libp2p listeners, so each switch must force a full rebuild or the
+        // listener bound at startup keeps accepting connections.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(enableTcp = false)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(enableQuic = false)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(enableWebrtc = false)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(enableWebtransport = false)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(enableWebtransport = false, enableTcp = true)))
+    }
+
+    @Test
+    fun tcpBrutalStaysHotReloadableBecauseItIsDialSideOnly() {
+        val old = config().copy(enableTcpBrutal = false)
+        assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(enableTcpBrutal = true)))
+        assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(tcpBrutalRate = "1mb")))
+    }
 }
