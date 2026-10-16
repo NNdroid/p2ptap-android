@@ -40,7 +40,7 @@ data class P2PConfig(
     var exitNode: String = "",
     var webUiEnable: Boolean = false,
     // Android-specific port: Go DefaultConfig uses 80, but Android needs a high port.
-    // load() overrides to 15858 if the stored value is 0, 80, or 8080.
+    // load() remaps any value outside 1024..65535 to 15858.
     var webUiPort: Int = 15858,
     var webUiToken: String = "",
     var logLevel: String = "",
@@ -851,7 +851,12 @@ object AppConfigManager {
                     parsed.tapIpv6 = "fd00::$lastOctet/64"
                     changed = true
                 }
-                if (parsed.webUiPort <= 0 || parsed.webUiPort == 8080 || parsed.webUiPort == 80) {
+                // Ports below 1024 need CAP_NET_BIND_SERVICE, which Android does
+                // not grant, so they can never bind — remap those. Every other
+                // value is honoured, including 8080: rewriting a port the user
+                // deliberately chose and saving the rewrite back made the editor
+                // silently disagree with what the operator asked for.
+                if (parsed.webUiPort !in 1024..65535) {
                     parsed.webUiPort = 15858
                     changed = true
                 }
