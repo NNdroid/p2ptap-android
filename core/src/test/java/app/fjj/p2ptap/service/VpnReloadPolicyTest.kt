@@ -59,6 +59,18 @@ class VpnReloadPolicyTest {
     }
 
     @Test
+    fun disableRelayRestartsBecauseLibp2pOptionsAreSetAtHostConstruction() {
+        // disable_relay is read once, when NewNode assembles the libp2p options
+        // (EnableRelay, EnableHolePunching, EnableAutoRelayWithStaticRelays)
+        // before libp2p.New. applyHotReload only swaps the config snapshot and
+        // never touches the relay client, so classifying it HOT made the switch
+        // save, show as on in the UI, and do nothing at runtime.
+        val old = config()
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(disableRelay = true)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(disableRelay = true, logLevel = "debug")))
+    }
+
+    @Test
     fun tcpBrutalStaysHotReloadableBecauseItIsDialSideOnly() {
         val old = config().copy(enableTcpBrutal = false)
         assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(enableTcpBrutal = true)))

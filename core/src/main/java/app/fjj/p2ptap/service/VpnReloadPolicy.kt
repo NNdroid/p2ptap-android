@@ -50,13 +50,21 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         discoverBootMesh = newConfig.discoverBootMesh,
         allowedSubnetPeers = newConfig.allowedSubnetPeers,
         enableMdns = newConfig.enableMdns,
-        // The four transport switches stay OUT of this exclusion list on purpose.
-        // applyHotReload publishes the config snapshot but never touches the
-        // libp2p listeners — there is no RemoveListenAddr in it — so flipping a
-        // switch in place only changes what the node dials, never what it binds.
-        // A user who turns TCP off would keep the listener that was bound at
-        // startup, which reads as "I disabled it and peers can still connect".
-        disableRelay = newConfig.disableRelay,
+        // The transport switches and disableRelay stay OUT of this exclusion list
+        // on purpose. applyHotReload publishes the config snapshot but never
+        // touches the libp2p listeners — there is no RemoveListenAddr in it — so
+        // flipping a switch in place only changes what the node dials, never what
+        // it binds. A user who turns TCP off would keep the listener that was
+        // bound at startup, which reads as "I disabled it and peers can still
+        // connect".
+        //
+        // disableRelay has the same defect for a different reason: it is read
+        // exactly once, when NewNode assembles the libp2p options (EnableRelay,
+        // EnableHolePunching, EnableAutoRelayWithStaticRelays) before libp2p.New.
+        // A hot reload only swaps the config snapshot, so the running host keeps
+        // its relay client, AutoRelay reservations and DCUtR regardless of the
+        // toggle. Classified HOT, the switch saved, the UI showed it on, and
+        // nothing changed at runtime.
         tlsServerName = newConfig.tlsServerName,
         tlsSniSuffix = newConfig.tlsSniSuffix,
         webUiEnable = newConfig.webUiEnable,
