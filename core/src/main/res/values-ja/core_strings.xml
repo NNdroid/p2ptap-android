@@ -80,7 +80,6 @@
     <string name="hint_tap_ipv6">TAP IPv6 は有効な IPv6 ネットワーク CIDR（例：fd00::1/64）でなければなりません。</string>
     <string name="hint_tap_mac">MAC アドレスは 6 オクテットでなければなりません（例：02:00:00:00:00:01）。</string>
     <string name="hint_tap_name">TAP 名は 16 文字以下でスペース不可。</string>
-    <string name="hint_tcp_brutal_rate">TCP ブラッタルレートは 100MbpsE、1Gbps、1Kbps のような形式にしてくださいE。</string>
     <string name="hint_tls_server_name">TLS サーバー名は有効な DNS ホスト名でなければなりません。</string>
     <string name="hint_tls_sni_suffix">TLS SNI サフィックスは有効な DNS ホスト名でなければなりません。</string>
     <string name="hint_transport_strategy">トランスポート戦略は best_path、redundant または fallback でなければなりません。</string>

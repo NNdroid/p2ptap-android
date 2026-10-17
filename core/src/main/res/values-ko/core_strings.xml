@@ -80,7 +80,6 @@
     <string name="hint_tap_ipv6">TAP IPv6 는 유효한 IPv6 네트워크 CIDR이 어야 합니다 (예: fd00::1/64).</string>
     <string name="hint_tap_mac">MAC 주소 는 6개 옥텟이 어야 합니다 (예: 02:00:00:00:00:01).</string>
     <string name="hint_tap_name">TAP 이름 은 16자 이하, 공백 불가.</string>
-    <string name="hint_tcp_brutal_rate">TCP brutal 속도 형식: 100Mbps, 1Gbps 또는 1Kbps.</string>
     <string name="hint_tls_server_name">TLS 서버 이름 은 유효한 DNS 호스트명이어야 합니다.</string>
     <string name="hint_tls_sni_suffix">TLS SNI 접미사 는 유효한 DNS 호스트명이어야 합니다.</string>
     <string name="hint_transport_strategy">전달 전략: best_path, redundant 또는 fallback 여야 합니다.</string>

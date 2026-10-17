@@ -80,7 +80,6 @@
     <string name="hint_tap_ipv6">TAP IPv6 должен быть допустимой сетевой CIDR IPv6 (напр. fd00::1/64).</string>
     <string name="hint_tap_mac">MAC-адрес должен содержать 6 октетов (напр. 02:00:00:00:00:01).</string>
     <string name="hint_tap_name">Имя TAP: не более 16 символов без пробелов.</string>
-    <string name="hint_tcp_brutal_rate">Скорость TCP brutal: например, 100Mbps, 1Gbps или 1Kbps.</string>
     <string name="hint_tls_server_name">Имя TLS-сервера должно быть допустимым DNS-именем хоста.</string>
     <string name="hint_tls_sni_suffix">Суффикс TLS SNI должен быть допустимым DNS-именем хоста.</string>
     <string name="hint_transport_strategy">Стратегия транспорта: best_path, redundant или fallback.</string>

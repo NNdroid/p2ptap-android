@@ -112,7 +112,6 @@
     <string name="hint_tap_ipv6">TAP IPv6 必须是有效的 IPv6 网络 CIDR（如 fd00::1/64）。</string>
     <string name="hint_tap_mac">MAC 地址必须是 6 个八位组（如 02:00:00:00:00:01）。</string>
     <string name="hint_tap_name">TAP 名称最多 16 个字符且不能包含空格。</string>
-    <string name="hint_tcp_brutal_rate">TCP 暴力速率格式如 100Mbps、1Gbps 或 1Kbps。</string>
     <string name="hint_tls_server_name">TLS 服务器名称必须是有效的 DNS 主机名。</string>
     <string name="hint_tls_sni_suffix">TLS SNI 后缀必须是有效的 DNS 主机名。</string>
     <string name="hint_transport_strategy">传输策略必须为 best_path、redundant 或 fallback。</string>

@@ -55,8 +55,6 @@ data class P2PConfig(
     var tapMac: String = "",
     var driverType: String = "",
     var webUiListenIpv6: String = "",
-    var enableTcpBrutal: Boolean = false,
-    var tcpBrutalRate: String = "",
     var obfuscationFixedSize: Int = 0,
     var obfuscationBlockSize: Int = 0,
     var obfuscationJitterRange: Int = 0,
@@ -135,8 +133,9 @@ data class P2PConfig(
         tr.put("disable_relay", disableRelay)
         tr.put("tls_server_name", tlsServerName)
         tr.put("tls_sni_suffix", tlsSniSuffix)
-        tr.put("enable_tcp_brutal", enableTcpBrutal)
-        tr.put("tcp_brutal_rate", tcpBrutalRate)
+        // The engine's TransportsConfig has no tcp_brutal fields — encoding/json
+        // drops the unknown keys silently, so writing them produced a setting
+        // that saved, exported and round-tripped without ever taking effect.
         root.put("transports", tr)
 
         // Listen addrs (empty = engine uses defaults)
@@ -295,8 +294,6 @@ data class P2PConfig(
         transports.put("disable_relay", disableRelay)
         transports.put("tls_server_name", tlsServerName)
         transports.put("tls_sni_suffix", tlsSniSuffix)
-        transports.put("enable_tcp_brutal", enableTcpBrutal)
-        transports.put("tcp_brutal_rate", tcpBrutalRate)
         root.put("transports", transports)
         root.put("webui_enable", webUiEnable)
         root.put("webui_port", webUiPort)
@@ -413,8 +410,6 @@ data class P2PConfig(
                 if (tr.has("disable_relay")) cfg.disableRelay = tr.getBoolean("disable_relay")
                 if (tr.has("tls_server_name")) cfg.tlsServerName = tr.getString("tls_server_name")
                 if (tr.has("tls_sni_suffix")) cfg.tlsSniSuffix = tr.getString("tls_sni_suffix")
-                if (tr.has("enable_tcp_brutal")) cfg.enableTcpBrutal = tr.getBoolean("enable_tcp_brutal")
-                if (tr.has("tcp_brutal_rate")) cfg.tcpBrutalRate = tr.getString("tcp_brutal_rate")
             } else {
                 if (root.has("enable_quic")) cfg.enableQuic = root.getBoolean("enable_quic")
                 if (root.has("enable_webrtc")) cfg.enableWebrtc = root.getBoolean("enable_webrtc")
@@ -423,8 +418,6 @@ data class P2PConfig(
                 if (root.has("disable_relay")) cfg.disableRelay = root.getBoolean("disable_relay")
                 if (root.has("tls_server_name")) cfg.tlsServerName = root.getString("tls_server_name")
                 if (root.has("tls_sni_suffix")) cfg.tlsSniSuffix = root.getString("tls_sni_suffix")
-                if (root.has("enable_tcp_brutal")) cfg.enableTcpBrutal = root.getBoolean("enable_tcp_brutal")
-                if (root.has("tcp_brutal_rate")) cfg.tcpBrutalRate = root.getString("tcp_brutal_rate")
             }
 
             if (root.has("obfuscation")) {

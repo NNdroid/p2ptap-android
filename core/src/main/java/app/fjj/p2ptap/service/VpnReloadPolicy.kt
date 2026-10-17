@@ -24,6 +24,37 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
     val exitModeChanged = oldConfig.exitNode.isBlank() != newConfig.exitNode.isBlank()
     if (exitModeChanged) return VpnReloadPlan.RESTART
 
+    // Only fields that applyHotReload genuinely re-applies are excluded below.
+    // Everything else needs a full VPN rebuild: applyHotReload publishes the new
+    // config snapshot but never touches the libp2p host or its listeners, so a
+    // field consumed at host construction keeps its boot value. Getting this list
+    // wrong is silent — the change saves, the UI shows the new value, and nothing
+    // moves at runtime.
+    //
+    // Transport switches: there is no RemoveListenAddr anywhere, so turning one
+    // off only changes what the node dials, never what it binds. Flipping TCP off
+    // would keep the listener bound at startup, which reads as "I disabled it and
+    // peers can still connect".
+    //
+    // disableRelay is read exactly once, when NewNode assembles the libp2p options
+    // (EnableRelay, EnableHolePunching, EnableAutoRelayWithStaticRelays) before
+    // libp2p.New. Classified HOT, the switch saved, the UI showed it on, and the
+    // running host kept its relay client, AutoRelay reservations and DCUtR anyway.
+    //
+    // tlsServerName / tlsSniSuffix go through p2ptls global setters called once
+    // before libp2p.New and cannot be reset in-process. webUiEnable / webUiToken /
+    // webUiListenIpv6 need SetupWebUI, which runs only at node creation. enableMdns
+    // instantiates the MDNS discovery service once. forcePrivateReachability becomes
+    // a libp2p host option. relayUpgradeInterval is read once when the relay-only
+    // upgrade loop creates its ticker. holePunchTimeout seeds the libp2p DCUtR
+    // DirectDialTimeout, so a change can only be partially applied.
+    //
+    // What IS excluded: obfuscation (applyObfuscationConfig re-applies the packer),
+    // STUN/TURN (resolved per connection), strictKeyNegotiation, discoverBootMesh
+    // and allowedSubnetPeers (all read the live snapshot on every use). logLevel
+    // and exitNode are excluded too, but they are applied explicitly by the caller
+    // through their own JNI calls — not by applyHotReload.
+    //
     // Exclude Go-engine-only fields from the comparison.  If ANY non-excluded
     // (VPN-relevant) field differs, a full VPN rebuild is required.
     val vpnOnlyChanged = oldConfig.copy(
@@ -31,7 +62,10 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         // tapIp, tapIpv6, mtu, nodeName, acceptSubnets, advertisedSubnets, dnsServers
         // psk, transportStrategy, webUiPort, staticPeers, bootstrapPeers
         // listenAddrs, tapName, tapMac, driverType
-        // enableQuic, enableWebrtc, enableWebtransport, enableTcp  ← RESTART, see below
+        // enableQuic, enableWebrtc, enableWebtransport, enableTcp, disableRelay
+        // holePunchTimeout, relayUpgradeInterval, enableMdns
+        // tlsServerName, tlsSniSuffix, forcePrivateReachability
+        // webUiEnable, webUiToken, webUiListenIpv6
         // exitNodeNatMasq, exitNodeWanInterface
         // aclEnable, aclDefaultAction, aclRulesJson
 
@@ -39,36 +73,14 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         engineConfig = newConfig.engineConfig,
         exitNode = newConfig.exitNode,
         logLevel = newConfig.logLevel,
-        holePunchTimeout = newConfig.holePunchTimeout,
         stunServers = newConfig.stunServers,
         turnServers = newConfig.turnServers,
-        relayUpgradeInterval = newConfig.relayUpgradeInterval,
         obfuscationEnable = newConfig.obfuscationEnable,
         obfuscationMode = newConfig.obfuscationMode,
         obfuscationAlgorithm = newConfig.obfuscationAlgorithm,
         strictKeyNegotiation = newConfig.strictKeyNegotiation,
         discoverBootMesh = newConfig.discoverBootMesh,
         allowedSubnetPeers = newConfig.allowedSubnetPeers,
-        enableMdns = newConfig.enableMdns,
-        // The transport switches and disableRelay stay OUT of this exclusion list
-        // on purpose. applyHotReload publishes the config snapshot but never
-        // touches the libp2p listeners — there is no RemoveListenAddr in it — so
-        // flipping a switch in place only changes what the node dials, never what
-        // it binds. A user who turns TCP off would keep the listener that was
-        // bound at startup, which reads as "I disabled it and peers can still
-        // connect".
-        //
-        // disableRelay has the same defect for a different reason: it is read
-        // exactly once, when NewNode assembles the libp2p options (EnableRelay,
-        // EnableHolePunching, EnableAutoRelayWithStaticRelays) before libp2p.New.
-        // A hot reload only swaps the config snapshot, so the running host keeps
-        // its relay client, AutoRelay reservations and DCUtR regardless of the
-        // toggle. Classified HOT, the switch saved, the UI showed it on, and
-        // nothing changed at runtime.
-        tlsServerName = newConfig.tlsServerName,
-        tlsSniSuffix = newConfig.tlsSniSuffix,
-        webUiEnable = newConfig.webUiEnable,
-        webUiToken = newConfig.webUiToken,
         // Obfuscation tuning
         obfuscationFixedSize = newConfig.obfuscationFixedSize,
         obfuscationBlockSize = newConfig.obfuscationBlockSize,
@@ -79,13 +91,6 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         obfuscationAutoThresholdBytes = newConfig.obfuscationAutoThresholdBytes,
         obfuscationAllowModeSwitch = newConfig.obfuscationAllowModeSwitch,
         obfuscationMaxFragSize = newConfig.obfuscationMaxFragSize,
-        // TCP brutal mode
-        enableTcpBrutal = newConfig.enableTcpBrutal,
-        tcpBrutalRate = newConfig.tcpBrutalRate,
-        // Web UI listen IPv6
-        webUiListenIpv6 = newConfig.webUiListenIpv6,
-        // Reachability forcing
-        forcePrivateReachability = newConfig.forcePrivateReachability,
     ) != newConfig
 
     if (vpnOnlyChanged) return VpnReloadPlan.RESTART

@@ -631,8 +631,6 @@ class ConfigActivity : AppCompatActivity() {
             exitNodeNatMasq = savedConfig.exitNodeNatMasq,
             exitNodeWanInterface = savedConfig.exitNodeWanInterface,
             forcePrivateReachability = savedConfig.forcePrivateReachability,
-            enableTcpBrutal = savedConfig.enableTcpBrutal,
-            tcpBrutalRate = savedConfig.tcpBrutalRate,
             listenAddrs = savedConfig.listenAddrs,
             tapName = savedConfig.tapName,
             tapMac = savedConfig.tapMac,

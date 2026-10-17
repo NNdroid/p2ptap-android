@@ -29,7 +29,6 @@ object UiMessages {
         "transport_strategy" to R.string.hint_transport_strategy,
         "log_level" to R.string.hint_log_level,
         "driver_type" to R.string.hint_driver_type,
-        "transports.tcp_brutal_rate" to R.string.hint_tcp_brutal_rate,
         "transports.tls_server_name" to R.string.hint_tls_server_name,
         "transports.tls_sni_suffix" to R.string.hint_tls_sni_suffix,
         "web_ui.port" to R.string.hint_web_ui_port,

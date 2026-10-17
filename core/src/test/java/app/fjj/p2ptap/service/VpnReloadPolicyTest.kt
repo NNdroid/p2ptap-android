@@ -71,9 +71,41 @@ class VpnReloadPolicyTest {
     }
 
     @Test
-    fun tcpBrutalStaysHotReloadableBecauseItIsDialSideOnly() {
-        val old = config().copy(enableTcpBrutal = false)
-        assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(enableTcpBrutal = true)))
-        assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(tcpBrutalRate = "1mb")))
+    fun constructionOnlySettingsRestartBecauseApplyHotReloadNeverRebindsThem() {
+        // Each of these is consumed once, when the node is built, so a hot save
+        // swaps the config snapshot and changes nothing at runtime. The old
+        // classifier kept all eight in the hot-reloadable set, which is why the
+        // Android build let users save them and see the toggle move with no
+        // effect.
+        val old = config()
+        // tls_server_name / tls_sni_suffix go through p2ptls global setters
+        // called once before libp2p.New; they cannot be reset in-process.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(tlsServerName = "cdn.example.com")))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(tlsSniSuffix = "cdn.example.com")))
+        // SetupWebUI runs only at node creation, so the running server keeps the
+        // bearer token it resolved at startup.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(webUiEnable = true)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(webUiToken = "rotated-token")))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(webUiListenIpv6 = "::1")))
+        // The MDNS discovery service is instantiated once, gated on the flag.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(enableMdns = true)))
+        // Becomes the libp2p ForceReachabilityPrivate host option.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(forcePrivateReachability = true)))
+        // Read once when the relay-only upgrade loop creates its ticker.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(relayUpgradeInterval = 60000)))
+        // Seeds the libp2p DCUtR DirectDialTimeout, so a change can only be
+        // partially applied — restart beats a half-applied value.
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(holePunchTimeout = 20000)))
+    }
+
+    @Test
+    fun constructionOnlySettingsRestartEvenAlongsideHotReloadableFields() {
+        // A restart-worthy field must not be masked by hot-reloadable changes in
+        // the same save; otherwise the restart is skipped.
+        val old = config()
+        assertEquals(
+            VpnReloadPlan.RESTART,
+            planVpnReload(old, old.copy(webUiToken = "rotated-token", logLevel = "debug", enableMdns = true))
+        )
     }
 }

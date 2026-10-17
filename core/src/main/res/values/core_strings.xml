@@ -41,7 +41,6 @@
     <string name="hint_transport_strategy">Transport strategy must be best_path, redundant or fallback.</string>
     <string name="hint_log_level">Log level must be debug, info, warn or error.</string>
     <string name="hint_driver_type">Driver type must be auto, tap or wintun.</string>
-    <string name="hint_tcp_brutal_rate">TCP brutal rate must be like 100Mbps, 1Gbps, or 1Kbps.</string>
     <string name="hint_tls_server_name">TLS server name must be a valid DNS hostname.</string>
     <string name="hint_tls_sni_suffix">TLS SNI suffix must be a valid DNS hostname.</string>
     <string name="hint_web_ui_port">WebUI port must be between 1 and 65535.</string>

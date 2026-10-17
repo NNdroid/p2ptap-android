@@ -80,7 +80,6 @@
     <string name="hint_tap_ipv6">TAP IPv6 debe ser una CIDR de red IPv6 válida (p. ej. fd00::1/64).</string>
     <string name="hint_tap_mac">La dirección MAC debe tener 6 octetos (p. ej. 02:00:00:00:00:01).</string>
     <string name="hint_tap_name">El nombre TAP debe tener 16 caracteres o menos sin espacios.</string>
-    <string name="hint_tcp_brutal_rate">La velocidad TCP brutal debe ser como 100Mbps, 1Gbps o 1Kbps.</string>
     <string name="hint_tls_server_name">El nombre del servidor TLS debe ser un nombre de host DNS válido.</string>
     <string name="hint_tls_sni_suffix">El sufijo TLS SNI debe ser un nombre de host DNS válido.</string>
     <string name="hint_transport_strategy">La estrategia de transporte debe ser best_path, redundant o fallback.</string>
