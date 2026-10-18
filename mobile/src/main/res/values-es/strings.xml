@@ -110,13 +110,13 @@
     <string name="prompt_vpn_not_running">Aviso: La VPN de P2PTap debe estar activa para acceder a la consola</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Habilitar autodescubrimiento mDNS LAN</string>
-    <string name="switch_disable_relay">Modo solo directo (Desactivar retransmisión)</string>
+    <string name="switch_disable_relay">Modo solo directo (también desactiva perforación y AutoRelay)</string>
     <string name="switch_strict_key">Secreto hacia adelante estricto (Aislamiento PFS)</string>
     <string name="group_transports">Protocolos de la capa de transporte</string>
-    <string name="switch_quic">Habilitar transporte QUIC (UDP)</string>
-    <string name="switch_webrtc">Habilitar WebRTC Direct (Mejora NAT)</string>
-    <string name="switch_webtransport">Habilitar WebTransport</string>
-    <string name="switch_tcp">Habilitar transporte TCP (Reutilización de puertos)</string>
+    <string name="switch_quic">Escuchar conexiones QUIC (UDP)</string>
+    <string name="switch_webrtc">Escuchar conexiones WebRTC (perforación NAT)</string>
+    <string name="switch_webtransport">Escuchar conexiones WebTransport</string>
+    <string name="switch_tcp">Escuchar conexiones TCP (reutilización de puertos)</string>
     <string name="hint_allowed_subnet_peers">IDs de pares de subred permitidos (o * para todos)</string>
 
     <!-- Peers Detail Dialog -->

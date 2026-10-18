@@ -110,13 +110,13 @@
     <string name="prompt_vpn_not_running">알림: 웹 콘솔에 액세스하려면 VPN이 실행 중이어야 합니다</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">로컬 mDNS 자동 검색 활성화</string>
-    <string name="switch_disable_relay">직접 연결 전용 모드 (릴레이 비활성화)</string>
+    <string name="switch_disable_relay">직접 연결 전용 모드 (홀펀칭과 AutoRelay도 비활성화)</string>
     <string name="switch_strict_key">엄격한 전방위 비밀성 (PFS 키 격리 강제)</string>
     <string name="group_transports">전송 계층 프로토콜 설정</string>
-    <string name="switch_quic">QUIC 전송 프로토콜 활성화 (UDP)</string>
-    <string name="switch_webrtc">WebRTC Direct 활성화 (NAT 통과 최적화)</string>
-    <string name="switch_webtransport">WebTransport 활성화</string>
-    <string name="switch_tcp">TCP 전송 활성화 (포트 재사용)</string>
+    <string name="switch_quic">QUIC 연결 수신 (UDP)</string>
+    <string name="switch_webrtc">WebRTC 연결 수신 (NAT 통과)</string>
+    <string name="switch_webtransport">WebTransport 연결 수신</string>
+    <string name="switch_tcp">TCP 연결 수신 (포트 재사용)</string>
     <string name="hint_allowed_subnet_peers">서브넷 접근 허용 Peer ID (모두 허용 시 *)</string>
 
     <!-- Peers Detail Dialog -->

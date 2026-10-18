@@ -110,13 +110,13 @@
     <string name="prompt_vpn_not_running">注意: WebコンソールにはVPN起動が必要です</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">ローカル mDNS 自動探索を有効化</string>
-    <string name="switch_disable_relay">直接接続専用モード (Circuit Relay を無効化)</string>
+    <string name="switch_disable_relay">直接接続専用モード (ホールパンチと AutoRelay も無効化)</string>
     <string name="switch_strict_key">厳格な前方秘匿性 (PFS キー分離を強制)</string>
     <string name="group_transports">トランスポート層プロトコル設定</string>
-    <string name="switch_quic">QUIC プロトコルを有効化 (UDP)</string>
-    <string name="switch_webrtc">WebRTC Direct を有効化 (NAT越え最適化)</string>
-    <string name="switch_webtransport">WebTransport を有効化</string>
-    <string name="switch_tcp">TCP トランスポートを有効化 (ポート再利用)</string>
+    <string name="switch_quic">QUIC 接続を待ち受ける (UDP)</string>
+    <string name="switch_webrtc">WebRTC 接続を待ち受ける (NAT 越え)</string>
+    <string name="switch_webtransport">WebTransport 接続を待ち受ける</string>
+    <string name="switch_tcp">TCP 接続を待ち受ける (ポート再利用)</string>
     <string name="hint_allowed_subnet_peers">サブネットアクセス許可 Peer ID (または全員許可 *)</string>
 
     <!-- Peers Detail Dialog -->

@@ -110,13 +110,13 @@
     <string name="prompt_vpn_not_running">Hinweis: P2PTap VPN muss laufen, um die Konsole zu öffnen</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">mDNS LAN-Auto-Erkennung aktivieren</string>
-    <string name="switch_disable_relay">Nur-Direktverbindung (Relay deaktivieren)</string>
+    <string name="switch_disable_relay">Nur-Direktverbindung (deaktiviert auch Hole Punching und AutoRelay)</string>
     <string name="switch_strict_key">Strikte Forward Secrecy (PFS-Schlüsselisolation)</string>
     <string name="group_transports">Transportschicht-Protokolle</string>
-    <string name="switch_quic">QUIC-Transport aktivieren (UDP)</string>
-    <string name="switch_webrtc">WebRTC Direct aktivieren (NAT-Traversal)</string>
-    <string name="switch_webtransport">WebTransport aktivieren</string>
-    <string name="switch_tcp">TCP-Transport aktivieren (Portwiederverwendung)</string>
+    <string name="switch_quic">QUIC-Listener aktivieren (UDP)</string>
+    <string name="switch_webrtc">WebRTC-Listener aktivieren (NAT-Traversal)</string>
+    <string name="switch_webtransport">WebTransport-Listener aktivieren</string>
+    <string name="switch_tcp">TCP-Listener aktivieren (Portwiederverwendung)</string>
     <string name="hint_allowed_subnet_peers">Zulässige Subnetz-Peer-IDs (oder * für alle)</string>
 
     <!-- Peers Detail Dialog -->

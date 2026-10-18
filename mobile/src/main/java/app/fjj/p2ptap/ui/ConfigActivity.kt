@@ -98,7 +98,14 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun setupDropdownAdapters() {
-        val obfModes = arrayOf("auto", "fixed", "block", "random", "dynamic")
+        // "fixed" and "block" are deliberately not offered here. The engine
+        // requires obfuscation.fixed_size > 0 / block_size > 0 for those modes
+        // (config.Validate returns an error), and this screen has no control for
+        // either size — they stay at 0. Picking them therefore rejected the whole
+        // config save with "obfuscation.fixed_size: must be > 0". They remain
+        // reachable through an imported config that carries the sizes, and through
+        // the WebUI, which does expose them.
+        val obfModes = arrayOf("auto", "random", "dynamic")
         val obfAlgos = arrayOf("auto", "chacha20", "aes-gcm", "none")
         val strategies = arrayOf("best_path", "redundant", "fallback")
         val logLevels = arrayOf("debug", "info", "warn", "error")
@@ -480,6 +487,19 @@ class ConfigActivity : AppCompatActivity() {
             .show()
     }
 
+    /**
+     * The mode an imported config may legitimately request is "fixed" or
+     * "block" — but only when the matching size came along with it. Without the
+     * size the engine's Validate rejects the whole config, so fall back to
+     * "auto" rather than displaying an unusable selection. Modes that carry their
+     * sizes (or need none) pass through untouched.
+     */
+    private fun saneObfuscationMode(config: P2PConfig): String = when (config.obfuscationMode) {
+        "fixed" -> if (config.obfuscationFixedSize > 0) config.obfuscationMode else "auto"
+        "block" -> if (config.obfuscationBlockSize > 0) config.obfuscationMode else "auto"
+        else -> config.obfuscationMode.ifBlank { "auto" }
+    }
+
     private fun loadConfig() {
         val config = AppConfigManager.load(this)
         displayConfig(config)
@@ -523,7 +543,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.switchDisableRelay.isChecked = config.disableRelay
         binding.switchObfuscation.isChecked = config.obfuscationEnable
         binding.switchStrictKey.isChecked = config.strictKeyNegotiation
-        binding.actvObfuscationMode.setText(config.obfuscationMode, false)
+        binding.actvObfuscationMode.setText(saneObfuscationMode(config), false)
         binding.actvObfuscationAlgo.setText(config.obfuscationAlgorithm, false)
         binding.switchQuic.isChecked = config.enableQuic
         binding.switchWebrtc.isChecked = config.enableWebrtc
@@ -537,7 +557,8 @@ class ConfigActivity : AppCompatActivity() {
         binding.etWebUiPort.setText(config.webUiPort.toString())
         binding.etWebUiToken.setText(config.webUiToken)
         binding.actvLogLevel.setText(config.logLevel, false)
-        binding.etHolePunchTimeout.setText(config.holePunchTimeout.toString())
+        // Stored in milliseconds; the field is labelled seconds, so show seconds.
+        binding.etHolePunchTimeout.setText((config.holePunchTimeout / 1000).toString())
         binding.etStunServers.setText(config.stunServers.joinToString("\n"))
         binding.etTurnServers.setText(config.turnServers.joinToString("\n"))
     }
@@ -574,7 +595,9 @@ class ConfigActivity : AppCompatActivity() {
         val aspList = aspString.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
         val dnsString = binding.etDnsServers.text?.toString() ?: ""
         val dnsList = dnsString.lines().map { it.trim() }.filter { it.isNotEmpty() }
-        val holePunchTimeout = binding.etHolePunchTimeout.text?.toString()?.toLongOrNull() ?: 15000
+        // The field is labelled seconds; the config stores milliseconds.
+        val holePunchTimeoutSeconds = binding.etHolePunchTimeout.text?.toString()?.toLongOrNull() ?: 15
+        val holePunchTimeout = holePunchTimeoutSeconds * 1000
         val stunString = binding.etStunServers.text?.toString() ?: ""
         val stunList = stunString.lines().map { it.trim() }.filter { it.isNotEmpty() }
         val turnString = binding.etTurnServers.text?.toString() ?: ""
@@ -628,8 +651,6 @@ class ConfigActivity : AppCompatActivity() {
             obfuscationAutoDetectInterval = savedConfig.obfuscationAutoDetectInterval,
             obfuscationAutoThresholdBytes = savedConfig.obfuscationAutoThresholdBytes,
             obfuscationAllowModeSwitch = savedConfig.obfuscationAllowModeSwitch,
-            exitNodeNatMasq = savedConfig.exitNodeNatMasq,
-            exitNodeWanInterface = savedConfig.exitNodeWanInterface,
             forcePrivateReachability = savedConfig.forcePrivateReachability,
             listenAddrs = savedConfig.listenAddrs,
             tapName = savedConfig.tapName,
@@ -672,7 +693,8 @@ class ConfigActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.err_invalid_port), Toast.LENGTH_SHORT).show()
             return
         }
-        // Hole punch timeout (1s–120s)
+        // Hole punch timeout (1s–120s). Stored in ms; mirrors the engine's own
+        // Validate, which resets anything outside 100ms..120s to the 15s default.
         if (config.holePunchTimeout < 1000 || config.holePunchTimeout > 120000) {
             Toast.makeText(this, getString(R.string.err_invalid_timeout), Toast.LENGTH_SHORT).show()
             return

@@ -66,7 +66,6 @@ fun planVpnReload(oldConfig: P2PConfig?, newConfig: P2PConfig, forceRestart: Boo
         // holePunchTimeout, relayUpgradeInterval, enableMdns
         // tlsServerName, tlsSniSuffix, forcePrivateReachability
         // webUiEnable, webUiToken, webUiListenIpv6
-        // exitNodeNatMasq, exitNodeWanInterface
         // aclEnable, aclDefaultAction, aclRulesJson
 
         // — Go-engine-only (excluded → HOT if changed) —

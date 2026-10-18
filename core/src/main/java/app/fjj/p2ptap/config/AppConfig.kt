@@ -64,8 +64,6 @@ data class P2PConfig(
     var obfuscationAutoThresholdBytes: Int = 0,
     var obfuscationAllowModeSwitch: Boolean = false,
     var obfuscationMaxFragSize: Int = 0,
-    var exitNodeNatMasq: Boolean = false,
-    var exitNodeWanInterface: String = "",
     var aclEnable: Boolean = false,
     var aclDefaultAction: String = "",
     var aclRulesJson: String = "",
@@ -109,19 +107,17 @@ data class P2PConfig(
         root.put("force_private_reachability", forcePrivateReachability)
 
         val targetNode = exitNode.trim()
-        if (targetNode.isNotBlank()) {
-            root.put("exit_node_peer", targetNode)
-            root.put("exit_gateway", targetNode)
-        } else {
-            root.put("exit_node_peer", "")
-            root.put("exit_gateway", "")
-        }
+        root.put("exit_node_peer", targetNode)
 
+        // ExitNode.Enable stays false: pkg/android rejects it outright ("exit node
+        // server is not supported on this build"), and Android routes exit traffic
+        // through exit_node_peer / setExitNode instead. nat_masquerade and
+        // wan_interface are only honoured when Enable is true
+        // (nftables_linux.go guards on !cfg.Enable), so writing them here produced
+        // two keys that claimed a state the engine could never reach.
         val exitNodeObj = JSONObject()
         exitNodeObj.put("enable", false)
         exitNodeObj.put("target", targetNode)
-        exitNodeObj.put("nat_masquerade", exitNodeNatMasq)
-        exitNodeObj.put("wan_interface", exitNodeWanInterface)
         root.put("exit_node", exitNodeObj)
 
         // Transports
@@ -192,15 +188,10 @@ data class P2PConfig(
         }
         root.put("allowed_subnet_peers", aspArray)
 
-        // DNS Servers
-        val dnsArray = JSONArray()
-        for (dns in dnsServers) {
-            val trimmed = dns.trim()
-            if (trimmed.isNotEmpty()) {
-                dnsArray.put(trimmed)
-            }
-        }
-        root.put("dns_servers", dnsArray)
+        // dnsServers is intentionally NOT written here: the engine's Config has no
+        // dns_servers field, so encoding/json dropped the key silently. The list
+        // is still live — VpnService uses it to addAddress() the DNS servers so
+        // their traffic is routed through the tunnel.
         // Hole punching configuration — Go expects time.Duration (int64 nanoseconds)
         root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
         root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
@@ -343,10 +334,13 @@ data class P2PConfig(
             root.put("listen_addrs", laArray)
         }
 
-        // Durations stored as milliseconds (internal unit); readDurationMs handles
-        // both this format and legacy "Ns" strings from standard p2ptap configs.
-        root.put("hole_punch_timeout", holePunchTimeout)
-        root.put("relay_upgrade_interval", relayUpgradeInterval)
+        // Durations are emitted in nanoseconds to match toEngineJson and the Go
+        // engine. Milliseconds here would round-trip through Android's own
+        // readDurationMs but a desktop p2ptap reading the export would see
+        // e.g. 60s as 60000ns, which its Validate clamps back to the 15s default —
+        // a silent reset of a value the user deliberately set.
+        root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
+        root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
 
         // Obfuscation detail fields
         root.put("obfuscation_fixed_size", obfuscationFixedSize)
@@ -358,10 +352,6 @@ data class P2PConfig(
         root.put("obfuscation_auto_threshold_bytes", obfuscationAutoThresholdBytes)
         root.put("obfuscation_allow_mode_switch", obfuscationAllowModeSwitch)
         root.put("obfuscation_max_frag_size", obfuscationMaxFragSize)
-
-        // Exit node detail
-        root.put("exit_node_nat_masquerade", exitNodeNatMasq)
-        root.put("exit_node_wan_interface", exitNodeWanInterface)
 
         return root.toString(2)
     }
@@ -394,8 +384,9 @@ data class P2PConfig(
                 val exitVal = root.get("exit_node")
                 if (exitVal is JSONObject) {
                     cfg.exitNode = exitVal.optString("target", exitVal.optString("peer_id", ""))
-                    if (exitVal.has("nat_masquerade")) cfg.exitNodeNatMasq = exitVal.getBoolean("nat_masquerade")
-                    if (exitVal.has("wan_interface")) cfg.exitNodeWanInterface = exitVal.getString("wan_interface")
+                    // nat_masquerade / wan_interface from an imported desktop
+                    // config are ignored on purpose: they only take effect when
+                    // exit_node.enable is true, which Android refuses.
                 } else if (exitVal is String) {
                     cfg.exitNode = exitVal
                 }
@@ -543,10 +534,6 @@ data class P2PConfig(
             if (root.has("obfuscation_auto_threshold_bytes")) cfg.obfuscationAutoThresholdBytes = root.getInt("obfuscation_auto_threshold_bytes")
             if (root.has("obfuscation_allow_mode_switch")) cfg.obfuscationAllowModeSwitch = root.getBoolean("obfuscation_allow_mode_switch")
             if (root.has("obfuscation_max_frag_size")) cfg.obfuscationMaxFragSize = root.getInt("obfuscation_max_frag_size")
-
-            // Exit node detail (flat keys)
-            if (root.has("exit_node_nat_masquerade")) cfg.exitNodeNatMasq = root.getBoolean("exit_node_nat_masquerade")
-            if (root.has("exit_node_wan_interface")) cfg.exitNodeWanInterface = root.getString("exit_node_wan_interface")
 
             // ACL
             if (root.has("acl")) {

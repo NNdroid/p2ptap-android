@@ -128,13 +128,13 @@
     <string name="prompt_vpn_not_running">Notice: P2PTap VPN must be running to access the console</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Enable mDNS LAN Auto-Discovery</string>
-    <string name="switch_disable_relay">Direct-Only Mode (Disable Circuit Relay)</string>
+    <string name="switch_disable_relay">Direct-Only Mode (also disables hole punching and AutoRelay)</string>
     <string name="switch_strict_key">Strict Forward Secrecy (Per-Peer PFS Key Isolation)</string>
     <string name="group_transports">Transport Layer Protocols</string>
-    <string name="switch_quic">Enable QUIC Transport (UDP)</string>
-    <string name="switch_webrtc">Enable WebRTC Direct (NAT Punching)</string>
-    <string name="switch_webtransport">Enable WebTransport Protocol</string>
-    <string name="switch_tcp">Enable TCP Transport (Port Reuse)</string>
+    <string name="switch_quic">Listen for QUIC connections (UDP)</string>
+    <string name="switch_webrtc">Listen for WebRTC connections (NAT punch)</string>
+    <string name="switch_webtransport">Listen for WebTransport connections</string>
+    <string name="switch_tcp">Listen for TCP connections (port reuse)</string>
     <string name="hint_allowed_subnet_peers">Allowed Subnet Peer IDs (or * for all)</string>
 
     <!-- Peers Detail Dialog -->

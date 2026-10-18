@@ -103,13 +103,13 @@
     <string name="prompt_vpn_not_running">提示：P2PTap VPN 必須先啟動才能存取控制台</string>
     <string name="tile_label">P2PTap 虛擬網</string>
     <string name="switch_enable_mdns">開啟區域網路 mDNS 節點自發現</string>
-    <string name="switch_disable_relay">僅直連模式 (停用中繼穿透回退)</string>
+    <string name="switch_disable_relay">僅直連模式 (同時停用打洞與自動中繼)</string>
     <string name="switch_strict_key">嚴格前向安全 (節點間 PFS 金鑰強隔離)</string>
     <string name="group_transports">傳輸層底層協定控制</string>
-    <string name="switch_quic">啟用 QUIC-v1 傳輸協定 (UDP)</string>
-    <string name="switch_webrtc">啟用 WebRTC-Direct 協定 (NAT穿透最佳化)</string>
-    <string name="switch_webtransport">啟用 WebTransport 協定</string>
-    <string name="switch_tcp">啟用 TCP 傳輸協定 (連接埠複用)</string>
+    <string name="switch_quic">監聽 QUIC 連線 (UDP)</string>
+    <string name="switch_webrtc">監聽 WebRTC 連線 (NAT 打洞)</string>
+    <string name="switch_webtransport">監聽 WebTransport 連線</string>
+    <string name="switch_tcp">監聽 TCP 連線 (連接埠複用)</string>
     <string name="hint_allowed_subnet_peers">允許存取子網路的 Peer ID 白名單 (或 * 允許全部)</string>
 
     <!-- Peers Detail Dialog -->

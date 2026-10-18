@@ -110,13 +110,13 @@
     <string name="prompt_vpn_not_running">Внимание: Для доступа к панели VPN должен быть запущен</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Включить автообнаружение узлов в LAN (mDNS)</string>
-    <string name="switch_disable_relay">Режим только прямого подключения (без реле)</string>
+    <string name="switch_disable_relay">Только прямое подключение (также отключает пробитие NAT и AutoRelay)</string>
     <string name="switch_strict_key">Строгая прямая секретность (изоляция ключей PFS)</string>
     <string name="group_transports">Протоколы транспортного уровня</string>
-    <string name="switch_quic">Включить протокол QUIC (UDP)</string>
-    <string name="switch_webrtc">Включить WebRTC Direct (пробитие NAT)</string>
-    <string name="switch_webtransport">Включить WebTransport</string>
-    <string name="switch_tcp">Включить транспорт TCP (переиспользование портов)</string>
+    <string name="switch_quic">Принимать соединения QUIC (UDP)</string>
+    <string name="switch_webrtc">Принимать соединения WebRTC (пробитие NAT)</string>
+    <string name="switch_webtransport">Принимать соединения WebTransport</string>
+    <string name="switch_tcp">Принимать соединения TCP (переиспользование портов)</string>
     <string name="hint_allowed_subnet_peers">Разрешенные Peer ID подсети (или * для всех)</string>
 
     <!-- Peers Detail Dialog -->

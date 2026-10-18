@@ -110,13 +110,13 @@
     <string name="prompt_vpn_not_running">Remarque : P2PTap VPN doit être actif pour accéder à la console</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Activer la découverte automatique mDNS LAN</string>
-    <string name="switch_disable_relay">Mode direct uniquement (Désactiver les relais)</string>
+    <string name="switch_disable_relay">Mode direct uniquement (désactive aussi le perçage et l\'AutoRelay)</string>
     <string name="switch_strict_key">Confidentialité persistante stricte (PFS)</string>
     <string name="group_transports">Protocoles de couche transport</string>
-    <string name="switch_quic">Activer le transport QUIC (UDP)</string>
-    <string name="switch_webrtc">Activer WebRTC Direct (Optimisation NAT)</string>
-    <string name="switch_webtransport">Activer WebTransport</string>
-    <string name="switch_tcp">Activer le transport TCP (Réutilisation de port)</string>
+    <string name="switch_quic">Écouter les connexions QUIC (UDP)</string>
+    <string name="switch_webrtc">Écouter les connexions WebRTC (perçage NAT)</string>
+    <string name="switch_webtransport">Écouter les connexions WebTransport</string>
+    <string name="switch_tcp">Écouter les connexions TCP (réutilisation de port)</string>
     <string name="hint_allowed_subnet_peers">IDs des pairs de sous-réseau autorisés (* pour tous)</string>
 
     <!-- Peers Detail Dialog -->
