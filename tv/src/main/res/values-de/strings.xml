@@ -151,6 +151,13 @@
     <string name="tv_set_mesh">Mesh-Erkennung</string>
     <string name="tv_set_subnets">Akzeptierte Subnetze</string>
     <string name="tv_set_webui">Web-Konsole</string>
+    <string name="tv_grp_transports">Transportprotokolle</string>
+    <string name="tv_grp_relay">NAT &amp; Relay</string>
+    <string name="tv_grp_security">Sicherheit</string>
+    <string name="tv_grp_discovery">Entdeckung &amp; Subnetze</string>
+    <string name="tv_grp_webui">Konsole</string>
+    <string name="tv_set_circuit_relay">Circuit-Relay</string>
+    <string name="tv_set_hole_punching">Hole Punching</string>
 
     <string name="tv_tier_obfuscation">Verschleierung</string>
     <string name="tv_tier_transport">Transport</string>
@@ -224,7 +231,7 @@
     <string name="tv_total_label">TOTAL</string>
     <string name="tv_screen_peers_hint">Mesh-Knoten und Ausstiegsgateway</string>
     <string name="tv_screen_transfer_hint">Konfiguration und Identität importieren</string>
-    <string name="tv_screen_settings_hint">Schalter und Stufen</string>
+    <string name="tv_screen_settings_hint">Die Schalter wirken sofort</string>
     <string name="tv_screen_diagnostics_hint">Verkehr und Protokolle</string>
     <string name="tv_transfer_from_file">Aus einer Datei</string>
     <string name="tv_transfer_from_clipboard">Aus der Zwischenablage</string>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A settings group card: a plate that holds a category title and a row of
+    toggle chips. It is not itself focusable, so it carries no ring and no
+    selected state.
+
+    The fill is deliberately lighter than tv_bg_settings_off (the chip's
+    neutral state). A chip that is the same colour as the plate it sits on
+    would vanish, and a group of identical chips reads as one blob instead of
+    a set of separate switches.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/md_theme_surfaceContainer" />
+    <stroke android:width="1dp" android:color="@color/md_theme_surfaceContainerHigh" />
+    <corners android:radius="14dp" />
+</shape>

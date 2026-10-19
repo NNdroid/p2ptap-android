@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A toggle chip: one setting inside a group card.
+
+    Only focus and disabled states here. There is no state_selected branch on
+    the chip itself, because a chip carries two things at once - the label and
+    the ON/OFF pill - and a green chip holding a green pill reads as one flat
+    shape rather than two. The pill keeps the value, the chip keeps the pointer.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:drawable="@drawable/tv_bg_settings_unavailable" />
+    <item android:state_focused="true" android:drawable="@drawable/tv_bg_settings_focused" />
+    <item android:drawable="@drawable/tv_bg_settings_off" />
+</selector>

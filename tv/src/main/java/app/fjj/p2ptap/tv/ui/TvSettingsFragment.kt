@@ -6,28 +6,34 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import app.fjj.p2ptap.config.AppConfigManager
 import app.fjj.p2ptap.config.P2PConfig
+import app.fjj.p2ptap.tv.Chip
 import app.fjj.p2ptap.tv.R
 import app.fjj.p2ptap.tv.Toggle
-import app.fjj.p2ptap.tv.ToggleAdapter
+import app.fjj.p2ptap.tv.ToggleGroup
+import app.fjj.p2ptap.tv.bindGroup
 import app.fjj.p2ptap.tv.databinding.FragmentTvSettingsBinding
+import app.fjj.p2ptap.tv.databinding.ItemTvGroupBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * S4 Settings. A vertical grid of feature toggles plus a row of tier
- * selectors (obfuscation mode, transport priority, log level, MTU).
+ * S4 Settings. Five group cards across two columns, one chip per setting.
  *
- * The TV cannot show an EditText for free-text fields like TAP IP or DNS,
- * so those are omitted from the settings surface entirely — the user reaches
- * them via Transfer → Import a config. What remains here is switches and
- * enums, both of which are 10-foot-safe: focus + DPAD_LEFT/RIGHT to move
- * between values, DPAD_CENTER to select.
+ * The TV cannot show an EditText for free-text fields like TAP IP or DNS, so
+ * those are omitted from the settings surface entirely - the user reaches them
+ * via Transfer to import a config. What remains here is switches, which are
+ * 10-foot-safe: focus and DPAD_CENTER to flip one, DPAD_LEFT/RIGHT and UP/DOWN
+ * to move between them.
+ *
+ * Changes are debounced and saved on the way out rather than on every press,
+ * because a relay or transport change forces the engine to rebuild and there is
+ * no reason to rebuild nine times for a viewer sweeping a group.
  */
 class TvSettingsFragment : Fragment() {
 
@@ -37,7 +43,8 @@ class TvSettingsFragment : Fragment() {
     private var config: P2PConfig? = null
     private var dirty = false
 
-    private val toggleAdapter = ToggleAdapter(::enabledTransports, ::onToggle)
+    private var groups: List<ToggleGroup> = emptyList()
+    private var chips: List<Chip> = emptyList()
 
     private val applyHandler = Handler(Looper.getMainLooper())
 
@@ -46,8 +53,8 @@ class TvSettingsFragment : Fragment() {
         try {
             AppConfigManager.save(requireContext(), current)
             AppConfigManager.reloadRunningService(requireContext(), forceRestart = true)
-            // Only clear dirty after success — if save() throws the change
-            // must remain marked so onStop() retries it.
+            // Only clear dirty after success: if save() throws, the change must
+            // stay marked so onStop() retries it.
             dirty = false
         } catch (e: Exception) {
             Toast.makeText(
@@ -67,13 +74,7 @@ class TvSettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.tvSettingsRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.tvSettingsRecycler.adapter = toggleAdapter
-        binding.tvSettingsRecycler.itemAnimator = null
-
         load()
-        binding.tvSettingsRecycler.requestFocus()
     }
 
     override fun onStop() {
@@ -92,6 +93,7 @@ class TvSettingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        chips = emptyList()
     }
 
     private fun load() {
@@ -100,58 +102,133 @@ class TvSettingsFragment : Fragment() {
                 .getOrNull() ?: return@launch
 
             config = loaded
-            toggles = listOf(
-                Toggle(
-                    R.string.tv_set_obfuscation, R.drawable.ic_tv_shield, false,
-                    { loaded.obfuscationEnable }, { loaded.obfuscationEnable = it }
+            groups = listOf(
+                ToggleGroup(
+                    R.string.tv_grp_transports,
+                    listOf(
+                        Toggle(
+                            R.string.tv_set_quic, transport = true,
+                            getter = { loaded.enableQuic }, setter = { loaded.enableQuic = it }
+                        ),
+                        Toggle(
+                            R.string.tv_set_webrtc, transport = true,
+                            getter = { loaded.enableWebrtc }, setter = { loaded.enableWebrtc = it }
+                        ),
+                        Toggle(
+                            R.string.tv_set_webtransport, transport = true,
+                            getter = { loaded.enableWebtransport },
+                            setter = { loaded.enableWebtransport = it }
+                        ),
+                        Toggle(
+                            R.string.tv_set_tcp, transport = true,
+                            getter = { loaded.enableTcp }, setter = { loaded.enableTcp = it }
+                        ),
+                    ),
                 ),
-                Toggle(
-                    R.string.tv_set_strict_keys, R.drawable.ic_tv_key, false,
-                    { loaded.strictKeyNegotiation }, { loaded.strictKeyNegotiation = it }
+                ToggleGroup(
+                    R.string.tv_grp_relay,
+                    listOf(
+                        Toggle(
+                            R.string.tv_set_relay,
+                            getter = { !loaded.disableRelay },
+                            setter = { loaded.disableRelay = !it }
+                        ),
+                        Toggle(
+                            R.string.tv_set_circuit_relay,
+                            getter = { !loaded.disableCircuitRelay },
+                            setter = { loaded.disableCircuitRelay = !it },
+                            enabled = { !loaded.disableRelay }
+                        ),
+                        Toggle(
+                            R.string.tv_set_hole_punching,
+                            getter = { !loaded.disableHolePunching },
+                            setter = { loaded.disableHolePunching = !it },
+                            enabled = { !loaded.disableRelay }
+                        ),
+                    ),
                 ),
-                Toggle(
-                    R.string.tv_set_quic, R.drawable.ic_tv_quic, true,
-                    { loaded.enableQuic }, { loaded.enableQuic = it }
+                ToggleGroup(
+                    R.string.tv_grp_security,
+                    listOf(
+                        Toggle(
+                            R.string.tv_set_obfuscation,
+                            getter = { loaded.obfuscationEnable },
+                            setter = { loaded.obfuscationEnable = it }
+                        ),
+                        Toggle(
+                            R.string.tv_set_strict_keys,
+                            getter = { loaded.strictKeyNegotiation },
+                            setter = { loaded.strictKeyNegotiation = it }
+                        ),
+                    ),
                 ),
-                Toggle(
-                    R.string.tv_set_webrtc, R.drawable.ic_tv_webrtc, true,
-                    { loaded.enableWebrtc }, { loaded.enableWebrtc = it }
+                ToggleGroup(
+                    R.string.tv_grp_discovery,
+                    listOf(
+                        Toggle(
+                            R.string.tv_set_mdns,
+                            getter = { loaded.enableMdns }, setter = { loaded.enableMdns = it }
+                        ),
+                        Toggle(
+                            R.string.tv_set_subnets,
+                            getter = { loaded.acceptSubnets },
+                            setter = { loaded.acceptSubnets = it }
+                        ),
+                    ),
                 ),
-                Toggle(
-                    R.string.tv_set_webtransport, R.drawable.ic_tv_wt, true,
-                    { loaded.enableWebtransport }, { loaded.enableWebtransport = it }
+                ToggleGroup(
+                    R.string.tv_grp_webui,
+                    listOf(
+                        Toggle(
+                            R.string.tv_set_webui,
+                            getter = { loaded.webUiEnable }, setter = { loaded.webUiEnable = it }
+                        ),
+                    ),
                 ),
-                Toggle(
-                    R.string.tv_set_tcp, R.drawable.ic_tv_tcp, true,
-                    { loaded.enableTcp }, { loaded.enableTcp = it }
-                ),
-                Toggle(
-                    R.string.tv_set_relay, R.drawable.ic_tv_relay, false,
-                    { !loaded.disableRelay }, { loaded.disableRelay = !it }
-                ),
-                Toggle(
-                    R.string.tv_set_mdns, R.drawable.ic_tv_mdns, false,
-                    { loaded.enableMdns }, { loaded.enableMdns = it }
-                ),
-                Toggle(
-                    R.string.tv_set_subnets, R.drawable.ic_tv_subnet, false,
-                    { loaded.acceptSubnets }, { loaded.acceptSubnets = it }
-                ),
-                Toggle(
-                    R.string.tv_set_webui, R.drawable.ic_tv_webui, false,
-                    { loaded.webUiEnable }, { loaded.webUiEnable = it }
-                )
             )
 
-            launch(Dispatchers.Main) {
-                toggleAdapter.submit(toggles)
-            }
+            launch(Dispatchers.Main) { render() }
         }
     }
 
-    private fun onToggle(item: Toggle) {
-        item.set(!item.value())
-        toggleAdapter.submit(toggles)
+    /**
+     * Fill the two columns in grid order: transports, relay, security,
+     * discovery, web console. Grid order puts the two tallest cards on the top
+     * row and the single-chip card last, which is the most legible arrangement
+     * and also the one that balances the columns best.
+     */
+    private fun render() {
+        val columns = listOf(
+            binding.tvSettingsColumnLeft,
+            binding.tvSettingsColumnRight,
+        )
+        columns.forEach { it.removeAllViews() }
+
+        val gap = resources.getDimensionPixelSize(R.dimen.tv_group_gap).toInt()
+        chips = groups.flatMapIndexed { index, group ->
+            val column = columns[index % columns.size]
+            val card = ItemTvGroupBinding.inflate(layoutInflater, column, false)
+            if (column.childCount > 0) {
+                (card.root.layoutParams as LinearLayout.LayoutParams).topMargin = gap
+            }
+            column.addView(card.root)
+            card.bindGroup(group, ::onToggle)
+        }
+        refresh()
+
+        binding.tvSettingsColumns.post {
+            chips.firstOrNull()?.root?.requestFocus()
+        }
+    }
+
+    private fun refresh() {
+        val transportCount = enabledTransports()
+        chips.forEach { it.paint(it.toggle.transport && it.toggle.value() && transportCount <= 1) }
+    }
+
+    private fun onToggle(toggle: Toggle) {
+        toggle.set(!toggle.value())
+        refresh()
         applySoon()
     }
 
@@ -170,8 +247,6 @@ class TvSettingsFragment : Fragment() {
         applyHandler.removeCallbacks(applyConfig)
         applyHandler.postDelayed(applyConfig, APPLY_DEBOUNCE_MS)
     }
-
-    private var toggles: List<Toggle> = emptyList()
 
     private companion object {
         const val APPLY_DEBOUNCE_MS = 400L

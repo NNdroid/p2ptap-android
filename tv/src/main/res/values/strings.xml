@@ -223,6 +223,13 @@
     <string name="tv_set_mesh">Mesh discovery</string>
     <string name="tv_set_subnets">Accepted subnets</string>
     <string name="tv_set_webui">Web console</string>
+    <string name="tv_grp_transports">Transports</string>
+    <string name="tv_grp_relay">NAT &amp; Relay</string>
+    <string name="tv_grp_security">Security</string>
+    <string name="tv_grp_discovery">Discovery &amp; Subnets</string>
+    <string name="tv_grp_webui">Console</string>
+    <string name="tv_set_circuit_relay">Circuit relay</string>
+    <string name="tv_set_hole_punching">Hole punching</string>
 
     <string name="tv_tier_obfuscation">Obfuscation</string>
     <string name="tv_tier_transport">Transport</string>
@@ -239,7 +246,7 @@
     <string name="tv_total_label">TOTAL</string>
     <string name="tv_screen_peers_hint">Mesh nodes and exit gateway</string>
     <string name="tv_screen_transfer_hint">Import config and identity</string>
-    <string name="tv_screen_settings_hint">Toggles and tiers</string>
+    <string name="tv_screen_settings_hint">Switches apply as you go</string>
     <string name="tv_screen_diagnostics_hint">Traffic and logs</string>
     <string name="tv_transfer_from_file">From a file</string>
     <string name="tv_transfer_from_clipboard">From clipboard</string>

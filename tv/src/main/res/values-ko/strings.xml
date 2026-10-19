@@ -150,6 +150,13 @@
     <string name="tv_set_mesh">메시 탐색</string>
     <string name="tv_set_subnets">허용 하위망</string>
     <string name="tv_set_webui">웹 콘솔</string>
+    <string name="tv_grp_transports">트랜스포트</string>
+    <string name="tv_grp_relay">NAT 및 릴레이</string>
+    <string name="tv_grp_security">보안</string>
+    <string name="tv_grp_discovery">탐색 및 서브넷</string>
+    <string name="tv_grp_webui">콘솔</string>
+    <string name="tv_set_circuit_relay">기본 릴레이</string>
+    <string name="tv_set_hole_punching">홀 펀칭</string>
 
     <string name="tv_tier_obfuscation">오블퍼케이션</string>
     <string name="tv_tier_transport">전송</string>
@@ -223,7 +230,7 @@
     <string name="tv_total_label">합계</string>
     <string name="tv_screen_peers_hint">메시 노드와出口 게이트웨이</string>
     <string name="tv_screen_transfer_hint">설정 및 ID 가져오기</string>
-    <string name="tv_screen_settings_hint">스위치와 등급</string>
+    <string name="tv_screen_settings_hint">스위치는 즉시 적용됩니다</string>
     <string name="tv_screen_diagnostics_hint">트래픽과 로그</string>
     <string name="tv_transfer_from_file">파일에서</string>
     <string name="tv_transfer_from_clipboard">클립보드에서</string>

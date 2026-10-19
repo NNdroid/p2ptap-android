@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One toggle as a chip: the label over the ON/OFF pill.
+
+    Stacked rather than side by side because a group card is roughly 390dp
+    wide and has to hold up to four chips, which leaves about 88dp a piece.
+    A label beside a pill in 88dp would ellipsize "WebTransport" into an
+    unreadable fragment, and the stack is what a settings grid is made of
+    anyway - the label is what gets scanned, the pill is what gets read.
+
+    The pill is a TextView rather than an ImageView because the word it shows
+    is the state and a viewer must not have to guess at a glyph. It carries
+    the state, the chip carries the focus ring, and the two never share a
+    colour so neither hides the other.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="0dp"
+  android:layout_height="match_parent"
+  android:background="@drawable/tv_bg_toggle_chip"
+  android:focusable="true"
+  android:focusableInTouchMode="true"
+  android:gravity="center"
+  android:orientation="vertical"
+  android:paddingStart="4dp"
+  android:paddingTop="4dp"
+  android:paddingEnd="4dp"
+  android:paddingBottom="4dp">
+
+  <TextView
+    android:id="@+id/tv_toggle_chip_label"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:breakStrategy="high"
+    android:ellipsize="end"
+    android:gravity="center"
+    android:hyphenationFrequency="normal"
+    android:includeFontPadding="false"
+    android:maxLines="2"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall" />
+
+  <TextView
+    android:id="@+id/tv_toggle_chip_state"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:background="@drawable/tv_bg_toggle_state"
+    android:ellipsize="end"
+    android:gravity="center"
+    android:includeFontPadding="false"
+    android:maxLines="1"
+    android:paddingStart="10dp"
+    android:paddingTop="3dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="3dp"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.Label" />
+
+</LinearLayout>

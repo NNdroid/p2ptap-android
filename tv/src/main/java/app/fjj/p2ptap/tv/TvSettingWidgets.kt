@@ -1,150 +1,105 @@
 package app.fjj.p2ptap.tv
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.recyclerview.widget.RecyclerView
-import app.fjj.p2ptap.tv.databinding.ItemTvTierBinding
-import app.fjj.p2ptap.tv.databinding.ItemTvTierChipBinding
-import app.fjj.p2ptap.tv.databinding.ItemTvToggleBinding
-import java.util.Locale
+import app.fjj.p2ptap.tv.databinding.ItemTvGroupBinding
+import app.fjj.p2ptap.tv.databinding.ItemTvToggleChipBinding
 
 /**
- * The two controls a TV settings screen is made of, and nothing else: a toggle
- * and a tier.
+ * The settings screen is made of groups, and nothing else. A group is one
+ * card holding a title and a row of chips, and a chip is one boolean setting.
  *
- * Both are built around one idea. A remote can press a view and move between
- * views, and it cannot do anything more — no dropdown, no scrollbar, no text
- * field. So every change on these screens is either a press on something that
- * flips, or a press on one member of a small closed set.
+ * Both ideas come from one constraint. A TV has no scrolling, so twelve
+ * settings have to be readable in a single pass; and a remote can only press a
+ * view or move between views, so every change on the screen is a press on
+ * something that flips. There is no dropdown, no scrollbar and no text field,
+ * so nothing else is needed.
  */
 
 /** One boolean setting, described by how to read and write it in the config. */
 class Toggle(
     val labelRes: Int,
-    val iconRes: Int,
     /**
      * Whether this is one of the transports that carry traffic. A node with no
      * transports enabled cannot reach anyone, so the last one standing is
      * shown but locked, rather than allowed to be turned off.
      */
-    val transport: Boolean,
+    val transport: Boolean = false,
     private val getter: () -> Boolean,
-    private val setter: (Boolean) -> Unit
+    private val setter: (Boolean) -> Unit,
+    /**
+     * False while another setting makes this one moot. The relay children are
+     * moot while the relay umbrella is off, because the umbrella forces both of
+     * them off regardless of their own values.
+     */
+    val enabled: () -> Boolean = { true },
 ) {
     fun value(): Boolean = getter()
     fun set(next: Boolean) = setter(next)
 }
 
-/**
- * Paint one toggle card. [locked] is the "this is the last transport enabled"
- * case: the card is drawn dimmed and removed from the focus path, which is the
- * honest way to say "on, and not changeable from here".
- */
-fun ItemTvToggleBinding.bindToggle(item: Toggle, locked: Boolean, onToggle: () -> Unit) {
-    val context = root.context
-    tvToggleIcon.setImageResource(item.iconRes)
-    tvToggleLabel.text = context.getString(item.labelRes)
-    val value = item.value()
-    tvToggleState.text = context.getString(
-        if (value) R.string.tv_toggle_on else R.string.tv_toggle_off
-    )
-    tvToggleState.isSelected = value
-    root.isSelected = value
-    root.isEnabled = !locked
-    root.setOnClickListener { onToggle() }
-}
-
-class ToggleAdapter(
-    private val transportCount: () -> Int,
-    private val onToggle: (Toggle) -> Unit
-) : RecyclerView.Adapter<ToggleAdapter.Row>() {
-
-    private var items: List<Toggle> = emptyList()
-
-    fun submit(newItems: List<Toggle>) {
-        items = newItems
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Row {
-        val inflater = LayoutInflater.from(parent.context)
-        return Row(ItemTvToggleBinding.inflate(inflater, parent, false))
-    }
-
-    override fun onBindViewHolder(holder: Row, position: Int) {
-        val item = items[position]
-        val locked = item.transport && item.value() && transportCount() <= 1
-        holder.bind(item, locked, { onToggle(item) })
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    class Row(private val binding: ItemTvToggleBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: Toggle, locked: Boolean, onToggle: () -> Unit) {
-            binding.bindToggle(item, locked, onToggle)
-        }
-    }
-}
+/** A named group of toggles, painted as one card holding a row of chips. */
+class ToggleGroup(val titleRes: Int, val toggles: List<Toggle>)
 
 /**
- * A setting with a small closed set of values, shown as a row of chips.
+ * One chip, kept after it is built so a repaint can update it in place.
  *
- * The values are the engine's own strings, unmapped and unlocalised, because
- * what the viewer picks is what the config records, and a relabelled copy
- * would drift from it. They are shown upper case, which is only display.
- *
- * [enabled] is false while a tier is moot, for instance the obfuscation mode
- * while obfuscation itself is off. The chips stay on screen dimmed, because
- * removing them would move the focus target out from under the viewer.
+ * Repainting in place rather than rebuilding the views is what keeps focus
+ * where the viewer put it. Re-inflating a chip after every press drops focus
+ * back to the first chip in the column, which reads as the press being
+ * rejected.
  */
-class TierModel(
-    val labelRes: Int,
-    val options: List<String>,
-    var current: String = options.first(),
-    var enabled: Boolean = true,
-    private val onChange: (String) -> Unit
-) {
+class Chip(internal val binding: ItemTvToggleChipBinding, val toggle: Toggle) {
 
-    /** Index of the current value, or negative one when it is not an option. */
-    val selectedIndex: Int get() = options.indexOf(current)
+    val root: View get() = binding.root
 
-    fun pick(index: Int, onRepaint: () -> Unit) {
-        if (index < 0 || index >= options.size) return
-        if (options[index] == current) return
-        current = options[index]
-        onChange(current)
-        onRepaint()
-    }
-
-    fun render(view: ItemTvTierBinding, onRepaint: () -> Unit) {
-        val context = view.root.context
-        view.tvTierLabel.text = context.getString(labelRes)
-        val chips = view.tvTierChips
-        chips.removeAllViews()
-
-        options.forEachIndexed { index, option ->
-            val chipBinding = ItemTvTierChipBinding.inflate(
-                LayoutInflater.from(context), chips, false
+    fun paint(locked: Boolean) {
+        val context = binding.root.context
+        binding.tvToggleChipLabel.text = context.getString(toggle.labelRes)
+        val live = toggle.enabled()
+        binding.tvToggleChipState.text =
+            context.getString(
+                if (toggle.value()) R.string.tv_toggle_on else R.string.tv_toggle_off
             )
-            val params = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
-            if (index > 0) {
-                params.marginStart = context.resources.getDimensionPixelSize(R.dimen.tv_gap_s)
-            }
-            chips.addView(chipBinding.root, params)
-
-            val chip = chipBinding.tvTierValue
-            chip.text = option.uppercase(Locale.ROOT)
-            chip.isSelected = index == selectedIndex
-            chip.isEnabled = enabled
-            chip.alpha = if (enabled) 1f else DISABLED_ALPHA
-            chip.setOnClickListener { pick(index, onRepaint) }
-        }
+        binding.tvToggleChipState.isSelected = toggle.value()
+        // Moot rather than disabled: the chip keeps its place in the focus path
+        // so the pointer never vanishes out from under the viewer, but it reads
+        // as "recorded, not in effect" while the setting above it wins.
+        binding.tvToggleChipLabel.alpha = if (live) 1f else MUTED_ALPHA
+        binding.tvToggleChipState.alpha = if (live) 1f else MUTED_ALPHA
+        binding.root.isEnabled = !locked
     }
 
     private companion object {
-        const val DISABLED_ALPHA = 0.35f
+        const val MUTED_ALPHA = 0.45f
+    }
+}
+
+/**
+ * Paint one group card and hand back its chips. The chips are built once and
+ * then repainted, so the caller keeps them and calls [Chip.paint] after every
+ * change instead of re-inflating.
+ */
+fun ItemTvGroupBinding.bindGroup(
+    group: ToggleGroup,
+    onToggle: (Toggle) -> Unit,
+): List<Chip> {
+    val context = root.context
+    tvGroupTitle.text = context.getString(group.titleRes)
+    tvGroupChips.removeAllViews()
+    return group.toggles.mapIndexed { index, toggle ->
+        val chip = ItemTvToggleChipBinding.inflate(
+            LayoutInflater.from(context), tvGroupChips, false
+        )
+        val params = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+        if (index > 0) {
+            params.marginStart = context.resources.getDimensionPixelSize(R.dimen.tv_gap_s)
+        }
+        tvGroupChips.addView(chip.root, params)
+        val painted = Chip(chip, toggle)
+        chip.root.setOnClickListener { onToggle(toggle) }
+        painted
     }
 }

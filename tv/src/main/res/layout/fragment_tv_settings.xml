@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    S4 Settings. A vertical RecyclerView of setting rows. Each row is either
-    a toggle (switch) or a tier (segmented buttons).
+    S4 Settings. Five group cards tiled across two columns.
 
-    Layout is a two-column grid inside the RecyclerView: a category label
-    on the left (240dp fixed), the control on the right (flex). This gives
-    the eye a stable vertical anchor to return to when moving focus.
+    A TV has no scrolling, so every screen has to fit inside the set's
+    drawable area, and this one had been overflowing: ten flat toggle rows at
+    62dp each are 620dp of content against roughly 368dp available, which cut
+    the last four rows off the bottom of the screen.
+
+    Grouping is what makes it fit, not tighter padding. Twelve settings read
+    as five related clusters, and a cluster is one card holding a title plus a
+    row of chips. Five cards in a 2 x 3 grid is 382dp; twelve rows were 62dp
+    apiece with no way to pack them.
+
+    Budget against the 540dp floor of a 1080p set at xhdpi:
+
+        padding        24 + 24               48
+        header         title 38 + 8 + 22     68
+        gutter         above the cards       20
+        cards          3 x 114 + 2 x 20     382
+                                             ====
+                                             500
+
+    40dp of slack, which is where a sixth card row would live. The columns are
+    plain weighted LinearLayouts rather than a RecyclerView: the set is fixed
+    and known at load time, so recycling buys nothing, and a GridLayoutManager
+    would fill the cards left to right instead of letting the tall ones sit
+    where they belong.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,7 +33,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/md_theme_background"
-    android:padding="32dp">
+    android:paddingStart="@dimen/tv_screen_padding_h"
+    android:paddingTop="@dimen/tv_screen_padding_v"
+    android:paddingEnd="@dimen/tv_screen_padding_h"
+    android:paddingBottom="@dimen/tv_screen_padding_v">
 
     <TextView
         android:id="@+id/tv_screen_title"
@@ -36,20 +59,33 @@
         app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tv_settings_recycler"
+    <LinearLayout
+        android:id="@+id/tv_settings_columns"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:clipToPadding="false"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:isScrollContainer="true"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/tv_screen_subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/tv_settings_column_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/tv_column_gutter"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:id="@+id/tv_settings_column_right"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/tv_column_gutter"
+            android:orientation="vertical" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -150,6 +150,13 @@
     <string name="tv_set_mesh">メッシュ検出</string>
     <string name="tv_set_subnets">許可サブネット</string>
     <string name="tv_set_webui">Web コンソール</string>
+    <string name="tv_grp_transports">トランスポート</string>
+    <string name="tv_grp_relay">NAT とリレー</string>
+    <string name="tv_grp_security">セキュリティ</string>
+    <string name="tv_grp_discovery">検出とサブネット</string>
+    <string name="tv_grp_webui">コンソール</string>
+    <string name="tv_set_circuit_relay">標準リレー</string>
+    <string name="tv_set_hole_punching">打洞</string>
 
     <string name="tv_tier_obfuscation">オーブスコベーション</string>
     <string name="tv_tier_transport">転送</string>
@@ -223,7 +230,7 @@
     <string name="tv_total_label">合計</string>
     <string name="tv_screen_peers_hint">メッシュノードと出口ゲートウェイ</string>
     <string name="tv_screen_transfer_hint">設定とIDのインポート</string>
-    <string name="tv_screen_settings_hint">切替とティア</string>
+    <string name="tv_screen_settings_hint">切替は即座に反映されます</string>
     <string name="tv_screen_diagnostics_hint">トラフィックとログ</string>
     <string name="tv_transfer_from_file">ファイルから</string>
     <string name="tv_transfer_from_clipboard">クリップボードから</string>

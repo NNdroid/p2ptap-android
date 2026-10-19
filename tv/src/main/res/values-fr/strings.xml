@@ -151,6 +151,13 @@
     <string name="tv_set_mesh">Découverte du maillage</string>
     <string name="tv_set_subnets">Sous-réseaux acceptés</string>
     <string name="tv_set_webui">Console web</string>
+    <string name="tv_grp_transports">Transport</string>
+    <string name="tv_grp_relay">NAT et relais</string>
+    <string name="tv_grp_security">Sécurité</string>
+    <string name="tv_grp_discovery">Découverte et sous-réseaux</string>
+    <string name="tv_grp_webui">Console</string>
+    <string name="tv_set_circuit_relay">Circuit relay</string>
+    <string name="tv_set_hole_punching">Perforation NAT</string>
 
     <string name="tv_tier_obfuscation">Obscurcissement</string>
     <string name="tv_tier_transport">Transport</string>
@@ -224,7 +231,7 @@
     <string name="tv_total_label">TOTAL</string>
     <string name="tv_screen_peers_hint">Nœuds de maillage et passerelle de sortie</string>
     <string name="tv_screen_transfer_hint">Importer la configuration et l\'identité</string>
-    <string name="tv_screen_settings_hint">Interrupteurs et niveaux</string>
+    <string name="tv_screen_settings_hint">Application immédiate</string>
     <string name="tv_screen_diagnostics_hint">Trafic et journaux</string>
     <string name="tv_transfer_from_file">Depuis un fichier</string>
     <string name="tv_transfer_from_clipboard">Depuis le presse-papiers</string>

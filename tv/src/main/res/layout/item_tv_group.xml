@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One settings group: a category title over a row of toggle chips.
+
+    A group is a card, not a section divider, because a related cluster has to
+    read as one object at ten feet - "these four are the transports" - rather
+    than as four rows that happen to sit near each other. Chips are inflated
+    per setting by the fragment, so a group can carry one or five of them
+    without touching this layout.
+
+    The card is 114dp tall whatever it holds, because a card whose height
+    tracks its contents makes the two columns come out ragged and the grid
+    only closes if every card is the same height.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@drawable/tv_bg_group"
+  android:orientation="vertical"
+  android:paddingStart="12dp"
+  android:paddingTop="@dimen/tv_group_padding_v"
+  android:paddingEnd="12dp"
+  android:paddingBottom="@dimen/tv_group_padding_v">
+
+  <TextView
+    android:id="@+id/tv_group_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:letterSpacing="0.06"
+    android:maxLines="1"
+    android:textAllCaps="true"
+    android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelMedium"
+    android:textColor="@color/md_theme_onSurfaceVariant"
+    android:textStyle="bold" />
+
+  <LinearLayout
+    android:id="@+id/tv_group_chips"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/tv_group_chip_h"
+    android:layout_marginTop="@dimen/tv_group_title_gap"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" />
+
+</LinearLayout>

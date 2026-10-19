@@ -151,6 +151,13 @@
     <string name="tv_set_mesh">Detección de malla</string>
     <string name="tv_set_subnets">Subredes aceptadas</string>
     <string name="tv_set_webui">Consola web</string>
+    <string name="tv_grp_transports">Transportes</string>
+    <string name="tv_grp_relay">NAT y relay</string>
+    <string name="tv_grp_security">Seguridad</string>
+    <string name="tv_grp_discovery">Descubrimiento y subredes</string>
+    <string name="tv_grp_webui">Consola</string>
+    <string name="tv_set_circuit_relay">Circuit relay</string>
+    <string name="tv_set_hole_punching">Perforación NAT</string>
 
     <string name="tv_tier_obfuscation">Ofuscación</string>
     <string name="tv_tier_transport">Transporte</string>
@@ -224,7 +231,7 @@
     <string name="tv_total_label">TOTAL</string>
     <string name="tv_screen_peers_hint">Nodos de malla y salida</string>
     <string name="tv_screen_transfer_hint">Importar configuración e identidad</string>
-    <string name="tv_screen_settings_hint">Interruptores y niveles</string>
+    <string name="tv_screen_settings_hint">Los interruptores se aplican al instante</string>
     <string name="tv_screen_diagnostics_hint">Tráfico y registros</string>
     <string name="tv_transfer_from_file">Desde un archivo</string>
     <string name="tv_transfer_from_clipboard">Desde el portapapeles</string>

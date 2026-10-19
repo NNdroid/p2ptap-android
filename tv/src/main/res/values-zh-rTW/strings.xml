@@ -151,6 +151,13 @@
     <string name="tv_set_mesh">Mesh 發現</string>
     <string name="tv_set_subnets">允許子網</string>
     <string name="tv_set_webui">Web 主控台</string>
+    <string name="tv_grp_transports">傳輸協定</string>
+    <string name="tv_grp_relay">NAT 穿透與中繼</string>
+    <string name="tv_grp_security">安全</string>
+    <string name="tv_grp_discovery">發現與子網</string>
+    <string name="tv_grp_webui">主控台</string>
+    <string name="tv_set_circuit_relay">標準中繼</string>
+    <string name="tv_set_hole_punching">打洞</string>
 
     <string name="tv_tier_obfuscation">混淆模式</string>
     <string name="tv_tier_transport">傳輸協定</string>
@@ -224,7 +231,7 @@
     <string name="tv_total_label">合計</string>
     <string name="tv_screen_peers_hint">網格節點與出口網關</string>
     <string name="tv_screen_transfer_hint">匯入設定與身份</string>
-    <string name="tv_screen_settings_hint">開關與檔位</string>
+    <string name="tv_screen_settings_hint">開關即時生效</string>
     <string name="tv_screen_diagnostics_hint">流量與日誌</string>
     <string name="tv_transfer_from_file">從檔案</string>
     <string name="tv_transfer_from_clipboard">從剪貼簿</string>

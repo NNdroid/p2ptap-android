@@ -62,11 +62,20 @@
          note and the status line fit in 540dp. -->
     <dimen name="tv_action_card_h">120dp</dimen>
 
-    <!-- Settings cards. Shorter than tv_nav_card_h because a settings screen
-         lists rather than navigates: ten cards have to sit in the same 540dp.
-         10 + 34 (the state pill) + 10 = 54dp per card, 62dp with the row
-         margin, so ten cards in two columns are five rows at 310dp. -->
-    <dimen name="tv_card_padding_v">10dp</dimen>
+    <!-- Settings group cards. A group is a title over a row of toggle chips,
+         so one card carries up to four settings instead of one row apiece.
+         Eight (padding) + 20 (the title) + 6 (title gap) + 72 (chip row)
+         + 8 (padding) is 114dp per card, and five of them tile a 2 x 3 grid
+         at 3 x 114 + 2 x 20 = 382dp, inside the 404dp the screen header
+         leaves. Height is fixed rather than wrap so both columns stay level. -->
+    <dimen name="tv_group_padding_v">8dp</dimen>
+    <dimen name="tv_group_title_gap">6dp</dimen>
+    <dimen name="tv_group_chip_h">72dp</dimen>
+    <!-- Gutter between the two group columns, and between cards in one
+         column. Split as two 10dp margins so the pair is one value to reason
+         about here and a plain margin in the layout. -->
+    <dimen name="tv_column_gutter">10dp</dimen>
+    <dimen name="tv_group_gap">20dp</dimen>
 
     <!-- Keep-alive layer rows. Three rows plus header, note and the honest
          footer have to fit in 540dp: 48 + 48 + 16 + 36 + 16 + 3x84 + 2x12 + 16
@@ -74,10 +83,4 @@
     <dimen name="tv_ka_row_h">84dp</dimen>
     <dimen name="tv_ka_action_w">220dp</dimen>
     <dimen name="tv_ka_action_h">60dp</dimen>
-
-    <!-- Tier rail: a row of value chips beside a label. The chip height is
-         deliberately close to the nav card height, because a focused chip has
-         the same glow-clearance problem as a focused button. -->
-    <dimen name="tv_tier_chip_h">68dp</dimen>
-    <dimen name="tv_tier_label_w">140dp</dimen>
 </resources>
