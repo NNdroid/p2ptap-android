@@ -9,23 +9,27 @@
 
     Grouping is what makes it fit, not tighter padding. Twelve settings read
     as five related clusters, and a cluster is one card holding a title plus a
-    row of chips. Five cards in a 2 x 3 grid is 382dp; twelve rows were 62dp
+    row of chips. The widest cluster takes a full-width row and the other four
+    tile a 2 x 2 grid: 114 + 20 + 2 x 114 + 20 = 382dp; twelve rows were 62dp
     apiece with no way to pack them.
+
+    The columns are plain weighted LinearLayouts rather than a RecyclerView: the
+    set is fixed and known at load time, so recycling buys nothing, and a
+    GridLayoutManager would fill the cards left to right instead of letting the
+    wide one sit where it belongs.
 
     Budget against the 540dp floor of a 1080p set at xhdpi:
 
         padding        24 + 24               48
         header         title 38 + 8 + 22     68
         gutter         above the cards       20
-        cards          3 x 114 + 2 x 20     382
+        lead card      full width            114
+        gutter         below it              20
+        grid           2 x 114 + 20          248
                                              ====
-                                             500
+                                             518
 
-    40dp of slack, which is where a sixth card row would live. The columns are
-    plain weighted LinearLayouts rather than a RecyclerView: the set is fixed
-    and known at load time, so recycling buys nothing, and a GridLayoutManager
-    would fill the cards left to right instead of letting the tall ones sit
-    where they belong.
+    22dp of slack, which is all there is left, so a sixth card row will not fit.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -60,31 +64,50 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
-        android:id="@+id/tv_settings_columns"
+        android:id="@+id/tv_settings_groups"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/tv_screen_subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- The full-width slot. It holds the one group whose labels are too
+             long for a narrow card: relay circuit relay runs to 23 characters
+             in Russian, which is 221dp of text against the 358dp a narrow chip
+             row offers after two gaps. It is 792dp full width. -->
         <LinearLayout
-            android:id="@+id/tv_settings_column_left"
-            android:layout_width="0dp"
+            android:id="@+id/tv_settings_lead"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="@dimen/tv_column_gutter"
             android:orientation="vertical" />
 
         <LinearLayout
-            android:id="@+id/tv_settings_column_right"
-            android:layout_width="0dp"
+            android:id="@+id/tv_settings_columns"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/tv_column_gutter"
-            android:orientation="vertical" />
+            android:layout_marginTop="@dimen/tv_group_gap"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/tv_settings_column_left"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/tv_column_gutter"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:id="@+id/tv_settings_column_right"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/tv_column_gutter"
+                android:orientation="vertical" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

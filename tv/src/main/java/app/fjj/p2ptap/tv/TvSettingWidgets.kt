@@ -40,8 +40,18 @@ class Toggle(
     fun set(next: Boolean) = setter(next)
 }
 
-/** A named group of toggles, painted as one card holding a row of chips. */
-class ToggleGroup(val titleRes: Int, val toggles: List<Toggle>)
+/**
+ * A named group of toggles, painted as one card holding a row of chips.
+ *
+ * [wide] asks for the full-width slot above the two-column grid. One group
+ * needs it: the relay group's circuit-relay label runs to 23 characters in
+ * Russian, and no narrow card can hold it in one line.
+ */
+class ToggleGroup(
+    val titleRes: Int,
+    val toggles: List<Toggle>,
+    val wide: Boolean = false,
+)
 
 /**
  * One chip, kept after it is built so a repaint can update it in place.
@@ -93,7 +103,14 @@ fun ItemTvGroupBinding.bindGroup(
         val chip = ItemTvToggleChipBinding.inflate(
             LayoutInflater.from(context), tvGroupChips, false
         )
-        val params = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+        // wrap_content under weight one: the chip takes its label's width first,
+        // then shares the leftover space. A 0dp width splits the row into equal
+        // quarters, which is not wide enough for the longest labels.
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            1f,
+        )
         if (index > 0) {
             params.marginStart = context.resources.getDimensionPixelSize(R.dimen.tv_gap_s)
         }

@@ -23,7 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * S4 Settings. Five group cards across two columns, one chip per setting.
+ * S4 Settings. One wide group on a full-width row, four more across two
+ * columns, one chip per setting.
  *
  * The TV cannot show an EditText for free-text fields like TAP IP or DNS, so
  * those are omitted from the settings surface entirely - the user reaches them
@@ -126,8 +127,8 @@ class TvSettingsFragment : Fragment() {
                     ),
                 ),
                 ToggleGroup(
-                    R.string.tv_grp_relay,
-                    listOf(
+                    titleRes = R.string.tv_grp_relay,
+                    toggles = listOf(
                         Toggle(
                             R.string.tv_set_relay,
                             getter = { !loaded.disableRelay },
@@ -146,6 +147,7 @@ class TvSettingsFragment : Fragment() {
                             enabled = { !loaded.disableRelay }
                         ),
                     ),
+                    wide = true,
                 ),
                 ToggleGroup(
                     R.string.tv_grp_security,
@@ -192,31 +194,36 @@ class TvSettingsFragment : Fragment() {
     }
 
     /**
-     * Fill the two columns in grid order: transports, relay, security,
-     * discovery, web console. Grid order puts the two tallest cards on the top
-     * row and the single-chip card last, which is the most legible arrangement
-     * and also the one that balances the columns best.
+     * Put the wide group in the full-width lead slot, then tile the rest down
+     * the two columns in list order. The wide group is always rendered first
+     * so the focus path starts at the top left of the screen; that makes the
+     * on-screen order relay, transports, security, discovery, web console, with
+     * the single-chip card last.
      */
     private fun render() {
         val columns = listOf(
             binding.tvSettingsColumnLeft,
             binding.tvSettingsColumnRight,
         )
+        binding.tvSettingsLead.removeAllViews()
         columns.forEach { it.removeAllViews() }
 
         val gap = resources.getDimensionPixelSize(R.dimen.tv_group_gap).toInt()
-        chips = groups.flatMapIndexed { index, group ->
-            val column = columns[index % columns.size]
-            val card = ItemTvGroupBinding.inflate(layoutInflater, column, false)
-            if (column.childCount > 0) {
+        val painted = mutableListOf<Chip>()
+        var nextColumn = 0
+        for (group in groups) {
+            val slot = if (group.wide) binding.tvSettingsLead else columns[nextColumn++ % columns.size]
+            val card = ItemTvGroupBinding.inflate(layoutInflater, slot, false)
+            if (slot.childCount > 0) {
                 (card.root.layoutParams as LinearLayout.LayoutParams).topMargin = gap
             }
-            column.addView(card.root)
-            card.bindGroup(group, ::onToggle)
+            slot.addView(card.root)
+            painted.addAll(card.bindGroup(group, ::onToggle))
         }
+        chips = painted
         refresh()
 
-        binding.tvSettingsColumns.post {
+        binding.tvSettingsGroups.post {
             chips.firstOrNull()?.root?.requestFocus()
         }
     }
