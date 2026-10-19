@@ -491,13 +491,19 @@ class MainActivity : AppCompatActivity() {
         } else {
             val node = config.exitNode.trim()
             val shortNode = if (node.length > 20) node.take(8) + "..." + node.takeLast(6) else node
+            val snap = viewModel.telemetry.value.snapshot
             binding.contentMain.tvExitNodeStatus.text = when {
                 P2PTapVpnService.currentState != P2PTapVpnService.STATE_RUNNING ->
                     getString(R.string.exit_node_idle_fmt, shortNode)
-                viewModel.telemetry.value.snapshot?.matchesExit(node) == true ->
+                snap?.matchesExit(node) == true ->
                     getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_applied))
-                else ->
+                // The route is not installed, so say why. A peer the engine is
+                // connected to means the gateway is still working at it; a peer
+                // it cannot reach means nothing will change on its own.
+                snap?.hasConnectedPeer(node) == true ->
                     getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_pending))
+                else ->
+                    getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_unreachable))
             }
         }
     }

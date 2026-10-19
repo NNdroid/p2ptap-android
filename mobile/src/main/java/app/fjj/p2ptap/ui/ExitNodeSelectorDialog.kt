@@ -81,8 +81,10 @@ class ExitNodeSelectorDialog : LiveDataSheet() {
             state != "RUNNING" -> getString(R.string.exit_node_idle_fmt, target)
             data.snapshot?.matchesExit(target) == true ->
                 getString(R.string.exit_node_active_fmt, target, getString(R.string.telemetry_applied))
-            else ->
+            data.snapshot?.hasConnectedPeer(target) == true ->
                 getString(R.string.exit_node_active_fmt, target, getString(R.string.telemetry_pending))
+            else ->
+                getString(R.string.exit_node_active_fmt, target, getString(R.string.telemetry_unreachable))
         }
         // Kept in a local: TelemetryState lives in :core, and a public
         // cross-module property is not smart-castable after a null check.

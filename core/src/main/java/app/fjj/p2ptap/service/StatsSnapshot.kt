@@ -33,6 +33,22 @@ data class StatsSnapshot(
 ) {
     fun matchesExit(target: String): Boolean = target.isNotBlank() &&
         (target == activeExitPeerId || matchesVirtualAddress(target, activeExitIpv4) || matchesVirtualAddress(target, activeExitIpv6))
+
+    /**
+     * True when [target] names a peer the engine is actually connected to.
+     *
+     * [matchesExit] answers "is the route installed?", but that condition has
+     * two very different causes: the gateway may be waiting on a peer that is
+     * already connected, or on a peer the engine cannot reach at all. Only the
+     * second one needs the user to do anything, so the UI has to be able to
+     * tell them apart.
+     */
+    fun hasConnectedPeer(target: String): Boolean = target.isNotBlank() &&
+        peers.any {
+            (it.connState == "ok" || it.connState == "relay_ok") &&
+                (target == it.peerId || matchesVirtualAddress(target, it.tapIp) ||
+                    matchesVirtualAddress(target, it.tapIpv6))
+        }
 }
 
 data class TelemetryState(val snapshot: StatsSnapshot? = null, val refreshing: Boolean = false,
