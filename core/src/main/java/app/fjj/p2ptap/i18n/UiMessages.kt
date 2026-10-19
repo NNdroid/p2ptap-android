@@ -127,6 +127,18 @@ object UiMessages {
         else -> R.string.telemetry_unknown
     })
 
+    /**
+     * Localized label for a transport medium. Used for the return-side path so it
+     * can be read against the forward badge: each node picks its own egress, so
+     * a peer's return medium may legitimately differ from the path we send over.
+     */
+    fun transportLabel(context: Context, raw: String): String = when (raw) {
+        "direct" -> context.getString(R.string.transport_direct)
+        "circuit-relay" -> context.getString(R.string.transport_circuit_relay)
+        "overlay-relay" -> context.getString(R.string.transport_overlay_relay)
+        else -> raw.ifBlank { "" }
+    }
+
     fun reachability(context: Context, raw: String): String = context.getString(when (raw) {
         "public" -> R.string.reachability_public
         "private" -> R.string.reachability_private

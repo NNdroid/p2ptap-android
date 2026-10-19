@@ -28,6 +28,9 @@
       <TextView android:id="@+id/tvReturnPath" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:textSize="11sp" android:textColor="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
+    <!-- Return-path medium (observed inbound transport; may differ from the forward badge) -->
+    <TextView android:id="@+id/tvReturnTransport" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="11sp" android:textColor="?attr/colorOnSurfaceVariant" android:layout_marginBottom="6dp" android:visibility="gone" />
+
     <!-- TAP IPs -->
     <TextView android:id="@+id/tvIpAddresses" android:layout_width="match_parent" android:layout_height="wrap_content" android:breakStrategy="high_quality" android:text="@string/telemetry_unknown" android:textColor="?attr/colorSecondary" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="6dp" />
 

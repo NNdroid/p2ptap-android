@@ -226,6 +226,20 @@ class PeersDetailDialog : LiveDataSheet() {
                 }
             }
 
+            // Return-path medium. Observed from the peer's inbound frames, so it
+            // may legitimately differ from the forward badge above — that
+            // difference is exactly the asymmetric routing worth surfacing.
+            itemBinding.tvReturnTransport.apply {
+                val label = UiMessages.transportLabel(ctx, item.returnTransport)
+                if (label.isNotBlank()) {
+                    val hop = item.returnRelayHop.ifBlank { "" }
+                    text = hop.takeIf { it.isNotBlank() }?.let { "$label · via $it" } ?: label
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
             // TAP IPs
             val ipText = buildString {
                 if (item.tapIp.isNotBlank()) append("IPv4: ${item.tapIp}  ")

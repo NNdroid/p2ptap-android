@@ -78,6 +78,14 @@ data class PeerItemData(
     val uptime: String = "",
     val returnPath: String = "",        // ok | dead | idle
     val returnPathDetail: String = "",
+    // ── P0: asymmetric return medium ────────────────────────────────────────
+    // The transport the peer's inbound frames most recently arrived over, which
+    // is the return-side twin of [transport] (the path WE send over). Each node
+    // picks its own egress, so these legitimately differ — a peer may send us
+    // over an overlay relay while we send it over a live direct link. Empty
+    // means no inbound frame was seen recently, i.e. the medium is unknown.
+    val returnTransport: String = "",   // "" | direct | circuit-relay | overlay-relay
+    val returnRelayHop: String = "",
     val jitterMs: Double = 0.0,
     val jitterMeasured: Boolean = false,
     val lossRatePercent: Double = 0.0,

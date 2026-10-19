@@ -46,6 +46,9 @@
     <string name="telemetry_unmeasured">尚未测量</string>
     <string name="telemetry_unreachable">不可达</string>
     <string name="return_path_ok">回程正常</string>
+    <string name="transport_direct">直连</string>
+    <string name="transport_circuit_relay">电路中继</string>
+    <string name="transport_overlay_relay">中继转发</string>
     <string name="return_path_dead">回程中断</string>
     <string name="return_path_idle">回程空闲</string>
     <string name="reachability_public">公网</string>

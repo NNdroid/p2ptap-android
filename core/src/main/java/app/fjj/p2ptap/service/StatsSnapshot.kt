@@ -79,6 +79,8 @@ object StatsSnapshotParser {
                 uptime = p.text("uptime"),
                 returnPath = p.text("return_path"),
                 returnPathDetail = p.text("return_path_detail"),
+                returnTransport = p.text("return_transport"),
+                returnRelayHop = p.text("return_relay_hop"),
                 jitterMs = if (p.optBoolean("jitter_measured", false)) p.optDouble("jitter_ms", 0.0) else 0.0,
                 jitterMeasured = p.optBoolean("jitter_measured", false),
                 lossRatePercent = if (p.optBoolean("loss_measured", false)) p.optDouble("loss_rate_percent", 0.0) else 0.0,

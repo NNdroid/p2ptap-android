@@ -99,6 +99,9 @@
 
     <!-- Return path status -->
     <string name="return_path_ok">Return path alive</string>
+    <string name="transport_direct">Direct</string>
+    <string name="transport_circuit_relay">Circuit relay</string>
+    <string name="transport_overlay_relay">Overlay relay</string>
     <string name="return_path_dead">Return path dead</string>
     <string name="return_path_idle">Return path idle</string>
 
