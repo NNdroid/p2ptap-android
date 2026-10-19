@@ -111,6 +111,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">ローカル mDNS 自動探索を有効化</string>
     <string name="switch_disable_relay">直接接続専用モード (ホールパンチと AutoRelay も無効化)</string>
+    <string name="switch_disable_circuit_relay">標準リレーのみ無効化</string>
+    <string name="switch_disable_hole_punching">ホールパンチングのみ無効化</string>
     <string name="switch_strict_key">厳格な前方秘匿性 (PFS キー分離を強制)</string>
     <string name="group_transports">トランスポート層プロトコル設定</string>
     <string name="switch_quic">QUIC 接続を待ち受ける (UDP)</string>

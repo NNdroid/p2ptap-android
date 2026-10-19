@@ -127,6 +127,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">启用 mDNS 局域网自动发现</string>
     <string name="switch_disable_relay">仅直连模式 (同时禁用打洞与自动中继)</string>
+    <string name="switch_disable_circuit_relay">仅关闭标准中继</string>
+    <string name="switch_disable_hole_punching">仅关闭打洞</string>
     <string name="switch_strict_key">严格前向安全 (每节点 PFS 密钥隔离)</string>
     <string name="group_transports">传输层协议</string>
     <string name="switch_quic">监听 QUIC 连接 (UDP)</string>

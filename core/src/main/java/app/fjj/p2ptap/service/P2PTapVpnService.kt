@@ -653,7 +653,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             return
         }
 
-        when (planVpnReload(oldConfig, newConfig, forceRestart)) {
+        when (planVpnReload(oldConfig, newConfig, forceRestart, applicationContext)) {
             VpnReloadPlan.NONE -> return
             VpnReloadPlan.HOT -> {
                 try {

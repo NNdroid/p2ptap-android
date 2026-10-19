@@ -108,4 +108,84 @@ class VpnReloadPolicyTest {
             planVpnReload(old, old.copy(webUiToken = "rotated-token", logLevel = "debug", enableMdns = true))
         )
     }
+
+    @Test
+    fun relaySplitFlagsRestartBecauseLibp2pOptionsAreFixedAtHostConstruction() {
+        // The two new flags disable only one side of NAT traversal each, but
+        // like disableRelay they are consumed once, when NewNode assembles the
+        // libp2p options, so they need the same treatment.
+        val old = config()
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(disableCircuitRelay = true)))
+        assertEquals(VpnReloadPlan.RESTART, planVpnReload(old, old.copy(disableHolePunching = true)))
+        assertEquals(
+            VpnReloadPlan.RESTART,
+            planVpnReload(old, old.copy(disableCircuitRelay = true, disableHolePunching = true))
+        )
+    }
+
+    @Test
+    fun decideMapsEngineVerdictsVerbatim() {
+        val old = config()
+        val updated = old.copy(logLevel = "debug")
+        assertEquals(VpnReloadPlan.RESTART, decide(old, updated, false, "restart"))
+        assertEquals(VpnReloadPlan.HOT, decide(old, updated, false, "reload"))
+        assertEquals(VpnReloadPlan.NONE, decide(old, old.copy(), false, "noop"))
+        // A verdict nobody produces is not evidence that a change is safe to
+        // hot-reload.
+        assertEquals(VpnReloadPlan.RESTART, decide(old, updated, false, "maybe"))
+        assertEquals(VpnReloadPlan.RESTART, decide(old, updated, false, ""))
+    }
+
+    @Test
+    fun forceRestartAndAMissingOldConfigOverrideTheEngine() {
+        val old = config()
+        assertEquals(VpnReloadPlan.RESTART, decide(old, old.copy(), true, "noop"))
+        assertEquals(VpnReloadPlan.RESTART, decide(null, config(), false, "reload"))
+    }
+
+    @Test
+    fun androidOwnedFieldsRestartEvenWhenTheEngineCallsThemReload() {
+        val old = config()
+        // dnsServers is applied by the VpnService and exit-node mode rewrites
+        // the TUN default routes, so neither ever reaches the engine: its
+        // verdict cannot cover them, and trusting one would leave the change
+        // silently unapplied.
+        assertEquals(
+            VpnReloadPlan.RESTART,
+            decide(old, old.copy(dnsServers = listOf("1.1.1.1")), false, "reload")
+        )
+        assertEquals(
+            VpnReloadPlan.RESTART,
+            decide(old, old.copy(exitNode = "peer-a"), false, "reload")
+        )
+    }
+
+    @Test
+    fun engineReloadVerdictLetsSubnetAndAclEditsSkipTheRestart() {
+        // These used to force a full VPN rebuild on Android even though the
+        // engine applies them through OnSubnetsChanged and its live config
+        // snapshot. The engine is now the authority, so its "reload" verdict
+        // stands.
+        val old = config()
+        val updated = old.copy(
+            advertisedSubnets = listOf("10.66.0.0/16"),
+            allowedSubnetPeers = listOf("peer-a"),
+            aclEnable = true,
+            aclRulesJson = "[{\"action\":\"allow\"}]"
+        )
+        assertEquals(VpnReloadPlan.HOT, decide(old, updated, false, "reload"))
+        // The local fallback is the over-conservative twin: the same edit
+        // restarts when the engine cannot be reached, so a stale AAR degrades
+        // to extra rebuilds rather than unapplied settings.
+        assertEquals(VpnReloadPlan.RESTART, decide(old, updated, false, null))
+    }
+
+    @Test
+    fun unreachableEngineFallsBackToTheLocalHeuristic() {
+        val old = config()
+        val hotOnly = old.copy(obfuscationEnable = true, logLevel = "debug")
+        val restartOnly = old.copy(mtu = 1280)
+        assertEquals(planVpnReloadLocal(old, hotOnly), decide(old, hotOnly, false, null))
+        assertEquals(planVpnReloadLocal(old, restartOnly), decide(old, restartOnly, false, null))
+    }
 }

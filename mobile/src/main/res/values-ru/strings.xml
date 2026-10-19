@@ -111,6 +111,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Включить автообнаружение узлов в LAN (mDNS)</string>
     <string name="switch_disable_relay">Только прямое подключение (также отключает пробитие NAT и AutoRelay)</string>
+    <string name="switch_disable_circuit_relay">Только отключить ретрансляцию</string>
+    <string name="switch_disable_hole_punching">Только отключить пробитие NAT</string>
     <string name="switch_strict_key">Строгая прямая секретность (изоляция ключей PFS)</string>
     <string name="group_transports">Протоколы транспортного уровня</string>
     <string name="switch_quic">Принимать соединения QUIC (UDP)</string>

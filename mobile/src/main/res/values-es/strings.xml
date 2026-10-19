@@ -111,6 +111,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Habilitar autodescubrimiento mDNS LAN</string>
     <string name="switch_disable_relay">Modo solo directo (también desactiva perforación y AutoRelay)</string>
+    <string name="switch_disable_circuit_relay">Desactivar solo circuit relay</string>
+    <string name="switch_disable_hole_punching">Desactivar solo perforación</string>
     <string name="switch_strict_key">Secreto hacia adelante estricto (Aislamiento PFS)</string>
     <string name="group_transports">Protocolos de la capa de transporte</string>
     <string name="switch_quic">Escuchar conexiones QUIC (UDP)</string>

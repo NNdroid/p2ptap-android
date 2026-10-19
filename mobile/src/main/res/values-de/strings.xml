@@ -111,6 +111,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">mDNS LAN-Auto-Erkennung aktivieren</string>
     <string name="switch_disable_relay">Nur-Direktverbindung (deaktiviert auch Hole Punching und AutoRelay)</string>
+    <string name="switch_disable_circuit_relay">Nur Circuit-Relay deaktivieren</string>
+    <string name="switch_disable_hole_punching">Nur Hole Punching deaktivieren</string>
     <string name="switch_strict_key">Strikte Forward Secrecy (PFS-Schlüsselisolation)</string>
     <string name="group_transports">Transportschicht-Protokolle</string>
     <string name="switch_quic">QUIC-Listener aktivieren (UDP)</string>

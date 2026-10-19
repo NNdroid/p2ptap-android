@@ -104,6 +104,8 @@
     <string name="tile_label">P2PTap 虛擬網</string>
     <string name="switch_enable_mdns">開啟區域網路 mDNS 節點自發現</string>
     <string name="switch_disable_relay">僅直連模式 (同時停用打洞與自動中繼)</string>
+    <string name="switch_disable_circuit_relay">僅停用標準中繼</string>
+    <string name="switch_disable_hole_punching">僅停用打洞</string>
     <string name="switch_strict_key">嚴格前向安全 (節點間 PFS 金鑰強隔離)</string>
     <string name="group_transports">傳輸層底層協定控制</string>
     <string name="switch_quic">監聽 QUIC 連線 (UDP)</string>

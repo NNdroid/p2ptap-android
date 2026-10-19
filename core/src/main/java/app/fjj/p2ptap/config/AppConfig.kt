@@ -29,6 +29,10 @@ data class P2PConfig(
     var enableWebtransport: Boolean = false,
     var enableTcp: Boolean = false,
     var disableRelay: Boolean = false,
+    // The engine's disable_relay is a legacy umbrella covering the two below. These
+    // split it so only one side of NAT traversal can be disabled.
+    var disableCircuitRelay: Boolean = false,
+    var disableHolePunching: Boolean = false,
     var tlsServerName: String = "",
     var tlsSniSuffix: String = "",
     var acceptSubnets: Boolean = false,
@@ -127,6 +131,8 @@ data class P2PConfig(
         tr.put("enable_webtransport", enableWebtransport)
         tr.put("enable_tcp_reuse", enableTcp)
         tr.put("disable_relay", disableRelay)
+        tr.put("disable_circuit_relay", disableCircuitRelay)
+        tr.put("disable_hole_punching", disableHolePunching)
         tr.put("tls_server_name", tlsServerName)
         tr.put("tls_sni_suffix", tlsSniSuffix)
         // The engine's TransportsConfig has no tcp_brutal fields — encoding/json
@@ -283,6 +289,8 @@ data class P2PConfig(
         transports.put("enable_webtransport", enableWebtransport)
         transports.put("enable_tcp_reuse", enableTcp)
         transports.put("disable_relay", disableRelay)
+        transports.put("disable_circuit_relay", disableCircuitRelay)
+        transports.put("disable_hole_punching", disableHolePunching)
         transports.put("tls_server_name", tlsServerName)
         transports.put("tls_sni_suffix", tlsSniSuffix)
         root.put("transports", transports)
@@ -399,6 +407,8 @@ data class P2PConfig(
                 if (tr.has("enable_webtransport")) cfg.enableWebtransport = tr.getBoolean("enable_webtransport")
                 if (tr.has("enable_tcp_reuse")) cfg.enableTcp = tr.getBoolean("enable_tcp_reuse")
                 if (tr.has("disable_relay")) cfg.disableRelay = tr.getBoolean("disable_relay")
+                if (tr.has("disable_circuit_relay")) cfg.disableCircuitRelay = tr.getBoolean("disable_circuit_relay")
+                if (tr.has("disable_hole_punching")) cfg.disableHolePunching = tr.getBoolean("disable_hole_punching")
                 if (tr.has("tls_server_name")) cfg.tlsServerName = tr.getString("tls_server_name")
                 if (tr.has("tls_sni_suffix")) cfg.tlsSniSuffix = tr.getString("tls_sni_suffix")
             } else {
@@ -407,6 +417,8 @@ data class P2PConfig(
                 if (root.has("enable_webtransport")) cfg.enableWebtransport = root.getBoolean("enable_webtransport")
                 if (root.has("enable_tcp")) cfg.enableTcp = root.getBoolean("enable_tcp")
                 if (root.has("disable_relay")) cfg.disableRelay = root.getBoolean("disable_relay")
+                if (root.has("disable_circuit_relay")) cfg.disableCircuitRelay = root.getBoolean("disable_circuit_relay")
+                if (root.has("disable_hole_punching")) cfg.disableHolePunching = root.getBoolean("disable_hole_punching")
                 if (root.has("tls_server_name")) cfg.tlsServerName = root.getString("tls_server_name")
                 if (root.has("tls_sni_suffix")) cfg.tlsSniSuffix = root.getString("tls_sni_suffix")
             }

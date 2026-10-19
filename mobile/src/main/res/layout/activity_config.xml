@@ -413,6 +413,25 @@
                         android:text="@string/switch_disable_relay"
                         android:textColor="?attr/colorOnSurface" />
 
+                    <!-- Fine-grained relay switches: they split disable_relay in
+                         half so only one side of NAT traversal can be disabled. -->
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchDisableCircuitRelay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:checked="false"
+                        android:text="@string/switch_disable_circuit_relay"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchDisableHolePunching"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/switch_disable_hole_punching"
+                        android:textColor="?attr/colorOnSurface" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

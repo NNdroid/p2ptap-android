@@ -129,6 +129,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Enable mDNS LAN Auto-Discovery</string>
     <string name="switch_disable_relay">Direct-Only Mode (also disables hole punching and AutoRelay)</string>
+    <string name="switch_disable_circuit_relay">Disable circuit relay only</string>
+    <string name="switch_disable_hole_punching">Disable hole punching only</string>
     <string name="switch_strict_key">Strict Forward Secrecy (Per-Peer PFS Key Isolation)</string>
     <string name="group_transports">Transport Layer Protocols</string>
     <string name="switch_quic">Listen for QUIC connections (UDP)</string>

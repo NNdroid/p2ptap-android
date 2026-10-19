@@ -111,6 +111,8 @@
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">로컬 mDNS 자동 검색 활성화</string>
     <string name="switch_disable_relay">직접 연결 전용 모드 (홀펀칭과 AutoRelay도 비활성화)</string>
+    <string name="switch_disable_circuit_relay">중계만 비활성화</string>
+    <string name="switch_disable_hole_punching">홀펀칭만 비활성화</string>
     <string name="switch_strict_key">엄격한 전방위 비밀성 (PFS 키 격리 강제)</string>
     <string name="group_transports">전송 계층 프로토콜 설정</string>
     <string name="switch_quic">QUIC 연결 수신 (UDP)</string>

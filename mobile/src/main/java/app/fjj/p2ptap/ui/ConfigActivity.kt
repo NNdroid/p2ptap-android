@@ -541,6 +541,8 @@ class ConfigActivity : AppCompatActivity() {
         binding.switchEnableMdns.isChecked = config.enableMdns
         binding.switchDiscoverBootMesh.isChecked = config.discoverBootMesh
         binding.switchDisableRelay.isChecked = config.disableRelay
+        binding.switchDisableCircuitRelay.isChecked = config.disableCircuitRelay
+        binding.switchDisableHolePunching.isChecked = config.disableHolePunching
         binding.switchObfuscation.isChecked = config.obfuscationEnable
         binding.switchStrictKey.isChecked = config.strictKeyNegotiation
         binding.actvObfuscationMode.setText(saneObfuscationMode(config), false)
@@ -579,6 +581,8 @@ class ConfigActivity : AppCompatActivity() {
         val enableMdns = binding.switchEnableMdns.isChecked
         val discoverBootMesh = binding.switchDiscoverBootMesh.isChecked
         val disableRelay = binding.switchDisableRelay.isChecked
+        val disableCircuitRelay = binding.switchDisableCircuitRelay.isChecked
+        val disableHolePunching = binding.switchDisableHolePunching.isChecked
         val obfuscation = binding.switchObfuscation.isChecked
         val strictKey = binding.switchStrictKey.isChecked
         val obfMode = binding.actvObfuscationMode.text?.toString()?.trim() ?: "auto"
@@ -627,6 +631,8 @@ class ConfigActivity : AppCompatActivity() {
             enableWebtransport = enableWebtransport,
             enableTcp = enableTcp,
             disableRelay = disableRelay,
+            disableCircuitRelay = disableCircuitRelay,
+            disableHolePunching = disableHolePunching,
             acceptSubnets = acceptSubnets,
             advertisedSubnets = advList,
             allowedSubnetPeers = aspList,
