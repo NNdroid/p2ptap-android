@@ -1,3 +1,16 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- The card language every settings group shares. Cards 1 to 7 of
+         activity_config.xml all repeat the same corner radius, stroke,
+         elevation and inner padding, so a radius change has to land in one
+         place instead of in seven card blocks. -->
+    <dimen name="card_corner_radius">20dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_stroke_width">1dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_gap">16dp</dimen>
+
+    <!-- Screen padding around the scrolling settings column. -->
+    <dimen name="screen_padding">16dp</dimen>
 </resources>

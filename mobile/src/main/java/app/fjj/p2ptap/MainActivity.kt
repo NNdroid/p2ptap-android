@@ -583,6 +583,11 @@ class MainActivity : AppCompatActivity() {
     private fun updateUiState(state: String, message: String) {
         val content = binding.contentMain
         content.btnOpenWebUI.isEnabled = state == P2PTapVpnService.STATE_RUNNING
+        // The health grid reports what the running engine reported, so outside
+        // RUNNING every one of its four cells shows "unknown". Keep the card
+        // only when it has something real to show.
+        content.cardSystemHealth.visibility =
+            if (state == P2PTapVpnService.STATE_RUNNING) View.VISIBLE else View.GONE
         when (state) {
             P2PTapVpnService.STATE_RUNNING -> {
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connected)

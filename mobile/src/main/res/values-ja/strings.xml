@@ -236,6 +236,10 @@
     <string name="msg_exit_node_updated">出口ノードを更新しました: %s</string>
     <string name="msg_exit_node_cleared">出口ノードを解除しました (自動メッシュモード)</string>
     <string name="msg_exit_node_hot_reloaded">出口ルーティングが即座に反映されました</string>
+    <string name="reload_plan_idle">VPN が停止中です — 変更は次回接続時に反映されます</string>
+    <string name="reload_plan_no_change">変更なし</string>
+    <string name="reload_plan_hot">保存後も VPN の接続は維持されます</string>
+    <string name="reload_plan_restart">保存すると VPN が再起動されます</string>
     <string name="hint_dns_servers">DNS サーバー (空欄でシステムデフォルト DNS を使用)</string>
     <string name="dialog_manage_dns">DNS サーバー一覧の管理</string>
 <string name="dialog_manage_stun">STUN サーバー管理</string>

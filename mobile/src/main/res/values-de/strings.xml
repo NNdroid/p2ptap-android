@@ -237,6 +237,10 @@
     <string name="msg_exit_node_updated">Exit-Knoten geändert auf: %s</string>
     <string name="msg_exit_node_cleared">Exit-Knoten deaktiviert (Auto-Mesh-Modus)</string>
     <string name="msg_exit_node_hot_reloaded">Exit-Routing wurde nahtlos angewendet</string>
+    <string name="reload_plan_idle">VPN ist gestoppt — Änderungen gelten bei der nächsten Verbindung</string>
+    <string name="reload_plan_no_change">Keine Änderungen</string>
+    <string name="reload_plan_hot">Speichern behält die VPN-Verbindung</string>
+    <string name="reload_plan_restart">Speichern startet die VPN neu</string>
     <string name="hint_dns_servers">DNS-Server (Leer lassen für Systemstandard-DNS)</string>
     <string name="dialog_manage_dns">DNS-Server verwalten</string>
 <string name="dialog_manage_stun">STUN-Server verwalten</string>

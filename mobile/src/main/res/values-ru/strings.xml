@@ -239,6 +239,10 @@
     <string name="msg_exit_node_updated">Узел выхода изменен на: %s</string>
     <string name="msg_exit_node_cleared">Узел выхода отключен (Авто-режим)</string>
     <string name="msg_exit_node_hot_reloaded">Маршрут выхода успешно обновлен</string>
+    <string name="reload_plan_idle">VPN остановлен — изменения применятся при следующем подключении</string>
+    <string name="reload_plan_no_change">Изменений нет</string>
+    <string name="reload_plan_hot">Сохранение не разорвёт подключение VPN</string>
+    <string name="reload_plan_restart">Сохранение перезапустит VPN</string>
     <string name="hint_dns_servers">DNS-серверы (Оставьте пустым для системного DNS по умолчанию)</string>
     <string name="dialog_manage_dns">Управление DNS-серверами</string>
 <string name="dialog_manage_stun">Управление STUN-серверами</string>

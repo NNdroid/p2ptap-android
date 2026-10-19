@@ -238,6 +238,10 @@
     <string name="msg_exit_node_updated">Nodo de salida cambiado a: %s</string>
     <string name="msg_exit_node_cleared">Nodo de salida desactivado (Modo automático)</string>
     <string name="msg_exit_node_hot_reloaded">Ruta de salida actualizada de forma fluida</string>
+    <string name="reload_plan_idle">VPN detenido: los cambios se aplican en la próxima conexión</string>
+    <string name="reload_plan_no_change">Sin cambios</string>
+    <string name="reload_plan_hot">Guardar mantiene la VPN conectada</string>
+    <string name="reload_plan_restart">Guardar reinicia la VPN</string>
     <string name="hint_dns_servers">Servidores DNS (Dejar en blanco para DNS predeterminado del sistema)</string>
     <string name="dialog_manage_dns">Administrar servidores DNS</string>
 <string name="dialog_manage_stun">Gestionar servidores STUN</string>

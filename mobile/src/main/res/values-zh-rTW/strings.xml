@@ -227,6 +227,10 @@
     <string name="msg_exit_node_updated">已設定出口節點為: %s</string>
     <string name="msg_exit_node_cleared">已切換為自動 Mesh 模式 (停用出口中繼)</string>
     <string name="msg_exit_node_hot_reloaded">出口路由已即時平滑生效</string>
+    <string name="reload_plan_idle">VPN 已停止 — 變更將於下次連線時生效</string>
+    <string name="reload_plan_no_change">沒有變更</string>
+    <string name="reload_plan_hot">儲存後無需中斷 VPN</string>
+    <string name="reload_plan_restart">儲存後會重連 VPN</string>
     <string name="hint_dns_servers">DNS 伺服器 (留空預設使用系統預設 DNS)</string>
     <string name="dialog_manage_dns">管理 DNS 伺服器列表</string>
 <string name="dialog_manage_stun">管理 STUN 伺服器列表</string>

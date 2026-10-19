@@ -255,6 +255,10 @@
     <string name="msg_exit_node_updated">Exit node updated to: %s</string>
     <string name="msg_exit_node_cleared">Exit node disabled (Auto Mesh Mode)</string>
     <string name="msg_exit_node_hot_reloaded">Exit node routing updated seamlessly in active VPN</string>
+    <string name="reload_plan_idle">VPN is stopped — changes apply on the next connection</string>
+    <string name="reload_plan_no_change">No changes</string>
+    <string name="reload_plan_hot">Saving keeps the VPN connected</string>
+    <string name="reload_plan_restart">Saving restarts the VPN</string>
     <string name="hint_dns_servers">DNS Servers (Leave empty for Android System Default DNS)</string>
     <string name="dialog_manage_dns">Manage DNS Servers</string>
 <string name="dialog_manage_stun">Manage STUN Servers</string>

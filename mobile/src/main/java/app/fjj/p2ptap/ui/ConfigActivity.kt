@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.ArrayAdapter
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -27,6 +28,8 @@ import app.fjj.p2ptap.config.splitPeerAddresses
 import app.fjj.p2ptap.config.P2PConfig
 import app.fjj.p2ptap.databinding.ActivityConfigBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
+import app.fjj.p2ptap.service.VpnReloadPlan
+import app.fjj.p2ptap.service.planVpnReload
 import com.google.android.material.textfield.TextInputLayout
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -41,6 +44,7 @@ class ConfigActivity : AppCompatActivity() {
     // keystroke ("10." is not a valid CIDR yet).
     private val validationHandler = Handler(Looper.getMainLooper())
     private val pendingValidations = mutableMapOf<TextInputLayout, Runnable>()
+    private val reloadPlanRunnable = Runnable { refreshReloadPlan() }
 
     private val importFileLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -207,6 +211,29 @@ class ConfigActivity : AppCompatActivity() {
             openAddressManager(AddressListType.TURN_SERVERS)
         }
 
+        // The switches and dropdowns have no validation of their own, so they
+        // are the only fields that could change the reload plan without the
+        // user noticing. actvThemeMode is excluded: the theme mode is stored
+        // separately and does not reach the VPN.
+        listOf(
+            binding.switchEnableMdns, binding.switchDiscoverBootMesh,
+            binding.switchDisableRelay, binding.switchDisableCircuitRelay,
+            binding.switchDisableHolePunching, binding.switchObfuscation,
+            binding.switchStrictKey, binding.switchQuic, binding.switchWebrtc,
+            binding.switchWebtransport, binding.switchTcp, binding.switchAcceptSubnets,
+            binding.switchWebUi
+        ).forEach { switch ->
+            switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, _ ->
+                scheduleReloadPlanRefresh()
+            })
+        }
+        listOf(
+            binding.actvObfuscationMode, binding.actvObfuscationAlgo,
+            binding.actvTransportStrategy, binding.actvLogLevel
+        ).forEach { dropdown ->
+            dropdown.doAfterTextChanged { scheduleReloadPlanRefresh() }
+        }
+
         setupRealTimeValidation()
     }
 
@@ -223,9 +250,50 @@ class ConfigActivity : AppCompatActivity() {
         val runnable = Runnable {
             til.error = validator()
             pendingValidations.remove(til)
+            refreshReloadPlan()
         }
         pendingValidations[til] = runnable
         validationHandler.postDelayed(runnable, 300)
+    }
+
+    // ── Reload plan preview ───────────────────────────────────────────────
+    // Tells the user, above the Save button, whether saving the edits on this
+    // screen can be applied to a running VPN or forces it to reconnect. Showing
+    // it before they tap Save is the point: after the tap the VPN is already
+    // dropping, so a Toast there is only a post-mortem.
+    //
+    // planVpnReload with a null Context skips the JNI round-trip and uses the
+    // local classifier instead, which is what makes this cheap enough to run
+    // after every debounced keystroke. The local classifier errs safe — it
+    // reports RESTART at least as often as the engine does — so it can
+    // over-warn but never under-warn. The real reload still asks the engine, so
+    // a wrong hint here cannot cause a change to go unapplied.
+
+    private fun scheduleReloadPlanRefresh() {
+        validationHandler.removeCallbacks(reloadPlanRunnable)
+        validationHandler.postDelayed(reloadPlanRunnable, 300)
+    }
+
+    private fun refreshReloadPlan() {
+        // Compare against what the running VPN actually uses. AppConfigManager
+        // holds the last saved config and the service's cached config is set
+        // from it, so the file read is the baseline until this screen saves.
+        val plan = if (P2PTapVpnService.isRunning()) {
+            planVpnReload(AppConfigManager.load(this), collectConfigFromUi(), false, null)
+        } else {
+            null
+        }
+        binding.tvReloadPlan.text = when (plan) {
+            null -> getString(R.string.reload_plan_idle)
+            VpnReloadPlan.NONE -> getString(R.string.reload_plan_no_change)
+            VpnReloadPlan.HOT -> getString(R.string.reload_plan_hot)
+            VpnReloadPlan.RESTART -> getString(R.string.reload_plan_restart)
+        }
+        binding.tvReloadPlan.setTextColor(ContextCompat.getColor(this, when (plan) {
+            VpnReloadPlan.HOT -> R.color.status_connected
+            VpnReloadPlan.RESTART -> R.color.status_connecting
+            else -> R.color.md_on_surface_variant
+        }))
     }
 
     private fun setupRealTimeValidation() {
@@ -563,6 +631,10 @@ class ConfigActivity : AppCompatActivity() {
         binding.etHolePunchTimeout.setText((config.holePunchTimeout / 1000).toString())
         binding.etStunServers.setText(config.stunServers.joinToString("\n"))
         binding.etTurnServers.setText(config.turnServers.joinToString("\n"))
+        // displayConfig runs before setupRealTimeValidation installs the field
+        // watchers, so the textChanged callbacks that would refresh this do not
+        // fire yet.
+        refreshReloadPlan()
     }
 
     private fun collectConfigFromUi(): P2PConfig {
