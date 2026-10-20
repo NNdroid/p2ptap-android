@@ -736,6 +736,7 @@ class ConfigActivity : AppCompatActivity() {
             driverType = savedConfig.driverType,
             webUiListenIpv6 = savedConfig.webUiListenIpv6,
             relayUpgradeInterval = savedConfig.relayUpgradeInterval,
+            relayUpgradeMaxBackoff = savedConfig.relayUpgradeMaxBackoff,
             aclEnable = savedConfig.aclEnable,
             aclDefaultAction = savedConfig.aclDefaultAction,
             aclRulesJson = savedConfig.aclRulesJson,

@@ -53,6 +53,7 @@ data class P2PConfig(
     var stunServers: List<String> = emptyList(),
     var turnServers: List<String> = emptyList(),
     var relayUpgradeInterval: Long = 0,
+    var relayUpgradeMaxBackoff: Long = 0,
     var forcePrivateReachability: Boolean = false,
     var listenAddrs: List<String> = emptyList(),
     var tapName: String = "",
@@ -78,7 +79,8 @@ data class P2PConfig(
         bootstrapPeers = bootstrapPeers.toList(), staticPeers = staticPeers.toList(),
         advertisedSubnets = advertisedSubnets.toList(), allowedSubnetPeers = allowedSubnetPeers.toList(),
         dnsServers = dnsServers.toList(), holePunchTimeout = holePunchTimeout, stunServers = stunServers.toList(),
-        turnServers = turnServers.toList(), relayUpgradeInterval = relayUpgradeInterval, listenAddrs = listenAddrs.toList()
+        turnServers = turnServers.toList(), relayUpgradeInterval = relayUpgradeInterval,
+        relayUpgradeMaxBackoff = relayUpgradeMaxBackoff, listenAddrs = listenAddrs.toList()
     )
 
     fun validateStrategy() {
@@ -201,6 +203,7 @@ data class P2PConfig(
         // Hole punching configuration — Go expects time.Duration (int64 nanoseconds)
         root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
         root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
+        root.put("relay_upgrade_max_backoff", relayUpgradeMaxBackoff * 1_000_000)
         val stunArray = JSONArray()
         for (server in stunServers) {
             val trimmed = server.trim()
@@ -349,6 +352,7 @@ data class P2PConfig(
         // a silent reset of a value the user deliberately set.
         root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
         root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
+        root.put("relay_upgrade_max_backoff", relayUpgradeMaxBackoff * 1_000_000)
 
         // Obfuscation detail fields
         root.put("obfuscation_fixed_size", obfuscationFixedSize)
@@ -508,6 +512,9 @@ data class P2PConfig(
             }
             if (root.has("relay_upgrade_interval")) {
                 cfg.relayUpgradeInterval = readDurationMs(root, "relay_upgrade_interval", 30000)
+            }
+            if (root.has("relay_upgrade_max_backoff")) {
+                cfg.relayUpgradeMaxBackoff = readDurationMs(root, "relay_upgrade_max_backoff", 1_800_000)
             }
             if (root.has("stun_servers")) {
                 val arr = root.getJSONArray("stun_servers")

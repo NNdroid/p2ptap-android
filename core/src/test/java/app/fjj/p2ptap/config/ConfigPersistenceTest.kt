@@ -70,4 +70,25 @@ class ConfigPersistenceTest {
         peers.add("new")
         assertEquals(listOf("old"), snapshot.staticPeers)
     }
+
+    @Test
+    fun relayUpgradeDurationsSurviveTheEngineJsonRoundTrip() {
+        // toEngineJson builds the engine config field by field, so a knob that is
+        // not declared there is silently dropped on every save from the phone and
+        // Go's Validate resets it to its default. Values go out in nanoseconds to
+        // match Go's time.Duration.
+        val original = P2PConfig(
+            nodeName = "n",
+            relayUpgradeInterval = 30_000,
+            relayUpgradeMaxBackoff = 1_800_000
+        )
+        val engine = JSONObject(original.toEngineJson("/app/node.key"))
+        assertEquals(30_000_000_000L, engine.getLong("relay_upgrade_interval"))
+        assertEquals(1_800_000_000_000L, engine.getLong("relay_upgrade_max_backoff"))
+
+        val restored = P2PConfig.fromJson(original.toExportJson())
+        assertEquals(30_000L, restored.relayUpgradeInterval)
+        assertEquals(1_800_000L, restored.relayUpgradeMaxBackoff)
+        assertEquals(1_800_000L, restored.snapshot().relayUpgradeMaxBackoff)
+    }
 }
