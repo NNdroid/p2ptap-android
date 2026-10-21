@@ -737,6 +737,7 @@ class ConfigActivity : AppCompatActivity() {
             webUiListenIpv6 = savedConfig.webUiListenIpv6,
             relayUpgradeInterval = savedConfig.relayUpgradeInterval,
             relayUpgradeMaxBackoff = savedConfig.relayUpgradeMaxBackoff,
+            relayUpgradeFlapWindow = savedConfig.relayUpgradeFlapWindow,
             aclEnable = savedConfig.aclEnable,
             aclDefaultAction = savedConfig.aclDefaultAction,
             aclRulesJson = savedConfig.aclRulesJson,

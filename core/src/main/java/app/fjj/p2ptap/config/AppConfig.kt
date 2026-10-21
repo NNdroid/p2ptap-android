@@ -54,6 +54,7 @@ data class P2PConfig(
     var turnServers: List<String> = emptyList(),
     var relayUpgradeInterval: Long = 0,
     var relayUpgradeMaxBackoff: Long = 0,
+    var relayUpgradeFlapWindow: Long = 0,
     var forcePrivateReachability: Boolean = false,
     var listenAddrs: List<String> = emptyList(),
     var tapName: String = "",
@@ -80,7 +81,8 @@ data class P2PConfig(
         advertisedSubnets = advertisedSubnets.toList(), allowedSubnetPeers = allowedSubnetPeers.toList(),
         dnsServers = dnsServers.toList(), holePunchTimeout = holePunchTimeout, stunServers = stunServers.toList(),
         turnServers = turnServers.toList(), relayUpgradeInterval = relayUpgradeInterval,
-        relayUpgradeMaxBackoff = relayUpgradeMaxBackoff, listenAddrs = listenAddrs.toList()
+        relayUpgradeMaxBackoff = relayUpgradeMaxBackoff,
+        relayUpgradeFlapWindow = relayUpgradeFlapWindow, listenAddrs = listenAddrs.toList()
     )
 
     fun validateStrategy() {
@@ -204,6 +206,7 @@ data class P2PConfig(
         root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
         root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
         root.put("relay_upgrade_max_backoff", relayUpgradeMaxBackoff * 1_000_000)
+        root.put("relay_upgrade_flap_window", relayUpgradeFlapWindow * 1_000_000)
         val stunArray = JSONArray()
         for (server in stunServers) {
             val trimmed = server.trim()
@@ -353,6 +356,7 @@ data class P2PConfig(
         root.put("hole_punch_timeout", holePunchTimeout * 1_000_000)
         root.put("relay_upgrade_interval", relayUpgradeInterval * 1_000_000)
         root.put("relay_upgrade_max_backoff", relayUpgradeMaxBackoff * 1_000_000)
+        root.put("relay_upgrade_flap_window", relayUpgradeFlapWindow * 1_000_000)
 
         // Obfuscation detail fields
         root.put("obfuscation_fixed_size", obfuscationFixedSize)
@@ -515,6 +519,9 @@ data class P2PConfig(
             }
             if (root.has("relay_upgrade_max_backoff")) {
                 cfg.relayUpgradeMaxBackoff = readDurationMs(root, "relay_upgrade_max_backoff", 1_800_000)
+            }
+            if (root.has("relay_upgrade_flap_window")) {
+                cfg.relayUpgradeFlapWindow = readDurationMs(root, "relay_upgrade_flap_window", 300_000)
             }
             if (root.has("stun_servers")) {
                 val arr = root.getJSONArray("stun_servers")

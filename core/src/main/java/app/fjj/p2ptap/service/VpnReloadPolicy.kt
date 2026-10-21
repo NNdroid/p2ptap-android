@@ -133,13 +133,13 @@ internal fun planVpnReloadLocal(
     // creates its ticker. holePunchTimeout seeds the libp2p DCUtR
     // DirectDialTimeout, so a change can only be partially applied.
     //
-    // The two relay-upgrade knobs are deliberately classified differently.
-    // relay_upgrade_max_backoff is read from the live config snapshot on every
-    // loop pass, so a hot save takes effect on the next failed attempt. Its
-    // sibling relay_upgrade_interval is frozen at loop start because
-    // time.NewTicker cannot be resized; changing it mid-run would be silently
-    // ignored until the node restarts. If the interval ever stops being frozen
-    // (e.g. the loop is rewritten to recreate its ticker), the Go-side
+    // The three relay-upgrade knobs are deliberately classified differently.
+    // relay_upgrade_max_backoff and relay_upgrade_flap_window are read from the
+    // live config snapshot on every loop pass, so a hot save takes effect on the
+    // next attempt. Their sibling relay_upgrade_interval is frozen at loop start
+    // because time.NewTicker cannot be resized; changing it mid-run would be
+    // silently ignored until the node restarts. If the interval ever stops being
+    // frozen (e.g. the loop is rewritten to recreate its ticker), the Go-side
     // restart-required test and this list must be updated together — the pair
     // must not be "tidied" in sync.
     //
@@ -168,6 +168,7 @@ internal fun planVpnReloadLocal(
         stunServers = newConfig.stunServers,
         turnServers = newConfig.turnServers,
         relayUpgradeMaxBackoff = newConfig.relayUpgradeMaxBackoff,
+        relayUpgradeFlapWindow = newConfig.relayUpgradeFlapWindow,
         obfuscationEnable = newConfig.obfuscationEnable,
         obfuscationMode = newConfig.obfuscationMode,
         obfuscationAlgorithm = newConfig.obfuscationAlgorithm,

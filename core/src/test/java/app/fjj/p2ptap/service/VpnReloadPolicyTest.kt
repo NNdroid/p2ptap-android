@@ -99,22 +99,23 @@ class VpnReloadPolicyTest {
     }
 
     @Test
-    fun relayUpgradeBackoffCapHotReloadsButIntervalStillNeedsARestart() {
-        // The two relay-upgrade knobs are consumed differently. The backoff cap
-        // is read from the live config snapshot on every loop pass, so a hot
-        // save takes effect on the next failed attempt. The interval is frozen
-        // when the upgrade loop creates its ticker — time.NewTicker cannot be
-        // resized — so it still needs a full rebuild.
+    fun relayUpgradeBackoffAndFlapWindowHotReloadButIntervalStillNeedsARestart() {
+        // The three relay-upgrade knobs are consumed differently. The backoff cap
+        // and the post-upgrade flap window are read from the live config snapshot
+        // on every loop pass, so a hot save takes effect on the next attempt. The
+        // interval is frozen when the upgrade loop creates its ticker —
+        // time.NewTicker cannot be resized — so it still needs a full rebuild.
         val old = config()
         assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(relayUpgradeMaxBackoff = 120000)))
+        assertEquals(VpnReloadPlan.HOT, planVpnReload(old, old.copy(relayUpgradeFlapWindow = 60000)))
         assertEquals(
             VpnReloadPlan.HOT,
             planVpnReload(old, old.copy(relayUpgradeMaxBackoff = 120000, logLevel = "debug"))
         )
-        // A cap change must not mask the restart its sibling still needs.
+        // A hot change must not mask the restart its frozen sibling still needs.
         assertEquals(
             VpnReloadPlan.RESTART,
-            planVpnReload(old, old.copy(relayUpgradeMaxBackoff = 120000, relayUpgradeInterval = 60000))
+            planVpnReload(old, old.copy(relayUpgradeFlapWindow = 60000, relayUpgradeInterval = 60000))
         )
     }
 

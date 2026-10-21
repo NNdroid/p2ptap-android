@@ -80,15 +80,19 @@ class ConfigPersistenceTest {
         val original = P2PConfig(
             nodeName = "n",
             relayUpgradeInterval = 30_000,
-            relayUpgradeMaxBackoff = 1_800_000
+            relayUpgradeMaxBackoff = 1_800_000,
+            relayUpgradeFlapWindow = 300_000
         )
         val engine = JSONObject(original.toEngineJson("/app/node.key"))
         assertEquals(30_000_000_000L, engine.getLong("relay_upgrade_interval"))
         assertEquals(1_800_000_000_000L, engine.getLong("relay_upgrade_max_backoff"))
+        assertEquals(300_000_000_000L, engine.getLong("relay_upgrade_flap_window"))
 
         val restored = P2PConfig.fromJson(original.toExportJson())
         assertEquals(30_000L, restored.relayUpgradeInterval)
         assertEquals(1_800_000L, restored.relayUpgradeMaxBackoff)
+        assertEquals(300_000L, restored.relayUpgradeFlapWindow)
         assertEquals(1_800_000L, restored.snapshot().relayUpgradeMaxBackoff)
+        assertEquals(300_000L, restored.snapshot().relayUpgradeFlapWindow)
     }
 }
