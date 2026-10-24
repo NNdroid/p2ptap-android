@@ -11,7 +11,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.widget.ScrollView
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -195,10 +195,35 @@ class LogViewerActivity : AppCompatActivity() {
         )
 
         if (!isPaused) {
-            binding.scrollView.post {
-                binding.scrollView.fullScroll(ScrollView.FOCUS_DOWN)
-            }
+            pinToBottomAfterLayout()
         }
+    }
+
+    /**
+     * Scroll to the content bottom during the layout pass triggered above.
+     * Re-assigning a new SpannableStringBuilder relayouts the TextView, and
+     * the content bottom moves down by the height of the new lines, so the
+     * offset has to be restored after layout. onPreDraw runs after
+     * measure/layout and before the frame is drawn, so the scroll never shows:
+     * the old `scrollView.post {}` ran after the frame had already hit the
+     * screen, painting one frame at the pre-layout offset before snapping to
+     * the bottom next frame — that is the up-down bounce. scrollTo is a no-op
+     * when the target is the current position, so a poll with no new lines is
+     * free.
+     */
+    private fun pinToBottomAfterLayout() {
+        val sv = binding.scrollView
+        sv.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                val child = sv.getChildAt(0)
+                if (child != null) {
+                    // ScrollView's scroll bound is child.bottom = paddingTop + height.
+                    sv.scrollTo(0, maxOf(0, child.height + sv.paddingTop - sv.height))
+                }
+                sv.viewTreeObserver.removeOnPreDrawListener(this)
+                return true
+            }
+        })
     }
 
     private fun buildSyntaxHighlightedLogs(entries: List<LogEntry>): SpannableStringBuilder {
