@@ -114,6 +114,11 @@ data class P2PConfig(
         root.put("discover_boot_mesh", discoverBootMesh)
         root.put("force_private_reachability", forcePrivateReachability)
 
+        // Load-bearing, not a dead write: pkg/android reads it back out of this
+        // JSON at node start (android.go, configureExitNode) to bring up the exit
+        // gateway before the first config change. P2PTap.setExitNode only fires on
+        // a later runtime change, so without this the app would come up on a cold
+        // start with no exit gateway configured at all.
         val targetNode = exitNode.trim()
         root.put("exit_node_peer", targetNode)
 
