@@ -217,8 +217,7 @@ class ConfigActivity : AppCompatActivity() {
         // separately and does not reach the VPN.
         listOf(
             binding.switchEnableMdns, binding.switchDiscoverBootMesh,
-            binding.switchDisableRelay, binding.switchDisableCircuitRelay,
-            binding.switchDisableHolePunching, binding.switchObfuscation,
+            binding.switchDisableCircuitRelay, binding.switchDisableHolePunching,
             binding.switchStrictKey, binding.switchQuic, binding.switchWebrtc,
             binding.switchWebtransport, binding.switchTcp, binding.switchAcceptSubnets,
             binding.switchWebUi
@@ -226,6 +225,16 @@ class ConfigActivity : AppCompatActivity() {
             switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, _ ->
                 scheduleReloadPlanRefresh()
             })
+        }
+        // These two are umbrellas for the controls greyed out by applySwitchGating,
+        // so toggling them must re-run the gating as well.
+        binding.switchDisableRelay.setOnCheckedChangeListener { _, _ ->
+            applySwitchGating()
+            scheduleReloadPlanRefresh()
+        }
+        binding.switchObfuscation.setOnCheckedChangeListener { _, _ ->
+            applySwitchGating()
+            scheduleReloadPlanRefresh()
         }
         listOf(
             binding.actvObfuscationMode, binding.actvObfuscationAlgo,
@@ -363,14 +372,18 @@ class ConfigActivity : AppCompatActivity() {
             }
         }
 
-        // Hole Punch Timeout — 1 000–120 000 ms
+        // Hole Punch Timeout — the field shows seconds (see displayConfig and
+        // collectConfig, which divide and multiply by 1000). This used to test
+        // the typed value against 1 000–120 000 ms, so "30" failed while "1000"
+        // passed and was stored as 1000 s; the message said "1 and 120
+        // seconds", so the operator had no way to tell the field was broken.
         binding.etHolePunchTimeout.doAfterTextChanged {
             debounceValidate(binding.tilHolePunchTimeout) {
                 val text = binding.etHolePunchTimeout.text?.toString()?.trim().orEmpty()
                 if (text.isEmpty()) null
                 else {
-                    val ms = text.toLongOrNull()
-                    if (ms == null || ms < 1000 || ms > 120000)
+                    val seconds = text.toLongOrNull()
+                    if (seconds == null || seconds < 1 || seconds > 120)
                         getString(R.string.err_invalid_timeout)
                     else null
                 }
@@ -595,6 +608,24 @@ class ConfigActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(mode)
     }
 
+    // Grey out the switches that the engine would ignore anyway, so the screen
+    // never offers a toggle that cannot change behaviour:
+    //  - disable_relay is an umbrella that forces circuit relay and hole
+    //    punching off (config.CircuitRelayEnabled / HolePunchingEnabled), so
+    //    the two specific switches are meaningless while it is on;
+    //  - obfuscation off means there is no padded stream to negotiate keys for
+    //    or to pick a mode and algorithm for.
+    // The values still get saved, so un-greying restores what was there.
+    private fun applySwitchGating() {
+        val relayOff = binding.switchDisableRelay.isChecked
+        binding.switchDisableCircuitRelay.isEnabled = !relayOff
+        binding.switchDisableHolePunching.isEnabled = !relayOff
+        val obfsOn = binding.switchObfuscation.isChecked
+        binding.switchStrictKey.isEnabled = obfsOn
+        binding.actvObfuscationMode.isEnabled = obfsOn
+        binding.actvObfuscationAlgo.isEnabled = obfsOn
+    }
+
     private fun displayConfig(config: P2PConfig) {
         binding.etNodeName.setText(config.nodeName)
         binding.etTapIp.setText(config.tapIp)
@@ -615,6 +646,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.switchStrictKey.isChecked = config.strictKeyNegotiation
         binding.actvObfuscationMode.setText(saneObfuscationMode(config), false)
         binding.actvObfuscationAlgo.setText(config.obfuscationAlgorithm, false)
+        applySwitchGating()
         binding.switchQuic.isChecked = config.enableQuic
         binding.switchWebrtc.isChecked = config.enableWebrtc
         binding.switchWebtransport.isChecked = config.enableWebtransport

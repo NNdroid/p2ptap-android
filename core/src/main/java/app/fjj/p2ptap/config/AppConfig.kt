@@ -119,14 +119,12 @@ data class P2PConfig(
 
         // ExitNode.Enable stays false: pkg/android rejects it outright ("exit node
         // server is not supported on this build"), and Android routes exit traffic
-        // through exit_node_peer / setExitNode instead. nat_masquerade and
-        // wan_interface are only honoured when Enable is true
-        // (nftables_linux.go guards on !cfg.Enable), so writing them here produced
-        // two keys that claimed a state the engine could never reach.
-        val exitNodeObj = JSONObject()
-        exitNodeObj.put("enable", false)
-        exitNodeObj.put("target", targetNode)
-        root.put("exit_node", exitNodeObj)
+        // through exit_node_peer / setExitNode instead. Enable is the only key the
+        // engine reads off this object, so nothing else goes here: nat_masquerade
+        // and wan_interface are only honoured when Enable is true
+        // (nftables_linux.go guards on !cfg.Enable), and "target" was never a field
+        // of ExitNodeConfig at all, so encoding/json silently dropped it.
+        root.put("exit_node", JSONObject().put("enable", false))
 
         // Transports
         val tr = root.optJSONObject("transports") ?: JSONObject()
