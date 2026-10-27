@@ -23,3 +23,7 @@ local.properties
 
 /.artifacts
 .kotlin/
+
+# Local AI-agent scratch space and commit-message helpers
+.zcode/
+.git_commit_msg.txt
