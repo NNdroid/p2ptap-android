@@ -80,6 +80,15 @@ internal fun decide(
     // Android-owned: exit-node mode rewrites the TUN default routes, and
     // dnsServers is applied by the VpnService, so neither reaches the engine.
     if (oldConfig.exitNode.isBlank() != newConfig.exitNode.isBlank()) return VpnReloadPlan.RESTART
+
+    // A peer→peer exit switch (both non-blank, different) changes only which
+    // gateway the engine routes through — never the TUN default routes — so it
+    // is a Go-engine hot reload, not a VPN rebuild. The engine reports "noop"
+    // for it because exit_node_peer is not a Config field; without this the
+    // switch would be silently dropped. Classify it here, before the engine
+    // verdict, so it does not depend on which AAR is installed.
+    if (oldConfig.exitNode != newConfig.exitNode) return VpnReloadPlan.HOT
+
     if (oldConfig.dnsServers != newConfig.dnsServers) return VpnReloadPlan.RESTART
 
     if (engineVerdict == null) return planVpnReloadLocal(oldConfig, newConfig)

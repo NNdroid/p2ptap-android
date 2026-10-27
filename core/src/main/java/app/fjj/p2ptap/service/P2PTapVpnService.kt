@@ -660,9 +660,20 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
                     if (oldConfig.logLevel != newConfig.logLevel) {
                         P2PTap.setLogLevel(newConfig.logLevel)
                     }
+                    // The exit node is applied through its own JNI calls. With the
+                    // current engine a peer whose TAP metadata has not arrived yet is
+                    // reported as a *pending* activation (the engine retries it in the
+                    // background and returns success), but an older AAR still throws on
+                    // it — and that is not grounds to tear down a healthy VPN. Log it
+                    // and keep the engine running; the outer catch is reserved for
+                    // genuinely fatal hot-reload failures (e.g. applyHotReload).
                     if (oldConfig.exitNode != newConfig.exitNode) {
-                        if (newConfig.exitNode.isBlank()) P2PTap.clearExitNode()
-                        else P2PTap.setExitNode(newConfig.exitNode, "", "")
+                        try {
+                            if (newConfig.exitNode.isBlank()) P2PTap.clearExitNode()
+                            else P2PTap.setExitNode(newConfig.exitNode, "", "")
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Exit node switch did not apply cleanly; keeping the running engine", e)
+                        }
                     }
                     // Publish the full config atomically so the Go data plane
                     // observes the new obfuscation, hole-punch, relay-upgrade,
