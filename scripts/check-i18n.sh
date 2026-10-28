@@ -36,10 +36,18 @@ is_locale() {
 
 # Emit one "name<TAB>placeholder-set" line per resource across the given
 # files. Handles single-line <string> and block resources (<plurals>, arrays).
+#
+# Resources carrying translatable="false" are omitted from the emitted set.
+# They are brand names and handles that must stay identical in every locale,
+# so a translation directory is not expected to define them; counting them as
+# defaults would report every locale as incomplete. Listing them in a locale
+# would also trip lint's Translatable check, so the omission is deliberate on
+# both sides.
 parse_resources() {
     awk '
         function flush(   body, ph, tok) {
             if (name == "") return
+            if (nontrans) { name = ""; cur = ""; return }
             body = cur
             gsub(/<[^>]*>/, " ", body)
             ph = ""
@@ -55,6 +63,7 @@ parse_resources() {
             flush()
             if (match($0, /name="[^"]+"/)) name = substr($0, RSTART + 6, RLENGTH - 7)
             cur = $0
+            nontrans = ($0 ~ /translatable="false"/)
             inres = ($0 ~ /<\/(string|plurals|string-array|integer-array)>/) ? 0 : 1
             next
         }
