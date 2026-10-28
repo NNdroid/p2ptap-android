@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hero background, idle state: neutral glow.
+
+     Three layers, bottom to top:
+       1. Base fill. Now translucent — the window behind it draws
+          bg_window_gradient, and letting that through is what makes this read
+          as glass rather than a tinted panel. Light mode keeps the fill
+          near-opaque because there is nothing to reveal behind a white card.
+       2. State glow. A radial wash anchored to the top edge. Its colour is the
+          only thing that changes across the four bg_hero_* variants, so the
+          card keeps an identical silhouette while the state reads from the
+          light it casts.
+       3. Top sheen. A short vertical ramp decaying inside the top ~12% of the
+          card, the way light catches the upper lip of a glass pane. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_hero_radius" />
+            <gradient
+                android:angle="270"
+                android:endColor="@color/hero_base_bottom"
+                android:startColor="@color/hero_base_top"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_hero_radius" />
+            <gradient
+                android:centerX="0.5"
+                android:centerY="0"
+                android:endColor="#00000000"
+                android:gradientRadius="@dimen/home_glow_radius"
+                android:startColor="@color/hero_glow_idle"
+                android:type="radial" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_hero_radius" />
+            <gradient
+                android:angle="270"
+                android:centerColor="#00000000"
+                android:centerY="0.12"
+                android:endColor="#00000000"
+                android:startColor="@color/hero_sheen"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

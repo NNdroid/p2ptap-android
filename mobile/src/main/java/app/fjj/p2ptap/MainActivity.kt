@@ -14,11 +14,17 @@ import android.net.Uri
 import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.provider.Settings
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import java.util.Locale
@@ -79,8 +85,31 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         setupListeners()
+        setupAdvancedSection()
+        // Seed the badge before the first telemetry tick, otherwise the chip
+        // renders as an empty pill for the first 1.5 seconds.
+        updateAdvancedCount()
         observeMetrics()
         requestNotificationPermission()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, ConfigActivity::class.java))
+                true
+            }
+            R.id.action_logs -> {
+                startActivity(Intent(this, LogViewerActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 
@@ -109,11 +138,21 @@ class MainActivity : AppCompatActivity() {
                             val activeCount = m.peerCount
                             val direct = m.directPeers
                             val relay = m.relayPeers
-                            content.tvActivePeers.text = resources.getQuantityString(
-                                R.plurals.active_peers_fmt, activeCount, activeCount, direct, relay
-                            )
-                            content.tvLiveSpeed.text = "↑ ${P2PStateRepository.formatSpeed(m.txSpeed)}\n↓ ${P2PStateRepository.formatSpeed(m.rxSpeed)}"
+                            // The cell is one third of the row wide, so it only
+                            // carries the count — the direct/relay split moved
+                            // to the hero subtitle, where there is room for it.
+                            content.tvActivePeers.text = activeCount.toString()
+                            content.tvTxSpeed.text = P2PStateRepository.formatSpeed(m.txSpeed)
+                            content.tvRxSpeed.text = P2PStateRepository.formatSpeed(m.rxSpeed)
                             content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(m.totalTx)}  ↓ ${P2PStateRepository.formatBytes(m.totalRx)}"
+                            // The subtitle carries the peer split rather than the
+                            // static "mesh is active" hint: once connected this is
+                            // the number the user came to the screen to check.
+                            content.tvStatusSubtitle.text = if (activeCount > 0) {
+                                getString(R.string.status_reason_connected_fmt, direct, relay)
+                            } else {
+                                getString(R.string.status_hint_connected)
+                            }
                             content.tvNatStatus.text = if (snapshot.natStatus.isNotBlank()) snapshot.natStatus else unknown
                             // System health
                             val sys = snapshot.systemHealth
@@ -125,7 +164,8 @@ class MainActivity : AppCompatActivity() {
                             renderProtocolStats(snapshot.protocolStats)
                         } else {
                             content.tvActivePeers.text = getString(if (data.failed) R.string.telemetry_refresh_failed else R.string.telemetry_unknown)
-                            content.tvLiveSpeed.text = "↑ $unknown\n↓ $unknown"
+                            content.tvTxSpeed.text = unknown
+                            content.tvRxSpeed.text = unknown
                             content.tvTraffic.text = "↑ $unknown  ↓ $unknown"
                             content.tvNatStatus.text = unknown
                             content.tvUptime.text = unknown
@@ -135,6 +175,7 @@ class MainActivity : AppCompatActivity() {
                             binding.contentMain.protoContainer.removeAllViews()
                         }
                         refreshExitNodeDisplay()
+                        updateAdvancedCount()
                     }
             }
         }
@@ -179,23 +220,36 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
+    override fun onDestroy() {
+        // The elapsed ticker is a plain Handler loop, not a lifecycle-scoped
+        // coroutine, so it has to be cancelled explicitly or it keeps posting
+        // against a dead binding.
+        elapsedHandler.removeCallbacks(elapsedTicker)
+        super.onDestroy()
+    }
+
     private fun setupListeners() {
         binding.contentMain.btnConnect.setOnClickListener {
-            if (P2PTapVpnService.currentState == P2PTapVpnService.STATE_STARTING || P2PTapVpnService.currentState == P2PTapVpnService.STATE_STOPPING) {
-                return@setOnClickListener
-            }
-            if (P2PTapVpnService.isRunning()) {
-                stopVpnService()
-            } else {
-                binding.contentMain.btnConnect.isEnabled = false
-                prepareAndStartVpn()
+            when (P2PTapVpnService.currentState) {
+                // STARTING is cancellable. It used to be disabled outright, which
+                // left the user watching "Connecting…" with no exit but the
+                // timeout — the state machine has always supported a stop here.
+                P2PTapVpnService.STATE_STARTING -> stopVpnService()
+                P2PTapVpnService.STATE_STOPPING -> Unit
+                else -> {
+                    if (P2PTapVpnService.isRunning()) {
+                        stopVpnService()
+                    } else {
+                        binding.contentMain.btnConnect.isEnabled = false
+                        prepareAndStartVpn()
+                    }
+                }
             }
         }
 
-        binding.contentMain.btnOpenSettings.setOnClickListener {
-            startActivity(Intent(this, ConfigActivity::class.java))
-        }
-
+        // Settings and logs moved to the app bar (see onCreateOptionsMenu);
+        // keeping end-of-page buttons for them meant a full scroll to reach
+        // either destination.
         binding.contentMain.btnOpenWebUI.setOnClickListener {
             if (!P2PTapVpnService.isRunning()) {
                 Toast.makeText(this, getString(R.string.prompt_vpn_not_running), Toast.LENGTH_SHORT).show()
@@ -218,15 +272,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.contentMain.btnViewLogs.setOnClickListener {
-            startActivity(Intent(this, LogViewerActivity::class.java))
-        }
-
         binding.contentMain.btnShareQr.setOnClickListener {
             QrDialog.newInstance().show(supportFragmentManager, QrDialog.TAG)
         }
 
-        binding.contentMain.cardSpeed.setOnClickListener {
+        binding.contentMain.cellUpload.setOnClickListener {
+            TrafficDetailDialog.newInstance().show(supportFragmentManager, TrafficDetailDialog.TAG)
+        }
+
+        binding.contentMain.cellDownload.setOnClickListener {
             TrafficDetailDialog.newInstance().show(supportFragmentManager, TrafficDetailDialog.TAG)
         }
 
@@ -254,6 +308,14 @@ class MainActivity : AppCompatActivity() {
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // Tap still copies (the common case). Long-press opens the actions that
+        // do not fit a single tap: reveal the untruncated ID, share it as a QR
+        // code, or jump to the peer list.
+        binding.contentMain.layoutPeerId.setOnLongClickListener {
+            showPeerIdMenu()
+            true
         }
 
         binding.contentMain.layoutTapIp.setOnClickListener {
@@ -290,6 +352,139 @@ class MainActivity : AppCompatActivity() {
         binding.contentMain.btnOpenDeveloper.setOnClickListener {
             openUrl("https://github.com/NNdroid")
         }
+    }
+
+    // ── Advanced disclosure ────────────────────────────────────────────────
+
+    private var advancedExpanded = false
+
+    private fun setupAdvancedSection() {
+        binding.contentMain.layoutAdvancedHeader.setOnClickListener { toggleAdvanced() }
+    }
+
+    /**
+     * Expand or collapse the operator-only block.
+     *
+     * On expand the body is made VISIBLE before animating so the first frame
+     * has a measured height; on collapse the fade runs first and GONE lands in
+     * the end action, otherwise the card snaps shut with no transition.
+     */
+    private fun toggleAdvanced() {
+        val content = binding.contentMain
+        advancedExpanded = !advancedExpanded
+        val body = content.layoutAdvancedBody
+        val chevron = content.ivAdvancedChevron
+        if (advancedExpanded) {
+            body.visibility = View.VISIBLE
+            body.alpha = 0f
+            body.animate().alpha(1f).setDuration(160L).start()
+            chevron.animate().rotation(180f).setDuration(160L).start()
+        } else {
+            body.animate().alpha(0f).setDuration(140L).withEndAction {
+                body.visibility = View.GONE
+                body.alpha = 1f
+            }.start()
+            chevron.animate().rotation(0f).setDuration(160L).start()
+        }
+    }
+
+    /**
+     * Count the advanced entries that actually hold a value.
+     *
+     * The badge is cosmetic, but it should not claim "9" while the engine is
+     * stopped and every cell reads "No data" — so it is derived from the same
+     * strings the block renders rather than being a fixed number.
+     */
+    private fun updateAdvancedCount() {
+        val content = binding.contentMain
+        val unknown = getString(R.string.telemetry_unknown)
+        fun hasValue(v: TextView) = v.text.toString().let { it.isNotBlank() && it != unknown }
+
+        var n = 0
+        if (hasValue(content.tvTraffic)) n++
+        if (hasValue(content.tvNatStatus)) n++
+        if (content.cardSystemHealth.visibility == View.VISIBLE) {
+            if (hasValue(content.tvUptime)) n++
+            if (hasValue(content.tvHeap)) n++
+            if (hasValue(content.tvGoroutines)) n++
+            if (hasValue(content.tvGcPause)) n++
+        }
+        n += content.protoContainer.childCount
+        val addrs = content.tvMultiaddrs.text?.toString().orEmpty()
+        if (addrs.isNotBlank() && addrs != getString(R.string.multiaddrs_empty_hint)) n++
+
+        content.tvAdvancedCount.text = n.toString()
+    }
+
+    // ── Peer ID actions ────────────────────────────────────────────────────
+
+    private fun showPeerIdMenu() {
+        val popup = PopupMenu(this, binding.contentMain.layoutPeerId)
+        popup.menu.add(Menu.NONE, MENU_COPY_ID, 0, R.string.menu_copy_full_id)
+        popup.menu.add(Menu.NONE, MENU_SHARE_QR, 1, R.string.menu_share_qr)
+        popup.menu.add(Menu.NONE, MENU_VIEW_PEERS, 2, R.string.menu_view_peers)
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                MENU_COPY_ID -> {
+                    copyPeerId()
+                    true
+                }
+                MENU_SHARE_QR -> {
+                    QrDialog.newInstance().show(supportFragmentManager, QrDialog.TAG)
+                    true
+                }
+                MENU_VIEW_PEERS -> {
+                    PeersDetailDialog.newInstance().show(supportFragmentManager, PeersDetailDialog.TAG)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+    private fun copyPeerId() {
+        // Prefer the persisted identity: tvPeerId reads "-" until the engine
+        // reports one, but the key pair already exists in config by then.
+        val pid = AppConfigManager.getPeerId(this).ifBlank {
+            binding.contentMain.tvPeerId.text?.toString().orEmpty()
+        }
+        if (pid.isBlank() || pid == "-") return
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.label_peer_id), pid))
+        Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
+    }
+
+    // ── Connect elapsed timer ──────────────────────────────────────────────
+
+    // The engine reports STARTING as a single opaque state — there is no
+    // per-stage callback between "starting" and "running". Rather than invent
+    // a progress bar, the screen shows how long the wait has actually been,
+    // which is both truthful and enough to tell "slow" from "stuck".
+    private val elapsedHandler = Handler(Looper.getMainLooper())
+    private var startingSince = 0L
+
+    private val elapsedTicker = object : Runnable {
+        override fun run() {
+            if (P2PTapVpnService.currentState != P2PTapVpnService.STATE_STARTING) return
+            val secs = ((SystemClock.elapsedRealtime() - startingSince) / 1000L).toInt()
+            binding.contentMain.tvStatusElapsed.text = getString(R.string.status_elapsed_fmt, secs)
+            elapsedHandler.postDelayed(this, 1000L)
+        }
+    }
+
+    private fun startElapsedTicker() {
+        if (startingSince == 0L) startingSince = SystemClock.elapsedRealtime()
+        binding.contentMain.tvStatusElapsed.visibility = View.VISIBLE
+        binding.contentMain.tvStatusElapsed.text = getString(R.string.status_elapsed_fmt, 0)
+        elapsedHandler.removeCallbacks(elapsedTicker)
+        elapsedHandler.postDelayed(elapsedTicker, 1000L)
+    }
+
+    private fun stopElapsedTicker() {
+        elapsedHandler.removeCallbacks(elapsedTicker)
+        startingSince = 0L
+        binding.contentMain.tvStatusElapsed.visibility = View.GONE
     }
 
     private fun openUrl(url: String) {
@@ -399,13 +594,15 @@ class MainActivity : AppCompatActivity() {
         refreshMultiaddrs()
         refreshExitNodeDisplay()
 
-        val v6Text = if (config.tapIpv6.isNotBlank()) {
-            config.tapIpv6
+        // Only spend a row when the config actually carries a v6 address. The
+        // old code forced the row VISIBLE, so a v4-only node still showed a
+        // "No data" line that could never fill in.
+        if (config.tapIpv6.isNotBlank()) {
+            binding.contentMain.tvTapIpv6.text = config.tapIpv6
+            binding.contentMain.layoutTapIpv6.visibility = View.VISIBLE
         } else {
-            getString(R.string.telemetry_unknown)
+            binding.contentMain.layoutTapIpv6.visibility = View.GONE
         }
-        binding.contentMain.layoutTapIpv6.visibility = View.VISIBLE
-        binding.contentMain.tvTapIpv6.text = v6Text
     }
 
     private fun renderProtocolStats(stats: ProtocolStatsData) {
@@ -584,12 +781,17 @@ class MainActivity : AppCompatActivity() {
         val content = binding.contentMain
         content.btnOpenWebUI.isEnabled = state == P2PTapVpnService.STATE_RUNNING
         // The health grid reports what the running engine reported, so outside
-        // RUNNING every one of its four cells shows "unknown". Keep the card
+        // RUNNING every one of its four cells shows "unknown". Keep the block
         // only when it has something real to show.
         content.cardSystemHealth.visibility =
             if (state == P2PTapVpnService.STATE_RUNNING) View.VISIBLE else View.GONE
+
+        // The hero glow carries the state: green routing, amber working on it,
+        // red failed, neutral idle. Same silhouette in all four, so the card
+        // never jumps between states.
         when (state) {
             P2PTapVpnService.STATE_RUNNING -> {
+                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_connected)
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connected)
                 content.tvStatusTitle.text = getString(R.string.status_connected)
                 content.tvStatusSubtitle.text = getString(R.string.status_hint_connected)
@@ -597,19 +799,26 @@ class MainActivity : AppCompatActivity() {
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_error)
                 content.btnConnect.setIconResource(R.drawable.ic_stop)
                 content.btnConnect.isEnabled = true
+                stopElapsedTicker()
                 startPulseAnimation()
             }
             P2PTapVpnService.STATE_STARTING -> {
+                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_connecting)
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
                 content.tvStatusTitle.text = getString(R.string.status_connecting)
                 content.tvStatusSubtitle.text = getString(R.string.status_hint_starting)
-                content.btnConnect.text = getString(R.string.status_connecting)
+                // Cancellable: the button stays live and means "give up", not
+                // "wait". A start that hangs used to leave the user no exit
+                // short of the timeout.
+                content.btnConnect.text = getString(R.string.btn_cancel)
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_connecting)
-                content.btnConnect.setIconResource(R.drawable.ic_refresh)
-                content.btnConnect.isEnabled = false
+                content.btnConnect.setIconResource(R.drawable.ic_stop)
+                content.btnConnect.isEnabled = true
+                startElapsedTicker()
                 startPulseAnimation()
             }
             P2PTapVpnService.STATE_STOPPING -> {
+                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_connecting)
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
                 content.tvStatusTitle.text = getString(R.string.status_stopping)
                 content.tvStatusSubtitle.text = getString(R.string.status_hint_stopping)
@@ -617,9 +826,11 @@ class MainActivity : AppCompatActivity() {
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_connecting)
                 content.btnConnect.setIconResource(R.drawable.ic_refresh)
                 content.btnConnect.isEnabled = false
+                stopElapsedTicker()
                 stopPulseAnimation()
             }
             P2PTapVpnService.STATE_TIMEOUT -> {
+                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_error)
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
                 content.tvStatusTitle.text = getString(R.string.status_timeout)
                 content.tvStatusSubtitle.text = if (message.isNotBlank()) message else getString(R.string.status_hint_timeout)
@@ -627,19 +838,25 @@ class MainActivity : AppCompatActivity() {
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_timeout)
                 content.btnConnect.setIconResource(R.drawable.ic_refresh)
                 content.btnConnect.isEnabled = true
+                stopElapsedTicker()
                 stopPulseAnimation()
             }
             P2PTapVpnService.STATE_ERROR -> {
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_disconnected)
+                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_error)
+                // Dedicated red ring: a failed start used to share the grey
+                // "disconnected" ring with a clean shutdown.
+                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_error)
                 content.tvStatusTitle.text = getString(R.string.status_error)
                 content.tvStatusSubtitle.text = if (message.isNotEmpty()) message else getString(R.string.status_error)
                 content.btnConnect.text = getString(R.string.btn_retry)
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.brand_primary)
                 content.btnConnect.setIconResource(R.drawable.ic_refresh)
                 content.btnConnect.isEnabled = true
+                stopElapsedTicker()
                 stopPulseAnimation()
             }
             else -> { // STATE_IDLE
+                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_idle)
                 content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_disconnected)
                 content.tvStatusTitle.text = getString(R.string.status_disconnected)
                 content.tvStatusSubtitle.text = getString(R.string.status_hint_idle)
@@ -647,6 +864,7 @@ class MainActivity : AppCompatActivity() {
                 content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.brand_primary)
                 content.btnConnect.setIconResource(R.drawable.ic_play)
                 content.btnConnect.isEnabled = true
+                stopElapsedTicker()
                 stopPulseAnimation()
             }
         }
@@ -658,5 +876,13 @@ class MainActivity : AppCompatActivity() {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
+    }
+
+    private companion object {
+        // PopupMenu item ids. Group NONE + id, so they only need to be unique
+        // inside this menu.
+        const val MENU_COPY_ID = 1001
+        const val MENU_SHARE_QR = 1002
+        const val MENU_VIEW_PEERS = 1003
     }
 }

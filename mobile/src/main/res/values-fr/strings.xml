@@ -46,12 +46,12 @@
     <string name="label_github_repo">Dépôt GitHub</string>
     <string name="label_developer">Développeur @NNdroid</string>
     <string name="title_settings">Configuration du nœud</string>
-    <string name="group_identity">👤 Identité du nœud &amp; Clés</string>
-    <string name="group_network">🌐 Réseau virtuel (L2/L3)</string>
-    <string name="group_peers">🚀 Amorçage &amp; Pairs statiques</string>
-    <string name="group_security">🔒 Obscurcissement &amp; Sécurité</string>
-    <string name="group_routing">🧭 Sous-réseaux &amp; Routage</string>
-    <string name="group_webui">📊 Console Web &amp; Diagnostics</string>
+    <string name="group_identity">Identité du nœud &amp; Clés</string>
+    <string name="group_network">Réseau virtuel (L2/L3)</string>
+    <string name="group_peers">Amorçage &amp; Pairs statiques</string>
+    <string name="group_security">Obscurcissement &amp; Sécurité</string>
+    <string name="group_routing">Sous-réseaux &amp; Routage</string>
+    <string name="group_webui">Console Web &amp; Diagnostics</string>
     <string name="title_web_console">Console Web P2PTap</string>
     <string name="hint_node_name">Nom du nœud (alias)</string>
     <string name="hint_tap_ip">IPv4 Virtuelle / CIDR (ex: 10.0.0.88/24)</string>
@@ -213,7 +213,7 @@
     <string name="dialog_scan_result_title">Informations de connexion détectées</string>
     <string name="action_add_static_peer">➕ Ajouter comme pair statique</string>
     <string name="action_add_bootstrap_peer">🌐 Ajouter comme pair d\'amorçage</string>
-    <string name="action_import_full_config">⚙️ Remplacer la configuration complète</string>
+    <string name="action_import_full_config">Remplacer la configuration complète</string>
     <string name="label_virtual_ipv6">IPv6 Virtuelle : </string>
     <string name="label_subnets">Sous-réseaux annoncés : </string>
     <string name="label_direct_multiaddrs">Multiaddrs directs : </string>
@@ -298,4 +298,18 @@
     <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
     <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
     <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
+    <string name="app_title">P2PTap Virtual Network</string>
+    <string name="home_section_identity">Identité du nœud</string>
+    <string name="label_virtual_ip">IP virtuelle</string>
+    <string name="metric_upload">Envoi</string>
+    <string name="metric_download">Réception</string>
+    <string name="metric_peers">Pairs</string>
+    <string name="advanced_info_title">Avancé</string>
+    <string name="home_section_runtime">Exécution</string>
+    <string name="status_elapsed_fmt">Démarrage du moteur · %1$d s</string>
+    <string name="status_reason_connected_fmt">Direct %1$d · Relais %2$d</string>
+    <string name="menu_copy_full_id">Copier l\'ID complet</string>
+    <string name="menu_share_qr">Partager le code QR</string>
+    <string name="menu_view_peers">Voir les pairs</string>
+    <string name="action_logs">Journaux</string>
 </resources>

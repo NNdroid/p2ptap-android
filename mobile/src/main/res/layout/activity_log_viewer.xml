@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurfaceContainerLow"
+    android:background="@drawable/bg_window_gradient"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurfaceContainerLow"
+        android:background="@drawable/bg_window_gradient"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -70,8 +70,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnToggleTheme"
                 style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/icon_button_size"
+                android:layout_height="@dimen/icon_button_size"
                 android:layout_marginStart="8dp"
                 app:icon="@drawable/ic_theme_mode"
                 app:iconTint="?attr/colorOnSurface" />
@@ -80,8 +80,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPauseResume"
                 style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/icon_button_size"
+                android:layout_height="@dimen/icon_button_size"
                 android:layout_marginStart="4dp"
                 app:icon="@drawable/ic_pause"
                 app:iconTint="?attr/colorPrimary" />
@@ -90,8 +90,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShareLogs"
                 style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/icon_button_size"
+                android:layout_height="@dimen/icon_button_size"
                 android:layout_marginStart="4dp"
                 app:icon="@drawable/ic_share"
                 app:iconTint="?attr/colorOnSurface" />
@@ -100,8 +100,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClearLogs"
                 style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/icon_button_size"
+                android:layout_height="@dimen/icon_button_size"
                 android:layout_marginStart="4dp"
                 app:icon="@drawable/ic_delete"
                 app:iconTint="@color/status_error" />

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hero background, connected state: green glow.
+     Same three layers as bg_hero_idle.xml — only the glow tint differs. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_hero_radius" />
+            <gradient
+                android:angle="270"
+                android:endColor="@color/hero_base_bottom"
+                android:startColor="@color/hero_base_top"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_hero_radius" />
+            <gradient
+                android:centerX="0.5"
+                android:centerY="0"
+                android:endColor="#00000000"
+                android:gradientRadius="@dimen/home_glow_radius"
+                android:startColor="@color/hero_glow_connected"
+                android:type="radial" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/home_hero_radius" />
+            <gradient
+                android:angle="270"
+                android:centerColor="#00000000"
+                android:centerY="0.12"
+                android:endColor="#00000000"
+                android:startColor="@color/hero_sheen"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

@@ -109,4 +109,24 @@
     <color name="badge_cidr">#2563EB</color>
     <color name="badge_relay">#8B5CF6</color>
     <color name="badge_tcp">#F59E0B</color>
+
+    <!-- ── Home hero card ──────────────────────────────────────────────
+         The hero is a two-layer background: a neutral vertical gradient
+         (hero_base_*) plus a radial glow anchored at the top edge whose
+         colour carries the connection state (hero_glow_*). Values are
+         declared per theme so the glow reads as a soft tint on white and
+         as a real light source on the dark surface. -->
+    <!-- Light mode runs the same glass model but near-opaque: a white card on a
+         near-white window has nothing to show through, so translucency only
+         costs contrast. The glass reads here through the brighter top sheen and
+         the hairline edge instead. -->
+    <color name="hero_base_top">#F2FFFFFF</color>
+    <color name="hero_base_bottom">#E6F1F5F9</color>
+    <color name="hero_sheen">#66FFFFFF</color>
+    <!-- Dark hairline on light mode: a white edge would vanish into the fill. -->
+    <color name="hero_border">#33000000</color>
+    <color name="hero_glow_idle">#1464748B</color>
+    <color name="hero_glow_connecting">#26F59E0B</color>
+    <color name="hero_glow_connected">#2610B981</color>
+    <color name="hero_glow_error">#26EF4444</color>
 </resources>

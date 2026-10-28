@@ -53,12 +53,12 @@
 
     <!-- Settings Groups -->
     <string name="title_settings">Node Settings</string>
-    <string name="group_identity">👤 Node Identity &amp; Keys</string>
-    <string name="group_network">🌐 Virtual Network (L2/L3)</string>
-    <string name="group_peers">🚀 Bootstrap &amp; Mesh Peers</string>
-    <string name="group_security">🔒 Security &amp; Obfuscation</string>
-    <string name="group_routing">🧭 Subnets &amp; Routing</string>
-    <string name="group_webui">📊 Web Console &amp; Diagnostics</string>
+    <string name="group_identity">Node Identity &amp; Keys</string>
+    <string name="group_network">Virtual Network (L2/L3)</string>
+    <string name="group_peers">Bootstrap &amp; Mesh Peers</string>
+    <string name="group_security">Security &amp; Obfuscation</string>
+    <string name="group_routing">Subnets &amp; Routing</string>
+    <string name="group_webui">Web Console &amp; Diagnostics</string>
 
     <!-- Settings Hints -->
     <string name="title_web_console">P2PTap Web Console</string>
@@ -230,7 +230,7 @@
     <string name="dialog_scan_result_title">Node Connection Info Detected</string>
     <string name="action_add_static_peer">➕ Add as Static Peer</string>
     <string name="action_add_bootstrap_peer">🌐 Add as Bootstrap Relay Peer</string>
-    <string name="action_import_full_config">⚙️ Import &amp; Override Full Config</string>
+    <string name="action_import_full_config">Import &amp; Override Full Config</string>
     <string name="label_virtual_ipv6">Virtual IPv6: </string>
     <string name="label_subnets">Advertised Subnets: </string>
     <string name="label_direct_multiaddrs">Direct Multiaddrs: </string>
@@ -312,4 +312,24 @@
     <string name="help_turn_servers">Format: turn:host:port?username=USER&amp;credential=PASS. Leave empty to disable TURN relay.</string>
     <string name="dialog_manage_turn">Manage TURN Servers</string>
     <string name="label_nat_status">NAT Status</string>
+
+    <!-- Brand strings for the about card's link buttons. They are proper
+         nouns, so they stay identical in every locale and deliberately have
+         no values-* override. -->
+    <string name="label_github_short" translatable="false">GitHub</string>
+    <string name="label_developer_short" translatable="false">@NNdroid</string>
+    <string name="app_title">P2PTap Virtual Network</string>
+    <string name="home_section_identity">Node Identity</string>
+    <string name="label_virtual_ip">Virtual IP</string>
+    <string name="metric_upload">Up</string>
+    <string name="metric_download">Down</string>
+    <string name="metric_peers">Peers</string>
+    <string name="advanced_info_title">Advanced</string>
+    <string name="home_section_runtime">Runtime</string>
+    <string name="status_elapsed_fmt">Starting engine · %1$d s</string>
+    <string name="status_reason_connected_fmt">Direct %1$d · Relay %2$d</string>
+    <string name="menu_copy_full_id">Copy full ID</string>
+    <string name="menu_share_qr">Share QR code</string>
+    <string name="menu_view_peers">View peers</string>
+    <string name="action_logs">Logs</string>
 </resources>

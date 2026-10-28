@@ -84,4 +84,27 @@
     <color name="badge_cidr">#60A5FA</color>
     <color name="badge_relay">#A78BFA</color>
     <color name="badge_tcp">#FBBF24</color>
+
+    <!-- ── Home hero card (night) ────────────────────────────────────────
+         On the dark surface the glow is the only thing separating one
+         state from another, so it carries more alpha than the light
+         variant where the base gradient already reads as "raised". -->
+    <!-- Hero glass. The hero fill is deliberately translucent now: the window
+         itself carries bg_window_gradient (top-lit, darkening downward) and the
+         hero sits on top of it, so the gradient shows through the card. That is
+         what makes it read as glass instead of a flat panel. Alpha is kept at
+         0.65-0.72 — lower than that and status text loses contrast against the
+         glow layer that is also stacked on this same card. -->
+    <color name="hero_base_top">#B80E1724</color>
+    <color name="hero_base_bottom">#A60A111C</color>
+    <!-- One-off white sheen painted along the top edge, the way light catches
+         the upper lip of a glass pane. -->
+    <color name="hero_sheen">#1FFFFFFF</color>
+    <!-- Glass edge. White with alpha, not colorOutlineVariant: a themed grey
+         stroke reads as a drawn border, a lit white line reads as an edge. -->
+    <color name="hero_border">#26FFFFFF</color>
+    <color name="hero_glow_idle">#1A64748B</color>
+    <color name="hero_glow_connecting">#3DF59E0B</color>
+    <color name="hero_glow_connected">#3D10B981</color>
+    <color name="hero_glow_error">#3DEF4444</color>
 </resources>

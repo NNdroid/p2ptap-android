@@ -47,12 +47,12 @@
     <string name="label_developer">개발자 @NNdroid</string>
     <string name="msg_multiaddrs_copied">모든 Multiaddr가 클립보드에 복사되었습니다</string>
     <string name="title_settings">노드 설정</string>
-    <string name="group_identity">👤 노드 신원 및 키 관리</string>
-    <string name="group_network">🌐 가상 네트워크 매개변수 (L2/L3)</string>
-    <string name="group_peers">🚀 부트스트랩 및 고정 피어</string>
-    <string name="group_security">🔒 트래픽 난독화 및 암호화</string>
-    <string name="group_routing">🧭 서브넷 라우팅</string>
-    <string name="group_webui">📊 웹 콘솔 및 진단</string>
+    <string name="group_identity">노드 신원 및 키 관리</string>
+    <string name="group_network">가상 네트워크 매개변수 (L2/L3)</string>
+    <string name="group_peers">부트스트랩 및 고정 피어</string>
+    <string name="group_security">트래픽 난독화 및 암호화</string>
+    <string name="group_routing">서브넷 라우팅</string>
+    <string name="group_webui">웹 콘솔 및 진단</string>
     <string name="title_web_console">P2PTap 웹 콘솔</string>
     <string name="hint_node_name">노드 이름 (별칭)</string>
     <string name="hint_tap_ip">가상 IPv4 / CIDR (예: 10.0.0.88/24)</string>
@@ -211,7 +211,7 @@
     <string name="dialog_scan_result_title">감지된 노드 연결 정보</string>
     <string name="action_add_static_peer">➕ 고정 피어로 추가</string>
     <string name="action_add_bootstrap_peer">🌐 부트스트랩 피어로 추가</string>
-    <string name="action_import_full_config">⚙️ 전체 설정 덮어쓰기 가져오기</string>
+    <string name="action_import_full_config">전체 설정 덮어쓰기 가져오기</string>
     <string name="label_virtual_ipv6">가상 IPv6: </string>
     <string name="label_subnets">알림 서브넷: </string>
     <string name="label_direct_multiaddrs">직접 연결 Multiaddr: </string>
@@ -292,4 +292,18 @@
     <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
     <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
     <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
+    <string name="app_title">P2PTap 가상 네트워크</string>
+    <string name="home_section_identity">노드 신원</string>
+    <string name="label_virtual_ip">가상 IP</string>
+    <string name="metric_upload">업로드</string>
+    <string name="metric_download">다운로드</string>
+    <string name="metric_peers">피어</string>
+    <string name="advanced_info_title">고급 정보</string>
+    <string name="home_section_runtime">실행 정보</string>
+    <string name="status_elapsed_fmt">엔진 시작 중 · %1$d초</string>
+    <string name="status_reason_connected_fmt">직접 %1$d · 릴레이 %2$d</string>
+    <string name="menu_copy_full_id">전체 ID 복사</string>
+    <string name="menu_share_qr">QR 코드 공유</string>
+    <string name="menu_view_peers">피어 보기</string>
+    <string name="action_logs">로그</string>
 </resources>

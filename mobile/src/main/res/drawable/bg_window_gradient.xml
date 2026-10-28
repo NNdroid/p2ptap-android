@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Window backdrop, light mode. Same job as the night variant: give the
+     translucent hero a gradient to sit on. Kept very low contrast — a strong
+     tint here would fight the white cards rather than support them. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:centerColor="#F3F6FB"
+        android:centerY="0.42"
+        android:endColor="#E9EFF7"
+        android:startColor="#FBFCFE"
+        android:type="linear" />
+</shape>

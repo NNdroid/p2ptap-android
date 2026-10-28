@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings group header icon: security & obfuscation. See
+     ic_group_identity.xml for why these are stroked instead of filled. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,2.8 L19.6,5.9 V12 c0,4.5 -3.3,8 -7.6,9.2 C7.7,20 4.4,16.5 4.4,12 V5.9 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.7" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,10.6 a1.7,1.7 0 1,0 0,3.4 a1.7,1.7 0 1,0 0,-3.4 M12,14 v2.4"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.7" />
+</vector>

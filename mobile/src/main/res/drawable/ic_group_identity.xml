@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings group header icon: node identity.
+     These nine ic_group_* icons are a deliberate second style, drawn as 1.7dp
+     strokes rather than the filled 24dp glyphs used inside content rows. They
+     only ever appear next to a bold 15sp group title, where a hairline weight
+     reads as a section marker instead of competing with the label. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,11.2 a3.1,3.1 0 1,0 0,-6.2 a3.1,3.1 0 1,0 0,6.2"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.7" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M5.5,20.2 c0,-3.7 2.9,-6.4 6.5,-6.4 s6.5,2.7 6.5,6.4"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.7" />
+</vector>

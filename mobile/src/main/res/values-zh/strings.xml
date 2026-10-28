@@ -53,12 +53,12 @@
 
     <!-- Settings Groups -->
     <string name="title_settings">节点参数配置</string>
-    <string name="group_identity">👤 节点身份与密钥管理</string>
-    <string name="group_network">🌐 虚拟网络参数 (L2/L3)</string>
-    <string name="group_peers">🚀 引导中继与静态节点</string>
-    <string name="group_security">🔒 流量特征混淆与安全加密</string>
-    <string name="group_routing">🧭 子网路由与网络宣告</string>
-    <string name="group_webui">📊 内置 Web 拓扑控制台与诊断</string>
+    <string name="group_identity">节点身份与密钥管理</string>
+    <string name="group_network">虚拟网络参数 (L2/L3)</string>
+    <string name="group_peers">引导中继与静态节点</string>
+    <string name="group_security">流量特征混淆与安全加密</string>
+    <string name="group_routing">子网路由与网络宣告</string>
+    <string name="group_webui">内置 Web 拓扑控制台与诊断</string>
 
     <!-- Settings Hints -->
     <string name="title_web_console">P2PTap 网络控制台</string>
@@ -227,7 +227,7 @@
     <string name="dialog_scan_result_title">已识别节点连接信息</string>
     <string name="action_add_static_peer">➕ 添加为静态对端节点 (Static Peer)</string>
     <string name="action_add_bootstrap_peer">🌐 添加为引导中继节点 (Bootstrap Peer)</string>
-    <string name="action_import_full_config">⚙️ 覆盖导入完整网络配置</string>
+    <string name="action_import_full_config">覆盖导入完整网络配置</string>
     <string name="label_virtual_ipv6">虚拟 IPv6: </string>
     <string name="label_subnets">宣告子网: </string>
     <string name="label_direct_multiaddrs">直连 Multiaddrs: </string>
@@ -309,4 +309,18 @@
     <string name="err_invalid_hostname">主机名无效 — 只能使用字母、数字、连字符和点</string>
     <string name="err_psk_too_short">PSK 至少需要 16 个字符以保证安全</string>
     <string name="err_token_too_short">认证令牌至少需要 16 个字符以保证安全</string>
+    <string name="app_title">P2PTap 虚拟网络</string>
+    <string name="home_section_identity">节点身份</string>
+    <string name="label_virtual_ip">虚拟 IP</string>
+    <string name="metric_upload">上行</string>
+    <string name="metric_download">下行</string>
+    <string name="metric_peers">节点</string>
+    <string name="advanced_info_title">高级信息</string>
+    <string name="home_section_runtime">运行统计</string>
+    <string name="status_elapsed_fmt">正在启动引擎 · %1$d 秒</string>
+    <string name="status_reason_connected_fmt">直连 %1$d · 中继 %2$d</string>
+    <string name="menu_copy_full_id">复制完整 ID</string>
+    <string name="menu_share_qr">分享二维码</string>
+    <string name="menu_view_peers">查看节点详情</string>
+    <string name="action_logs">日志</string>
 </resources>

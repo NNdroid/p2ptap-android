@@ -40,12 +40,12 @@
     <string name="label_direct_peers">直連</string>
     <string name="label_relay_peers">中繼</string>
     <string name="title_settings">節點參數配置</string>
-    <string name="group_identity">👤 節點身份與金鑰管理</string>
-    <string name="group_network">🌐 虛擬網路參數 (L2/L3)</string>
-    <string name="group_peers">🚀 引導中繼與靜態節點</string>
-    <string name="group_security">🔒 流量特徵混淆與安全加密</string>
-    <string name="group_routing">🧭 子網路由與網路宣告</string>
-    <string name="group_webui">📊 內建 Web 拓撲控制台與診斷</string>
+    <string name="group_identity">節點身份與金鑰管理</string>
+    <string name="group_network">虛擬網路參數 (L2/L3)</string>
+    <string name="group_peers">引導中繼與靜態節點</string>
+    <string name="group_security">流量特徵混淆與安全加密</string>
+    <string name="group_routing">子網路由與網路宣告</string>
+    <string name="group_webui">內建 Web 拓撲控制台與診斷</string>
     <string name="title_web_console">P2PTap 網路控制台</string>
     <string name="hint_node_name">節點名稱 (別名)</string>
     <string name="hint_tap_ip">虛擬 IPv4 / CIDR (如 10.0.0.88/24)</string>
@@ -204,7 +204,7 @@
     <string name="dialog_scan_result_title">已識別節點連線資訊</string>
     <string name="action_add_static_peer">➕ 新增為靜態對端節點 (Static Peer)</string>
     <string name="action_add_bootstrap_peer">🌐 新增為引導中繼節點 (Bootstrap Peer)</string>
-    <string name="action_import_full_config">⚙️ 覆蓋匯入完整網路配置</string>
+    <string name="action_import_full_config">覆蓋匯入完整網路配置</string>
     <string name="label_virtual_ipv6">虛擬 IPv6: </string>
     <string name="label_subnets">宣告子網: </string>
     <string name="label_direct_multiaddrs">直連 Multiaddrs: </string>
@@ -294,4 +294,18 @@
     <string name="err_invalid_hostname">主机名无效 — 只能使用字母、数字、连字符和点</string>
     <string name="err_psk_too_short">PSK 至少需要 16 个字符以保证安全</string>
     <string name="err_token_too_short">认证令牌至少需要 16 个字符以保证安全</string>
+    <string name="app_title">P2PTap 虛擬網路</string>
+    <string name="home_section_identity">節點身分</string>
+    <string name="label_virtual_ip">虛擬 IP</string>
+    <string name="metric_upload">上行</string>
+    <string name="metric_download">下行</string>
+    <string name="metric_peers">節點</string>
+    <string name="advanced_info_title">進階資訊</string>
+    <string name="home_section_runtime">執行統計</string>
+    <string name="status_elapsed_fmt">正在啟動引擎 · %1$d 秒</string>
+    <string name="status_reason_connected_fmt">直連 %1$d · 中繼 %2$d</string>
+    <string name="menu_copy_full_id">複製完整 ID</string>
+    <string name="menu_share_qr">分享二維碼</string>
+    <string name="menu_view_peers">檢視節點詳情</string>
+    <string name="action_logs">日誌</string>
 </resources>

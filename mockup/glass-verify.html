@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Hero 玻璃效果验证 · 真实参数还原</title>
+<style>
+  :root{
+    --ink:#E7EDF7; --ink2:#94A3B8; --ink3:#64748B;
+    --cyan:#22D3EE; --green:#10B981; --amber:#F59E0B;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#080B12; color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    padding:40px 28px 72px; line-height:1.6;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+  .sub{color:var(--ink2);font-size:14px;max-width:720px;margin-bottom:6px}
+  .note{
+    margin-top:14px;padding:12px 16px;border-radius:12px;
+    background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.22);
+    font-size:13px;color:#A5F3FC;
+  }
+  .note b{color:#67E8F9}
+  h2{font-size:15px;font-weight:700;margin:44px 0 6px;letter-spacing:.02em}
+  .cap{font-size:12.5px;color:var(--ink3);margin-bottom:16px}
+
+  .stage{display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:0 0 auto}
+  .col > b{display:block;font-size:13px;font-weight:700;margin-bottom:4px}
+  .col > span{display:block;font-size:11.5px;color:var(--ink3);margin-bottom:12px}
+
+  /* ── 手机屏 ─────────────────────────────────────────── */
+  .screen{
+    width:390px;height:520px;border-radius:20px;overflow:hidden;
+    position:relative;padding:16px;
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.95),0 0 0 1px rgba(148,163,184,.14);
+  }
+  /* 落地版：bg_window_gradient 三段渐变 */
+  .screen.bg-new{
+    background:linear-gradient(180deg,#0D1524 0%,#0A101C 42%,#05080E 100%);
+  }
+  /* 旧版：colorSurfaceContainerLow 实色 */
+  .screen.bg-old{background:#0B1220}
+
+  /* ── hero 卡片 ──────────────────────────────────────── */
+  .hero{
+    border-radius:24px;padding:20px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    position:relative;
+  }
+  /* 旧版：不透明双层，实色渐变 + glow */
+  .hero.old{
+    background:
+      radial-gradient(circle 260px at 50% 0%,rgba(16,185,129,.24) 0%,transparent 100%),
+      linear-gradient(180deg,#0E1724 0%,#0A111C 100%);
+    border:1px solid rgba(148,163,184,.22);
+  }
+  /* 落地版：半透明基础 + 状态 glow + 顶部 sheen + 白色描边 */
+  .hero.new{
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.122) 0%,transparent 12%),
+      radial-gradient(circle 260px at 50% 0%,rgba(16,185,129,.239) 0%,transparent 100%),
+      linear-gradient(180deg,rgba(14,23,36,.722) 0%,rgba(10,17,28,.651) 100%);
+    border:1px solid rgba(255,255,255,.149);
+  }
+
+  .ring{
+    width:84px;height:84px;border-radius:50%;
+    border:2px solid rgba(16,185,129,.55);
+    background:rgba(16,185,129,.10);
+    display:grid;place-items:center;margin-bottom:12px;
+    box-shadow:0 0 30px -6px rgba(16,185,129,.55);
+  }
+  .ring svg{width:34px;height:34px;stroke:#34D399;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .htitle{font-size:19px;font-weight:700;letter-spacing:-.01em;color:#ECFDF5}
+  .hsub{font-size:12.5px;color:#94A3B8;margin-top:3px}
+  .hsub i{font-style:normal;color:#34D399;font-weight:600}
+  .cta{
+    margin-top:16px;width:100%;height:48px;border-radius:14px;
+    display:grid;place-items:center;
+    background:#EF4444;color:#fff;font-size:14.5px;font-weight:700;
+    box-shadow:0 8px 22px -10px rgba(239,68,68,.9);
+  }
+
+  /* 下面一张实色卡片，用来看玻璃卡与普通卡的层次差 */
+  .card{
+    margin-top:12px;border-radius:16px;padding:14px;
+    background:#0F172A;border:1px solid rgba(148,163,184,.18);
+  }
+  .card .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink2);padding:5px 0}
+  .card .row b{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:12px}
+
+  /* ── 参数表 ─────────────────────────────────────────── */
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(148,163,184,.13)}
+  th{color:var(--ink3);font-weight:600;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase}
+  td code{font-family:var(--mono);font-size:11.5px;color:#67E8F9;background:rgba(34,211,238,.08);padding:1px 5px;border-radius:4px}
+  .bad{color:#FCA5A5}
+  .good{color:#6EE7B7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Hero 玻璃效果 · 按落地参数渲染</h1>
+  <p class="sub">
+    下面两张手机屏用的是刚写进项目的真实色值和透明度，不是另做的设计稿。
+    左边是改之前的实色卡片，右边是现在的玻璃卡片，两边光晕、圆角、内容完全一致，
+    唯一变量是填充透明度和描边色。
+  </p>
+  <div class="note">
+    <b>Android 没有 CSS 的 backdrop-filter。</b>
+    所以这里的"玻璃"不是模糊背景，而是让卡片半透明、把窗口的渐变透上来。
+    因为窗口梯度是上面亮下面暗，卡片贴在页面上就会跟着有明暗层次——
+    这是玻璃观感的来源，代价为零。
+  </div>
+
+  <h2>对比：实色 vs 玻璃</h2>
+  <p class="cap">同一个位置、同一个状态（已连接），只有填充与描边的差别。</p>
+
+  <div class="stage">
+
+    <div class="col">
+      <b>改之前 · 实色</b>
+      <span>hero_base_top #0E1724 · 不透明</span>
+      <div class="screen bg-old">
+        <div class="hero old">
+          <div class="ring">
+            <svg viewBox="0 0 24 24"><path d="M12 3v18M5 10l7-7 7 7"/></svg>
+          </div>
+          <div class="htitle">已连接</div>
+          <div class="hsub">出口网关 <i>直连</i> · 12 peers</div>
+          <div class="cta">断开连接</div>
+        </div>
+        <div class="card">
+          <div class="row"><span>上行</span><b>1.2 MB/s</b></div>
+          <div class="row"><span>下行</span><b>4.8 MB/s</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <b>改之后 · 玻璃</b>
+      <span>hero_base_top #0E1724 @ 72% · 白色描边 15%</span>
+      <div class="screen bg-new">
+        <div class="hero new">
+          <div class="ring">
+            <svg viewBox="0 0 24 24"><path d="M12 3v18M5 10l7-7 7 7"/></svg>
+          </div>
+          <div class="htitle">已连接</div>
+          <div class="hsub">出口网关 <i>直连</i> · 12 peers</div>
+          <div class="cta">断开连接</div>
+        </div>
+        <div class="card">
+          <div class="row"><span>上行</span><b>1.2 MB/s</b></div>
+          <div class="row"><span>下行</span><b>4.8 MB/s</b></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>落地的参数</h2>
+  <p class="cap">这些值就在 colors.xml 里，改一个数就能调。</p>
+  <table>
+    <tr><th>层</th><th>改之前</th><th>改之后</th><th>作用</th></tr>
+    <tr>
+      <td>hero 填充</td>
+      <td class="bad"><code>#0E1724</code> 不透明</td>
+      <td class="good"><code>#B80E1724</code> 72%</td>
+      <td>让窗口渐变透上来</td>
+    </tr>
+    <tr>
+      <td>hero 描边</td>
+      <td class="bad"><code>colorOutlineVariant</code></td>
+      <td class="good"><code>#26FFFFFF</code> 15% 白</td>
+      <td>灰线像画的框，白线像玻璃边</td>
+    </tr>
+    <tr>
+      <td>顶部高光</td>
+      <td class="bad">无</td>
+      <td class="good"><code>#1FFFFFFF</code> 到 12% 衰减</td>
+      <td>光打在玻璃上沿的那道亮线</td>
+    </tr>
+    <tr>
+      <td>窗口背景</td>
+      <td class="bad"><code>#0B1220</code> 实色</td>
+      <td class="good">#0D1524 → #0A101C → #05080E</td>
+      <td>玻璃要有东西可透</td>
+    </tr>
+  </table>
+
+  <div class="note" style="background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.22);color:#FCD34D">
+    <b>需要你实机确认的一点：</b>
+    玻璃卡片对背景是敏感的。深色模式下因为窗口有明暗渐变，效果明显；
+    浅色模式下窗口接近纯白，半透明几乎看不出来，所以浅色那边我把填充压到了 95%，
+    玻璃感主要靠描边和高光——这是有意为之，不是漏改。
+  </div>
+
+</div>
+</body>
+</html>

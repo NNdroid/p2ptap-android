@@ -47,12 +47,12 @@
     <string name="label_developer">Разработчик @NNdroid</string>
     <string name="msg_multiaddrs_copied">Все адреса Multiaddrs скопированы в буфер обмена</string>
     <string name="title_settings">Параметры узла</string>
-    <string name="group_identity">👤 Идентификация узла и ключи</string>
-    <string name="group_network">🌐 Виртуальная сеть (L2/L3)</string>
-    <string name="group_peers">🚀 Bootstrap и статические узлы</string>
-    <string name="group_security">🔒 Маскировка трафика и шифрование</string>
-    <string name="group_routing">🧭 Подсети и маршрутизация</string>
-    <string name="group_webui">📊 Веб-панель и диагностика</string>
+    <string name="group_identity">Идентификация узла и ключи</string>
+    <string name="group_network">Виртуальная сеть (L2/L3)</string>
+    <string name="group_peers">Bootstrap и статические узлы</string>
+    <string name="group_security">Маскировка трафика и шифрование</string>
+    <string name="group_routing">Подсети и маршрутизация</string>
+    <string name="group_webui">Веб-панель и диагностика</string>
     <string name="title_web_console">Веб-панель P2PTap</string>
     <string name="hint_node_name">Имя узла (псевдоним)</string>
     <string name="hint_tap_ip">Виртуальный IPv4 / CIDR (напр. 10.0.0.88/24)</string>
@@ -214,7 +214,7 @@
     <string name="dialog_scan_result_title">Обнаружены данные подключения</string>
     <string name="action_add_static_peer">➕ Добавить как статический узел</string>
     <string name="action_add_bootstrap_peer">🌐 Добавить как Bootstrap-узел</string>
-    <string name="action_import_full_config">⚙️ Заменить и импортировать полную конфигурацию</string>
+    <string name="action_import_full_config">Заменить и импортировать полную конфигурацию</string>
     <string name="label_virtual_ipv6">Виртуальный IPv6: </string>
     <string name="label_subnets">Анонсируемые подсети: </string>
     <string name="label_direct_multiaddrs">Прямые Multiaddrs: </string>
@@ -301,4 +301,18 @@
     <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
     <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
     <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
+    <string name="app_title">P2PTap Virtual Network</string>
+    <string name="home_section_identity">Идентичность узла</string>
+    <string name="label_virtual_ip">Виртуальный IP</string>
+    <string name="metric_upload">Отдача</string>
+    <string name="metric_download">Приём</string>
+    <string name="metric_peers">Пиры</string>
+    <string name="advanced_info_title">Дополнительно</string>
+    <string name="home_section_runtime">Работа</string>
+    <string name="status_elapsed_fmt">Запуск движка · %1$d с</string>
+    <string name="status_reason_connected_fmt">Напрямую %1$d · Relay %2$d</string>
+    <string name="menu_copy_full_id">Копировать полный ID</string>
+    <string name="menu_share_qr">Поделиться QR-кодом</string>
+    <string name="menu_view_peers">Показать пиры</string>
+    <string name="action_logs">Журнал</string>
 </resources>

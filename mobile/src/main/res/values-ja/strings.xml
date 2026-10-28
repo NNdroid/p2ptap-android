@@ -47,12 +47,12 @@
     <string name="label_developer">開発者 @NNdroid</string>
     <string name="msg_multiaddrs_copied">すべての Multiaddr をクリップボードにコピーしました</string>
     <string name="title_settings">ノードパラメータ設定</string>
-    <string name="group_identity">👤 ノードIDと秘密鍵管理</string>
-    <string name="group_network">🌐 仮想ネットワーク設定 (L2/L3)</string>
-    <string name="group_peers">🚀 ブートストラップと静的ピア</string>
-    <string name="group_security">🔒 トラフィック難読化と暗号化</string>
-    <string name="group_routing">🧭 サブネットルーティング</string>
-    <string name="group_webui">📊 Webコンソールと診断</string>
+    <string name="group_identity">ノードIDと秘密鍵管理</string>
+    <string name="group_network">仮想ネットワーク設定 (L2/L3)</string>
+    <string name="group_peers">ブートストラップと静的ピア</string>
+    <string name="group_security">トラフィック難読化と暗号化</string>
+    <string name="group_routing">サブネットルーティング</string>
+    <string name="group_webui">Webコンソールと診断</string>
     <string name="title_web_console">P2PTap Webコンソール</string>
     <string name="hint_node_name">ノード名 (エイリアス)</string>
     <string name="hint_tap_ip">仮想 IPv4 / CIDR (例: 10.0.0.88/24)</string>
@@ -211,7 +211,7 @@
     <string name="dialog_scan_result_title">検出されたノード接続情報</string>
     <string name="action_add_static_peer">➕ 静的ピアとして追加</string>
     <string name="action_add_bootstrap_peer">🌐 ブートストラップピアとして追加</string>
-    <string name="action_import_full_config">⚙️ 全設定を上書きインポート</string>
+    <string name="action_import_full_config">全設定を上書きインポート</string>
     <string name="label_virtual_ipv6">仮想 IPv6: </string>
     <string name="label_subnets">広報サブネット: </string>
     <string name="label_direct_multiaddrs">直接接続 Multiaddr: </string>
@@ -292,4 +292,18 @@
     <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
     <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
     <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
+    <string name="app_title">P2PTap 仮想ネットワーク</string>
+    <string name="home_section_identity">ノード識別子</string>
+    <string name="label_virtual_ip">仮想 IP</string>
+    <string name="metric_upload">上り</string>
+    <string name="metric_download">下り</string>
+    <string name="metric_peers">ピア</string>
+    <string name="advanced_info_title">詳細情報</string>
+    <string name="home_section_runtime">稼働状況</string>
+    <string name="status_elapsed_fmt">エンジン起動中 · %1$d 秒</string>
+    <string name="status_reason_connected_fmt">直接 %1$d · リレー %2$d</string>
+    <string name="menu_copy_full_id">ID をすべてコピー</string>
+    <string name="menu_share_qr">QR コードを共有</string>
+    <string name="menu_view_peers">ピアを表示</string>
+    <string name="action_logs">ログ</string>
 </resources>

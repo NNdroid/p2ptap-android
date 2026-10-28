@@ -5,12 +5,44 @@
          activity_config.xml all repeat the same corner radius, stroke,
          elevation and inner padding, so a radius change has to land in one
          place instead of in seven card blocks. -->
-    <dimen name="card_corner_radius">20dp</dimen>
+    <!-- 16dp, not 20dp: the home screen cards are 16dp and Android switches
+         between the two screens in one gesture, so two page-level radii read as
+         a jump. Dialog-inner cards stay at the Material default 12dp on
+         purpose — those are cards nested inside a 16dp dialog surface, and they
+         should be tighter than the shell, not equal to it. -->
+    <dimen name="card_corner_radius">16dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="card_stroke_width">1dp</dimen>
     <dimen name="card_padding">16dp</dimen>
     <dimen name="card_gap">16dp</dimen>
 
+    <!-- Compact icon-button box. The log viewer puts four of these next to a
+         search field on a 360dp-wide screen; at 48dp each they consumed 204dp
+         and squeezed the field to ~130dp. -->
+    <dimen name="icon_button_size">40dp</dimen>
+
     <!-- Screen padding around the scrolling settings column. -->
     <dimen name="screen_padding">16dp</dimen>
+
+    <!-- ── Main screen (home_*) tokens ────────────────────────────────────
+         The home screen runs a tighter scale than the settings screen: one
+         hero card at 24dp, every list card at 16dp, and a single 14dp inner
+         padding so row content lines up with the 16dp screen margin. Values
+         live here instead of inline dp so a radius change lands in one place
+         across content_main.xml, its rows and the advanced section. -->
+    <dimen name="home_screen_padding">16dp</dimen>
+    <dimen name="home_hero_radius">24dp</dimen>
+    <dimen name="home_hero_padding">20dp</dimen>
+    <dimen name="home_card_radius">16dp</dimen>
+    <dimen name="home_card_padding">14dp</dimen>
+    <!-- Gap between cards that belong to the same group. -->
+    <dimen name="home_gap">12dp</dimen>
+    <!-- Gap that separates one group of cards from the next. -->
+    <dimen name="home_group_gap">20dp</dimen>
+    <dimen name="home_ring_size">84dp</dimen>
+    <dimen name="home_ring_icon">34dp</dimen>
+    <dimen name="home_cta_height">48dp</dimen>
+    <dimen name="home_metric_min_height">56dp</dimen>
+    <dimen name="home_row_min_height">44dp</dimen>
+    <dimen name="home_glow_radius">260dp</dimen>
 </resources>
