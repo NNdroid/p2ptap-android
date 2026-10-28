@@ -308,7 +308,6 @@
     <string name="err_invalid_hostname">主机名无效 — 只能使用字母、数字、连字符和点</string>
     <string name="err_psk_too_short">PSK 至少需要 16 个字符以保证安全</string>
     <string name="err_token_too_short">认证令牌至少需要 16 个字符以保证安全</string>
-    <string name="app_title">P2PTap 虚拟网络</string>
     <string name="home_section_identity">节点身份</string>
     <string name="label_virtual_ip">虚拟 IP</string>
     <string name="metric_upload">上行</string>

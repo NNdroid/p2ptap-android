@@ -301,7 +301,6 @@
     <string name="err_invalid_hostname">Invalid hostname — use letters, digits, hyphens, and dots only</string>
     <string name="err_psk_too_short">PSK should be at least 16 characters for adequate security</string>
     <string name="err_token_too_short">Auth token should be at least 16 characters for adequate security</string>
-    <string name="app_title">P2PTap Virtual Network</string>
     <string name="home_section_identity">Идентичность узла</string>
     <string name="label_virtual_ip">Виртуальный IP</string>
     <string name="metric_upload">Отдача</string>

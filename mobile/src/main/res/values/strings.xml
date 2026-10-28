@@ -318,7 +318,6 @@
          no values-* override. -->
     <string name="label_github_short" translatable="false">GitHub</string>
     <string name="label_developer_short" translatable="false">@NNdroid</string>
-    <string name="app_title">P2PTap Virtual Network</string>
     <string name="home_section_identity">Node Identity</string>
     <string name="label_virtual_ip">Virtual IP</string>
     <string name="metric_upload">Up</string>

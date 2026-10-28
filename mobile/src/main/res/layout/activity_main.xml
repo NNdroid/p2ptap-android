@@ -13,11 +13,14 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
+        <!-- The brand, not a translated tagline: app_name is the same string
+             the launcher and the About card use, so the title bar cannot drift
+             away from what the app calls itself elsewhere. -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_title" />
+            app:title="@string/app_name" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

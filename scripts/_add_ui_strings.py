@@ -14,7 +14,6 @@ ROOT = Path(__file__).resolve().parent.parent
 RES = ROOT / "mobile" / "src" / "main" / "res"
 
 KEYS = [
-    "app_title",
     "home_section_identity",
     "label_virtual_ip",
     "metric_upload",
@@ -34,7 +33,6 @@ KEYS = [
 # Translations, keyed by resource qualifier ("values" is the default/English).
 NEW_STRINGS = {
     "values": {
-        "app_title": "P2PTap Virtual Network",
         "home_section_identity": "Node Identity",
         "label_virtual_ip": "Virtual IP",
         "metric_upload": "Up",
@@ -51,7 +49,6 @@ NEW_STRINGS = {
         "action_logs": "Logs",
     },
     "values-zh": {
-        "app_title": "P2PTap 虚拟网络",
         "home_section_identity": "节点身份",
         "label_virtual_ip": "虚拟 IP",
         "metric_upload": "上行",
@@ -68,7 +65,6 @@ NEW_STRINGS = {
         "action_logs": "日志",
     },
     "values-zh-rCN": {
-        "app_title": "P2PTap 虚拟网络",
         "home_section_identity": "节点身份",
         "label_virtual_ip": "虚拟 IP",
         "metric_upload": "上行",
@@ -85,7 +81,6 @@ NEW_STRINGS = {
         "action_logs": "日志",
     },
     "values-zh-rHK": {
-        "app_title": "P2PTap 虛擬網路",
         "home_section_identity": "節點身分",
         "label_virtual_ip": "虛擬 IP",
         "metric_upload": "上行",
@@ -102,7 +97,6 @@ NEW_STRINGS = {
         "action_logs": "日誌",
     },
     "values-zh-rTW": {
-        "app_title": "P2PTap 虛擬網路",
         "home_section_identity": "節點身分",
         "label_virtual_ip": "虛擬 IP",
         "metric_upload": "上行",
@@ -119,7 +113,6 @@ NEW_STRINGS = {
         "action_logs": "日誌",
     },
     "values-de": {
-        "app_title": "P2PTap Virtual Network",
         "home_section_identity": "Knotenidentität",
         "label_virtual_ip": "Virtuelle IP",
         "metric_upload": "Senden",
@@ -136,7 +129,6 @@ NEW_STRINGS = {
         "action_logs": "Protokolle",
     },
     "values-es": {
-        "app_title": "P2PTap Virtual Network",
         "home_section_identity": "Identidad del nodo",
         "label_virtual_ip": "IP virtual",
         "metric_upload": "Subida",
@@ -153,7 +145,6 @@ NEW_STRINGS = {
         "action_logs": "Registros",
     },
     "values-fr": {
-        "app_title": "P2PTap Virtual Network",
         "home_section_identity": "Identité du nœud",
         "label_virtual_ip": "IP virtuelle",
         "metric_upload": "Envoi",
@@ -170,7 +161,6 @@ NEW_STRINGS = {
         "action_logs": "Journaux",
     },
     "values-ja": {
-        "app_title": "P2PTap 仮想ネットワーク",
         "home_section_identity": "ノード識別子",
         "label_virtual_ip": "仮想 IP",
         "metric_upload": "上り",
@@ -187,7 +177,6 @@ NEW_STRINGS = {
         "action_logs": "ログ",
     },
     "values-ko": {
-        "app_title": "P2PTap 가상 네트워크",
         "home_section_identity": "노드 신원",
         "label_virtual_ip": "가상 IP",
         "metric_upload": "업로드",
@@ -204,7 +193,6 @@ NEW_STRINGS = {
         "action_logs": "로그",
     },
     "values-ru": {
-        "app_title": "P2PTap Virtual Network",
         "home_section_identity": "Идентичность узла",
         "label_virtual_ip": "Виртуальный IP",
         "metric_upload": "Отдача",
