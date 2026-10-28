@@ -10,14 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: p2ptap-core/go.mod
-      - uses: actions/setup-java@v4
+          # The Go module lives in the p2ptap-core submodule, so the default
+          # go.sum lookup in the repository root always misses and every run
+          # restores nothing. Pinning the path makes the module cache (and the
+          # gomobile/gobind install) actually hit.
+          cache-dependency-path: p2ptap-core/go.sum
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '25'
@@ -35,7 +40,7 @@ jobs:
           bash p2ptap-core/scripts/build-aar.sh
           mkdir -p core/libs
           cp p2ptap-core/bin/p2ptap.aar core/libs/p2ptap.aar
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Check locale completeness
         run: bash scripts/check-i18n.sh
       - name: Test, lint and build both variants
@@ -48,7 +53,7 @@ jobs:
           ./gradlew testDebugUnitTest :mobile:lintDebug :tv:lintDebug \
             :mobile:assembleDebug :tv:assembleDebug \
             :mobile:assembleRelease :tv:assembleRelease --console=plain
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android-apks
           path: |
