@@ -44,7 +44,13 @@ class TvPeersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        TvFocusAnimation.attachTo(binding.tvPeersRecycler, TvFocusAnimation.SCALE_CARD)
+        // The list itself only needs to be focusable so DPAD can enter it.
+        // It must NOT scale on focus: the old code ran the focus animation on
+        // the RecyclerView, which scaled every row at once and left the actual
+        // focused card with no distinct treatment. Rows get their own ring from
+        // the adapter below.
+        binding.tvPeersRecycler.isFocusable = true
+        binding.tvPeersRecycler.isFocusableInTouchMode = true
 
         adapter = PeersAdapter()
         binding.tvPeersRecycler.layoutManager = LinearLayoutManager(requireContext())
@@ -67,10 +73,19 @@ class TvPeersFragment : Fragment() {
     }
 
     private fun renderSummary(metrics: NodeMetrics) {
-        val count = resources.getQuantityString(R.plurals.tv_peer_count, metrics.peerCount, metrics.peerCount)
-        val direct = metrics.directPeers
-        val relay = metrics.relayPeers
-        binding.tvPeersSummary.text = "$count · $direct direct · $relay relay"
+        val count = resources.getQuantityString(
+            R.plurals.tv_peer_count, metrics.peerCount, metrics.peerCount
+        )
+        // Was "$count · $direct direct · $relay relay" — English words baked
+        // into Kotlin, so the summary stayed English in all ten translated
+        // locales while tv_peers_summary_fmt and tv_path_direct/relay sat
+        // translated and unused right next to it.
+        binding.tvPeersSummary.text = getString(
+            R.string.tv_peers_summary_fmt,
+            count,
+            getString(R.string.tv_path_direct), metrics.directPeers,
+            getString(R.string.tv_path_relay), metrics.relayPeers,
+        )
     }
 
     override fun onDestroyView() {
@@ -97,8 +112,10 @@ class TvPeersFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_tv_peer_card, parent, false)
-            TvFocusAnimation.attachTo(view.findViewById<MaterialCardView>(R.id.tv_peer_card),
-                TvFocusAnimation.SCALE_CARD)
+            TvFocusAnimation.attachToCard(
+                view.findViewById<MaterialCardView>(R.id.tv_peer_card),
+                TvFocusAnimation.SCALE_CARD,
+            )
             return Holder(view)
         }
 

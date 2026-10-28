@@ -122,4 +122,53 @@
     <color name="tv_banner_start">#00F2FE</color>
     <color name="tv_banner_mid">#38BDF8</color>
     <color name="tv_banner_end">#10B981</color>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Glass hero, the same stacking as the phone build.
+
+         Android has no backdrop-filter: a View cannot blur what is behind it,
+         and RenderEffect would only blur the card's own content. Glass is
+         therefore painted as four layers, in this order:
+
+           1. fill      — the card, held at 80–92% so the window gradient
+                           underneath still shows through
+           2. sheen     — a white radial pinned to the top edge, 16% at peak,
+                           which is what reads as "light on glass"
+           3. state glow— a radial tinted by connection state, left/top
+           4. stroke    — 1dp white at 11.4%, the glass edge
+
+         Layer 1 only reads as glass because the window behind it is a
+         gradient (tv_bg_window.xml), not a flat fill. On a flat background
+         a translucent card is indistinguishable from an opaque one.
+         ══════════════════════════════════════════════════════════════════ -->
+    <color name="tv_hero_fill_top">#CC172237</color>
+    <color name="tv_hero_fill_bottom">#EB0E1523</color>
+    <color name="tv_hero_sheen">#29FFFFFF</color>
+    <color name="tv_hero_stroke">#1DFFFFFF</color>
+
+    <!-- State glow. Same four states as the phone build, tuned slightly
+         dimmer because a TV panel is viewed in a dark room at 3 m and a
+         strong wash turns into a colour cast on the whole card. -->
+    <color name="tv_hero_glow_idle">#2964748B</color>
+    <color name="tv_hero_glow_connecting">#3DF59E0B</color>
+    <color name="tv_hero_glow_connected">#3B10B981</color>
+    <color name="tv_hero_glow_error">#3DF87171</color>
+
+    <!-- Every non-hero card: filled, not glass, so the hero stays the focus. -->
+    <color name="tv_card_fill_top">#B81C273D</color>
+    <color name="tv_card_fill_bottom">#D1121A2A</color>
+    <color name="tv_card_stroke">#2194A3B8</color>
+
+    <!-- Rail surfaces. Slightly darker than the window so the rail reads as
+         chrome rather than as a panel floating on the content. -->
+    <color name="tv_rail_fill_top">#EB0B1020</color>
+    <color name="tv_rail_fill_bottom">#F5070B14</color>
+
+    <!-- Rail item states. Selection and focus are two different things and
+         get two different looks: selection is a left accent bar plus a wash,
+         focus is a ring. Both can be true at once. -->
+    <color name="tv_rail_item_selected_fill">#1A22D3EE</color>
+    <color name="tv_rail_item_focus_fill">#2922D3EE</color>
+    <color name="tv_rail_label">#94A3B8</color>
+    <color name="tv_rail_label_active">#A5F3FC</color>
 </resources>

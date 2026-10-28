@@ -1,6 +1,7 @@
 package app.fjj.p2ptap.tv.ui
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.VpnService
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,9 +11,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import app.fjj.p2ptap.config.AppConfigManager
-import app.fjj.p2ptap.config.P2PBootFlagStore
 import app.fjj.p2ptap.service.NodeMetrics
 import app.fjj.p2ptap.service.P2PStateRepository
 import app.fjj.p2ptap.service.P2PTapVpnService
@@ -26,16 +25,20 @@ import kotlinx.coroutines.launch
 /**
  * S1, the home screen.
  *
- * The whole app's primary action surface. A TV user opens P2PTap to answer
- * one question — "is my mesh on?" — and then possibly one action — "turn it
- * off / back on". Everything else is one focus hop away on a dedicated screen,
- * which is why the hero card dominates and the nav grid below is small.
+ * A TV user opens P2PTap to answer one question — "is my mesh on?" — and then
+ * possibly take one action — "turn it off / back on". The hero answers the
+ * question at a glance and holds the action; the right column adds the two
+ * things a viewer actually wants next (how fast, how much).
  *
- * All the state comes from [P2PStateRepository], which is a single object in
- * :core shared by the VPN service, the peers screen and every other
- * destination. The fragment only observes and renders — it never talks to the
- * engine directly except through the repository, which is what keeps it
- * deterministic.
+ * Navigation is not this screen's job any more. The old layout carried four
+ * quick-nav cards that duplicated four of the seven rail destinations, which
+ * cost ~240dp of a 540dp-tall screen to save a focus hop that was already one
+ * press away. That space now shows throughput and session counters.
+ *
+ * All state comes from [P2PStateRepository], a single object in :core shared
+ * by the VPN service, the peers screen and every other destination. The
+ * fragment only observes and renders — it never talks to the engine directly
+ * except through the repository, which is what keeps it deterministic.
  */
 class TvHomeFragment : Fragment() {
 
@@ -43,14 +46,26 @@ class TvHomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     /**
-     * Whether the next press of the toggle button will bring the VPN up.
+     * Whether the next press of the toggle will bring the VPN up.
      *
      * Kept as an intent rather than derived from the state each time: the
-     * state lagging behind the user's action is exactly the window in which a
-     * double press would send two opposite requests to the engine.
+     * window in which the state lags behind the user's press is exactly the
+     * window in which a double press would send two opposite requests to the
+     * engine.
      */
     private var pendingConnect = true
+
     private var cachedAddresses: String? = null
+
+    /** Guards against re-inflating the hero drawable on every status tick. */
+    private var heroBackgroundRes = 0
+
+    // The subtitle is assembled from two independent flows — status carries
+    // the engine's message, metrics carries the peer breakdown — so both
+    // renderers stash what they know and rebuild the line through one path.
+    private var lastState = P2PTapVpnService.STATE_IDLE
+    private var lastMessage = ""
+    private var lastMetrics: NodeMetrics? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,54 +82,22 @@ class TvHomeFragment : Fragment() {
         observeRepository()
         loadIdentity()
         loadVersions()
-        wireUpNav()
 
         binding.tvHeroToggle.setOnClickListener { toggleVpn() }
-
-        // Attach the focus animation to the hero card, the toggle, and each
-        // nav card. The rail's animation is handled by the adapter.
         TvFocusAnimation.attachTo(binding.tvHeroToggle, TvFocusAnimation.SCALE_BUTTON)
-        TvFocusAnimation.attachTo(binding.tvHeroCard, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvNavPeers, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvNavTransfer, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvNavSettings, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvNavDiagnostics, TvFocusAnimation.SCALE_CARD)
     }
 
     override fun onResume() {
         super.onResume()
-        // Focus the toggle when the fragment becomes visible. The user who
-        // opens the app wants to press the button, not hunt for it.
+        // The user who opens the app wants to press the button, not hunt for
+        // it. Only the toggle is focusable on this screen, so a focused rail
+        // item and a focused button are the whole focus graph.
         binding.tvHeroToggle.requestFocus()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun wireUpNav() {
-        val navController = findNavController()
-        binding.tvNavPeers.setOnClickListener {
-            if (navController.currentDestination?.id != R.id.tvPeersFragment) {
-                navController.navigate(R.id.tvPeersFragment)
-            }
-        }
-        binding.tvNavTransfer.setOnClickListener {
-            if (navController.currentDestination?.id != R.id.tvTransferFragment) {
-                navController.navigate(R.id.tvTransferFragment)
-            }
-        }
-        binding.tvNavSettings.setOnClickListener {
-            if (navController.currentDestination?.id != R.id.tvSettingsFragment) {
-                navController.navigate(R.id.tvSettingsFragment)
-            }
-        }
-        binding.tvNavDiagnostics.setOnClickListener {
-            if (navController.currentDestination?.id != R.id.tvDiagnosticsFragment) {
-                navController.navigate(R.id.tvDiagnosticsFragment)
-            }
-        }
     }
 
     // ── Repository observation ──────────────────────────────────────────────
@@ -131,52 +114,158 @@ class TvHomeFragment : Fragment() {
     }
 
     private fun renderState(state: String, message: String) {
-        val (labelRes, dotRes) = when (state) {
-            P2PTapVpnService.STATE_RUNNING ->
-                R.string.tv_status_running to R.color.tv_status_connected
-            P2PTapVpnService.STATE_STARTING ->
-                R.string.tv_status_starting to R.color.tv_status_connecting
-            P2PTapVpnService.STATE_STOPPING ->
-                R.string.tv_status_stopping to R.color.tv_status_stopping
-            P2PTapVpnService.STATE_TIMEOUT ->
-                R.string.tv_status_timeout to R.color.tv_status_timeout
-            P2PTapVpnService.STATE_ERROR ->
-                R.string.tv_status_error to R.color.tv_status_error
-            else -> R.string.tv_status_idle to R.color.tv_status_disconnected
+        val labelRes: Int
+        val dotRes: Int
+        val heroRes: Int
+        when (state) {
+            P2PTapVpnService.STATE_RUNNING -> {
+                labelRes = R.string.tv_status_running
+                dotRes = R.color.tv_status_connected
+                heroRes = R.drawable.tv_bg_hero_connected
+            }
+            P2PTapVpnService.STATE_STARTING -> {
+                labelRes = R.string.tv_status_starting
+                dotRes = R.color.tv_status_connecting
+                heroRes = R.drawable.tv_bg_hero_connecting
+            }
+            P2PTapVpnService.STATE_STOPPING -> {
+                labelRes = R.string.tv_status_stopping
+                dotRes = R.color.tv_status_stopping
+                heroRes = R.drawable.tv_bg_hero_connecting
+            }
+            P2PTapVpnService.STATE_TIMEOUT -> {
+                labelRes = R.string.tv_status_timeout
+                dotRes = R.color.tv_status_timeout
+                heroRes = R.drawable.tv_bg_hero_error
+            }
+            P2PTapVpnService.STATE_ERROR -> {
+                labelRes = R.string.tv_status_error
+                dotRes = R.color.tv_status_error
+                heroRes = R.drawable.tv_bg_hero_error
+            }
+            else -> {
+                labelRes = R.string.tv_status_idle
+                dotRes = R.color.tv_status_disconnected
+                heroRes = R.drawable.tv_bg_hero_idle
+            }
         }
-        binding.tvStatusText.text = getString(labelRes)
+
+        binding.tvStatusText.setText(labelRes)
         binding.tvStatusDot.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), dotRes)
 
-        val running = state == P2PTapVpnService.STATE_RUNNING
-        binding.tvHeroToggle.text =
-            if (running) getString(R.string.tv_disconnect) else getString(R.string.tv_connect)
-        binding.tvHeroToggle.isEnabled = state != P2PTapVpnService.STATE_STOPPING
-
-        // The addresses line doubles as the error line: a disconnected node
-        // has no addresses to show, and the slot should not read as broken.
-        // renderState is the single source of truth for this line; loadIdentity
-        // only updates cachedAddresses and re-invokes renderState.
-        val detail = message.trim()
-        if (detail.isNotEmpty() && !running) {
-            binding.tvAddresses.visibility = View.VISIBLE
-            binding.tvAddresses.text = detail
-        } else {
-            binding.tvAddresses.visibility = View.VISIBLE
-            binding.tvAddresses.text = cachedAddresses ?: getString(R.string.tv_addresses_none)
+        // Re-inflating a four-layer drawable at status-tick rate is wasteful;
+        // StateFlow already de-duplicates equal emissions, but a TIMEOUT that
+        // flickers between TIMEOUT and ERROR would still swap it every frame.
+        if (heroBackgroundRes != heroRes) {
+            binding.tvHeroCard.setBackgroundResource(heroRes)
+            heroBackgroundRes = heroRes
         }
 
+        val running = state == P2PTapVpnService.STATE_RUNNING
+        renderToggle(state)
         pendingConnect = !running && state != P2PTapVpnService.STATE_STOPPING
+
+        lastState = state
+        lastMessage = message
+        renderSubtitle()
+
+        binding.tvAddresses.text = cachedAddresses ?: getString(R.string.tv_addresses_none)
+    }
+
+    /**
+     * The line under the state word.
+     *
+     * It carries the engine's message when there is one — that is how an error
+     * explains itself without a second row — and otherwise falls back to the
+     * peer breakdown, which is the most useful thing to know while connected.
+     * It hides entirely rather than sitting there empty: an empty slot under
+     * the state word reads as broken.
+     */
+    private fun renderSubtitle() {
+        val metrics = lastMetrics
+        val detail = lastMessage.trim()
+        val text = detail.ifBlank {
+            if (lastState == P2PTapVpnService.STATE_RUNNING && metrics != null &&
+                metrics.peerCount > 0
+            ) {
+                getString(
+                    R.string.tv_peers_summary_fmt,
+                    resources.getQuantityString(
+                        R.plurals.tv_peer_count, metrics.peerCount, metrics.peerCount
+                    ),
+                    getString(R.string.tv_path_direct), metrics.directPeers,
+                    getString(R.string.tv_path_relay), metrics.relayPeers,
+                )
+            } else {
+                ""
+            }
+        }
+        binding.tvStatusSub.text = text
+        binding.tvStatusSub.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    /**
+     * The toggle changes both its label and its colour per state.
+     *
+     * Colour encodes intent, not status: red is destructive (pressing it ends
+     * a working tunnel), the neutral tone is a way out (cancel a connection
+     * that has not landed yet), and primary is "do the thing". Painting the
+     * cancel state brand-cyan made the one button on screen look like the
+     * primary action while it did the opposite.
+     */
+    private fun renderToggle(state: String) {
+        val ctx = requireContext()
+        val labelRes: Int
+        val bgRes: Int
+        val fgRes: Int
+        when (state) {
+            P2PTapVpnService.STATE_RUNNING -> {
+                labelRes = R.string.tv_disconnect
+                bgRes = R.color.tv_status_error
+                fgRes = R.color.md_theme_onError
+            }
+            P2PTapVpnService.STATE_STARTING -> {
+                labelRes = R.string.tv_cancel
+                bgRes = R.color.md_theme_secondaryContainer
+                fgRes = R.color.md_theme_onSecondaryContainer
+            }
+            P2PTapVpnService.STATE_STOPPING -> {
+                labelRes = R.string.tv_status_stopping
+                bgRes = R.color.md_theme_secondaryContainer
+                fgRes = R.color.md_theme_onSecondaryContainer
+            }
+            P2PTapVpnService.STATE_TIMEOUT,
+            P2PTapVpnService.STATE_ERROR -> {
+                labelRes = R.string.tv_retry
+                bgRes = R.color.md_theme_primary
+                fgRes = R.color.md_theme_onPrimary
+            }
+            else -> {
+                labelRes = R.string.tv_connect
+                bgRes = R.color.md_theme_primary
+                fgRes = R.color.md_theme_onPrimary
+            }
+        }
+
+        binding.tvHeroToggle.setText(labelRes)
+        binding.tvHeroToggle.isEnabled = state != P2PTapVpnService.STATE_STOPPING
+        val bg = ContextCompat.getColorStateList(ctx, bgRes)
+        val fg = ContextCompat.getColor(ctx, fgRes)
+        binding.tvHeroToggle.backgroundTintList = bg
+        binding.tvHeroToggle.setTextColor(fg)
+        binding.tvHeroToggle.iconTint = ColorStateList.valueOf(fg)
     }
 
     private fun renderMetrics(metrics: NodeMetrics) {
+        lastMetrics = metrics
         binding.tvTxSpeed.text = TvFormat.speed(metrics.txSpeed)
         binding.tvRxSpeed.text = TvFormat.speed(metrics.rxSpeed)
-        binding.tvTotalTx.text =
-            getString(R.string.tv_total_tx_fmt, TvFormat.bytes(metrics.totalTx))
-        binding.tvPeerCount.text = resources.getQuantityString(
-            R.plurals.tv_peer_count, metrics.peerCount, metrics.peerCount
-        )
+        binding.tvSessionTx.text = TvFormat.bytes(metrics.totalTx)
+        binding.tvSessionRx.text = TvFormat.bytes(metrics.totalRx)
+        binding.tvSessionPeers.text = metrics.peerCount.toString()
+        // The subtitle may be showing the peer breakdown, so it has to follow.
+        renderSubtitle()
     }
 
     // ── Identity and versions, all off the main thread ─────────────────────
@@ -199,9 +288,13 @@ class TvHomeFragment : Fragment() {
                 ?.trim()
                 ?.takeIf { it.isNotEmpty() }
             launch(Dispatchers.Main) {
-                cachedAddresses = addrs?.let { TvFormat.shorten(it, 56, 24) }
+                cachedAddresses = addrs
+                    ?.split(Regex("\\s+"))
+                    ?.filter { it.isNotBlank() }
+                    ?.take(2)
+                    ?.joinToString("\n") { TvFormat.shorten(it, 26, 14) }
+                    ?.takeIf { it.isNotEmpty() }
                     ?: getString(R.string.tv_addresses_none)
-                // Re-render so renderState picks up the new cachedAddresses.
                 val s = P2PStateRepository.status.value
                 renderState(s.state, s.message)
             }

@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    S1 Home. Two zones:
-    1. Hero card (top ~55%): status dot + state, node identity, up/down speeds,
-       total counters, and the single primary toggle button. This is the
-       surface a TV user opens the app for.
-    2. Nav grid (bottom ~45%): four cards for Peers, Transfer, Settings,
-       Diagnostics. Each card scales on focus and navigates to that screen.
+    S1 Home, 10-foot layout.
 
-    The nav grid exists so the primary action can always be reached without
-    going through the rail, but the rail is the canonical navigation surface.
+    Three zones, laid out left to right because a 16:9 panel has width to
+    spend and the previous vertical stack did not spend it:
 
-    Everything is a MaterialCardView with Widget.P2ptap.Tv.Card, which sets
-    cardElevation=0dp (flat design, no drop shadow at TV distance) and
-    cardCornerRadius=24dp.
+      1. Glass hero (left, fills remaining width) — connection state, node
+         identity, addresses, and the one action. The state tint of the card's
+         radial glow is what answers "is the mesh on" from across the room.
+      2. Live throughput (right column, top) — up/down speed for this second.
+      3. Session (right column, bottom) — counters since the tunnel came up.
+
+    The old layout spent roughly 240dp of the same screen on four nav cards
+    that navigated to Peers, Transfer, Settings and Diagnostics — all four of
+    which are already rail destinations one focus-hop away. Removing them is
+    not a simplification for its own sake: it is the space this screen needed
+    to show throughput and counters without pushing the hero smaller.
+
+    Vertical budget against 540dp at xhdpi:
+
+        padding          20 + 20                      40
+        eyebrow row      18
+        gap to cards    12
+        hero / column   470  (20 + 18 + 12 = 50 above it)
+
+    Nothing here scrolls. A TV has no scroll gesture, so anything that does not
+    fit is simply gone.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,422 +33,363 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/tv_bg_window"
+    android:paddingStart="@dimen/tv_screen_padding_h"
+    android:paddingEnd="@dimen/tv_screen_padding_h"
+    android:paddingTop="@dimen/tv_screen_padding_v"
+    android:paddingBottom="@dimen/tv_screen_padding_v"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context="app.fjj.p2ptap.tv.ui.TvHomeFragment">
 
+    <TextView
+        android:id="@+id/tv_hero_eyebrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_hero_eyebrow"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:letterSpacing="0.16"
+        android:textColor="@color/md_theme_onSurfaceVariant"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_hero_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:textSize="13sp"
+        android:letterSpacing="0.04"
+        android:textColor="#8A9DB4"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_hero_eyebrow"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- ════════════════════════════════════════════════════════════════════
-         Hero card: connection status, identity, and the toggle.
+         Glass hero.
+         A FrameLayout with a layer-list background rather than a
+         MaterialCardView: CardView sets its own background programmatically,
+         which silently replaces any android:background drawable, and the
+         glass look *is* the drawable (four stacked layers). Children stay
+         inside the 24dp padding so the 26dp corners never clip anything.
          ════════════════════════════════════════════════════════════════════ -->
-    <com.google.android.material.card.MaterialCardView
+    <FrameLayout
         android:id="@+id/tv_hero_card"
-        style="@style/Widget.P2ptap.Tv.Card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
-        app:cardBackgroundColor="@color/md_theme_surface"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="28dp"
-        app:layout_constraintDimensionRatio="H,17:6"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_nav_grid_scroll"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="@dimen/tv_home_gap"
+        android:background="@drawable/tv_bg_hero_idle"
+        app:layout_constraintTop_toBottomOf="@id/tv_hero_eyebrow"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toStartOf="@id/tv_home_col">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="32dp">
+            android:orientation="vertical"
+            android:padding="@dimen/tv_hero_pad">
 
-            <!-- Top row: brand label (left) and version info (right). -->
-            <TextView
-                android:id="@+id/tv_hero_eyebrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tv_hero_eyebrow"
-                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
-                android:textColor="@color/md_theme_onSurfaceVariant"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_hero_version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
-                android:textColor="@color/md_theme_onSurfaceVariant"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:text="v1.0.0 · engine 1.4.2" />
-
-            <!-- Status row: dot + state label. -->
+            <!-- State: dot + word. The word is the answer to the only question
+                 a TV user opens this app to ask. -->
             <LinearLayout
-                android:id="@+id/tv_status_row"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="20dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_hero_eyebrow"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_hero_toggle">
+                android:gravity="center_vertical">
 
                 <View
                     android:id="@+id/tv_status_dot"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
                     android:background="@drawable/tv_bg_status_dot"
                     android:backgroundTint="@color/tv_status_disconnected" />
 
                 <TextView
                     android:id="@+id/tv_status_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.DisplaySmall"
-                    android:textColor="@color/md_theme_onBackground"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeroState"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     tools:text="CONNECTED" />
             </LinearLayout>
 
-            <!-- Toggle button (right of the status row). -->
+            <!-- Doubles as the error line: a disconnected node has no address
+                 to show and the slot must not read as broken, so the reason
+                 replaces the summary rather than stacking under it. -->
+            <TextView
+                android:id="@+id/tv_status_sub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="33dp"
+                android:layout_marginTop="9dp"
+                android:textSize="17sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="#9FB0C6"
+                tools:text="4 peers · 2 direct · 2 relay" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/tv_hero_stroke" />
+
+            <TextView
+                android:id="@+id/tv_node_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="Mesh Node · Living Room" />
+
+            <!-- One address per line, monospace, ellipsised in the middle so
+                 the transport suffix stays visible. The old single wrapped
+                 line cut the IPv6 address off at "tcp…". -->
+            <TextView
+                android:id="@+id/tv_addresses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:fontFamily="monospace"
+                android:textSize="15sp"
+                android:lineSpacingExtra="3dp"
+                android:maxLines="2"
+                android:ellipsize="middle"
+                android:textColor="#7E93AD"
+                tools:text="/ip4/10.0.0.88/tcp/4141\n/ip6/fd00::88/tcp/4141" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tv_hero_toggle"
-                style="@style/Widget.P2ptap.Tv.Button"
+                style="@style/Widget.P2ptap.Tv.Cta"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/tv_hero_btn_h"
                 android:text="@string/tv_connect"
                 app:icon="@drawable/ic_tv_power"
-                app:iconGravity="start"
-                app:iconSize="36dp"
-                app:iconPadding="16dp"
-                app:layout_constraintTop_toTopOf="@id/tv_status_row"
-                app:layout_constraintBottom_toBottomOf="@id/tv_status_row"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- Node identity: name, addresses. -->
-            <LinearLayout
-                android:id="@+id/tv_node_info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="32dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_status_row"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <TextView
-                    android:id="@+id/tv_node_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineMedium"
-                    android:textColor="@color/md_theme_onBackground"
-                    tools:text="Mesh Node" />
-
-                <TextView
-                    android:id="@+id/tv_addresses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyMedium"
-                    android:textColor="@color/md_theme_onSurfaceVariant"
-                    android:fontFamily="monospace"
-                    android:maxLines="2"
-                    android:ellipsize="middle"
-                    tools:text="/ip4/10.0.0.88/tcp/4141 /ip6/fd00::88/tcp/4141" />
-            </LinearLayout>
-
-            <!-- Metrics row: 4 stat cells. -->
-            <LinearLayout
-                android:id="@+id/tv_metrics_row"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="24dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_node_info"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/tv_speed_tx_label"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
-                    android:textColor="@color/md_theme_onSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/tv_tx_speed"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
-                    android:textColor="@color/md_theme_primary"
-                    android:fontFamily="monospace"
-                    tools:text="12.4 MB/s" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/tv_speed_rx_label"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
-                    android:textColor="@color/md_theme_onSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/tv_rx_speed"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.HeadlineSmall"
-                    android:textColor="@color/md_theme_tertiary"
-                    android:fontFamily="monospace"
-                    tools:text="3.1 MB/s" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/tv_total_label"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.LabelSmall"
-                    android:textColor="@color/md_theme_onSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/tv_total_tx"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
-                    android:textColor="@color/md_theme_onSurface"
-                    android:fontFamily="monospace"
-                    tools:text="1.2 GB" />
-
-                <TextView
-                    android:id="@+id/tv_peer_count"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodyLarge"
-                    android:textColor="@color/md_theme_onSurface"
-                    tools:text="4 peers" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+                app:backgroundTint="@color/md_theme_primary"
+                app:iconTint="@color/md_theme_onPrimary"
+                android:textColor="@color/md_theme_onPrimary" />
+        </LinearLayout>
+    </FrameLayout>
 
     <!-- ════════════════════════════════════════════════════════════════════
-         Nav grid: 4 quick-nav cards below the hero.
+         Right column: throughput and session counters.
          ════════════════════════════════════════════════════════════════════ -->
-    <HorizontalScrollView
-        android:id="@+id/tv_nav_grid_scroll"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/tv_home_col"
+        android:layout_width="@dimen/tv_home_col_w"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
-        android:fillViewport="true"
-        android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/tv_hero_card"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_hero_eyebrow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:divider="@color/md_theme_outlineVariant"
-            android:showDividers="middle"
-            android:dividerPadding="8dp">
+            android:layout_height="0dp"
+            android:layout_weight="11"
+            android:background="@drawable/tv_bg_card">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/tv_nav_peers"
-                style="@style/Widget.P2ptap.Tv.Card.Focusable"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="24dp">
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_card_throughput"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.14"
+                    android:textColor="@color/md_theme_onSurfaceVariant" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_tv_peers"
-                        android:contentDescription="@null"
-                        app:tint="@color/md_theme_primary" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="bottom">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/tv_screen_peers"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleMedium"
-                        android:textColor="@color/md_theme_onSurface" />
+                        android:text="@string/tv_arrow_up"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_primary" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_tx_speed"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/tv_screen_peers_hint"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
-                        android:textColor="@color/md_theme_onSurfaceVariant"
-                        android:maxLines="2"
-                        android:gravity="center" />
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="monospace"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/md_theme_primary"
+                        tools:text="12.4 MB/s" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/tv_nav_transfer"
-                style="@style/Widget.P2ptap.Tv.Card.Focusable"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="24dp">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_tv_transfer"
-                        android:contentDescription="@null"
-                        app:tint="@color/md_theme_primary" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="bottom">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/tv_screen_transfer"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleMedium"
-                        android:textColor="@color/md_theme_onSurface" />
+                        android:text="@string/tv_arrow_down"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_tertiary" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_rx_speed"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/tv_screen_transfer_hint"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
-                        android:textColor="@color/md_theme_onSurfaceVariant"
-                        android:maxLines="2"
-                        android:gravity="center" />
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="monospace"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/md_theme_tertiary"
+                        tools:text="3.1 MB/s" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </FrameLayout>
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/tv_nav_settings"
-                style="@style/Widget.P2ptap.Tv.Card.Focusable"
-                android:layout_width="0dp"
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:layout_marginTop="@dimen/tv_home_card_gap"
+            android:background="@drawable/tv_bg_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="24dp">
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_card_session"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.14"
+                    android:textColor="@color/md_theme_onSurfaceVariant" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_tv_settings"
-                        android:contentDescription="@null"
-                        app:tint="@color/md_theme_primary" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/tv_screen_settings"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleMedium"
-                        android:textColor="@color/md_theme_onSurface" />
+                        android:layout_weight="1"
+                        android:text="@string/tv_session_up"
+                        android:textSize="15sp"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
 
                     <TextView
+                        android:id="@+id/tv_session_tx"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/tv_screen_settings_hint"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
-                        android:textColor="@color/md_theme_onSurfaceVariant"
-                        android:maxLines="2"
-                        android:gravity="center" />
+                        android:fontFamily="monospace"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_onSurface"
+                        tools:text="1.2 GB" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/tv_nav_diagnostics"
-                style="@style/Widget.P2ptap.Tv.Card.Focusable"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_tv_diagnostics"
-                        android:contentDescription="@null"
-                        app:tint="@color/md_theme_primary" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/tv_screen_diagnostics"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleMedium"
-                        android:textColor="@color/md_theme_onSurface" />
+                        android:layout_weight="1"
+                        android:text="@string/tv_session_down"
+                        android:textSize="15sp"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
 
                     <TextView
+                        android:id="@+id/tv_session_rx"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/tv_screen_diagnostics_hint"
-                        android:textAppearance="@style/TextAppearance.P2ptap.Tv.BodySmall"
-                        android:textColor="@color/md_theme_onSurfaceVariant"
-                        android:maxLines="2"
-                        android:gravity="center" />
+                        android:fontFamily="monospace"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_onSurface"
+                        tools:text="486 MB" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </HorizontalScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/tv_session_peers"
+                        android:textSize="15sp"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/tv_session_peers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_onSurface"
+                        tools:text="4" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

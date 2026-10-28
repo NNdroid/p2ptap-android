@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Selected rail item background. A filled rounded rectangle with
-    the primary container color, giving the selected item visual
-    weight against the unselected items.
+    Current destination: a wash plus a 3dp accent bar on the leading edge.
+
+    This is selection, not focus — it answers "which screen am I on" and stays
+    put while the remote moves. Focus is bg_tv_rail_item_focus. The two used
+    to be one state, so the highlight followed the page instead of the cursor
+    and a user pushing DPAD had no idea where the cursor actually was.
 -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/md_theme_primaryContainer" />
-    <corners android:radius="20dp" />
-    <stroke
-        android:width="1dp"
-        android:color="@color/md_theme_primary" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tv_rail_item_selected_fill" />
+            <corners android:radius="@dimen/tv_rail_corner" />
+        </shape>
+    </item>
+
+    <item
+        android:width="@dimen/tv_rail_accent_w"
+        android:height="26dp"
+        android:gravity="start|center_vertical">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/md_theme_primary" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+</layer-list>

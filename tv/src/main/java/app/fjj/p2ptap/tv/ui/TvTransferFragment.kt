@@ -57,10 +57,11 @@ class TvTransferFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        TvFocusAnimation.attachTo(binding.tvTransferFile, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvTransferClipboard, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvTransferQr, TvFocusAnimation.SCALE_CARD)
-        TvFocusAnimation.attachTo(binding.tvTransferNew, TvFocusAnimation.SCALE_CARD)
+        // Cards carry the ring, not just the scale — see TvFocusAnimation.
+        TvFocusAnimation.attachToCard(binding.tvTransferFile, TvFocusAnimation.SCALE_CARD)
+        TvFocusAnimation.attachToCard(binding.tvTransferClipboard, TvFocusAnimation.SCALE_CARD)
+        TvFocusAnimation.attachToCard(binding.tvTransferQr, TvFocusAnimation.SCALE_CARD)
+        TvFocusAnimation.attachToCard(binding.tvTransferNew, TvFocusAnimation.SCALE_CARD)
 
         binding.tvTransferFile.setOnClickListener {
             configLauncher.launch(TvTransfer.IMPORT_MIME_TYPES)

@@ -3,20 +3,26 @@ package app.fjj.p2ptap.tv
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.fjj.p2ptap.crash.CrashReportDialog
 import app.fjj.p2ptap.service.LogCollector
+import app.fjj.p2ptap.service.P2PStateRepository
 import app.fjj.p2ptap.service.P2PTapVpnService
 import app.fjj.p2ptap.tv.databinding.ActivityTvMainBinding
 import app.fjj.p2ptap.tv.ui.TvNavDestination
 import app.fjj.p2ptap.tv.ui.TvNavRailAdapter
+import kotlinx.coroutines.launch
 
 /**
  * The single Activity the TV build launches into.
  *
- * It hosts a two-pane shell: a vertical rail on the left (fixed 240dp) and a
+ * It hosts a two-pane shell: a vertical rail on the left (fixed 200dp) and a
  * [NavHostFragment] on the right. Each destination is a Fragment, so the
  * platform's Activity lifecycle never fires when the user moves between
  * screens — the process, the memory and the Go engine's native handle are all
@@ -24,15 +30,16 @@ import app.fjj.p2ptap.tv.ui.TvNavRailAdapter
  * design so heavy: every destination switch was a full Activity cold start,
  * which on a box that throttles the CPU under load meant a 600–900 ms gap.
  *
- * The rail is a RecyclerView with [TvNavRailAdapter]; each item is a
- * MaterialButton in `Widget.P2ptap.Tv.RailItem` shape. Focus animation is a
- * 1.06x scale with 200ms AccelerateDecelerate, which matches the Material
- * Design guidance for remote-driven interfaces.
+ * The rail is a RecyclerView with [TvNavRailAdapter]. Its 200dp width and
+ * 52dp row height are a vertical budget, not a percentage: a 1080p set at
+ * xhdpi is only 540dp tall, and the rail has to hold a brand row plus seven
+ * destinations inside that. The previous 240dp/72dp combination overflowed by
+ * 136dp, which put Keep-alive and About below the fold.
  *
  * All the business logic that used to live in the eight Activities — VPN
  * toggle, Shizuku status, config import, log collection — is in the fragments
  * and the :core module. This Activity owns only the shell and cross-cutting
- * concerns (log collector install, telemetry, back handling).
+ * concerns (log collector install, telemetry, rail state, back handling).
  */
 class TvMainActivity : AppCompatActivity() {
 
@@ -89,6 +96,16 @@ class TvMainActivity : AppCompatActivity() {
             railAdapter.setSelectedDestination(destination.id)
         }
 
+        // Repeat the connection state at the foot of the rail. A TV session is
+        // spent on Peers or Diagnostics as often as on Home, and "is the
+        // tunnel still up" is the question a viewer has while looking at those
+        // screens. Cheap to maintain: one StateFlow collector for the Activity.
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                P2PStateRepository.status.collect { renderRailState(it.state) }
+            }
+        }
+
         // Intercept BACK: on a nested destination it navigates up the nav
         // stack; on the top-level destination it lets the platform handle it
         // (which on TV is: minimize the app).
@@ -123,6 +140,33 @@ class TvMainActivity : AppCompatActivity() {
             })
         }
         super.onPause()
+    }
+
+    /**
+     * Mirror the VPN state into the foot of the rail.
+     *
+     * Same string and colour mapping as the home hero, deliberately: two places
+     * on screen saying "connected" in two different words is worse than one of
+     * them being absent.
+     */
+    private fun renderRailState(state: String) {
+        val (labelRes, colorRes) = when (state) {
+            P2PTapVpnService.STATE_RUNNING ->
+                R.string.tv_status_running to R.color.tv_status_connected
+            P2PTapVpnService.STATE_STARTING ->
+                R.string.tv_status_starting to R.color.tv_status_connecting
+            P2PTapVpnService.STATE_STOPPING ->
+                R.string.tv_status_stopping to R.color.tv_status_stopping
+            P2PTapVpnService.STATE_TIMEOUT ->
+                R.string.tv_status_timeout to R.color.tv_status_timeout
+            P2PTapVpnService.STATE_ERROR ->
+                R.string.tv_status_error to R.color.tv_status_error
+            else ->
+                R.string.tv_status_idle to R.color.tv_status_disconnected
+        }
+        binding.tvRailState.setText(labelRes)
+        binding.tvRailState.setTextColor(ContextCompat.getColor(this, colorRes))
+        binding.tvRailDot.backgroundTintList = ContextCompat.getColorStateList(this, colorRes)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

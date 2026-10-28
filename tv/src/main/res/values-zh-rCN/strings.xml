@@ -256,4 +256,13 @@
     <string name="tv_about_peer_label">节点 ID</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">开源。许可证见仓库。</string>
+    <string name="tv_retry">重试</string>
+    <string name="tv_cancel">取消</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">实时速率</string>
+    <string name="tv_card_session">会话</string>
+    <string name="tv_session_up">已上传</string>
+    <string name="tv_session_down">已下载</string>
+    <string name="tv_session_peers">节点</string>
 </resources>

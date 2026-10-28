@@ -255,4 +255,13 @@
     <string name="tv_about_peer_label">ピア ID</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">オープンソース。ライセンスはリポジトリ参照。</string>
+    <string name="tv_retry">再試行</string>
+    <string name="tv_cancel">キャンセル</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">リアルタイム速度</string>
+    <string name="tv_card_session">セッション</string>
+    <string name="tv_session_up">送信</string>
+    <string name="tv_session_down">受信</string>
+    <string name="tv_session_peers">ピア</string>
 </resources>

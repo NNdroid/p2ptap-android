@@ -2,43 +2,44 @@
 <!--
     One item in the left navigation rail.
 
-    Uses a plain LinearLayout (not MaterialButton) because the
-    MaterialButton static-init check for colorPrimary throws
-    IllegalArgumentException at runtime on this device's Material
-    theme resolution. A LinearLayout with an ImageView and TextView
-    gives us the same visual result with no Material dependency.
+    52dp tall with a 4dp gap. The height is a budget, not a taste: seven rows
+    at the old 72dp + 16dp of margin came to 560dp against the 424dp a rail
+    actually gets on a 1080p set, so Keep-alive and About lived off-screen.
+    52dp keeps the 17sp label (the smallest size still legible at 3 m) and
+    brings the column to 392dp.
 
-    The rail item is focusable so the TV remote can move between
-    items. Focus is handled by TvFocusAnimation.attachTo in the
-    adapter.
+    Plain LinearLayout rather than MaterialButton: MaterialButton's static
+    colorPrimary check threw IllegalArgumentException at runtime on this
+    device's theme resolution. An ImageView plus a TextView gives the same
+    look with no Material dependency.
+
+    Focus is a ring (bg_tv_rail_item_focus), selection is an accent bar
+    (bg_tv_rail_item_selected). The adapter swaps between them — they are two
+    independent states, not one.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tv_rail_item"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="@dimen/tv_rail_item_h"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:clickable="true"
     android:background="@drawable/bg_tv_rail_item"
-    android:elevation="0dp"
-    app:layout_constraintStart_toStartOf="parent"
-    tools:ignore="HardcodedText"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:elevation="0dp">
 
     <ImageView
         android:id="@+id/tv_rail_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/tv_rail_icon"
+        android:layout_height="@dimen/tv_rail_icon"
         android:src="@drawable/ic_tv_power"
         app:tint="@color/md_theme_onSurfaceVariant"
         android:contentDescription="@null" />
@@ -48,9 +49,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="16dp"
-        android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
-        android:textColor="@color/md_theme_onSurfaceVariant"
+        android:layout_marginStart="12dp"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/tv_rail_label"
         android:textAllCaps="false"
         android:singleLine="true"
         android:ellipsize="end"

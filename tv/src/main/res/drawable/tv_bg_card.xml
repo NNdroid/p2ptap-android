@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The standard card: filled, 1dp stroke, 20dp corners.
+
+    Deliberately NOT glass. Only the hero is glass, so that the hero is the
+    one surface the eye lands on first. Making every card translucent turns
+    the screen into an even wash of the same value and the hierarchy
+    disappears — which is exactly what the old flat #0F172A cards did.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/tv_card_radius" />
+            <gradient
+                android:angle="270"
+                android:startColor="@color/tv_card_fill_top"
+                android:endColor="@color/tv_card_fill_bottom" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/tv_card_radius" />
+            <stroke
+                android:width="@dimen/tv_card_stroke"
+                android:color="@color/tv_card_stroke" />
+        </shape>
+    </item>
+</layer-list>

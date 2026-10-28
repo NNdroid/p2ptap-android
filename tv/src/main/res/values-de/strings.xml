@@ -256,4 +256,13 @@
     <string name="tv_about_peer_label">Peer-ID</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">Open Source. Lizenzdetails im Repository.</string>
+    <string name="tv_retry">ERNEUT</string>
+    <string name="tv_cancel">ABBRECHEN</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">Live-Durchsatz</string>
+    <string name="tv_card_session">Sitzung</string>
+    <string name="tv_session_up">Hochgeladen</string>
+    <string name="tv_session_down">Heruntergeladen</string>
+    <string name="tv_session_peers">Peers</string>
 </resources>

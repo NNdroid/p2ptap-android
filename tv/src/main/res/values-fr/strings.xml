@@ -256,4 +256,13 @@
     <string name="tv_about_peer_label">ID de pair</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">Code source ouvert. Voir le dépôt pour la licence.</string>
+    <string name="tv_retry">RÉESSAYER</string>
+    <string name="tv_cancel">ANNULER</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">Débit en direct</string>
+    <string name="tv_card_session">Session</string>
+    <string name="tv_session_up">Envoyé</string>
+    <string name="tv_session_down">Reçu</string>
+    <string name="tv_session_peers">Pairs</string>
 </resources>

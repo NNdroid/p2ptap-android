@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Rail item background. A rounded rectangle with a subtle stroke.
-    On focus, the item scales up (handled by TvFocusAnimation) and
-    the adapter swaps the background to a selected-state drawable.
-    Unfocused/unselected items use this transparent version.
+    Unfocused, unselected rail item.
+
+    No stroke. The previous version drew a 1dp outline on all seven items,
+    which at 10 feet reads as seven empty boxes stacked in a column — the rail
+    looked like a form, not a menu. Fill and ring return only when the item is
+    focused (bg_tv_rail_item_focus) or is the current destination
+    (bg_tv_rail_item_selected); the two states are independent and can be true
+    at the same time.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@android:color/transparent" />
-    <corners android:radius="20dp" />
-    <stroke
-        android:width="1dp"
-        android:color="@color/md_theme_outlineVariant" />
+    <corners android:radius="@dimen/tv_rail_corner" />
 </shape>

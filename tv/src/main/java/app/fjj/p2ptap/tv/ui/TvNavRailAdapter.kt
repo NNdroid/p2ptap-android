@@ -1,13 +1,12 @@
 package app.fjj.p2ptap.tv.ui
 
-import android.graphics.drawable.Drawable
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getString
 import androidx.recyclerview.widget.RecyclerView
@@ -16,13 +15,18 @@ import app.fjj.p2ptap.tv.R
 /**
  * Rail item adapter for the left navigation rail.
  *
- * Each item is a LinearLayout with an icon and label. State changes are
- * handled by swapping the icon tint and label color between
- * `colorPrimary` (selected) and `colorOnSurfaceVariant` (unselected).
+ * The important part of this class is that **selection and focus are two
+ * different states**, and they used to be one.
  *
- * The selection change is animated by the RecyclerView's default
- * focus listener on the item; the item's own focus listener calls
- * TvFocusAnimation.attachTo, which scales the item.
+ * Before: the item's fill followed `selectedId`, i.e. the destination you were
+ * already on, and focus was expressed only by a 1.06x scale from
+ * [TvFocusAnimation]. Moving the remote down the rail left the highlight
+ * sitting on the current page while the cursor was somewhere else entirely —
+ * on a dark panel the scale change was not enough to find it.
+ *
+ * Now: selection is the destination you are on (wash + leading accent bar),
+ * focus is where the remote is pointing (3dp ring), and both can be true at
+ * the same time without either one hiding the other.
  */
 class TvNavRailAdapter(
     private val destinations: List<TvNavDestination>,
@@ -41,36 +45,53 @@ class TvNavRailAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_tv_rail, parent, false)
         return RailItemHolder(view).apply {
-            TvFocusAnimation.attachTo(root, TvFocusAnimation.SCALE_RAIL)
+            root.isFocusable = true
+            root.isFocusableInTouchMode = true
             root.setOnClickListener {
                 val pos = bindingAdapterPosition
                 if (pos != RecyclerView.NO_POSITION) onSelect(destinations[pos])
+            }
+            root.setOnFocusChangeListener { v, hasFocus ->
+                TvFocusAnimation.animate(
+                    v,
+                    if (hasFocus) TvFocusAnimation.SCALE_RAIL else TvFocusAnimation.SCALE_NORMAL,
+                )
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) bindState(this, destinations[pos])
             }
         }
     }
 
     override fun onBindViewHolder(holder: RailItemHolder, position: Int) {
         val destination = destinations[position]
-        val isSelected = destination.id == selectedId
-
         holder.label.text = getString(holder.itemView.context, destination.labelRes)
-        val icon = getDrawable(holder.itemView.context, destination.iconRes)
-        if (icon != null) {
-            val context = holder.itemView.context
-            val tintRes = if (isSelected) R.color.md_theme_primary
-                          else R.color.md_theme_onSurfaceVariant
-            val tint = getColor(context, tintRes)
-            icon.setTint(tint)
-        }
-        holder.icon.setImageDrawable(icon)
+        holder.icon.setImageResource(destination.iconRes)
+        bindState(holder, destination)
+    }
 
-        val textColorRes = if (isSelected) R.color.md_theme_primary
-                           else R.color.md_theme_onSurfaceVariant
-        holder.label.setTextColor(getColor(holder.itemView.context, textColorRes))
+    /**
+     * Renders the combination of focus and selection for one item. Called from
+     * onBind and from the focus listener, so the two never disagree.
+     */
+    private fun bindState(holder: RailItemHolder, destination: TvNavDestination) {
+        val ctx = holder.itemView.context
+        val focused = holder.root.hasFocus()
+        val selected = destination.id == selectedId
+        val active = focused || selected
 
-        val bgRes = if (isSelected) R.drawable.bg_tv_rail_item_selected
-                    else R.drawable.bg_tv_rail_item
-        holder.root.setBackgroundResource(bgRes)
+        holder.label.setTextColor(
+            getColor(ctx, if (active) R.color.tv_rail_label_active else R.color.tv_rail_label)
+        )
+        holder.icon.imageTintList = ColorStateList.valueOf(
+            getColor(ctx, if (active) R.color.md_theme_primary else R.color.md_theme_onSurfaceVariant)
+        )
+        holder.root.setBackgroundResource(
+            when {
+                focused -> R.drawable.bg_tv_rail_item_focus
+                selected -> R.drawable.bg_tv_rail_item_selected
+                else -> R.drawable.bg_tv_rail_item
+            }
+        )
     }
 
     override fun getItemCount(): Int = destinations.size

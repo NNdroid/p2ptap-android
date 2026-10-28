@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Focused rail item: 3dp ring plus a stronger wash.
+
+    This is the single most important state in a TV UI. The old build showed
+    focus only as a 1.06x scale and 8dp of elevation, both of which are
+    invisible on a dark panel at three metres — a user could not tell which
+    row the remote was pointing at. A ring is unambiguous on any background
+    and does not depend on the panel's contrast.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tv_rail_item_focus_fill" />
+            <corners android:radius="@dimen/tv_rail_corner" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/tv_rail_corner" />
+            <stroke
+                android:width="@dimen/tv_focus_ring"
+                android:color="@color/md_theme_focusRing" />
+        </shape>
+    </item>
+</layer-list>

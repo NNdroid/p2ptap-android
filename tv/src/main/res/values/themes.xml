@@ -39,7 +39,10 @@
 
         <!-- ── Surface / background ──────────────────────────────────── -->
         <item name="android:colorBackground">@color/md_theme_background</item>
-        <item name="android:windowBackground">@color/md_theme_background</item>
+        <!-- A gradient, not a flat fill. The glass hero is translucent, and a
+             translucent card over a flat colour is indistinguishable from an
+             opaque one — the gradient is the layer that shows through. -->
+        <item name="android:windowBackground">@drawable/tv_bg_window</item>
         <item name="android:textColorPrimary">@color/md_theme_onBackground</item>
         <item name="android:textColorSecondary">@color/md_theme_onSurfaceVariant</item>
         <item name="android:colorAccent">@color/md_theme_primary</item>
@@ -119,6 +122,18 @@
         <item name="android:textColor">@color/md_theme_onBackground</item>
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- The connection state word. 38sp rather than DisplaySmall's 56sp: the
+         hero is a column now, not a full-width band, and the longest value any
+         locale produces is "DISCONNECTED" / "ПОДКЛЮЧЕНО" / "VERBUNDEN". At
+         56sp those ellipsise; at 38sp they clear the 315dp the status row
+         leaves beside the dot with room to spare. -->
+    <style name="TextAppearance.P2ptap.Tv.HeroState" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textSize">38sp</item>
+        <item name="android:textColor">@color/md_theme_onSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
     </style>
 
     <style name="TextAppearance.P2ptap.Tv.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
@@ -220,6 +235,10 @@
         <item name="cornerSize">20dp</item>
     </style>
 
+    <style name="ShapeAppearance.P2ptap.Tv.Button" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">16dp</item>
+    </style>
+
     <style name="ShapeAppearance.P2ptap.Tv.Large" parent="ShapeAppearance.Material3.Corner.Large">
         <item name="cornerSize">28dp</item>
     </style>
@@ -266,6 +285,27 @@
         <item name="android:gravity">center</item>
         <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Tv.Medium</item>
         <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!--
+        The hero action. Explicit insetTop/Bottom of 0dp matters: MaterialButton
+        defaults to 6dp of vertical inset, so a button declared at 62dp only
+        paints 50dp of content and a two-line label gets clipped. The phone
+        build had exactly that bug on its GitHub button; this is the same trap.
+    -->
+    <style name="Widget.P2ptap.Tv.Cta" parent="Widget.Material3.Button">
+        <item name="android:minWidth">@dimen/tv_hero_btn_w</item>
+        <item name="android:minHeight">@dimen/tv_hero_btn_h</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Tv.Button</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">12dp</item>
+        <item name="iconSize">22dp</item>
     </style>
 
     <!--

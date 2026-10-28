@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Window background. Not decoration — it is the layer the glass hero needs
+    in order to read as glass. A translucent card over a flat fill is
+    indistinguishable from an opaque card; the gradient is what shows through.
+
+    Kept deliberately low-contrast: at 3 m the top-to-bottom falloff should be
+    felt, not noticed. A steeper ramp turns the top of every screen into a
+    visible band on an OLED panel.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="#0C1526"
+        android:centerColor="#070C16"
+        android:endColor="#04070C" />
+</shape>

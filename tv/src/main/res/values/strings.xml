@@ -271,4 +271,13 @@
     <string name="tv_about_peer_label">Peer ID</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">Open source. See the repository for license details.</string>
+    <string name="tv_retry">RETRY</string>
+    <string name="tv_cancel">CANCEL</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">Live throughput</string>
+    <string name="tv_card_session">Session</string>
+    <string name="tv_session_up">Uploaded</string>
+    <string name="tv_session_down">Downloaded</string>
+    <string name="tv_session_peers">Peers</string>
 </resources>

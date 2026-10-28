@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Rail surface. A touch darker than the window gradient so the rail reads as
+    chrome sitting over the content, not as another panel floating on it.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/tv_rail_fill_top"
+        android:endColor="@color/tv_rail_fill_bottom" />
+</shape>

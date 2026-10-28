@@ -11,7 +11,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/tv_bg_window"
     android:padding="32dp">
 
     <TextView
@@ -209,7 +209,7 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
                 android:layout_weight="1"
-                android:background="@color/md_theme_background"
+                android:background="@drawable/tv_bg_window"
                 android:isScrollContainer="true"
                 android:padding="16dp">
 

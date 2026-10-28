@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P2PTap TV · UI Redesign</title>
+<style>
+  :root{
+    --bg:#070A10;
+    --surface:#0F172A;
+    --sc-low:#141B2E;
+    --sc:#1B2438;
+    --sc-high:#232E45;
+    --outline:#475569;
+    --outline-var:#1E293B;
+    --on-surface:#F8FAFC;
+    --on-var:#CBD5E1;
+    --muted:#94A3B8;
+    --primary:#22D3EE;
+    --tertiary:#34D399;
+    --ok:#10B981;
+    --warn:#F59E0B;
+    --err:#F87171;
+    --violet:#8B5CF6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#05070B;color:#E2E8F0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  body{padding:28px 24px 64px}
+  .doc{max-width:1180px;margin:0 auto 22px}
+  .doc h1{font-size:20px;font-weight:700;letter-spacing:.2px}
+  .doc p{font-size:13.5px;line-height:1.75;color:#8FA1B8;margin-top:8px;max-width:78ch}
+  .doc code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    background:#111A29;border:1px solid #1E293B;border-radius:5px;padding:1px 5px;color:#7DD3FC}
+
+  /* ── controls ─────────────────────────────────────────── */
+  .bar{max-width:1180px;margin:0 auto 16px;display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+  .group{display:flex;align-items:center;gap:8px;flex:0 0 auto;flex-wrap:nowrap}
+  .group > span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5A6B84;margin-right:2px}
+  .pill{font-size:12.5px;padding:6px 13px;border-radius:8px;border:1px solid #23314A;
+    background:#0B1220;color:#93A5BE;cursor:pointer;transition:.15s;font-family:inherit}
+  .pill:hover{border-color:#2F4260;color:#CFDCEB}
+  .pill[aria-pressed="true"]{background:#0E2C38;border-color:#22D3EE55;color:#67E8F9}
+
+  /* ── frame ────────────────────────────────────────────── */
+  .frame-wrap{max-width:1180px;margin:0 auto;position:relative}
+  .frame{width:100%;aspect-ratio:16/9;position:relative;overflow:hidden;border-radius:14px;
+    border:1px solid #1B2436;background:#000;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.9),0 0 0 1px #0A0F18}
+  .frame::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 0%,transparent 55%,rgba(0,0,0,.55) 100%)}
+
+  .stage{width:960px;height:540px;display:flex;position:absolute;top:0;left:0;
+    transform-origin:top left;background:
+      radial-gradient(140% 110% at 8% -10%, #0E1B2E 0%, transparent 55%),
+      linear-gradient(158deg,#0A1322 0%,#070C16 46%,#04070C 100%)}
+
+  /* ── rail ─────────────────────────────────────────────── */
+  .rail{width:200px;flex:0 0 200px;height:100%;display:flex;flex-direction:column;
+    padding:12px 10px;gap:4px;
+    background:linear-gradient(180deg,rgba(11,16,32,.92),rgba(7,11,20,.96));
+    border-right:1px solid rgba(148,163,184,.09)}
+  .brand{height:50px;display:flex;align-items:center;gap:10px;padding:0 9px;margin-bottom:2px}
+  .brand svg{width:24px;height:24px;flex:0 0 24px}
+  .brand b{font-size:17px;font-weight:700;letter-spacing:.2px;color:var(--on-surface)}
+
+  .rail-item{height:52px;flex:0 0 52px;display:flex;align-items:center;gap:12px;
+    padding:0 12px;border-radius:14px;cursor:pointer;position:relative;
+    border:1px solid transparent;color:var(--muted);
+    transition:transform .16s cubic-bezier(.4,0,.2,1),box-shadow .16s,background .16s,color .16s}
+  .rail-item svg{width:23px;height:23px;flex:0 0 23px;stroke:currentColor}
+  .rail-item span{font-size:17px;font-weight:600;letter-spacing:.1px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rail-item[data-selected="true"]{background:rgba(34,211,238,.10);color:#A5F3FC}
+  .rail-item[data-selected="true"]::before{content:"";position:absolute;left:0;top:13px;bottom:13px;
+    width:3px;border-radius:0 3px 3px 0;background:var(--primary);box-shadow:0 0 12px #22D3EE}
+
+  /* focus ring: the one signal that must never be ambiguous at 3 metres */
+  .focused{transform:scale(1.035);z-index:6;
+    box-shadow:0 0 0 3px var(--primary),0 0 26px rgba(34,211,238,.34),0 16px 34px rgba(0,0,0,.6)}
+  .rail-item.focused{background:rgba(34,211,238,.16);color:#E7FBFF}
+
+  .rail-foot{margin-top:auto;display:flex;align-items:center;gap:9px;padding:10px 12px;
+    border-radius:12px;background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.09)}
+  .rail-foot i{width:9px;height:9px;border-radius:50%;flex:0 0 9px;background:var(--muted)}
+  .rail-foot span{font-size:14px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+
+  /* ── content ──────────────────────────────────────────── */
+  .content{flex:1;height:100%;padding:24px 48px 24px 48px;display:flex;flex-direction:column;min-width:0}
+  .screen{display:flex;flex-direction:column;height:100%;min-height:0}
+  .screen[hidden]{display:none}
+
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#6B7F99;display:flex;justify-content:space-between;align-items:center}
+  .eyebrow em{font-style:normal;letter-spacing:.05em;font-weight:600;color:#54677F;
+    font-family:ui-monospace,Menlo,monospace}
+
+  /* glass hero */
+  .hero{position:relative;flex:1;margin-top:12px;border-radius:26px;padding:24px;
+    display:flex;flex-direction:column;overflow:hidden;
+    background:
+      radial-gradient(120% 130% at 6% -22%, var(--glow,rgba(100,116,139,.16)) 0%, transparent 62%),
+      linear-gradient(178deg,rgba(23,34,55,.80) 0%,rgba(14,21,35,.88) 52%,rgba(9,14,24,.92) 100%);
+    border:1px solid rgba(255,255,255,.115);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 60px rgba(255,255,255,.025),
+      0 26px 60px -22px rgba(0,0,0,.85)}
+  .hero::before{content:"";position:absolute;left:26px;right:26px;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.5) 18%,rgba(255,255,255,.5) 82%,transparent)}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(90% 60% at 50% 108%,rgba(0,0,0,.5),transparent 70%)}
+
+  .status-row{display:flex;align-items:center;gap:16px;margin-top:18px}
+  .dot{width:17px;height:17px;border-radius:50%;flex:0 0 17px;background:var(--muted);
+    box-shadow:0 0 0 5px rgba(148,163,184,.13)}
+  .status-text{font-size:38px;font-weight:800;letter-spacing:.5px;line-height:1;
+    color:var(--on-surface)}
+  .status-sub{font-size:17px;color:#9FB0C6;margin-top:9px;margin-left:33px}
+
+  .hero-sep{height:1px;background:linear-gradient(90deg,rgba(148,163,184,.22),rgba(148,163,184,.05));margin:20px 0 16px}
+
+  .node-name{font-size:25px;font-weight:700;color:var(--on-surface);letter-spacing:.2px}
+  .node-addr{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;
+    color:#7E93AD;margin-top:7px;line-height:1.6;display:flex;flex-direction:column}
+  .node-addr i{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .chip{font-size:13px;font-weight:700;letter-spacing:.04em;padding:5px 11px;border-radius:7px;
+    background:rgba(148,163,184,.10);border:1px solid rgba(148,163,184,.16);color:#A9BACC}
+  .chip.ok{background:rgba(16,185,129,.13);border-color:rgba(16,185,129,.32);color:#6EE7B7}
+  .chip.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.30);color:#FCD34D}
+  .chip.vio{background:rgba(139,92,246,.14);border-color:rgba(139,92,246,.32);color:#C4B5FD}
+
+  .hero-foot{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start;
+    gap:9px;padding-top:16px}
+  .cta{height:62px;min-width:246px;padding:0 26px;border-radius:16px;border:none;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:12px;
+    font-family:inherit;font-size:20px;font-weight:800;letter-spacing:.3px;
+    color:#04141B;background:linear-gradient(180deg,#5EE7F5,#22D3EE);
+    box-shadow:0 10px 26px -8px rgba(34,211,238,.6),inset 0 1px 0 rgba(255,255,255,.5);
+    transition:transform .16s,box-shadow .16s}
+  .cta svg{width:22px;height:22px;stroke:#04141B}
+  .cta.danger{background:linear-gradient(180deg,#FB8C8C,#F87171);color:#2A0808;
+    box-shadow:0 10px 26px -8px rgba(248,113,113,.5),inset 0 1px 0 rgba(255,255,255,.45)}
+  .cta.danger svg{stroke:#2A0808}
+  .cta.neutral{background:rgba(148,163,184,.13);color:#DCE7F3;
+    border:1px solid rgba(148,163,184,.30);box-shadow:none}
+  .cta.neutral svg{stroke:#DCE7F3}
+  .cta.neutral:hover{background:rgba(148,163,184,.19)}
+  .hint-inline{font-size:13.5px;color:#6C8099;line-height:1.45}
+
+  /* right column */
+  .col{display:flex;flex-direction:column;gap:14px;min-width:0}
+  .home-grid{display:grid;grid-template-columns:1fr 250px;gap:18px;flex:1;min-height:0;margin-top:12px}
+  .home-grid .hero{margin-top:0}
+
+  .card{border-radius:20px;padding:16px 18px;background:linear-gradient(180deg,rgba(28,39,61,.72),rgba(18,26,42,.82));
+    border:1px solid rgba(148,163,184,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.055);
+    display:flex;flex-direction:column;min-height:0;transition:transform .16s,box-shadow .16s}
+  .card-title{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6E8299}
+  .big{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:31px;font-weight:700;
+    letter-spacing:-.5px;line-height:1.1;margin-top:7px;font-variant-numeric:tabular-nums}
+  .big.tx{color:#67E8F9}
+  .big.rx{color:#6EE7B7}
+  .big.plain{font-size:25px;color:var(--on-surface)}
+  .unit{font-size:13px;font-weight:600;color:#5E738C;margin-left:5px;letter-spacing:0}
+  .ar{font-style:normal;font-size:19px;margin-right:5px;opacity:.8;font-weight:700}
+  .spark{margin-top:10px;height:34px;width:100%;display:block}
+  .kv{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;
+    border-bottom:1px solid rgba(148,163,184,.08)}
+  .kv:last-child{border-bottom:none;padding-bottom:0}
+  .kv b{font-size:15px;font-weight:600;color:#8FA3BA}
+  .kv span{font-family:ui-monospace,Menlo,monospace;font-size:16px;font-weight:700;
+    color:var(--on-surface);font-variant-numeric:tabular-nums}
+
+  /* generic screen header */
+  .screen-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+  .screen-head h2{font-size:27px;font-weight:800;color:var(--on-surface);letter-spacing:.2px}
+  .screen-head p{font-size:15px;color:#8496AD;margin-top:5px;line-height:1.4}
+  .counter{font-size:13px;font-weight:700;letter-spacing:.1em;color:#6B7F99;
+    padding:6px 11px;border-radius:7px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.13)}
+
+  /* peers */
+  .rows{display:flex;flex-direction:column;gap:8px;margin-top:16px;flex:1;min-height:0}
+  .row{flex:1 1 0;min-height:56px;max-height:92px;display:flex;align-items:center;gap:14px;padding:0 16px;
+    border-radius:14px;background:rgba(20,28,45,.66);border:1px solid rgba(148,163,184,.11);
+    transition:transform .16s,box-shadow .16s,background .16s}
+  .row .avi{width:32px;height:32px;border-radius:9px;flex:0 0 32px;display:grid;place-items:center;
+    background:rgba(34,211,238,.10);border:1px solid rgba(34,211,238,.22);color:#67E8F9;
+    font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:700}
+  .row .pid{font-family:ui-monospace,Menlo,monospace;font-size:14.5px;color:#CBD9E8;
+    flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .rtt{font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:700;
+    color:var(--on-surface);font-variant-numeric:tabular-nums}
+  .row .via{font-size:12.5px;font-weight:600;letter-spacing:.04em;color:#6C8099;width:62px;text-align:right}
+
+  /* settings grid */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;flex:1;min-height:0}
+  .sgroup{border-radius:18px;padding:12px 14px 13px;
+    background:linear-gradient(180deg,rgba(27,38,60,.62),rgba(17,25,40,.8));
+    border:1px solid rgba(148,163,184,.12);display:flex;flex-direction:column;min-height:0;
+    transition:transform .16s,box-shadow .16s}
+  .sgroup.wide{grid-column:span 2}
+  .sgroup h4{font-size:12.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+    color:#6E8299;display:flex;align-items:center;gap:8px}
+  .sgroup h4 svg{width:14px;height:14px;stroke:var(--primary)}
+  .toggles{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .tog{font-size:14px;font-weight:700;padding:8px 13px;border-radius:10px;cursor:pointer;
+    background:rgba(148,163,184,.07);border:1px solid rgba(148,163,184,.15);color:#93A6BC;
+    display:inline-flex;align-items:center;gap:7px;transition:transform .16s,box-shadow .16s,background .16s}
+  .tog::before{content:"";width:7px;height:7px;border-radius:50%;background:#5A6E86}
+  .tog[data-on="true"]{background:rgba(34,211,238,.13);border-color:rgba(34,211,238,.34);color:#A5F3FC}
+  .tog[data-on="true"]::before{background:var(--primary);box-shadow:0 0 9px #22D3EE}
+
+  /* diagnostics */
+  .dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  .cell{border-radius:14px;padding:11px 13px;background:rgba(20,28,45,.66);
+    border:1px solid rgba(148,163,184,.11)}
+  .cell i{display:block;font-style:normal;font-size:11.5px;font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;color:#6E8299}
+  .cell b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:20px;font-weight:700;
+    color:var(--on-surface);margin-top:5px;font-variant-numeric:tabular-nums}
+  .log{margin-top:12px;flex:1;min-height:0;border-radius:14px;padding:12px 14px;overflow:hidden;
+    background:rgba(6,10,17,.78);border:1px solid rgba(148,163,184,.11);
+    font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.85;color:#7F94AC}
+  .log em{font-style:normal;color:#5EEAD4}
+  .log b{color:#93C5FD;font-weight:600}
+  .log s{color:#6B7F99;text-decoration:none}
+
+  /* hint bar */
+  .hintbar{display:none}
+  .hintbar span{font-size:12.5px;color:#5B6E87;display:inline-flex;align-items:center;gap:6px}
+  .key{display:inline-grid;place-items:center;min-width:19px;height:18px;padding:0 5px;
+    border-radius:4px;background:rgba(148,163,184,.12);border:1px solid rgba(148,163,184,.18);
+    font-size:11px;font-weight:700;color:#9AAEC4;font-family:ui-monospace,Menlo,monospace}
+
+  /* ── embed: render the TV screen alone at exactly 960x540 ── */
+  body.embed{padding:0;background:#000;overflow:hidden}
+  body.embed .doc,body.embed .bar,body.embed .spec{display:none}
+  body.embed .frame-wrap{max-width:960px;margin:0}
+  body.embed .frame{border:none;border-radius:0;box-shadow:none}
+
+  /* ── spec ─────────────────────────────────────────────── */
+  .spec{max-width:1180px;margin:44px auto 0}
+  .spec h3{font-size:15px;font-weight:700;color:#D6E2F0;margin:30px 0 12px;
+    display:flex;align-items:center;gap:10px}
+  .spec h3::before{content:"";width:3px;height:15px;border-radius:2px;background:var(--primary)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #131C2B;vertical-align:top;line-height:1.55}
+  th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#5A6B84;font-weight:700;
+    border-bottom-color:#1B2637}
+  td:first-child{color:#B9C9DB;font-weight:600;white-space:nowrap}
+  td:nth-child(2){color:#7A8CA3}
+  td:nth-child(3){color:#C7D6E6}
+  .num{font-family:ui-monospace,Menlo,monospace;color:#6EE7B7;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="doc">
+  <h1>P2PTap TV · 10 英尺界面重设计</h1>
+  <p>手机那套设计语言（玻璃叠层、状态色驱动、统一圆角）搬到电视上，但不能照抄——电视是<b>遥控器焦点驱动</b>、<b>3 米观看距离</b>、<b>不能滚动</b>。所以这一版的重点不是配色，是<b>让焦点永远可见</b>，以及把首页从"手机竖排"改成"横向分区"。</p>
+  <p>用 <code>←</code> <code>→</code> <code>↑</code> <code>↓</code> 移动焦点，<code>Enter</code> 确认。焦点环、选中态、状态光晕都是真实按 dp 换算的规格。</p>
+</div>
+
+<div class="bar">
+  <div class="group">
+    <span>界面</span>
+    <button class="pill" data-goto="home" aria-pressed="true">Home</button>
+    <button class="pill" data-goto="peers" aria-pressed="false">Peers</button>
+    <button class="pill" data-goto="settings" aria-pressed="false">Settings</button>
+    <button class="pill" data-goto="diag" aria-pressed="false">Diagnostics</button>
+  </div>
+  <div class="group">
+    <span>状态</span>
+    <button class="pill" data-state="idle" aria-pressed="false">断开</button>
+    <button class="pill" data-state="connecting" aria-pressed="false">连接中</button>
+    <button class="pill" data-state="connected" aria-pressed="true">已连接</button>
+    <button class="pill" data-state="error" aria-pressed="false">失败</button>
+  </div>
+  <div class="group">
+    <span>导航轨</span>
+    <button class="pill" data-rail="label" aria-pressed="true">图标+文字</button>
+    <button class="pill" data-rail="icon" aria-pressed="false">仅图标</button>
+  </div>
+</div>
+
+<div class="frame-wrap">
+  <div class="frame">
+    <div class="stage" id="stage" data-state="connected" data-rail="label">
+
+      <!-- ═══ rail ═══ -->
+      <aside class="rail">
+        <div class="brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.5 20 6v6c0 5-3.4 8.2-8 9.5-4.6-1.3-8-4.5-8-9.5V6z"/>
+            <path d="M9 12.2l2.2 2.2L15.4 10"/>
+          </svg>
+          <b class="brand-label">P2PTap</b>
+        </div>
+
+        <div class="rail-item" data-focusable data-screen="home" data-selected="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 4v8"/><path d="M6.3 7.3a8 8 0 1 0 11.4 0"/>
+          </svg><span>Home</span>
+        </div>
+        <div class="rail-item" data-focusable data-screen="peers">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/>
+            <path d="M16.5 5.4a3.2 3.2 0 0 1 0 5.2"/><path d="M18 14.4c2 .7 3 2.4 3 5.1"/>
+          </svg><span>Peers</span>
+        </div>
+        <div class="rail-item" data-focusable data-screen="transfer">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 4v14"/><path d="M3.5 14.5 7 18l3.5-3.5"/><path d="M17 20V6"/><path d="M13.5 9.5 17 6l3.5 3.5"/>
+          </svg><span>Transfer</span>
+        </div>
+        <div class="rail-item" data-focusable data-screen="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h9"/><path d="M17 7h3"/><circle cx="15" cy="7" r="2.2"/>
+            <path d="M4 17h3"/><path d="M11 17h9"/><circle cx="9" cy="17" r="2.2"/>
+          </svg><span>Settings</span>
+        </div>
+        <div class="rail-item" data-focusable data-screen="diag">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12h4l2.5-6 4 13 2.5-7h5"/>
+          </svg><span>Diagnostics</span>
+        </div>
+        <div class="rail-item" data-focusable data-screen="keepalive">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.5 19 6.5v5.2c0 4.4-2.9 7.2-7 8.6-4.1-1.4-7-4.2-7-8.6V6.5z"/>
+            <path d="M12 9v4"/><circle cx="12" cy="15.6" r=".9" fill="currentColor" stroke="none"/>
+          </svg><span>Keep-alive</span>
+        </div>
+        <div class="rail-item" data-focusable data-screen="about">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="8" r=".9" fill="currentColor" stroke="none"/>
+          </svg><span>About</span>
+        </div>
+
+        <div class="rail-foot">
+          <i id="rail-dot"></i><span id="rail-state">Connected</span>
+        </div>
+      </aside>
+
+      <!-- ═══ content ═══ -->
+      <main class="content">
+
+        <!-- ── HOME ── -->
+        <section class="screen" data-for="home">
+          <div class="eyebrow"><span>P2PTap Mesh</span><em id="ver">v2.4.1 · engine 1.4.2</em></div>
+
+          <div class="home-grid">
+            <div class="hero" id="hero">
+              <div class="status-row">
+                <div class="dot" id="hero-dot"></div>
+                <div class="status-text" id="hero-state">CONNECTED</div>
+              </div>
+              <div class="status-sub" id="hero-sub">4 peers · Direct 2 · Relay 2</div>
+
+              <div class="hero-sep"></div>
+
+              <div class="node-name">Mesh Node · Living Room</div>
+              <div class="node-addr">
+                <i>/ip4/10.0.0.88/tcp/4141</i>
+                <i>/ip6/fd00::88/tcp/4141</i>
+              </div>
+              <div class="hero-foot">
+                <button class="cta" id="cta" data-focusable>
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v9"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/>
+                  </svg>
+                  <span id="cta-label">Disconnect</span>
+                </button>
+                <div class="hint-inline" id="cta-hint">OK tears the tunnel down; identity is kept.</div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="card" style="flex:11">
+                <div class="card-title">Live throughput</div>
+                <div class="big tx"><i class="ar">&#8593;</i>12.4<span class="unit">MB/s</span></div>
+                <div style="flex:1"></div>
+                <div class="big rx"><i class="ar">&#8595;</i>3.1<span class="unit">MB/s</span></div>
+              </div>
+
+              <div class="card" style="flex:9">
+                <div class="card-title">Session</div>
+                <div style="margin-top:8px">
+                  <div class="kv"><b>Uploaded</b><span>1.2 GB</span></div>
+                  <div class="kv"><b>Downloaded</b><span>486 MB</span></div>
+                  <div class="kv" style="border-bottom:none"><b>Peers</b><span>4</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ── PEERS ── -->
+        <section class="screen" data-for="peers" hidden>
+          <div class="screen-head">
+            <div>
+              <h2>Peers</h2>
+              <p>Who is on the mesh, and over which link</p>
+            </div>
+            <div class="counter">4 ONLINE</div>
+          </div>
+
+          <div class="rows">
+            <div class="row" data-focusable>
+              <div class="avi">A1</div>
+              <div class="pid">12D3KooWQ8m…7f3a</div>
+              <span class="chip ok">QUIC</span>
+              <div class="rtt">8.2 ms</div><div class="via">direct</div>
+            </div>
+            <div class="row" data-focusable>
+              <div class="avi">B7</div>
+              <div class="pid">12D3KooWH2v…c19e</div>
+              <span class="chip ok">QUIC</span>
+              <div class="rtt">11.4 ms</div><div class="via">direct</div>
+            </div>
+            <div class="row" data-focusable>
+              <div class="avi">C3</div>
+              <div class="pid">12D3KooWLm4…04b8</div>
+              <span class="chip vio">RELAY</span>
+              <div class="rtt">46.9 ms</div><div class="via">via boot</div>
+            </div>
+            <div class="row" data-focusable>
+              <div class="avi">D9</div>
+              <div class="pid">12D3KooWPz7…5e2d</div>
+              <span class="chip vio">RELAY</span>
+              <div class="rtt">— </div><div class="via">via boot</div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ── SETTINGS ── -->
+        <section class="screen" data-for="settings" hidden>
+          <div class="screen-head">
+            <div>
+              <h2>Settings</h2>
+              <p>Five groups, all on one screen — nothing scrolls</p>
+            </div>
+            <div class="counter">12 ITEMS</div>
+          </div>
+
+          <div class="grid2">
+            <div class="sgroup wide" data-focusable>
+              <h4><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="8"/></svg>Relay circuit</h4>
+              <div class="toggles">
+                <span class="tog" data-on="true">Relay transport</span>
+                <span class="tog" data-on="true">Circuit v2</span>
+                <span class="tog" data-on="false">Force private reachability</span>
+                <span class="tog" data-on="true">Auto relay pool</span>
+              </div>
+            </div>
+
+            <div class="sgroup" data-focusable>
+              <h4><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h16"/><path d="M12 4v16"/></svg>Transports</h4>
+              <div class="toggles">
+                <span class="tog" data-on="true">QUIC</span>
+                <span class="tog" data-on="true">TCP</span>
+                <span class="tog" data-on="false">WebRTC</span>
+                <span class="tog" data-on="false">WebTransport</span>
+              </div>
+            </div>
+
+            <div class="sgroup" data-focusable>
+              <h4><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v6c0 4.5-3.3 7.5-8 8.7C7.3 20.5 4 17.5 4 13V7z"/></svg>Security</h4>
+              <div class="toggles">
+                <span class="tog" data-on="true">Obfuscation</span>
+                <span class="tog" data-on="true">Padding</span>
+                <span class="tog" data-on="false">Strict PSK</span>
+              </div>
+            </div>
+
+            <div class="sgroup" data-focusable>
+              <h4><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Keep-alive</h4>
+              <div class="toggles">
+                <span class="tog" data-on="true">Shell keeper</span>
+                <span class="tog" data-on="false">Aggressive probe</span>
+              </div>
+            </div>
+
+            <div class="sgroup" data-focusable>
+              <h4><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/></svg>Appearance</h4>
+              <div class="toggles">
+                <span class="tog" data-on="true">Reduced motion</span>
+                <span class="tog" data-on="false">Show dev metrics</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ── DIAGNOSTICS ── -->
+        <section class="screen" data-for="diag" hidden>
+          <div class="screen-head">
+            <div>
+              <h2>Diagnostics</h2>
+              <p>Reported by the engine itself, not estimated</p>
+            </div>
+            <div class="counter">LIVE</div>
+          </div>
+
+          <div class="dgrid">
+            <div class="cell"><i>Tx speed</i><b style="color:#67E8F9">12.4 MB/s</b></div>
+            <div class="cell"><i>Rx speed</i><b style="color:#6EE7B7">3.1 MB/s</b></div>
+            <div class="cell"><i>Direct peers</i><b>2</b></div>
+            <div class="cell"><i>Relay peers</i><b>2</b></div>
+            <div class="cell"><i>Total tx</i><b>1.2 GB</b></div>
+            <div class="cell"><i>Total rx</i><b>486 MB</b></div>
+          </div>
+
+          <div class="log">
+            <div><s>12:04:11</s> <em>INF</em> tunnel up · wintun ready</div>
+            <div><s>12:04:12</s> <em>INF</em> <b>peer 12D3KooWQ8m…</b> direct via QUIC 8.2ms</div>
+            <div><s>12:04:14</s> <em>INF</em> <b>peer 12D3KooWLm4…</b> relayed via boot</div>
+            <div><s>12:04:31</s> <em>WRN</em> relay pool: 1 hop unhealthy, rotating</div>
+            <div><s>12:05:02</s> <em>INF</em> seqsync converged · 4 peers</div>
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ spec ═══ -->
+<div class="spec">
+
+  <h3>焦点：电视上唯一重要的状态</h3>
+  <table>
+    <tr><th>项</th><th>现在</th><th>改为</th></tr>
+    <tr><td>焦点可见性</td><td>只有 1.06 倍缩放 + elevation 8（暗底上几乎看不出）</td><td>3dp 青色焦点环 + 1.035 缩放 + 外发光，任何背景上都成立</td></tr>
+    <tr><td>选中 vs 焦点</td><td>混为一谈：填充色跟的是"当前页面"，焦点只是一点点缩放</td><td>两个独立通道 —— 选中＝左侧色条 + 浅填充；焦点＝外环。可同时存在，不会互相吞掉</td></tr>
+    <tr><td>焦点可预测性</td><td>父容器设为 focusable，D-pad 会先落到容器上</td><td>只让真正的目标可聚焦，方向键永远落在"看得见的那个框"</td></tr>
+  </table>
+
+  <h3>布局：电视不是拉宽的手机</h3>
+  <table>
+    <tr><th>项</th><th>现在</th><th>改为</th></tr>
+    <tr><td>导航轨高度</td><td class="num">7 × 80dp = 560dp</td><td class="num">7 × 56dp = 392dp</td></tr>
+    <tr><td>轨道可视高</td><td class="num">424dp → 溢出 136dp</td><td class="num">424dp → 富余 32dp</td></tr>
+    <tr><td>后果</td><td>Keep-alive 与 About 首屏看不见，要滚动才出现</td><td>7 项全部常驻，符合"电视不滚动"的前提</td></tr>
+    <tr><td>首页导航卡</td><td>4 张卡与导航轨 100% 重复，占掉约 240dp</td><td>移除，换成实时速率 + 会话卡（信息不重复）</td></tr>
+    <tr><td>首页结构</td><td>上下堆叠（手机式）</td><td>左右分区：左 hero / 右指标，用掉 16:9 的横向空间</td></tr>
+  </table>
+
+  <h3>视觉：沿用手机的设计语言</h3>
+  <table>
+    <tr><th>项</th><th>值</th><th>说明</th></tr>
+    <tr><td>Hero 玻璃</td><td class="num">fill 80% + 顶部 sheen 16% + 1dp 白描边 11.5%</td><td>和手机 hero 同一套叠层算法</td></tr>
+    <tr><td>状态光晕</td><td class="num">径向渐变，左上 62% 衰减</td><td>连接绿 / 连接中琥珀 / 失败红 / 空闲灰</td></tr>
+    <tr><td>圆角</td><td class="num">26 hero · 20 卡 · 14 行</td><td>已按电视距离放大；不再出现 12/16/24 三套混用</td></tr>
+    <tr><td>字号下限</td><td class="num">13dp 标签（大写 + 0.14em 字距）· 17dp 正文</td><td>原 LabelSmall 14sp 共 22 处，3 米处偏小；标签靠字距而非字号拉开层级</td></tr>
+    <tr><td>数字</td><td class="num">tabular-nums</td><td>速率跳动时列宽不抖</td></tr>
+    <tr><td>安全区</td><td class="num">左右 30dp · 上下 20dp</td><td>留在 5% overscan 内</td></tr>
+  </table>
+
+  <h3>顺手查出的 6 个真问题</h3>
+  <table>
+    <tr><th>#</th><th>文件</th><th>问题</th></tr>
+    <tr><td>1</td><td>item_tv_rail.xml</td><td>7 项 × 80dp = 560dp 塞进 424dp 可视高，溢出 136dp</td></tr>
+    <tr><td>2</td><td>TvNavRailAdapter.kt</td><td>焦点只改缩放不改背景；选中态跟的是页面而非焦点</td></tr>
+    <tr><td>3</td><td>activity_tv_main.xml</td><td>注释写 "7 items × 154dp = 1078dp"，实际 item 是 72dp —— 注释与代码不符</td></tr>
+    <tr><td>4</td><td>fragment_tv_home.xml</td><td>7 个等宽 TextView 混排标签与数值，标签和数值等宽；peer 数没有标签</td></tr>
+    <tr><td>5</td><td>fragment_tv_diagnostics.xml</td><td>硬编码 "Live log" 与 " / "，不走 i18n（其余 221 条已 11 语言全覆盖）</td></tr>
+    <tr><td>6</td><td>tv/src/main/res/drawable</td><td>14 个孤儿 drawable（ic_tv_quic / webrtc / wt / tcp / relay / mesh / subnet 等）</td></tr>
+  </table>
+
+</div>
+
+<script>
+(function(){
+  var stage = document.getElementById('stage');
+  var FRAME_W = 960;
+
+  // ── scale the 960x540 stage to the frame width ──
+  function fit(){
+    var f = document.querySelector('.frame');
+    var s = f.clientWidth / FRAME_W;
+    stage.style.transform = 'scale(' + s + ')';
+    f.style.height = (540 * s) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  // ── focus engine: geometry based, mirrors Android focus search ──
+  var current = null;
+
+  function activeScreen(){
+    return stage.querySelector('.screen:not([hidden])');
+  }
+
+  function focusables(){
+    var out = [];
+    stage.querySelectorAll('.rail-item[data-focusable]').forEach(function(el){ out.push(el); });
+    activeScreen().querySelectorAll('[data-focusable]').forEach(function(el){ out.push(el); });
+    return out.filter(function(el){ return el.getClientRects().length > 0; });
+  }
+
+  function setFocus(el){
+    if (!el) return;
+    if (current) current.classList.remove('focused');
+    current = el;
+    el.classList.add('focused');
+  }
+
+  function center(el){
+    var r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  function move(dir){
+    if (!current) return;
+    var a = center(current), best = null, bestScore = Infinity;
+    focusables().forEach(function(el){
+      if (el === current) return;
+      var b = center(el);
+      var dx = b.x - a.x, dy = b.y - a.y, primary, cross;
+      if (dir === 'left')  { if (dx > -4) return; primary = -dx; cross = Math.abs(dy); }
+      if (dir === 'right') { if (dx <  4) return; primary =  dx; cross = Math.abs(dy); }
+      if (dir === 'up')    { if (dy > -4) return; primary = -dy; cross = Math.abs(dx); }
+      if (dir === 'down')  { if (dy <  4) return; primary =  dy; cross = Math.abs(dx); }
+      var score = primary + cross * 2.4;
+      if (score < bestScore) { bestScore = score; best = el; }
+    });
+    if (best) setFocus(best);
+  }
+
+  // ── screens ──
+  function goto(name){
+    stage.querySelectorAll('.screen').forEach(function(s){
+      s.hidden = s.dataset.for !== name;
+    });
+    stage.querySelectorAll('.rail-item').forEach(function(el){
+      el.dataset.selected = (el.dataset.screen === name) ? 'true' : 'false';
+    });
+    document.querySelectorAll('[data-goto]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.goto === name ? 'true' : 'false');
+    });
+    var first = activeScreen().querySelector('[data-focusable]');
+    setFocus(first);
+  }
+
+  stage.querySelectorAll('.rail-item').forEach(function(el){
+    el.addEventListener('click', function(){ goto(el.dataset.screen); });
+  });
+
+  // ── connection state ──
+  var STATES = {
+    idle:       { text:'DISCONNECTED', sub:'WAN off · no tunnel established', glow:'rgba(100,116,139,.17)', color:'#64748B', cta:'Connect', tone:'go', hint:'OK starts the tunnel on the last used profile.' },
+    connecting: { text:'CONNECTING',   sub:'Negotiating with bootstrap node… 12s', glow:'rgba(245,158,11,.24)', color:'#F59E0B', cta:'Cancel', tone:'neutral', hint:'Elapsed time is real — cancel and back out any time.' },
+    connected:  { text:'CONNECTED',    sub:'4 peers · Direct 2 · Relay 2', glow:'rgba(16,185,129,.23)', color:'#10B981', cta:'Disconnect', tone:'danger', hint:'OK tears the tunnel down; identity is kept.' },
+    error:      { text:'ERROR',        sub:'Bootstrap unreachable — check network', glow:'rgba(248,113,113,.24)', color:'#F87171', cta:'Retry', tone:'go', hint:'Reason replaces the address line — the slot never reads broken.' }
+  };
+
+  function setState(name){
+    var s = STATES[name];
+    stage.dataset.state = name;
+    document.getElementById('hero').style.setProperty('--glow', s.glow);
+    document.getElementById('hero-state').textContent = s.text;
+    document.getElementById('hero-sub').textContent = s.sub;
+    document.getElementById('hero-dot').style.background = s.color;
+    document.getElementById('hero-dot').style.boxShadow = '0 0 0 5px ' + s.glow.replace(/[\d.]+\)$/, '0.16)') + ', 0 0 22px ' + s.color + '66';
+
+    var cta = document.getElementById('cta');
+    cta.classList.toggle('danger', s.tone === 'danger');
+    cta.classList.toggle('neutral', s.tone === 'neutral');
+    document.getElementById('cta-label').textContent = s.cta;
+    document.getElementById('cta-hint').textContent = s.hint;
+
+    var railDot = document.getElementById('rail-dot');
+    railDot.style.background = s.color;
+    railDot.style.boxShadow = '0 0 9px ' + s.color;
+    document.getElementById('rail-state').textContent =
+      name === 'connected' ? 'Connected' : name === 'connecting' ? 'Linking' : name === 'error' ? 'Error' : 'Offline';
+
+    document.querySelectorAll('[data-state]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.state === name ? 'true' : 'false');
+    });
+  }
+
+  document.getElementById('cta').addEventListener('click', function(){
+    var cur = stage.dataset.state;
+    setState(cur === 'connected' ? 'idle' : 'connected');
+  });
+
+  // ── rail mode ──
+  function setRail(mode){
+    stage.dataset.rail = mode;
+    document.querySelectorAll('[data-rail]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.rail === mode ? 'true' : 'false');
+    });
+    var rail = document.querySelector('.rail');
+    rail.style.width = mode === 'icon' ? '76px' : '200px';
+    rail.style.flexBasis = mode === 'icon' ? '76px' : '200px';
+    rail.style.alignItems = mode === 'icon' ? 'center' : 'stretch';
+    document.querySelector('.brand-label').style.display = mode === 'icon' ? 'none' : '';
+    rail.querySelectorAll('.rail-item span').forEach(function(s){
+      s.style.display = mode === 'icon' ? 'none' : '';
+    });
+    rail.querySelectorAll('.rail-item').forEach(function(el){
+      el.style.justifyContent = mode === 'icon' ? 'center' : 'flex-start';
+      el.style.padding = mode === 'icon' ? '0' : '0 12px';
+      el.style.width = mode === 'icon' ? '52px' : '';
+    });
+    document.querySelector('.rail-foot').style.display = mode === 'icon' ? 'none' : '';
+  }
+
+  // ── control wiring ──
+  document.querySelectorAll('[data-goto]').forEach(function(b){
+    b.addEventListener('click', function(){ goto(b.dataset.goto); });
+  });
+  document.querySelectorAll('[data-state]').forEach(function(b){
+    b.addEventListener('click', function(){ setState(b.dataset.state); });
+  });
+  document.querySelectorAll('[data-rail]').forEach(function(b){
+    b.addEventListener('click', function(){ setRail(b.dataset.rail); });
+  });
+
+  // toggle chips inside settings
+  stage.querySelectorAll('.tog').forEach(function(t){
+    t.dataset.focusable = '';
+    t.addEventListener('click', function(){
+      t.dataset.on = t.dataset.on === 'true' ? 'false' : 'true';
+    });
+  });
+
+  // ── keyboard ──
+  document.addEventListener('keydown', function(e){
+    var k = e.key;
+    if (k === 'ArrowLeft')  { move('left');  e.preventDefault(); }
+    if (k === 'ArrowRight') { move('right'); e.preventDefault(); }
+    if (k === 'ArrowUp')    { move('up');    e.preventDefault(); }
+    if (k === 'ArrowDown')  { move('down');  e.preventDefault(); }
+    if (k === 'Enter' || k === ' ') {
+      if (current) { current.click(); e.preventDefault(); }
+    }
+  });
+
+  // boot — ?screen=peers&state=error&rail=icon makes any view a shareable link
+  var q = new URLSearchParams(location.search);
+  if (q.has('embed')) document.body.classList.add('embed');
+  var qState = q.get('state');
+  setState(STATES[qState] ? qState : 'connected');
+  if (q.get('rail') === 'icon') setRail('icon');
+  goto(q.get('screen') || 'home');
+  fit();
+})();
+</script>
+</body>
+</html>

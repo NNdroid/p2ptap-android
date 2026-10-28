@@ -5,10 +5,11 @@
     decor (status bar, nav bar) sits outside our layout, and we do not want any
     extra container to steal pixels at 1080p.
 
-    The rail is 240dp wide. That is roughly 12.5% of a 1920px panel at 16:9,
-    which is the width Plex uses and gives 6–7 rail items comfortable vertical
-    real estate (7 items * 154dp = 1078dp, fitting inside a 1080dp frame with
-    4dp of breathing room top and bottom).
+    The rail is 200dp. That number is a vertical budget, not a percentage: a
+    1080p set at xhdpi is 540dp tall, and the rail has to hold a brand row plus
+    seven 52dp destinations inside it with room to spare. See dimens.xml for
+    the arithmetic — the previous 240dp/72dp combination overflowed by 136dp
+    and pushed the last two destinations off-screen.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,7 +17,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/tv_bg_window"
     tools:context="app.fjj.p2ptap.tv.TvMainActivity">
 
     <!-- ════════════════════════════════════════════════════════════════════
@@ -24,30 +25,32 @@
          ════════════════════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/tv_rail_container"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/tv_rail_w"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:background="@color/md_theme_surfaceContainerLow"
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp"
+        android:background="@drawable/tv_bg_rail"
+        android:paddingStart="@dimen/tv_rail_pad_h"
+        android:paddingEnd="@dimen/tv_rail_pad_h"
+        android:paddingTop="@dimen/tv_rail_pad_v"
+        android:paddingBottom="@dimen/tv_rail_pad_v"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- App brand at the top of the rail. Small, quiet — the rail's
-             identity, not a status bar. -->
+        <!-- App brand. One line, no subtitle: the rail's identity, not a
+             status bar. It used to reserve 68dp of vertical budget for what is
+             a 24dp wordmark. -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/tv_rail_brand_h"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingStart="28dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="28dp">
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp">
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@drawable/ic_tv_shield"
                 android:contentDescription="@null"
                 app:tint="@color/md_theme_primary" />
@@ -55,38 +58,64 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="10dp"
                 android:text="@string/app_name"
-                android:textAppearance="@style/TextAppearance.P2ptap.Tv.TitleLarge"
+                android:textSize="17sp"
+                android:textStyle="bold"
                 android:textColor="@color/md_theme_onSurface" />
         </LinearLayout>
 
-        <!-- The rail itself. Vertical RecyclerView; each item is a
-             MaterialButton-shaped tab. -->
+        <!-- The rail itself. Vertical RecyclerView; each item is a 52dp tab. -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tv_rail"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginTop="2dp"
             android:clipToPadding="false"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:isScrollContainer="true"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp" />
-    </LinearLayout>
+            android:isScrollContainer="true" />
 
-    <!-- ════════════════════════════════════════════════════════════════════
-         Vertical divider between rail and content.
-         ════════════════════════════════════════════════════════════════════ -->
-    <View
-        android:id="@+id/tv_divider"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/md_theme_outlineVariant"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_rail_container" />
+        <!-- Repeats the connection state on every destination. A TV user
+             spends most of a session three screens away from Home, and
+             "is the tunnel still up" is the question they actually have. -->
+        <LinearLayout
+            android:id="@+id/tv_rail_foot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/tv_rail_foot_gap"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/tv_bg_rail_foot">
+
+            <View
+                android:id="@+id/tv_rail_dot"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:background="@drawable/tv_bg_status_dot"
+                android:backgroundTint="@color/tv_status_disconnected" />
+
+            <TextView
+                android:id="@+id/tv_rail_state"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="9dp"
+                android:text="@string/tv_status_idle"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:letterSpacing="0.06"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/tv_rail_label" />
+        </LinearLayout>
+    </LinearLayout>
 
     <!-- ════════════════════════════════════════════════════════════════════
          Content area. NavHostFragment swaps destinations in here.
@@ -95,10 +124,9 @@
         android:id="@+id/tv_nav_host"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_divider"
+        app:layout_constraintStart_toEndOf="@id/tv_rail_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:navGraph="@navigation/tv_nav_graph"
         android:name="androidx.navigation.fragment.NavHostFragment"

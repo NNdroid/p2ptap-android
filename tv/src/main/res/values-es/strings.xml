@@ -256,4 +256,13 @@
     <string name="tv_about_peer_label">ID de par</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">Código abierto. Consulte el repositorio para la licencia.</string>
+    <string name="tv_retry">REINTENTAR</string>
+    <string name="tv_cancel">CANCELAR</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">Rendimiento en vivo</string>
+    <string name="tv_card_session">Sesión</string>
+    <string name="tv_session_up">Subido</string>
+    <string name="tv_session_down">Bajado</string>
+    <string name="tv_session_peers">Pares</string>
 </resources>

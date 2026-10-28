@@ -25,7 +25,13 @@
     clears that; below about 80dp the glow eats the text.
 -->
 <resources>
-    <dimen name="tv_screen_padding_h">72dp</dimen>
+    <!-- One gutter for every screen. This used to be 72dp, which is 7.5% of a
+         960dp-wide panel — safe for overscan but 24dp more than needed, and it
+         made the content edge jump between the home screen (which used its own
+         value) and every other screen. 48dp is the 5% that TV overscan
+         guidance actually asks for, and it gives the settings grid 48dp of
+         extra width for long Russian and German labels. -->
+    <dimen name="tv_screen_padding_h">48dp</dimen>
     <dimen name="tv_screen_padding_v">24dp</dimen>
     <dimen name="tv_gap_l">24dp</dimen>
     <dimen name="tv_gap_m">16dp</dimen>
@@ -83,4 +89,50 @@
     <dimen name="tv_ka_row_h">84dp</dimen>
     <dimen name="tv_ka_action_w">220dp</dimen>
     <dimen name="tv_ka_action_h">60dp</dimen>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         10-foot rail, focus ring and card system.
+
+         The rail budget is the reason this block exists. The previous item
+         was 72dp plus 4dp of margin on each side, which is 80dp per row:
+         7 rows = 560dp against the 424dp a rail actually gets on a 1080p set
+         (540dp tall, minus 24dp of padding top and bottom, minus the 68dp
+         brand row). 136dp of overflow meant the last two destinations —
+         Keep-alive and About — were simply not on screen until the remote
+         scrolled the rail, which is exactly the thing a TV UI is not
+         supposed to require.
+
+         At 52dp + a 4dp gap the seven rows are 392dp and fit with 32dp to
+         spare. The label stays at 17sp because that is the smallest size
+         that still reads from a sofa; the row gets shorter, the text does
+         not.
+         ══════════════════════════════════════════════════════════════════ -->
+    <dimen name="tv_rail_w">200dp</dimen>
+    <dimen name="tv_rail_pad_h">10dp</dimen>
+    <dimen name="tv_rail_pad_v">12dp</dimen>
+    <dimen name="tv_rail_brand_h">50dp</dimen>
+    <dimen name="tv_rail_item_h">52dp</dimen>
+    <dimen name="tv_rail_corner">14dp</dimen>
+    <dimen name="tv_rail_icon">23dp</dimen>
+    <dimen name="tv_rail_accent_w">3dp</dimen>
+    <dimen name="tv_rail_foot_gap">10dp</dimen>
+
+    <!-- Focus ring. 3dp is the thinnest stroke that still reads as a ring
+         rather than a border at three metres; below 2dp it dissolves into
+         the card edge on a dark panel. -->
+    <dimen name="tv_focus_ring">3dp</dimen>
+    <dimen name="tv_card_stroke">1dp</dimen>
+
+    <!-- Card and content geometry. Three radii only: hero, card, row. -->
+    <dimen name="tv_hero_radius">26dp</dimen>
+    <dimen name="tv_card_radius">20dp</dimen>
+
+    <!-- Home is two columns, not a vertical stack: a 16:9 screen has width to
+         spend and the phone layout was leaving two thirds of it empty. -->
+    <dimen name="tv_home_col_w">250dp</dimen>
+    <dimen name="tv_home_gap">18dp</dimen>
+    <dimen name="tv_home_card_gap">14dp</dimen>
+    <dimen name="tv_hero_pad">24dp</dimen>
+    <dimen name="tv_hero_btn_h">62dp</dimen>
+    <dimen name="tv_hero_btn_w">246dp</dimen>
 </resources>

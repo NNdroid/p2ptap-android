@@ -258,4 +258,13 @@
     <string name="tv_about_peer_label">ID пары</string>
     <string name="tv_about_arch_label">ABI</string>
     <string name="tv_about_footer">Открытый код. Подробности лицензии — в репозитории.</string>
+    <string name="tv_retry">ПОВТОРИТЬ</string>
+    <string name="tv_cancel">ОТМЕНА</string>
+    <string name="tv_arrow_up">↑</string>
+    <string name="tv_arrow_down">↓</string>
+    <string name="tv_card_throughput">Текущая скорость</string>
+    <string name="tv_card_session">Сеанс</string>
+    <string name="tv_session_up">Отправлено</string>
+    <string name="tv_session_down">Получено</string>
+    <string name="tv_session_peers">Пиры</string>
 </resources>
