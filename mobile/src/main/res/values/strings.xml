@@ -77,6 +77,7 @@
     <string name="hint_mtu">Tunnel MTU</string>
     <string name="hint_obfuscation_algo">Encryption Algorithm</string>
     <string name="hint_transport_strategy">Transport Strategy</string>
+    <string name="helper_transport_strategy">best_path uses one path; multipath balances traffic across all live paths (direct + circuit relay) and reorders at the receiver; redundant duplicates; fallback fails over. Restart required.</string>
     <string name="hint_log_level">Log Level</string>
 
     <string name="switch_accept_subnets">Accept Advertised Subnets</string>

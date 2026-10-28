@@ -86,7 +86,7 @@ data class P2PConfig(
     )
 
     fun validateStrategy() {
-        if (transportStrategy !in setOf("best_path", "redundant", "fallback")) {
+        if (transportStrategy !in setOf("best_path", "multipath", "redundant", "fallback")) {
             throw LocalizedException(R.string.error_strategy)
         }
     }

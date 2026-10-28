@@ -111,7 +111,7 @@ class ConfigActivity : AppCompatActivity() {
         // the WebUI, which does expose them.
         val obfModes = arrayOf("auto", "random", "dynamic")
         val obfAlgos = arrayOf("auto", "chacha20", "aes-gcm", "none")
-        val strategies = arrayOf("best_path", "redundant", "fallback")
+        val strategies = arrayOf("best_path", "multipath", "redundant", "fallback")
         val logLevels = arrayOf("debug", "info", "warn", "error")
         val themeModes = arrayOf(
             getString(R.string.theme_light),
