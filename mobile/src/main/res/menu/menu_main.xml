@@ -6,10 +6,13 @@
     <!-- Settings and logs used to be two outlined buttons at the very bottom
          of content_main, so reaching either one meant scrolling past every
          telemetry card. They are the only two secondary destinations, which
-         makes them app-bar actions rather than end-of-page buttons. -->
+         makes them app-bar actions rather than end-of-page buttons.
+         The icons carry their own theme colour (see ic_settings.xml): unlike
+         every layout ImageView in this app, a menu item has no app:tint, so a
+         hardcoded white fill disappears against the light theme's toolbar. -->
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/ic_key"
+        android:icon="@drawable/ic_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="always" />

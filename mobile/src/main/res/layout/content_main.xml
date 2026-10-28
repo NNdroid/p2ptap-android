@@ -60,13 +60,23 @@
                         android:alpha="0.25"
                         android:background="@drawable/bg_status_disconnected" />
 
+                    <!-- Decorative: the state is announced by tvStatusTitle
+                         below, which is a polite live region. A fixed
+                         contentDescription here would keep saying
+                         "Disconnected" while the node is connected.
+                         The tint is not optional — ic_p2p_shield_node is
+                         filled #FFFFFFFF, and the idle hero background is
+                         near-white in the light theme, so an untinted glyph
+                         vanishes entirely there. -->
                     <ImageView
                         android:id="@+id/ivStatus"
                         android:layout_width="@dimen/home_ring_icon"
                         android:layout_height="@dimen/home_ring_icon"
                         android:layout_gravity="center"
-                        android:contentDescription="@string/status_disconnected"
-                        android:src="@drawable/ic_p2p_shield_node" />
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_p2p_shield_node"
+                        app:tint="?attr/colorOnSurface" />
                 </FrameLayout>
 
                 <TextView
@@ -1059,7 +1069,8 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_p2p_shield_node" />
+                        android:src="@drawable/ic_p2p_shield_node"
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
