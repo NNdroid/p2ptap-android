@@ -28,6 +28,7 @@
     <string name="error_io">Не удалось прочитать или записать данные. Проверьте доступ и свободное место.</string>
     <string name="error_unknown">Операция не выполнена. Подробности в журнале диагностики.</string>
     <string name="hint_obfuscation_mode">Режим маскировки</string>
+    <string name="hint_obfuscation_rules">Правила заполнения</string>
     <string name="priority_lan">Прямое подключение LAN</string>
     <string name="priority_loopback">Петлевой интерфейс</string>
     <string name="priority_overlay">Оверлейная сеть</string>

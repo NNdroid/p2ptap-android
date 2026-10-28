@@ -179,20 +179,12 @@ internal fun planVpnReloadLocal(
         relayUpgradeMaxBackoff = newConfig.relayUpgradeMaxBackoff,
         relayUpgradeFlapWindow = newConfig.relayUpgradeFlapWindow,
         obfuscationEnable = newConfig.obfuscationEnable,
-        obfuscationMode = newConfig.obfuscationMode,
+        paddingRules = newConfig.paddingRules,
         obfuscationAlgorithm = newConfig.obfuscationAlgorithm,
         strictKeyNegotiation = newConfig.strictKeyNegotiation,
         discoverBootMesh = newConfig.discoverBootMesh,
         allowedSubnetPeers = newConfig.allowedSubnetPeers,
         // Obfuscation tuning
-        obfuscationFixedSize = newConfig.obfuscationFixedSize,
-        obfuscationBlockSize = newConfig.obfuscationBlockSize,
-        obfuscationJitterRange = newConfig.obfuscationJitterRange,
-        obfuscationMinSize = newConfig.obfuscationMinSize,
-        obfuscationMaxSize = newConfig.obfuscationMaxSize,
-        obfuscationAutoDetectInterval = newConfig.obfuscationAutoDetectInterval,
-        obfuscationAutoThresholdBytes = newConfig.obfuscationAutoThresholdBytes,
-        obfuscationAllowModeSwitch = newConfig.obfuscationAllowModeSwitch,
         obfuscationMaxFragSize = newConfig.obfuscationMaxFragSize,
     ) != newConfig
 

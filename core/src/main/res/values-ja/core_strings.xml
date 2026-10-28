@@ -28,6 +28,7 @@
     <string name="error_io">データを読み書きできません。アクセス権と空き容量を確認してください。</string>
     <string name="error_unknown">操作に失敗しました。詳細は診断ログを確認してください。</string>
     <string name="hint_obfuscation_mode">難読化モード</string>
+    <string name="hint_obfuscation_rules">パディングルール</string>
     <string name="priority_lan">LAN 直接接続</string>
     <string name="priority_loopback">ループバック</string>
     <string name="priority_overlay">オーバーレイ</string>

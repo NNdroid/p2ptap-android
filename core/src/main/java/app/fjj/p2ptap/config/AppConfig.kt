@@ -21,7 +21,7 @@ data class P2PConfig(
     var psk: String = "",
     var enableMdns: Boolean = false,
     var obfuscationEnable: Boolean = false,
-    var obfuscationMode: String = "",
+    var paddingRules: String = "0 -> 400-600",
     var obfuscationAlgorithm: String = "",
     var strictKeyNegotiation: Boolean = false,
     var enableQuic: Boolean = false,
@@ -61,14 +61,6 @@ data class P2PConfig(
     var tapMac: String = "",
     var driverType: String = "",
     var webUiListenIpv6: String = "",
-    var obfuscationFixedSize: Int = 0,
-    var obfuscationBlockSize: Int = 0,
-    var obfuscationJitterRange: Int = 0,
-    var obfuscationMinSize: Int = 0,
-    var obfuscationMaxSize: Int = 0,
-    var obfuscationAutoDetectInterval: Int = 0,
-    var obfuscationAutoThresholdBytes: Int = 0,
-    var obfuscationAllowModeSwitch: Boolean = false,
     var obfuscationMaxFragSize: Int = 0,
     var aclEnable: Boolean = false,
     var aclDefaultAction: String = "",
@@ -231,17 +223,9 @@ data class P2PConfig(
         // Obfuscation
         val obf = root.optJSONObject("obfuscation") ?: JSONObject()
         obf.put("enable", obfuscationEnable)
-        obf.put("mode", obfuscationMode)
+        obf.put("padding_rules", paddingRules)
         obf.put("algorithm", obfuscationAlgorithm)
         obf.put("strict_key_negotiation", strictKeyNegotiation)
-        obf.put("fixed_size", obfuscationFixedSize)
-        obf.put("block_size", obfuscationBlockSize)
-        obf.put("jitter_range", obfuscationJitterRange)
-        obf.put("min_size", obfuscationMinSize)
-        obf.put("max_size", obfuscationMaxSize)
-        obf.put("auto_detect_interval", obfuscationAutoDetectInterval)
-        obf.put("auto_threshold_bytes", obfuscationAutoThresholdBytes)
-        obf.put("allow_mode_switch", obfuscationAllowModeSwitch)
         obf.put("max_frag_size", obfuscationMaxFragSize)
         root.put("obfuscation", obf)
 
@@ -289,7 +273,7 @@ data class P2PConfig(
         root.put("force_private_reachability", forcePrivateReachability)
         root.put("exit_node", exitNode)
         root.put("obfuscation_enable", obfuscationEnable)
-        root.put("obfuscation_mode", obfuscationMode)
+        root.put("obfuscation_padding_rules", paddingRules)
         root.put("obfuscation_algorithm", obfuscationAlgorithm)
         root.put("strict_key_negotiation", strictKeyNegotiation)
         val transports = JSONObject()
@@ -362,14 +346,6 @@ data class P2PConfig(
         root.put("relay_upgrade_flap_window", relayUpgradeFlapWindow * 1_000_000)
 
         // Obfuscation detail fields
-        root.put("obfuscation_fixed_size", obfuscationFixedSize)
-        root.put("obfuscation_block_size", obfuscationBlockSize)
-        root.put("obfuscation_jitter_range", obfuscationJitterRange)
-        root.put("obfuscation_min_size", obfuscationMinSize)
-        root.put("obfuscation_max_size", obfuscationMaxSize)
-        root.put("obfuscation_auto_detect_interval", obfuscationAutoDetectInterval)
-        root.put("obfuscation_auto_threshold_bytes", obfuscationAutoThresholdBytes)
-        root.put("obfuscation_allow_mode_switch", obfuscationAllowModeSwitch)
         root.put("obfuscation_max_frag_size", obfuscationMaxFragSize)
 
         return root.toString(2)
@@ -437,21 +413,13 @@ data class P2PConfig(
             if (root.has("obfuscation")) {
                 val obf = root.getJSONObject("obfuscation")
                 if (obf.has("enable")) cfg.obfuscationEnable = obf.getBoolean("enable")
-                if (obf.has("mode")) cfg.obfuscationMode = obf.getString("mode")
+                if (obf.has("padding_rules")) cfg.paddingRules = obf.getString("padding_rules")
                 if (obf.has("algorithm")) cfg.obfuscationAlgorithm = obf.getString("algorithm")
                 if (obf.has("strict_key_negotiation")) cfg.strictKeyNegotiation = obf.getBoolean("strict_key_negotiation")
-                if (obf.has("fixed_size")) cfg.obfuscationFixedSize = obf.getInt("fixed_size")
-                if (obf.has("block_size")) cfg.obfuscationBlockSize = obf.getInt("block_size")
-                if (obf.has("jitter_range")) cfg.obfuscationJitterRange = obf.getInt("jitter_range")
-                if (obf.has("min_size")) cfg.obfuscationMinSize = obf.getInt("min_size")
-                if (obf.has("max_size")) cfg.obfuscationMaxSize = obf.getInt("max_size")
-                if (obf.has("auto_detect_interval")) cfg.obfuscationAutoDetectInterval = obf.getInt("auto_detect_interval")
-                if (obf.has("auto_threshold_bytes")) cfg.obfuscationAutoThresholdBytes = obf.getInt("auto_threshold_bytes")
-                if (obf.has("allow_mode_switch")) cfg.obfuscationAllowModeSwitch = obf.getBoolean("allow_mode_switch")
                 if (obf.has("max_frag_size")) cfg.obfuscationMaxFragSize = obf.getInt("max_frag_size")
             } else {
                 if (root.has("obfuscation_enable")) cfg.obfuscationEnable = root.getBoolean("obfuscation_enable")
-                if (root.has("obfuscation_mode")) cfg.obfuscationMode = root.getString("obfuscation_mode")
+                if (root.has("obfuscation_padding_rules")) cfg.paddingRules = root.getString("obfuscation_padding_rules")
                 if (root.has("obfuscation_algorithm")) cfg.obfuscationAlgorithm = root.getString("obfuscation_algorithm")
                 if (root.has("strict_key_negotiation")) cfg.strictKeyNegotiation = root.getBoolean("strict_key_negotiation")
             }
@@ -554,14 +522,6 @@ data class P2PConfig(
             }
 
             // Flat key obfuscation detail fields
-            if (root.has("obfuscation_fixed_size")) cfg.obfuscationFixedSize = root.getInt("obfuscation_fixed_size")
-            if (root.has("obfuscation_block_size")) cfg.obfuscationBlockSize = root.getInt("obfuscation_block_size")
-            if (root.has("obfuscation_jitter_range")) cfg.obfuscationJitterRange = root.getInt("obfuscation_jitter_range")
-            if (root.has("obfuscation_min_size")) cfg.obfuscationMinSize = root.getInt("obfuscation_min_size")
-            if (root.has("obfuscation_max_size")) cfg.obfuscationMaxSize = root.getInt("obfuscation_max_size")
-            if (root.has("obfuscation_auto_detect_interval")) cfg.obfuscationAutoDetectInterval = root.getInt("obfuscation_auto_detect_interval")
-            if (root.has("obfuscation_auto_threshold_bytes")) cfg.obfuscationAutoThresholdBytes = root.getInt("obfuscation_auto_threshold_bytes")
-            if (root.has("obfuscation_allow_mode_switch")) cfg.obfuscationAllowModeSwitch = root.getBoolean("obfuscation_allow_mode_switch")
             if (root.has("obfuscation_max_frag_size")) cfg.obfuscationMaxFragSize = root.getInt("obfuscation_max_frag_size")
 
             // ACL

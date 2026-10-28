@@ -102,14 +102,6 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun setupDropdownAdapters() {
-        // "fixed" and "block" are deliberately not offered here. The engine
-        // requires obfuscation.fixed_size > 0 / block_size > 0 for those modes
-        // (config.Validate returns an error), and this screen has no control for
-        // either size — they stay at 0. Picking them therefore rejected the whole
-        // config save with "obfuscation.fixed_size: must be > 0". They remain
-        // reachable through an imported config that carries the sizes, and through
-        // the WebUI, which does expose them.
-        val obfModes = arrayOf("auto", "random", "dynamic")
         val obfAlgos = arrayOf("auto", "chacha20", "aes-gcm", "none")
         val strategies = arrayOf("best_path", "multipath", "redundant", "fallback")
         val logLevels = arrayOf("debug", "info", "warn", "error")
@@ -119,7 +111,6 @@ class ConfigActivity : AppCompatActivity() {
             getString(R.string.theme_system)
         )
 
-        binding.actvObfuscationMode.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, obfModes))
         binding.actvObfuscationAlgo.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, obfAlgos))
         binding.actvTransportStrategy.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, strategies))
         binding.actvLogLevel.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, logLevels))
@@ -237,7 +228,7 @@ class ConfigActivity : AppCompatActivity() {
             scheduleReloadPlanRefresh()
         }
         listOf(
-            binding.actvObfuscationMode, binding.actvObfuscationAlgo,
+            binding.actvObfuscationAlgo,
             binding.actvTransportStrategy, binding.actvLogLevel
         ).forEach { dropdown ->
             dropdown.doAfterTextChanged { scheduleReloadPlanRefresh() }
@@ -568,19 +559,6 @@ class ConfigActivity : AppCompatActivity() {
             .show()
     }
 
-    /**
-     * The mode an imported config may legitimately request is "fixed" or
-     * "block" — but only when the matching size came along with it. Without the
-     * size the engine's Validate rejects the whole config, so fall back to
-     * "auto" rather than displaying an unusable selection. Modes that carry their
-     * sizes (or need none) pass through untouched.
-     */
-    private fun saneObfuscationMode(config: P2PConfig): String = when (config.obfuscationMode) {
-        "fixed" -> if (config.obfuscationFixedSize > 0) config.obfuscationMode else "auto"
-        "block" -> if (config.obfuscationBlockSize > 0) config.obfuscationMode else "auto"
-        else -> config.obfuscationMode.ifBlank { "auto" }
-    }
-
     private fun loadConfig() {
         val config = AppConfigManager.load(this)
         displayConfig(config)
@@ -622,7 +600,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.switchDisableHolePunching.isEnabled = !relayOff
         val obfsOn = binding.switchObfuscation.isChecked
         binding.switchStrictKey.isEnabled = obfsOn
-        binding.actvObfuscationMode.isEnabled = obfsOn
+        binding.etPaddingRules.isEnabled = obfsOn
         binding.actvObfuscationAlgo.isEnabled = obfsOn
     }
 
@@ -644,7 +622,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.switchDisableHolePunching.isChecked = config.disableHolePunching
         binding.switchObfuscation.isChecked = config.obfuscationEnable
         binding.switchStrictKey.isChecked = config.strictKeyNegotiation
-        binding.actvObfuscationMode.setText(saneObfuscationMode(config), false)
+        binding.etPaddingRules.setText(config.paddingRules)
         binding.actvObfuscationAlgo.setText(config.obfuscationAlgorithm, false)
         applySwitchGating()
         binding.switchQuic.isChecked = config.enableQuic
@@ -689,7 +667,7 @@ class ConfigActivity : AppCompatActivity() {
         val disableHolePunching = binding.switchDisableHolePunching.isChecked
         val obfuscation = binding.switchObfuscation.isChecked
         val strictKey = binding.switchStrictKey.isChecked
-        val obfMode = binding.actvObfuscationMode.text?.toString()?.trim() ?: "auto"
+        val paddingRules = binding.etPaddingRules.text?.toString()?.trim() ?: "0 -> 400-600"
         val obfAlgo = binding.actvObfuscationAlgo.text?.toString()?.trim() ?: "auto"
         val enableQuic = binding.switchQuic.isChecked
         val enableWebrtc = binding.switchWebrtc.isChecked
@@ -727,7 +705,7 @@ class ConfigActivity : AppCompatActivity() {
             tlsSniSuffix = tlsSniSuffix,
             enableMdns = enableMdns,
             obfuscationEnable = obfuscation,
-            obfuscationMode = obfMode,
+            paddingRules = paddingRules,
             obfuscationAlgorithm = obfAlgo,
             strictKeyNegotiation = strictKey,
             enableQuic = enableQuic,
@@ -752,15 +730,7 @@ class ConfigActivity : AppCompatActivity() {
             engineConfig = savedConfig.engineConfig,
             // Engine-only fields with no native editor: carry forward from saved config
             // to prevent silent data loss on every save.
-            obfuscationFixedSize = savedConfig.obfuscationFixedSize,
-            obfuscationBlockSize = savedConfig.obfuscationBlockSize,
-            obfuscationJitterRange = savedConfig.obfuscationJitterRange,
-            obfuscationMinSize = savedConfig.obfuscationMinSize,
-            obfuscationMaxSize = savedConfig.obfuscationMaxSize,
             obfuscationMaxFragSize = savedConfig.obfuscationMaxFragSize,
-            obfuscationAutoDetectInterval = savedConfig.obfuscationAutoDetectInterval,
-            obfuscationAutoThresholdBytes = savedConfig.obfuscationAutoThresholdBytes,
-            obfuscationAllowModeSwitch = savedConfig.obfuscationAllowModeSwitch,
             forcePrivateReachability = savedConfig.forcePrivateReachability,
             listenAddrs = savedConfig.listenAddrs,
             tapName = savedConfig.tapName,
@@ -845,18 +815,6 @@ class ConfigActivity : AppCompatActivity() {
             }
         }
         // Obfuscation params
-        if (config.obfuscationMode == "fixed" && config.obfuscationFixedSize <= 0) {
-            Toast.makeText(this, getString(R.string.err_invalid_fixed_size), Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (config.obfuscationMode == "block" && config.obfuscationBlockSize <= 0) {
-            Toast.makeText(this, getString(R.string.err_invalid_block_size), Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (config.obfuscationJitterRange < 0) {
-            Toast.makeText(this, getString(R.string.err_invalid_jitter), Toast.LENGTH_SHORT).show()
-            return
-        }
         if (config.obfuscationMaxFragSize > 0 && config.obfuscationMaxFragSize < 256) {
             Toast.makeText(this, getString(R.string.err_invalid_max_frag_size), Toast.LENGTH_SHORT).show()
             return

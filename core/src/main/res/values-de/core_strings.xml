@@ -28,6 +28,7 @@
     <string name="error_io">Datenzugriff fehlgeschlagen. Dateizugriff und freien Speicher prüfen.</string>
     <string name="error_unknown">Vorgang fehlgeschlagen. Details im Diagnoseprotokoll.</string>
     <string name="hint_obfuscation_mode">Verschleierungsmodus</string>
+    <string name="hint_obfuscation_rules">Padding-Regeln</string>
     <string name="priority_lan">LAN direkt</string>
     <string name="priority_loopback">Loopback</string>
     <string name="priority_overlay">Overlay</string>

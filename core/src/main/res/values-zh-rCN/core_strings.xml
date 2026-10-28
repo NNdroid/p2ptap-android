@@ -28,6 +28,7 @@
     <string name="error_io">无法读写数据，请检查文件访问权限和可用存储空间。</string>
     <string name="error_unknown">操作失败，请查看诊断日志了解详情。</string>
     <string name="hint_obfuscation_mode">混淆模式</string>
+    <string name="hint_obfuscation_rules">填充规则</string>
     <string name="priority_lan">局域网直连</string>
     <string name="priority_loopback">回环</string>
     <string name="priority_overlay">覆盖网络</string>

@@ -16,7 +16,7 @@ class LocalizedException(
 
 object UiMessages {
     private val configField = Regex("invalid config: ([a-z_.\\[\\]0-9]+):", RegexOption.IGNORE_CASE)
-    private val activeObfuscation = Regex("Active \\(([^,]+) mode, (\\d+)B\\)")
+    private val activeObfuscation = Regex("Active \\(rule: .+\\)")
 
     /** Map engine field names to localized hint resource IDs. */
     private val fieldHints = mapOf(
@@ -104,12 +104,11 @@ object UiMessages {
     }) + " ($score)"
 
     fun obfuscation(context: Context, raw: String): String {
-        activeObfuscation.find(raw)?.let {
-            return context.getString(R.string.security_active_fmt, it.groupValues[1], it.groupValues[2])
+        if (activeObfuscation.containsMatchIn(raw)) {
+            return raw
         }
         return when (raw.lowercase()) {
             "disabled" -> context.getString(R.string.stat_obf_disabled)
-            "auto", "none", "tls", "random", "quic" -> context.getString(R.string.hint_obfuscation_mode) + ": $raw"
             else -> context.getString(R.string.telemetry_unknown)
         }
     }

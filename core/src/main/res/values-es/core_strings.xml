@@ -28,6 +28,7 @@
     <string name="error_io">No se pueden leer o escribir datos. Revisa el acceso y el espacio libre.</string>
     <string name="error_unknown">La operación falló. Consulta los registros de diagnóstico.</string>
     <string name="hint_obfuscation_mode">Modo de ofuscación</string>
+    <string name="hint_obfuscation_rules">Reglas de relleno</string>
     <string name="priority_lan">Conexión LAN directa</string>
     <string name="priority_loopback">Bucle local</string>
     <string name="priority_overlay">Red superpuesta</string>

@@ -28,6 +28,7 @@
     <string name="error_io">데이터를 읽거나 쓸 수 없습니다. 파일 접근 권한과 여유 공간을 확인하세요.</string>
     <string name="error_unknown">작업에 실패했습니다. 자세한 내용은 진단 로그를 확인하세요.</string>
     <string name="hint_obfuscation_mode">난독화 모드</string>
+    <string name="hint_obfuscation_rules">패딩 규칙</string>
     <string name="priority_lan">LAN 직접 연결</string>
     <string name="priority_loopback">루프백</string>
     <string name="priority_overlay">오버레이</string>

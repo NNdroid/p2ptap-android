@@ -28,6 +28,7 @@
     <string name="error_io">Lecture ou écriture impossible. Vérifiez l’accès et l’espace disponible.</string>
     <string name="error_unknown">L’opération a échoué. Consultez les journaux de diagnostic.</string>
     <string name="hint_obfuscation_mode">Mode d\'obscurcissement</string>
+    <string name="hint_obfuscation_rules">Règles de remplissage</string>
     <string name="priority_lan">LAN direct</string>
     <string name="priority_loopback">Boucle locale</string>
     <string name="priority_overlay">Réseau superposé</string>

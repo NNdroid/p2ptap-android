@@ -85,6 +85,7 @@
     <string name="security_public">Public mesh (no PSK)</string>
     <string name="stat_obf_disabled">Disabled</string>
     <string name="hint_obfuscation_mode">Obfuscation Mode</string>
+    <string name="hint_obfuscation_rules">Padding Rules</string>
     <string name="protocol_relay">Relay</string>
     <string name="priority_loopback">Loopback</string>
     <string name="priority_lan">LAN direct</string>

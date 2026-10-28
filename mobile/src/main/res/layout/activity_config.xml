@@ -616,20 +616,23 @@
                         android:text="@string/switch_strict_key"
                         android:textColor="?attr/colorOnSurface" />
 
-                    <!-- Obfuscation Mode Dropdown -->
+                    <!-- Padding Rules -->
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/menuObfuscationMode"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:id="@+id/menuObfuscationRules"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:hint="@string/hint_obfuscation_mode">
+                        android:hint="@string/hint_obfuscation_rules">
 
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/actvObfuscationMode"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPaddingRules"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="none" />
+                            android:gravity="top"
+                            android:inputType="textMultiLine"
+                            android:lines="3"
+                            android:minLines="2" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Obfuscation Algorithm Dropdown -->
