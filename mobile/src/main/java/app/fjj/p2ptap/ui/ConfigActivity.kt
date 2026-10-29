@@ -209,8 +209,8 @@ class ConfigActivity : AppCompatActivity() {
         listOf(
             binding.switchEnableMdns, binding.switchDiscoverBootMesh,
             binding.switchDisableCircuitRelay, binding.switchDisableHolePunching,
-            binding.switchStrictKey, binding.switchQuic, binding.switchWebrtc,
-            binding.switchWebtransport, binding.switchTcp, binding.switchAcceptSubnets,
+            binding.switchStrictKey, binding.chipQuic, binding.chipWebrtc,
+            binding.chipWebtransport, binding.chipTcp, binding.switchAcceptSubnets,
             binding.switchWebUi
         ).forEach { switch ->
             switch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, _ ->
@@ -625,10 +625,10 @@ class ConfigActivity : AppCompatActivity() {
         binding.etPaddingRules.setText(config.paddingRules)
         binding.actvObfuscationAlgo.setText(config.obfuscationAlgorithm, false)
         applySwitchGating()
-        binding.switchQuic.isChecked = config.enableQuic
-        binding.switchWebrtc.isChecked = config.enableWebrtc
-        binding.switchWebtransport.isChecked = config.enableWebtransport
-        binding.switchTcp.isChecked = config.enableTcp
+        binding.chipQuic.isChecked = config.enableQuic
+        binding.chipWebrtc.isChecked = config.enableWebrtc
+        binding.chipWebtransport.isChecked = config.enableWebtransport
+        binding.chipTcp.isChecked = config.enableTcp
         binding.actvTransportStrategy.setText(config.transportStrategy, false)
         binding.switchAcceptSubnets.isChecked = config.acceptSubnets
         binding.etAdvertisedSubnets.setText(config.advertisedSubnets.joinToString("\n"))
@@ -669,10 +669,10 @@ class ConfigActivity : AppCompatActivity() {
         val strictKey = binding.switchStrictKey.isChecked
         val paddingRules = binding.etPaddingRules.text?.toString()?.trim() ?: "0 -> 400-600"
         val obfAlgo = binding.actvObfuscationAlgo.text?.toString()?.trim() ?: "auto"
-        val enableQuic = binding.switchQuic.isChecked
-        val enableWebrtc = binding.switchWebrtc.isChecked
-        val enableWebtransport = binding.switchWebtransport.isChecked
-        val enableTcp = binding.switchTcp.isChecked
+        val enableQuic = binding.chipQuic.isChecked
+        val enableWebrtc = binding.chipWebrtc.isChecked
+        val enableWebtransport = binding.chipWebtransport.isChecked
+        val enableTcp = binding.chipTcp.isChecked
         val strategy = binding.actvTransportStrategy.text?.toString()?.trim() ?: "best_path"
         val acceptSubnets = binding.switchAcceptSubnets.isChecked
         val advString = binding.etAdvertisedSubnets.text?.toString() ?: ""

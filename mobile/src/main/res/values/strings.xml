@@ -138,6 +138,11 @@
     <string name="switch_webrtc">Listen for WebRTC connections (NAT punch)</string>
     <string name="switch_webtransport">Listen for WebTransport connections</string>
     <string name="switch_tcp">Listen for TCP connections (port reuse)</string>
+    <!-- Protocol names shown as multi-select chips in the transports group. -->
+    <string name="proto_quic" translatable="false">QUIC</string>
+    <string name="proto_webrtc" translatable="false">WebRTC</string>
+    <string name="proto_webtransport" translatable="false">WebTransport</string>
+    <string name="proto_tcp" translatable="false">TCP</string>
     <string name="hint_allowed_subnet_peers">Allowed Subnet Peer IDs (or * for all)</string>
 
     <!-- Peers Detail Dialog -->

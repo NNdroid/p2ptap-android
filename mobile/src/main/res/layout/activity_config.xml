@@ -694,45 +694,47 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- QUIC Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchQuic"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="@string/switch_quic"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <!-- WebRTC Direct Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchWebrtc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="@string/switch_webrtc"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <!-- WebTransport Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchWebtransport"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="@string/switch_webtransport"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <!-- TCP Reuse Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchTcp"
+                    <!-- Enabled listen protocols (multi-select) -->
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/groupProtocols"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:checked="true"
-                        android:text="@string/switch_tcp"
-                        android:textColor="?attr/colorOnSurface" />
+                        app:chipSpacingHorizontal="8dp"
+                        app:singleSelection="false">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipQuic"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/proto_quic" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipWebrtc"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/proto_webrtc" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipWebtransport"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/proto_webtransport" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipTcp"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/proto_tcp" />
+                    </com.google.android.material.chip.ChipGroup>
 
                     <!-- Transport Strategy Dropdown -->
                     <com.google.android.material.textfield.TextInputLayout
