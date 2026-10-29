@@ -67,6 +67,7 @@
     <string name="hint_mtu">터널 MTU (기본 1500)</string>
     <string name="hint_obfuscation_algo">데이터 암호화 알고리즘</string>
     <string name="hint_transport_strategy">전송 전략</string>
+    <string name="helper_transport_strategy">best_path는 단일 경로를 사용합니다. multipath는 모든 활성 경로(직접 + 회로 릴레이) 간 트래픽을 분산하고 수신 측에서 재정렬합니다. redundant는 중복 전송, fallback은 장애 시 페일오버합니다. 재시작이 필요합니다.</string>
     <string name="hint_log_level">로그 레벨</string>
     <string name="switch_accept_subnets">원격 노드 서브넷 수락</string>
     <string name="switch_obfuscation">난독화 및 종단간 암호화 활성화</string>

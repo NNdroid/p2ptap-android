@@ -67,6 +67,7 @@
     <string name="hint_mtu">トンネル MTU (デフォルト 1500)</string>
     <string name="hint_obfuscation_algo">データ暗号化アルゴリズム</string>
     <string name="hint_transport_strategy">トランスポート選択戦略</string>
+    <string name="helper_transport_strategy">best_path は単一経路を使用。multipath はすべての有効な経路（直接 + サーキットリレー）間でトラフィックを分散し受信側で並べ替え。redundant は重複送信、fallback は障害時にフェイルオーバー。再起動が必要です。</string>
     <string name="hint_log_level">ログレベル</string>
     <string name="switch_accept_subnets">リモート通知サブネットを受信</string>
     <string name="switch_obfuscation">難読化とE2E暗号化を有効化</string>

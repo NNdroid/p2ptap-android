@@ -75,6 +75,7 @@
     <string name="hint_mtu">隧道 MTU 大小 (默认 1500)</string>
     <string name="hint_obfuscation_algo">端到端数据加密算法</string>
     <string name="hint_transport_strategy">传输通道选路策略</string>
+    <string name="helper_transport_strategy">best_path 使用单一通道；multipath 在所有活动通道（直连 + 电路中继）间均衡流量并在接收端重排；redundant 重复发送；fallback 故障切换。需重启后生效。</string>
     <string name="hint_log_level">日志输出级别</string>
 
     <string name="switch_accept_subnets">自动接收远端节点通告的局域网子网</string>

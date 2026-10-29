@@ -66,6 +66,7 @@
     <string name="hint_mtu">MTU du tunnel (1500 par défaut)</string>
     <string name="hint_obfuscation_algo">Algorithme de chiffrement</string>
     <string name="hint_transport_strategy">Stratégie de transport</string>
+    <string name="helper_transport_strategy">best_path utilise un seul chemin; multipath répartit le trafic sur tous les chemins actifs (direct + relais par circuit) et réordonne chez le récepteur; redundant duplique; fallback bascule en cas de panne. Redémarrage requis.</string>
     <string name="hint_log_level">Niveau de journalisation</string>
     <string name="switch_accept_subnets">Accepter les sous-réseaux annoncés</string>
     <string name="switch_obfuscation">Activer l\'obscurcissement et le chiffrement E2E</string>

@@ -67,6 +67,7 @@
     <string name="hint_mtu">MTU туннеля (по умолчанию 1500)</string>
     <string name="hint_obfuscation_algo">Алгоритм шифрования</string>
     <string name="hint_transport_strategy">Стратегия выбора транспорта</string>
+    <string name="helper_transport_strategy">best_path использует один путь; multipath распределяет трафик по всем активным путям (прямой + ретрансляция по цепи) и переупорядочивает на приёмнике; redundant дублирует; fallback переключается при сбое. Требуется перезапуск.</string>
     <string name="hint_log_level">Уровень логирования</string>
     <string name="switch_accept_subnets">Принимать анонсированные подсети</string>
     <string name="switch_obfuscation">Включить маскировку трафика и E2 шифрование</string>

@@ -66,6 +66,7 @@
     <string name="hint_mtu">Tunnel MTU (Standard 1500)</string>
     <string name="hint_obfuscation_algo">Verschlüsselungsalgorithmus</string>
     <string name="hint_transport_strategy">Transportstrategie</string>
+    <string name="helper_transport_strategy">best_path nutzt einen Pfad; multipath verteilt den Verkehr auf alle aktiven Pfade (direkt + Circuit-Relay) und sortiert beim Empfänger; redundant dupliziert; fallback weicht bei Ausfall aus. Neustart erforderlich.</string>
     <string name="hint_log_level">Protokollierungsgrad</string>
     <string name="switch_accept_subnets">Angekündigte Subnetze akzeptieren</string>
     <string name="switch_obfuscation">Verkehrsverschleierung &amp; Verschlüsselung aktivieren</string>

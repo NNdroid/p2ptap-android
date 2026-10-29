@@ -75,6 +75,7 @@
     <string name="hint_mtu">隧道 MTU</string>
     <string name="hint_obfuscation_algo">加密算法</string>
     <string name="hint_transport_strategy">传输策略</string>
+    <string name="helper_transport_strategy">best_path 使用单一路径；multipath 在全部活跃路径（直连 + 电路中继）间均衡流量并在接收端重排序；redundant 冗余发送；fallback 故障切换。需重启生效。</string>
     <string name="hint_log_level">日志级别</string>
 
     <string name="switch_accept_subnets">接收宣告子网</string>

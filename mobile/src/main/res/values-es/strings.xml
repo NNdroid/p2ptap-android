@@ -66,6 +66,7 @@
     <string name="hint_mtu">MTU del túnel (predeterminado 1500)</string>
     <string name="hint_obfuscation_algo">Algoritmo de cifrado</string>
     <string name="hint_transport_strategy">Estrategia de transporte</string>
+    <string name="helper_transport_strategy">best_path usa una sola ruta; multipath equilibra el tráfico entre todas las rutas activas (directa + relevo por circuito) y reordena en el receptor; redundant duplica; fallback conmuta ante fallos. Requiere reinicio.</string>
     <string name="hint_log_level">Nivel de registro</string>
     <string name="switch_accept_subnets">Aceptar subredes anunciadas</string>
     <string name="switch_obfuscation">Activar ofuscación y cifrado E2E</string>
