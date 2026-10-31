@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pill field for the peers / logs search inputs. 26dp on a 52dp box, fill
+     only: an outlined pill at this size reads as a button, not a field. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/m3_card" />
+    <corners android:radius="26dp" />
+</shape>

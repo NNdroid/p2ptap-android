@@ -63,9 +63,13 @@
     <string name="helper_transport_strategy">best_path 使用單一通道；multipath 在所有活動通道（直連 + 電路中繼）間平衡流量並在接收端重新排序；redundant 冗餘發送；fallback 故障切換。需重啟後生效。</string>
     <string name="hint_log_level">日誌輸出級別</string>
     <string name="switch_accept_subnets">自動接收遠端節點通告的區域網子網</string>
+    <string name="switch_accept_subnets_desc">把對端通告的子網路由接入本機 TAP 介面。</string>
     <string name="switch_obfuscation">開啟流量特徵混淆與端到端加密</string>
+    <string name="switch_obfuscation_desc">按規則填充短幀，使 DPI 無法指紋識別通道。</string>
     <string name="switch_discover_boot_mesh">允許發現多 Boot 節點骨幹中繼</string>
+    <string name="switch_discover_boot_mesh_desc">加入引導網格，以便發現區域網路以外的節點。</string>
     <string name="switch_webui_enable">啟用內建 Web 儀表板控制台</string>
+    <string name="switch_webui_enable_desc">在 127.0.0.1 上提供本機控制面板。</string>
     <string name="title_log_viewer">即時診斷日誌</string>
     <string name="hint_search_logs">搜尋日誌關鍵字、IP、Peer…</string>
     <string name="filter_all">全部</string>
@@ -104,10 +108,15 @@
     <string name="prompt_vpn_not_running">提示：P2PTap VPN 必須先啟動才能存取控制台</string>
     <string name="tile_label">P2PTap 虛擬網</string>
     <string name="switch_enable_mdns">開啟區域網路 mDNS 節點自發現</string>
+    <string name="switch_enable_mdns_desc">在區域網路內廣播本節點，自動發現附近的對端。</string>
     <string name="switch_disable_relay">僅直連模式 (同時停用打洞與自動中繼)</string>
+    <string name="switch_disable_relay_desc">僅使用直連。NAT 後的對端將無法存取。</string>
     <string name="switch_disable_circuit_relay">僅停用標準中繼</string>
+    <string name="switch_disable_circuit_relay_desc">不再把 libp2p 電路中繼當作備用路徑。</string>
     <string name="switch_disable_hole_punching">僅停用打洞</string>
+    <string name="switch_disable_hole_punching_desc">跳過 NAT 打洞，只依賴已建立的鏈路。</string>
     <string name="switch_strict_key">嚴格前向安全 (節點間 PFS 金鑰強隔離)</string>
+    <string name="switch_strict_key_desc">拒絕身分金鑰在未重新協商時發生變化的對端。</string>
     <string name="group_transports">傳輸層底層協定控制</string>
     <string name="switch_quic">監聽 QUIC 連線 (UDP)</string>
     <string name="switch_webrtc">監聽 WebRTC 連線 (NAT 打洞)</string>
@@ -122,8 +131,8 @@
     <string name="peers_empty_offline">節點當前處於離線狀態\n點擊首頁連線後即可自動發現並建立 P2P 虛擬網卡全互聯</string>
     <string name="peers_waiting_hint">暫無在線節點\n等待網路內其他 Peer 節點加入…</string>
     <string name="peers_summary_fmt">共 %1$d 個在線節點 (%2$d 直連, %3$d 中繼)</string>
-    <string name="badge_direct">⚡ 直連</string>
-    <string name="badge_relay">🔁 中繼</string>
+    <string name="badge_direct">直連</string>
+    <string name="badge_relay">中繼</string>
     <string name="msg_peer_id_copied_fmt">Peer ID 已複製: %s</string>
     <string name="label_endpoint_prefix">端點: </string>
     <string name="label_traffic_prefix">流量: </string>
@@ -133,9 +142,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">傳輸速率與流量統計 (Traffic &amp; Metrics)</string>
     <string name="traffic_offline_hint">VPN 未連線，請先在首頁點擊連線以開始統計即時流量</string>
-    <string name="section_live_throughput">⚡ 即時速率與累計吞吐</string>
-    <string name="section_protocol_stats">🌐 二三層協定分佈統計</string>
-    <string name="section_security_stats">🔒 傳輸安全與混淆加密</string>
+    <string name="section_live_throughput">即時速率與累計吞吐</string>
+    <string name="section_protocol_stats">二三層協定分佈統計</string>
+    <string name="section_security_stats">傳輸安全與混淆加密</string>
     <string name="stat_live_tx_speed">即時上行速率</string>
     <string name="stat_live_rx_speed">即時下行速率</string>
     <string name="stat_total_tx_bytes">累計發出流量</string>
@@ -184,10 +193,10 @@
     <string name="dialog_manage_allowed_peers">管理允許存取子網節點 (Allowed Peer IDs)</string>
     <string name="btn_manage_list_fmt">管理列表 (%d)</string>
     <string name="btn_add_address">新增位址</string>
-    <string name="btn_scan_qr">📷 掃碼新增</string>
-    <string name="btn_paste_clip">📋 貼上追加</string>
-    <string name="btn_switch_text_mode">📝 批次文字模式</string>
-    <string name="btn_switch_list_mode">📇 卡片列表模式</string>
+    <string name="btn_scan_qr">掃碼新增</string>
+    <string name="btn_paste_clip">貼上追加</string>
+    <string name="btn_switch_text_mode">批次文字模式</string>
+    <string name="btn_switch_list_mode">卡片列表模式</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">輸入 /ip4/.../udp/.../p2p/... 或 IP/CIDR 位址</string>
     <string name="dialog_edit_address_title">編輯位址</string>
     <string name="dialog_add_address_title">新增位址</string>
@@ -198,13 +207,13 @@
     <string name="btn_save_list">儲存並套用</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 掃碼匯入</string>
+    <string name="btn_scan_config">掃碼匯入</string>
     <string name="title_scan_qr">掃描節點連線二維碼</string>
     <string name="msg_scan_success">掃碼成功</string>
     <string name="msg_scan_no_result">未從圖片或相機中識別到有效二維碼</string>
     <string name="dialog_scan_result_title">已識別節點連線資訊</string>
-    <string name="action_add_static_peer">➕ 新增為靜態對端節點 (Static Peer)</string>
-    <string name="action_add_bootstrap_peer">🌐 新增為引導中繼節點 (Bootstrap Peer)</string>
+    <string name="action_add_static_peer">新增為靜態對端節點 (Static Peer)</string>
+    <string name="action_add_bootstrap_peer">新增為引導中繼節點 (Bootstrap Peer)</string>
     <string name="action_import_full_config">覆蓋匯入完整網路配置</string>
     <string name="label_virtual_ipv6">虛擬 IPv6: </string>
     <string name="label_subnets">宣告子網: </string>
@@ -214,9 +223,9 @@
 
     <!-- 出口節點選擇器 -->
     <string name="label_exit_node">出口節點 / 全域網關</string>
-    <string name="exit_node_auto_display">🌐 自動 Mesh 選路 (不啟用出口中繼)</string>
-    <string name="exit_node_active_fmt">🚀 出口: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 出口: %1$s</string>
+    <string name="exit_node_auto_display">自動 Mesh 選路 (不啟用出口中繼)</string>
+    <string name="exit_node_active_fmt">出口: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">出口: %1$s</string>
     <string name="dialog_exit_node_title">出口節點選擇</string>
     <string name="dialog_exit_node_desc">選擇通過哪台在線 Mesh 節點中轉網際網路/全域網關流量</string>
     <string name="exit_node_auto_title">自動 Mesh 直連模式 (預設)</string>
@@ -308,4 +317,15 @@
     <string name="menu_share_qr">分享二維碼</string>
     <string name="menu_view_peers">檢視節點詳情</string>
     <string name="action_logs">日誌</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">首頁</string>
+    <string name="tab_peers">節點</string>
+    <string name="tab_traffic">流量</string>
+    <string name="tab_settings">設定</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">搜尋節點名稱、Peer ID 或 IP</string>
+    <string name="action_toggle_theme">切換淺色/深色主題</string>
+    <string name="btn_share_logs">分享日誌</string>
 </resources>

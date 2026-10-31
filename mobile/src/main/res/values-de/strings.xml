@@ -129,8 +129,8 @@
     <string name="peers_empty_offline">Knoten ist offline.\nVerbinden Sie sich, um Peers zu erkennen.</string>
     <string name="peers_waiting_hint">Warten auf Beitritt anderer Peers…</string>
     <string name="peers_summary_fmt">Gesamt %1$d Aktive Peers (%2$d Direkt, %3$d Relais)</string>
-    <string name="badge_direct">⚡ Direkt</string>
-    <string name="badge_relay">🔁 Relais</string>
+    <string name="badge_direct">Direkt</string>
+    <string name="badge_relay">Relais</string>
     <string name="msg_peer_id_copied_fmt">Peer ID kopiert: %s</string>
     <string name="label_endpoint_prefix">Endpunkt: </string>
     <string name="label_traffic_prefix">Datenverkehr: </string>
@@ -140,9 +140,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">Verkehrs- &amp; Durchsatzstatistiken</string>
     <string name="traffic_offline_hint">VPN ist nicht verbunden.</string>
-    <string name="section_live_throughput">⚡ Live-Durchsatz &amp; Gesamtdaten</string>
-    <string name="section_protocol_stats">🌐 L2/L3 Protokollaufschlüsselung</string>
-    <string name="section_security_stats">🔒 Sicherheit &amp; Verschleierung</string>
+    <string name="section_live_throughput">Live-Durchsatz &amp; Gesamtdaten</string>
+    <string name="section_protocol_stats">L2/L3 Protokollaufschlüsselung</string>
+    <string name="section_security_stats">Sicherheit &amp; Verschleierung</string>
     <string name="stat_live_tx_speed">Live TX-Geschwindigkeit</string>
     <string name="stat_live_rx_speed">Live RX-Geschwindigkeit</string>
     <string name="stat_total_tx_bytes">Gesamte TX-Daten</string>
@@ -192,10 +192,10 @@
     <string name="dialog_manage_allowed_peers">Zulässige Subnetz-Peer-IDs verwalten</string>
     <string name="btn_manage_list_fmt">Liste verwalten (%d)</string>
     <string name="btn_add_address">Adresse hinzufügen</string>
-    <string name="btn_scan_qr">📷 QR scannen</string>
-    <string name="btn_paste_clip">📋 Aus Zwischenablage anfügen</string>
-    <string name="btn_switch_text_mode">📝 Stapel-Textmodus</string>
-    <string name="btn_switch_list_mode">📇 Kartenlistenmodus</string>
+    <string name="btn_scan_qr">QR scannen</string>
+    <string name="btn_paste_clip">Aus Zwischenablage anfügen</string>
+    <string name="btn_switch_text_mode">Stapel-Textmodus</string>
+    <string name="btn_switch_list_mode">Kartenlistenmodus</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">/ip4/.../udp/.../p2p/... oder IP/CIDR eingeben</string>
     <string name="dialog_edit_address_title">Adresse bearbeiten</string>
     <string name="dialog_add_address_title">Neue Adresse hinzufügen</string>
@@ -206,13 +206,13 @@
     <string name="btn_save_list">Speichern &amp; Anwenden</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 QR-Import</string>
+    <string name="btn_scan_config">QR-Import</string>
     <string name="title_scan_qr">Knoten-QR-Code scannen</string>
     <string name="msg_scan_success">Scan erfolgreich</string>
     <string name="msg_scan_no_result">Kein gültiger QR-Code erkannt</string>
     <string name="dialog_scan_result_title">Erkannte Knotenverbindungsinformationen</string>
-    <string name="action_add_static_peer">➕ Als statischen Peer hinzufügen</string>
-    <string name="action_add_bootstrap_peer">🌐 Als Bootstrap-Peer hinzufügen</string>
+    <string name="action_add_static_peer">Als statischen Peer hinzufügen</string>
+    <string name="action_add_bootstrap_peer">Als Bootstrap-Peer hinzufügen</string>
     <string name="action_import_full_config">Vollständige Konfiguration überschreiben</string>
     <string name="label_virtual_ipv6">Virtuelles IPv6: </string>
     <string name="label_subnets">Angekündigte Subnetze: </string>
@@ -222,9 +222,9 @@
 
     <!-- Exit Node Selector -->
     <string name="label_exit_node">Exit-Knoten / Gateway</string>
-    <string name="exit_node_auto_display">🌐 Auto-Mesh-Modus (Kein Exit-Relais)</string>
-    <string name="exit_node_active_fmt">🚀 Gateway: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 Gateway: %1$s</string>
+    <string name="exit_node_auto_display">Auto-Mesh-Modus (Kein Exit-Relais)</string>
+    <string name="exit_node_active_fmt">Gateway: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">Gateway: %1$s</string>
     <string name="dialog_exit_node_title">Exit-Knoten auswählen</string>
     <string name="dialog_exit_node_desc">Wählen Sie einen Peer-Knoten als Gateway für Internetverkehr</string>
     <string name="exit_node_auto_title">Auto-Mesh-Modus (Standard)</string>
@@ -309,4 +309,13 @@
     <string name="menu_share_qr">QR-Code teilen</string>
     <string name="menu_view_peers">Peers ansehen</string>
     <string name="action_logs">Protokolle</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">Start</string>
+    <string name="tab_peers">Peers</string>
+    <string name="tab_traffic">Datenverkehr</string>
+    <string name="tab_settings">Einstellungen</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">Nach Name, Peer-ID oder IP suchen</string>
 </resources>

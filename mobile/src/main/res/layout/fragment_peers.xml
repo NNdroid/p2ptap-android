@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Peers tab.
+
+  This screen is what PeersDetailDialog used to be, promoted from a modal sheet
+  to a destination of its own. The reason is reading volume: a peer card
+  carries eighteen facts (state, encryption, role, geo, RTT, jitter, loss,
+  return path, TAP IPs, Peer ID, endpoint, link traffic, OS, version...), and
+  a bottom sheet that covered 80% of a 393dp screen was never going to be the
+  right container for a list of them.
+
+  What the tab adds over the sheet: a 34sp page title so the screen has a
+  landmark, a search field (with 20 peers the list is no longer scannable), and
+  live updates without the sheet's dismiss/reopen cycle.
+
+  Structure carries over from the sheet deliberately — same item layout, same
+  data source, same summary line — so the two cannot drift while both existed.
+
+  RTT provenance is unchanged and worth restating: the value shown is
+  measured (TAP-ICMP → libp2p-ping → p2p-echo); when no source has a sample
+  the row reads "unmeasured" rather than a fabricated 0.0 ms.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/m3_page"
+    android:clipToPadding="false"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <!-- Page title. 34sp at regular weight — the title is a landmark, so
+             it grows in size and drops in weight relative to a heading.
+             The refresh button is the sheet's btnRefresh: the list is live,
+             but a manual pull is still the only way to force the engine to
+             re-sample stats on a stalled session. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:letterSpacing="-0.012"
+                android:text="@string/tab_peers"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="34sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRefresh"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:contentDescription="@string/btn_refresh"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_search_field"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="18dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_search"
+                app:tint="?attr/colorOnSurfaceVariant" />
+
+            <EditText
+                android:id="@+id/etPeerSearch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:background="@null"
+                android:hint="@string/hint_search_peers"
+                android:gravity="center_vertical"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="0dp"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOnSurfaceVariant"
+                android:textSize="15sp"
+                tools:ignore="LabelFor" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="4dp"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/telemetry_loading"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12.5sp" />
+
+        <LinearLayout
+            android:id="@+id/peersContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Log viewer.
+
+     Relaid on the M3 surface language, and two controls changed shape rather
+     than just colour:
+
+     · the level filter was a scrolling ChipGroup, which read as five
+       independent toggles. It is a segmented pill now — one control, five
+       mutually exclusive states, which is exactly what it means;
+     · the four actions were full text buttons that took a whole row. They are
+       icon buttons on the search line, so the log itself gets the height.
+
+     Toolbar stays: this is a pushed screen, and back navigation belongs in an
+     app bar. The home shell has no toolbar at all, so this is the only place
+     one shows up. -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_window_gradient"
+    android:background="@color/m3_page"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_window_gradient"
+        android:background="@color/m3_page"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/title_log_viewer"
-            app:titleTextColor="?attr/colorOnSurface"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="?attr/colorOnSurface" />
+            app:navigationIconTint="?attr/colorOnSurface"
+            app:title="@string/title_log_viewer"
+            app:titleTextColor="?attr/colorOnSurface" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,157 +41,142 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingHorizontal="14dp"
+        android:paddingHorizontal="16dp"
         android:paddingBottom="12dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Top Control Bar: Search & Action Buttons -->
+        <!-- Search + action icons on one line: the log block needs the height
+             more than the buttons do. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:orientation="horizontal">
 
-            <!-- Search input -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.P2ptap.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/hint_search_logs"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusTopStart="14dp"
                 app:boxBackgroundMode="outline"
-                app:boxStrokeColor="?attr/colorOutlineVariant"
-                app:startIconDrawable="@drawable/ic_search"
-                app:startIconTint="?attr/colorOnSurfaceVariant"
-                app:endIconMode="clear_text">
+                app:startIconDrawable="@drawable/ic_search">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etSearchLogs"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:inputType="text" />
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Theme Toggle Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnToggleTheme"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="@dimen/icon_button_size"
-                android:layout_height="@dimen/icon_button_size"
-                android:layout_marginStart="8dp"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="6dp"
+                android:contentDescription="@string/action_toggle_theme"
                 app:icon="@drawable/ic_theme_mode"
-                app:iconTint="?attr/colorOnSurface" />
+                app:iconTint="?attr/colorOnSurfaceVariant" />
 
-            <!-- Pause / Resume Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPauseResume"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="@dimen/icon_button_size"
-                android:layout_height="@dimen/icon_button_size"
-                android:layout_marginStart="4dp"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/btn_pause_logs"
                 app:icon="@drawable/ic_pause"
-                app:iconTint="?attr/colorPrimary" />
+                app:iconTint="?attr/colorOnSurfaceVariant" />
 
-            <!-- Share Logs Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShareLogs"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="@dimen/icon_button_size"
-                android:layout_height="@dimen/icon_button_size"
-                android:layout_marginStart="4dp"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/btn_share_logs"
                 app:icon="@drawable/ic_share"
-                app:iconTint="?attr/colorOnSurface" />
+                app:iconTint="?attr/colorOnSurfaceVariant" />
 
-            <!-- Clear Logs Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClearLogs"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-                android:layout_width="@dimen/icon_button_size"
-                android:layout_height="@dimen/icon_button_size"
-                android:layout_marginStart="4dp"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/btn_clear_logs"
                 app:icon="@drawable/ic_delete"
-                app:iconTint="@color/status_error" />
-
+                app:iconTint="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
-        <!-- Filter Chips Row -->
-        <HorizontalScrollView
+        <!-- Level filter: one segmented control, five exclusive states -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleLevels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_marginBottom="8dp">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:checkedButton="@id/chipAll"
+            app:selectionRequired="true"
+            app:singleSelection="true">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupLevels"
-                android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chipAll"
+                style="@style/Widget.P2ptap.SegmentButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:singleSelection="true">
+                android:layout_weight="1"
+                android:text="@string/filter_all" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipAll"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/filter_all" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chipInfo"
+                style="@style/Widget.P2ptap.SegmentButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filter_info" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipInfo"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/filter_info" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chipWarn"
+                style="@style/Widget.P2ptap.SegmentButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filter_warn" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipWarn"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/filter_warn" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chipError"
+                style="@style/Widget.P2ptap.SegmentButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filter_error" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipError"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/filter_error" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chipDebug"
+                style="@style/Widget.P2ptap.SegmentButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/filter_debug" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipDebug"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/filter_debug" />
-
-
-            </com.google.android.material.chip.ChipGroup>
-        </HorizontalScrollView>
-
-        <!-- Main Terminal Box Card -->
+        <!-- Log block: a tonal container, not a bordered box -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:cardBackgroundColor="@color/log_card"
-            app:strokeColor="@color/log_stroke"
-            app:strokeWidth="1dp">
+            app:cardBackgroundColor="@color/m3_card"
+            app:cardCornerRadius="@dimen/m3_card_radius"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
             <ScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:padding="12dp"
+                android:padding="14dp"
                 android:scrollbars="vertical">
 
                 <TextView
@@ -185,45 +184,41 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
-                    android:lineSpacingExtra="3dp"
-                    android:textColor="@color/log_text"
-                    android:textSize="12sp"
+                    android:text="@string/logs_initializing"
+                    android:textColor="?attr/colorOnSurface"
                     android:textIsSelectable="true"
-                    android:text="@string/logs_initializing" />
+                    android:textSize="11sp" />
             </ScrollView>
-
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Bottom Status Bar / Quick Action -->
+        <!-- Footer: count on the left, copy on the right -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvLogStats"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
                 android:text="@string/telemetry_loading"
-                android:textSize="12sp"
-                android:textColor="?attr/colorOnSurfaceVariant" />
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCopyLogs"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Widget.P2ptap.Button.FilledTonalButton"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
+                android:layout_height="wrap_content"
                 android:text="@string/btn_copy_logs"
-                android:textSize="12sp"
-                app:cornerRadius="10dp"
+                android:textSize="13sp"
                 app:icon="@drawable/ic_copy"
-                app:iconSize="16dp" />
-
+                app:iconSize="17dp" />
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

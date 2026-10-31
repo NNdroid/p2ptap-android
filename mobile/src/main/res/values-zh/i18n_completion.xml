@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="backup_description">备份配置与身份密钥，或导入已有节点。</string>
-    <string name="backup_export_group">📤 导出与分享</string>
-    <string name="backup_import_group">📥 导入与恢复</string>
-    <string name="backup_scan_qr">📷 扫码导入（配置、身份或节点）</string>
-    <string name="backup_gallery_qr">🖼️ 从相册导入二维码图片</string>
+    <string name="backup_export_group">导出与分享</string>
+    <string name="backup_import_group">导入与恢复</string>
+    <string name="backup_scan_qr">扫码导入（配置、身份或节点）</string>
+    <string name="backup_gallery_qr">从相册导入二维码图片</string>
     <string name="msg_identity_restored_fmt">配置和身份已恢复，Peer ID：%1$s</string>
     <string name="peer_id_fmt">Peer ID：%1$s</string>
     <string name="identity_not_generated">未生成</string>

@@ -79,9 +79,13 @@
     <string name="hint_log_level">日志级别</string>
 
     <string name="switch_accept_subnets">接收宣告子网</string>
+    <string name="switch_accept_subnets_desc">把对端通告的子网路由接入本机 TAP 接口。</string>
     <string name="switch_obfuscation">启用流量混淆与加密</string>
+    <string name="switch_obfuscation_desc">按规则填充短帧，使 DPI 无法指纹识别隧道。</string>
     <string name="switch_discover_boot_mesh">发现 Boot 骨干网</string>
+    <string name="switch_discover_boot_mesh_desc">加入引导网格，以便发现局域网以外的节点。</string>
     <string name="switch_webui_enable">启用内置 Web 控制台</string>
+    <string name="switch_webui_enable_desc">在 127.0.0.1 上提供本地控制面板。</string>
 
     <!-- 日志查看器 -->
     <string name="title_log_viewer">诊断日志</string>
@@ -127,10 +131,15 @@
     <string name="prompt_vpn_not_running">注意：必须运行 P2PTap VPN 才能访问控制台</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">启用 mDNS 局域网自动发现</string>
+    <string name="switch_enable_mdns_desc">在局域网内广播本节点，自动发现附近的对端。</string>
     <string name="switch_disable_relay">仅直连模式 (同时禁用打洞与自动中继)</string>
+    <string name="switch_disable_relay_desc">仅使用直连。NAT 后的对端将无法访问。</string>
     <string name="switch_disable_circuit_relay">仅关闭标准中继</string>
+    <string name="switch_disable_circuit_relay_desc">不再把 libp2p 电路中继当作备用路径。</string>
     <string name="switch_disable_hole_punching">仅关闭打洞</string>
+    <string name="switch_disable_hole_punching_desc">跳过 NAT 打洞，只依赖已建立的链路。</string>
     <string name="switch_strict_key">严格前向安全 (每节点 PFS 密钥隔离)</string>
+    <string name="switch_strict_key_desc">拒绝身份密钥在未重新协商时发生变化的对端。</string>
     <string name="group_transports">传输层协议</string>
     <string name="switch_quic">监听 QUIC 连接 (UDP)</string>
     <string name="switch_webrtc">监听 WebRTC 连接 (NAT 打洞)</string>
@@ -145,8 +154,8 @@
     <string name="peers_empty_offline">节点目前离线。\n请在主界面点击连接以发现并连接节点。</string>
     <string name="peers_waiting_hint">等待其他节点加入虚拟网格…</string>
     <string name="peers_summary_fmt">共 %1$d 个活跃节点 (%2$d 直连, %3$d 中继)</string>
-    <string name="badge_direct">⚡ 直连</string>
-    <string name="badge_relay">🔁 中继</string>
+    <string name="badge_direct">直连</string>
+    <string name="badge_relay">中继</string>
     <string name="msg_peer_id_copied_fmt">Peer ID 已复制: %s</string>
     <string name="label_endpoint_prefix">终结点: </string>
     <string name="label_traffic_prefix">流量: </string>
@@ -156,9 +165,9 @@
     <!-- 流量详情对话框 -->
     <string name="dialog_traffic_title">流量与吞吐量指标</string>
     <string name="traffic_offline_hint">VPN 未连接。请在主界面点击连接以监控实时流量。</string>
-    <string name="section_live_throughput">⚡ 实时吞吐量与生命周期数据</string>
-    <string name="section_protocol_stats">🌐 L2/L3 协议明细</string>
-    <string name="section_security_stats">🔒 安全与混淆</string>
+    <string name="section_live_throughput">实时吞吐量与生命周期数据</string>
+    <string name="section_protocol_stats">L2/L3 协议明细</string>
+    <string name="section_security_stats">安全与混淆</string>
     <string name="stat_live_tx_speed">实时发送速率</string>
     <string name="stat_live_rx_speed">实时接收速率</string>
     <string name="stat_total_tx_bytes">累计发送数据</string>
@@ -207,10 +216,10 @@
     <string name="dialog_manage_allowed_peers">管理允许访问子网节点 (Allowed Peer IDs)</string>
     <string name="btn_manage_list_fmt">管理列表 (%d)</string>
     <string name="btn_add_address">添加新地址</string>
-    <string name="btn_scan_qr">📷 扫码添加</string>
-    <string name="btn_paste_clip">📋 粘贴追加</string>
-    <string name="btn_switch_text_mode">📝 批量文本模式</string>
-    <string name="btn_switch_list_mode">📇 卡片列表模式</string>
+    <string name="btn_scan_qr">扫码添加</string>
+    <string name="btn_paste_clip">粘贴追加</string>
+    <string name="btn_switch_text_mode">批量文本模式</string>
+    <string name="btn_switch_list_mode">卡片列表模式</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">输入 /ip4/.../udp/.../p2p/... 或 IP/CIDR 地址</string>
     <string name="dialog_edit_address_title">编辑地址</string>
     <string name="dialog_add_address_title">添加新地址</string>
@@ -221,13 +230,13 @@
     <string name="btn_save_list">保存并应用</string>
 
     <!-- 二维码扫描与导入 -->
-    <string name="btn_scan_config">📷 扫码导入</string>
+    <string name="btn_scan_config">扫码导入</string>
     <string name="title_scan_qr">扫描节点连接二维码</string>
     <string name="msg_scan_success">扫码成功</string>
     <string name="msg_scan_no_result">未识别到有效二维码</string>
     <string name="dialog_scan_result_title">已识别节点连接信息</string>
-    <string name="action_add_static_peer">➕ 添加为静态对端节点 (Static Peer)</string>
-    <string name="action_add_bootstrap_peer">🌐 添加为引导中继节点 (Bootstrap Peer)</string>
+    <string name="action_add_static_peer">添加为静态对端节点 (Static Peer)</string>
+    <string name="action_add_bootstrap_peer">添加为引导中继节点 (Bootstrap Peer)</string>
     <string name="action_import_full_config">覆盖导入完整网络配置</string>
     <string name="label_virtual_ipv6">虚拟 IPv6: </string>
     <string name="label_subnets">宣告子网: </string>
@@ -237,9 +246,9 @@
 
     <!-- 出口节点选择器 -->
     <string name="label_exit_node">出口节点 / 全局网关</string>
-    <string name="exit_node_auto_display">🌐 自动 Mesh 选路 (不启用出口中继)</string>
-    <string name="exit_node_active_fmt">🚀 出口: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 出口: %1$s</string>
+    <string name="exit_node_auto_display">自动 Mesh 选路 (不启用出口中继)</string>
+    <string name="exit_node_active_fmt">出口: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">出口: %1$s</string>
     <string name="dialog_exit_node_title">出口节点选择</string>
     <string name="dialog_exit_node_desc">选择通过哪台在线 Mesh 节点中转互联网/全局网关流量</string>
     <string name="exit_node_auto_title">自动 Mesh 直连模式 (默认)</string>
@@ -322,4 +331,15 @@
     <string name="menu_share_qr">分享二维码</string>
     <string name="menu_view_peers">查看节点详情</string>
     <string name="action_logs">日志</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">首页</string>
+    <string name="tab_peers">节点</string>
+    <string name="tab_traffic">流量</string>
+    <string name="tab_settings">设置</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">搜索节点名称、Peer ID 或 IP</string>
+    <string name="action_toggle_theme">切换浅色/深色主题</string>
+    <string name="btn_share_logs">分享日志</string>
 </resources>

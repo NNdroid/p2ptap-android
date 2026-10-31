@@ -133,9 +133,12 @@ class LogViewerActivity : AppCompatActivity() {
             renderLogs()
         }
 
-        binding.chipGroupLevels.setOnCheckedStateChangeListener { _, checkedIds ->
-            if (checkedIds.isEmpty()) return@setOnCheckedStateChangeListener
-            activeLevelFilter = when (checkedIds.first()) {
+        // Segmented control, not a chip group: the five states are mutually
+        // exclusive, and the group enforces exactly one selection, so only the
+        // "became checked" edge is interesting.
+        binding.toggleLevels.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            activeLevelFilter = when (checkedId) {
                 R.id.chipInfo -> "INFO"
                 R.id.chipWarn -> "WARN"
                 R.id.chipError -> "ERROR"

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Direct-connection tag. Same silhouette as bg_tag_neutral (fill only, 8dp,
+     no outline) with the tertiary container tone, so the badge stays a tag and
+     only its hue changes with the peer state. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/md_tertiary_container" />
+    <corners android:radius="8dp" />
+</shape>

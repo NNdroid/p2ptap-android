@@ -129,8 +129,8 @@
     <string name="peers_empty_offline">Le nœud est hors ligne.\nConnectez-vous pour découvrir les pairs.</string>
     <string name="peers_waiting_hint">En attente d\'autres pairs…</string>
     <string name="peers_summary_fmt">Total %1$d pairs actifs (%2$d Direct, %3$d Relais)</string>
-    <string name="badge_direct">⚡ Direct</string>
-    <string name="badge_relay">🔁 Relais</string>
+    <string name="badge_direct">Direct</string>
+    <string name="badge_relay">Relais</string>
     <string name="msg_peer_id_copied_fmt">Peer ID copié : %s</string>
     <string name="label_endpoint_prefix">Point d\'accès : </string>
     <string name="label_traffic_prefix">Trafic : </string>
@@ -140,9 +140,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">Statistiques de trafic et de débit</string>
     <string name="traffic_offline_hint">Le VPN n\'est pas connecté.</string>
-    <string name="section_live_throughput">⚡ Débit en direct et données totales</string>
-    <string name="section_protocol_stats">🌐 Répartition des protocoles L2/L3</string>
-    <string name="section_security_stats">🔒 Sécurité et obscurcissement</string>
+    <string name="section_live_throughput">Débit en direct et données totales</string>
+    <string name="section_protocol_stats">Répartition des protocoles L2/L3</string>
+    <string name="section_security_stats">Sécurité et obscurcissement</string>
     <string name="stat_live_tx_speed">Vitesse d\'envoi en direct</string>
     <string name="stat_live_rx_speed">Vitesse de réception en direct</string>
     <string name="stat_total_tx_bytes">Données envoyées totales</string>
@@ -193,10 +193,10 @@
     <string name="dialog_manage_allowed_peers">Gérer les IDs de pairs autorisés</string>
     <string name="btn_manage_list_fmt">Gérer la liste (%d)</string>
     <string name="btn_add_address">Ajouter une adresse</string>
-    <string name="btn_scan_qr">📷 Scanner QR</string>
-    <string name="btn_paste_clip">📋 Coller et ajouter</string>
-    <string name="btn_switch_text_mode">📝 Mode texte par lot</string>
-    <string name="btn_switch_list_mode">📇 Mode liste de cartes</string>
+    <string name="btn_scan_qr">Scanner QR</string>
+    <string name="btn_paste_clip">Coller et ajouter</string>
+    <string name="btn_switch_text_mode">Mode texte par lot</string>
+    <string name="btn_switch_list_mode">Mode liste de cartes</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">Entrez /ip4/.../udp/.../p2p/... ou IP/CIDR</string>
     <string name="dialog_edit_address_title">Modifier l\'adresse</string>
     <string name="dialog_add_address_title">Ajouter une adresse</string>
@@ -207,13 +207,13 @@
     <string name="btn_save_list">Enregistrer et appliquer</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 Importer QR</string>
+    <string name="btn_scan_config">Importer QR</string>
     <string name="title_scan_qr">Scanner le QR code de connexion</string>
     <string name="msg_scan_success">Analyse réussie</string>
     <string name="msg_scan_no_result">Aucun QR code valide détecté</string>
     <string name="dialog_scan_result_title">Informations de connexion détectées</string>
-    <string name="action_add_static_peer">➕ Ajouter comme pair statique</string>
-    <string name="action_add_bootstrap_peer">🌐 Ajouter comme pair d\'amorçage</string>
+    <string name="action_add_static_peer">Ajouter comme pair statique</string>
+    <string name="action_add_bootstrap_peer">Ajouter comme pair d\'amorçage</string>
     <string name="action_import_full_config">Remplacer la configuration complète</string>
     <string name="label_virtual_ipv6">IPv6 Virtuelle : </string>
     <string name="label_subnets">Sous-réseaux annoncés : </string>
@@ -223,9 +223,9 @@
 
     <!-- Exit Node Selector -->
     <string name="label_exit_node">Nœud de sortie / Passerelle</string>
-    <string name="exit_node_auto_display">🌐 Mode Maillé Auto (Pas de relais de sortie)</string>
-    <string name="exit_node_active_fmt">🚀 Passerelle : %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 Passerelle : %1$s</string>
+    <string name="exit_node_auto_display">Mode Maillé Auto (Pas de relais de sortie)</string>
+    <string name="exit_node_active_fmt">Passerelle : %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">Passerelle : %1$s</string>
     <string name="dialog_exit_node_title">Sélectionner le nœud de sortie</string>
     <string name="dialog_exit_node_desc">Sélectionnez un pair pour relayer le trafic Internet</string>
     <string name="exit_node_auto_title">Mode Maillé Auto (Par défaut)</string>
@@ -312,4 +312,13 @@
     <string name="menu_share_qr">Partager le code QR</string>
     <string name="menu_view_peers">Voir les pairs</string>
     <string name="action_logs">Journaux</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">Accueil</string>
+    <string name="tab_peers">Nœuds</string>
+    <string name="tab_traffic">Trafic</string>
+    <string name="tab_settings">Réglages</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">Rechercher par nom, Peer ID ou IP</string>
 </resources>

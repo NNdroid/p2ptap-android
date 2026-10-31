@@ -129,8 +129,8 @@
     <string name="peers_empty_offline">Узел оффлайн.\nПодключитесь к сети для поиска других узлов.</string>
     <string name="peers_waiting_hint">Ожидание подключения других узлов…</string>
     <string name="peers_summary_fmt">Всего %1$d активных узлов (%2$d прямых, %3$d реле)</string>
-    <string name="badge_direct">⚡ Прямое</string>
-    <string name="badge_relay">🔁 Реле</string>
+    <string name="badge_direct">Прямое</string>
+    <string name="badge_relay">Реле</string>
     <string name="msg_peer_id_copied_fmt">Peer ID скопирован: %s</string>
     <string name="label_endpoint_prefix">Конечная точка: </string>
     <string name="label_traffic_prefix">Трафик: </string>
@@ -140,9 +140,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">Статистика трафика и скорости</string>
     <string name="traffic_offline_hint">VPN не подключен.</string>
-    <string name="section_live_throughput">⚡ Текущий пропускной поток и общий трафик</string>
-    <string name="section_protocol_stats">🌐 Детализация протоколов L2/L3</string>
-    <string name="section_security_stats">🔒 Безопасность и маскировка</string>
+    <string name="section_live_throughput">Текущий пропускной поток и общий трафик</string>
+    <string name="section_protocol_stats">Детализация протоколов L2/L3</string>
+    <string name="section_security_stats">Безопасность и маскировка</string>
     <string name="stat_live_tx_speed">Скорость передачи</string>
     <string name="stat_live_rx_speed">Скорость приема</string>
     <string name="stat_total_tx_bytes">Всего передано</string>
@@ -194,10 +194,10 @@
     <string name="dialog_manage_allowed_peers">Управление разрешенными Peer ID подсети</string>
     <string name="btn_manage_list_fmt">Управление списком (%d)</string>
     <string name="btn_add_address">Добавить адрес</string>
-    <string name="btn_scan_qr">📷 Сканировать QR</string>
-    <string name="btn_paste_clip">📋 Вставить из буфера</string>
-    <string name="btn_switch_text_mode">📝 Пакетный текстовый режим</string>
-    <string name="btn_switch_list_mode">📇 Режим списка карточек</string>
+    <string name="btn_scan_qr">Сканировать QR</string>
+    <string name="btn_paste_clip">Вставить из буфера</string>
+    <string name="btn_switch_text_mode">Пакетный текстовый режим</string>
+    <string name="btn_switch_list_mode">Режим списка карточек</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">Введите /ip4/.../udp/.../p2p/... или IP/CIDR</string>
     <string name="dialog_edit_address_title">Редактировать адрес</string>
     <string name="dialog_add_address_title">Добавить новый адрес</string>
@@ -208,13 +208,13 @@
     <string name="btn_save_list">Сохранить и применить</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 Импорт по QR</string>
+    <string name="btn_scan_config">Импорт по QR</string>
     <string name="title_scan_qr">Сканировать QR-код подключения</string>
     <string name="msg_scan_success">Сканирование прошло успешно</string>
     <string name="msg_scan_no_result">Действительный QR-код не обнаружен</string>
     <string name="dialog_scan_result_title">Обнаружены данные подключения</string>
-    <string name="action_add_static_peer">➕ Добавить как статический узел</string>
-    <string name="action_add_bootstrap_peer">🌐 Добавить как Bootstrap-узел</string>
+    <string name="action_add_static_peer">Добавить как статический узел</string>
+    <string name="action_add_bootstrap_peer">Добавить как Bootstrap-узел</string>
     <string name="action_import_full_config">Заменить и импортировать полную конфигурацию</string>
     <string name="label_virtual_ipv6">Виртуальный IPv6: </string>
     <string name="label_subnets">Анонсируемые подсети: </string>
@@ -224,9 +224,9 @@
 
     <!-- Выбор узла выхода -->
     <string name="label_exit_node">Узел выхода / Шлюз</string>
-    <string name="exit_node_auto_display">🌐 Авто-режим сети (без реле выхода)</string>
-    <string name="exit_node_active_fmt">🚀 Шлюз: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 Шлюз: %1$s</string>
+    <string name="exit_node_auto_display">Авто-режим сети (без реле выхода)</string>
+    <string name="exit_node_active_fmt">Шлюз: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">Шлюз: %1$s</string>
     <string name="dialog_exit_node_title">Выбор узла выхода</string>
     <string name="dialog_exit_node_desc">Выберите узел для ретрансляции трафика интернета</string>
     <string name="exit_node_auto_title">Авто-режим Mesh (по умолчанию)</string>
@@ -315,4 +315,13 @@
     <string name="menu_share_qr">Поделиться QR-кодом</string>
     <string name="menu_view_peers">Показать пиры</string>
     <string name="action_logs">Журнал</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">Главная</string>
+    <string name="tab_peers">Узлы</string>
+    <string name="tab_traffic">Трафик</string>
+    <string name="tab_settings">Настройки</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">Поиск по имени, Peer ID или IP</string>
 </resources>

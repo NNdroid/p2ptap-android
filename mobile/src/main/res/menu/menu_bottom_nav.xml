@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom navigation: four destinations, no "more" overflow.
+
+     首页 / 节点 / 流量 是三个常驻目的地。设置 is the fourth: it lives in its own
+     Activity (ConfigActivity) because the settings form is ~1200 lines of
+     layout with its own scroll state and validation, and folding that into a
+     tab would have meant either a Fragment that duplicates the Activity's
+     894 lines of read/write logic or an Activity that pretends to be a tab.
+     The bar is inflated on both screens and the selected item is set from the
+     current screen, so the transition is the only visible difference. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tabHome"
+        android:icon="@drawable/ic_home"
+        android:title="@string/tab_home" />
+
+    <item
+        android:id="@+id/tabPeers"
+        android:icon="@drawable/ic_peers"
+        android:title="@string/tab_peers" />
+
+    <item
+        android:id="@+id/tabTraffic"
+        android:icon="@drawable/ic_traffic"
+        android:title="@string/tab_traffic" />
+
+    <item
+        android:id="@+id/tabSettings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/tab_settings" />
+
+</menu>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom navigation foreground: icon and label share one selector so the
+     selected pill, its icon and its label can never disagree.
+     Selected uses on-secondary-container (#161B5C light / #CFF7FF night)
+     against the primary_container indicator, which is the M3 pair. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/m3_nav_selected" android:state_checked="true" />
+    <item android:color="@color/md_on_surface_variant" />
+</selector>

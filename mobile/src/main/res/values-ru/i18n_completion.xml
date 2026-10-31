@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="backup_description">Сохраните настройки и ключи идентификации или импортируйте существующий узел.</string>
-    <string name="backup_export_group">📤 Экспорт и отправка</string>
-    <string name="backup_import_group">📥 Импорт и восстановление</string>
-    <string name="backup_scan_qr">📷 Сканировать QR (настройки, идентификация или узел)</string>
-    <string name="backup_gallery_qr">🖼️ Импортировать QR из галереи</string>
+    <string name="backup_export_group">Экспорт и отправка</string>
+    <string name="backup_import_group">Импорт и восстановление</string>
+    <string name="backup_scan_qr">Сканировать QR (настройки, идентификация или узел)</string>
+    <string name="backup_gallery_qr">Импортировать QR из галереи</string>
     <string name="msg_identity_restored_fmt">Настройки и идентификация восстановлены. Peer ID: %1$s</string>
     <string name="peer_id_fmt">Peer ID: %1$s</string>
     <string name="identity_not_generated">Не создан</string>

@@ -61,12 +61,15 @@
         <item name="materialButtonStyle">@style/Widget.P2ptap.Button</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.P2ptap.Dialog</item>
 
-        <!-- System bars -->
-        <item name="android:statusBarColor">@color/window_bg</item>
+        <!-- System bars. Status bar takes the page colour so the 34sp page
+             title can scroll under it; navigation bar takes the dock colour so
+             the 80dp bottom nav reads as one continuous surface with the
+             gesture area instead of a bar floating on a lighter strip. -->
+        <item name="android:statusBarColor">@color/m3_page</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@color/window_bg</item>
+        <item name="android:navigationBarColor">@color/m3_dock</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="android:windowBackground">@color/window_bg</item>
+        <item name="android:windowBackground">@color/m3_page</item>
     </style>
 
     <style name="Theme.P2ptap" parent="Base.Theme.P2ptap" />

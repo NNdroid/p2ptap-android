@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Share bar track. A well cut into the card, same tone as the inset blocks,
+     so an empty bar is not mistaken for a divider. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/m3_inset" />
+    <corners android:radius="3dp" />
+</shape>

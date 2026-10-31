@@ -1,172 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Exit-node selector sheet.
+
+     Rebuilt on the M3 surface language: the sheet carries the surface, so the
+     root is transparent, and the "auto" option is a tonal card with no stroke
+     and no elevation — selection is shown by the check, not by a 2dp cyan
+     outline, which is the one thing on this sheet that looked like a different
+     design system.
+
+     Three placeholder glyphs were also wrong and are fixed here: the selected
+     row drew ic_paste (a clipboard) as its checkmark, and the custom-input
+     affordance drew a text "›" instead of a chevron. -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurfaceContainerLow"
-    android:orientation="vertical"
-    android:padding="20dp">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+    android:background="@android:color/transparent"
+    android:overScrollMode="never">
 
-
-    <!-- Header Title Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="4dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="20dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dialog_exit_node_title"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRefreshPeers"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:contentDescription="@string/btn_refresh"
-            app:icon="@drawable/ic_refresh"
-            app:iconTint="?attr/colorPrimary" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/dialog_exit_node_desc"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="12.5sp" />
-
-    <!-- Card 1: Default / Auto Mesh Mode Option -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardAutoMode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="1dp"
-        app:strokeColor="?attr/colorPrimary"
-        app:strokeWidth="2dp">
-
+        <!-- Header Title Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_p2p_shield_node"
-                app:tint="?attr/colorPrimary" />
-
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="12dp"
-                android:orientation="vertical">
+                android:text="@string/dialog_exit_node_title"
+                android:textColor="?attr/colorOnSurface"
+                android:textFontWeight="600"
+                android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/exit_node_auto_title"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14.5sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="@string/exit_node_auto_desc"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/ivAutoChecked"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_paste"
-                app:tint="?attr/colorPrimary" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRefreshPeers"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/btn_refresh"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="@color/md_primary" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Custom Input Action Row -->
-    <LinearLayout
-        android:id="@+id/layoutCustomInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingVertical="6dp">
-
-        <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_edit"
-            app:tint="?attr/colorSecondary" />
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/exit_node_custom_title"
-            android:textColor="?attr/colorSecondary"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="16dp"
+            android:text="@string/dialog_exit_node_desc"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="13sp" />
+
+        <!-- Card 1: Default / Auto Mesh Mode Option -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAutoMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/m3_card"
+            app:cardCornerRadius="@dimen/m3_card_radius_small"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_p2p_shield_node"
+                    app:tint="@color/md_primary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/exit_node_auto_title"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textFontWeight="600"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/exit_node_auto_desc"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12.5sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivAutoChecked"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_check"
+                    app:tint="@color/md_primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Custom Input Action Row -->
+        <LinearLayout
+            android:id="@+id/layoutCustomInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="14dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/md_primary" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="@string/exit_node_custom_title"
+                android:textColor="@color/md_primary"
+                android:textFontWeight="600"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/m3_seam" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="›"
-            android:textColor="?attr/colorOutline"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_marginBottom="10dp"
+            android:letterSpacing="0.06"
+            android:text="@string/section_active_peers"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textFontWeight="600"
+            android:textSize="11sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/section_active_peers"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tvSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textColor="@color/md_primary"
+            android:textIsSelectable="true" />
 
-    <TextView android:id="@+id/tvSelection" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:textColor="?attr/colorPrimary"
-        android:paddingBottom="8dp" android:textIsSelectable="true" />
-    <TextView android:id="@+id/tvDataStatus" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="@string/telemetry_loading"
-        android:textColor="?attr/colorOnSurfaceVariant" android:paddingBottom="8dp"
-        android:accessibilityLiveRegion="polite" />
-    <!-- Active Peers List Container -->
+        <TextView
+            android:id="@+id/tvDataStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:paddingBottom="8dp"
+            android:text="@string/telemetry_loading"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
-
+        <!-- Active Peers List Container -->
         <LinearLayout
             android:id="@+id/containerPeers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

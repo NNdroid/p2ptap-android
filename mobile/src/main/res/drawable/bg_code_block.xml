@@ -1,7 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Inset block for monospace content: listen multiaddrs, JSON previews.
+     12dp radius (one step tighter than the card it is nested in) and a fill
+     darker than the card, which is how M3 nests a surface inside a surface
+     without drawing a border. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#0D0F172A" />
+    <solid android:color="@color/m3_inset" />
     <corners android:radius="12dp" />
-    <stroke android:width="1dp" android:color="#1A0F172A" />
 </shape>

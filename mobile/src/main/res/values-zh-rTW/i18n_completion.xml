@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="backup_description">備份設定與身分金鑰，或匯入現有節點。</string>
-    <string name="backup_export_group">📤 匯出與分享</string>
-    <string name="backup_import_group">📥 匯入與還原</string>
-    <string name="backup_scan_qr">📷 掃碼匯入（設定、身分或節點）</string>
-    <string name="backup_gallery_qr">🖼️ 從相簿匯入 QR 碼圖片</string>
+    <string name="backup_export_group">匯出與分享</string>
+    <string name="backup_import_group">匯入與還原</string>
+    <string name="backup_scan_qr">掃碼匯入（設定、身分或節點）</string>
+    <string name="backup_gallery_qr">從相簿匯入 QR 碼圖片</string>
     <string name="msg_identity_restored_fmt">設定與身分已還原，Peer ID：%1$s</string>
     <string name="peer_id_fmt">Peer ID：%1$s</string>
     <string name="identity_not_generated">尚未產生</string>

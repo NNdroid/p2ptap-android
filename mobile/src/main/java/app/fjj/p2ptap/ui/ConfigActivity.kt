@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.widget.doAfterTextChanged
+import app.fjj.p2ptap.MainActivity
 import app.fjj.p2ptap.R
 import app.fjj.p2ptap.config.AppConfigManager
 import app.fjj.p2ptap.config.splitPeerAddresses
@@ -88,16 +89,54 @@ class ConfigActivity : AppCompatActivity() {
         loadThemeMode()
         refreshPeerIdDisplay()
         setupListeners()
+        setupBottomNav()
     }
 
     override fun onResume() {
         super.onResume()
         syncStatusBarColor()
+        // Coming back from another tab: this screen is always the settings
+        // destination, so re-assert the selection by id (setting a MenuItem's
+        // isChecked does not repaint the bar or move its indicator).
+        binding.bottomNav.selectedItemId = R.id.tabSettings
+    }
+
+    /**
+     * Same bar as the home screen.
+     *
+     * Settings is the selected item here; the other three leave this Activity.
+     * `CLEAR_TOP or SINGLE_TOP` matters: MainActivity is the task root, so this
+     * delivers the requested tab through onNewIntent instead of stacking a
+     * second copy of it on top of the settings screen.
+     */
+    private fun setupBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.tabSettings -> true
+                R.id.tabHome, R.id.tabPeers, R.id.tabTraffic -> {
+                    val tab = when (item.itemId) {
+                        R.id.tabPeers -> MainActivity.TAB_PEERS
+                        R.id.tabTraffic -> MainActivity.TAB_TRAFFIC
+                        else -> MainActivity.TAB_HOME
+                    }
+                    startActivity(
+                        Intent(this, MainActivity::class.java).apply {
+                            putExtra(MainActivity.EXTRA_TAB, tab)
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        },
+                    )
+                    true
+                }
+
+                else -> false
+            }
+        }
+        binding.bottomNav.selectedItemId = R.id.tabSettings
     }
 
     private fun syncStatusBarColor() {
         val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        window.statusBarColor = ContextCompat.getColor(this, R.color.window_bg)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.m3_page)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = !isNight
     }
 
@@ -120,6 +159,10 @@ class ConfigActivity : AppCompatActivity() {
     private fun setupListeners() {
         binding.btnSave.setOnClickListener {
             saveConfig()
+        }
+
+        binding.layoutOpenLogs.setOnClickListener {
+            startActivity(Intent(this, LogViewerActivity::class.java))
         }
 
         binding.btnBackupRestore.setOnClickListener {
@@ -232,6 +275,25 @@ class ConfigActivity : AppCompatActivity() {
             binding.actvTransportStrategy, binding.actvLogLevel
         ).forEach { dropdown ->
             dropdown.doAfterTextChanged { scheduleReloadPlanRefresh() }
+        }
+
+        // Every switch is a 56dp setting line now: title, explanation, thumb.
+        // The whole line toggles, which is what gives the explanation a hit
+        // area — before, tapping the text beside a bare MaterialSwitch did
+        // nothing. Switches greyed out by applySwitchGating stay inert here as
+        // well, otherwise the row would be a way around the gating.
+        listOf(
+            binding.rowEnableMdns to binding.switchEnableMdns,
+            binding.rowDiscoverBootMesh to binding.switchDiscoverBootMesh,
+            binding.rowDisableRelay to binding.switchDisableRelay,
+            binding.rowDisableCircuitRelay to binding.switchDisableCircuitRelay,
+            binding.rowDisableHolePunching to binding.switchDisableHolePunching,
+            binding.rowObfuscation to binding.switchObfuscation,
+            binding.rowStrictKey to binding.switchStrictKey,
+            binding.rowAcceptSubnets to binding.switchAcceptSubnets,
+            binding.rowWebUi to binding.switchWebUi,
+        ).forEach { (row, sw) ->
+            row.setOnClickListener { if (sw.isEnabled) sw.toggle() }
         }
 
         setupRealTimeValidation()

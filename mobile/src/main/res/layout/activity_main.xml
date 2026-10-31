@@ -1,31 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- App shell.
+
+     There is no Toolbar any more. The M3 Expressive layout this app now
+     follows puts the page name in a 34sp headline inside the scrolling
+     content, and reserves the app bar for back navigation on pushed screens
+     (ConfigActivity still has one). Removing it also removed the two menu
+     actions that used to live up there: Settings is the fourth tab, and Logs
+     moved into the settings page's diagnostics group.
+
+     The three tab bodies are Fragments (HomeFragment / PeersFragment /
+     TrafficFragment), swapped into this container with add/hide rather than
+     replace, so a tab keeps its scroll position and its disclosure state when
+     you come back to it. They share one MainViewModel through
+     `by activityViewModels()`, so the engine is still polled once, not three
+     times.
+
+     Sizing: the content frame takes the weight, the dock is a fixed 80dp, so
+     nothing is ever hidden behind the bar and no scroll view needs a bottom
+     inset. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/m3_page"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/tabContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-        <!-- The brand, not a translated tagline: app_name is the same string
-             the launcher and the About card use, so the title bar cannot drift
-             away from what the app calls itself elsewhere. -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        style="@style/Widget.P2ptap.BottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m3_nav_height"
+        app:menu="@menu/menu_bottom_nav" />
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <include
-        android:id="@+id/contentMain"
-        layout="@layout/content_main" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

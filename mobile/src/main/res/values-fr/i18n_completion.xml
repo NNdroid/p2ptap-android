@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="backup_description">Sauvegardez la configuration et les clés d’identité ou importez un nœud existant.</string>
-    <string name="backup_export_group">📤 Exporter et partager</string>
-    <string name="backup_import_group">📥 Importer et restaurer</string>
-    <string name="backup_scan_qr">📷 Scanner un QR (configuration, identité ou nœud)</string>
-    <string name="backup_gallery_qr">🖼️ Importer une image QR de la galerie</string>
+    <string name="backup_export_group">Exporter et partager</string>
+    <string name="backup_import_group">Importer et restaurer</string>
+    <string name="backup_scan_qr">Scanner un QR (configuration, identité ou nœud)</string>
+    <string name="backup_gallery_qr">Importer une image QR de la galerie</string>
     <string name="msg_identity_restored_fmt">Configuration et identité restaurées. Peer ID : %1$s</string>
     <string name="peer_id_fmt">Peer ID : %1$s</string>
     <string name="identity_not_generated">Non généré</string>

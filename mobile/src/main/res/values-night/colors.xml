@@ -3,7 +3,9 @@
     <!-- ── Material 3 Color Tokens (Dark) ───────────────────────────── -->
     <!-- Primary -->
     <color name="md_primary">#06B6D4</color>
-    <color name="md_on_primary">#FFFFFF</color>
+    <!-- Same reasoning as the light theme: the cyan does not change between
+         themes, so neither does the colour that has to sit on it. -->
+    <color name="md_on_primary">#001416</color>
     <color name="md_primary_container">#003B42</color>
     <color name="md_on_primary_container">#CFF7FF</color>
     <color name="md_primary_inverse">#53E3F4</color>
@@ -86,25 +88,42 @@
     <color name="badge_tcp">#FBBF24</color>
 
     <!-- ── Home hero card (night) ────────────────────────────────────────
-         On the dark surface the glow is the only thing separating one
-         state from another, so it carries more alpha than the light
-         variant where the base gradient already reads as "raised". -->
-    <!-- Hero glass. The hero fill is deliberately translucent now: the window
-         itself carries bg_window_gradient (top-lit, darkening downward) and the
-         hero sits on top of it, so the gradient shows through the card. That is
-         what makes it read as glass instead of a flat panel. Alpha is kept at
-         0.65-0.72 — lower than that and status text loses contrast against the
-         glow layer that is also stacked on this same card. -->
-    <color name="hero_base_top">#B80E1724</color>
-    <color name="hero_base_bottom">#A60A111C</color>
-    <!-- One-off white sheen painted along the top edge, the way light catches
-         the upper lip of a glass pane. -->
-    <color name="hero_sheen">#1FFFFFFF</color>
-    <!-- Glass edge. White with alpha, not colorOutlineVariant: a themed grey
-         stroke reads as a drawn border, a lit white line reads as an edge. -->
-    <color name="hero_border">#26FFFFFF</color>
-    <color name="hero_glow_idle">#1A64748B</color>
-    <color name="hero_glow_connecting">#3DF59E0B</color>
-    <color name="hero_glow_connected">#3D10B981</color>
-    <color name="hero_glow_error">#3DEF4444</color>
+         Same flat tonal fill as the light theme; only m3_hero_* differs.
+         The old glass stack needed a night-only translucency ladder to sit
+         on bg_window_gradient — that backdrop is flat now, so the ladder
+         went with it. -->
+
+    <!-- ── M3 Expressive surface language (night) ───────────────────────
+         The ladder is page #0B0F19 → card #111827 → pressed #1E293B, which
+         is one step deeper than the md_* tokens on purpose: at night the
+         card has to sit *below* the page in lightness for the same reason
+         the light card sits above it — one step of separation, no stroke. -->
+    <color name="m3_page">#0B0F19</color>
+    <color name="m3_card">#111827</color>
+    <color name="m3_card_press">#1E293B</color>
+    <color name="m3_inset">#0C121D</color>
+    <color name="m3_dock">#111827</color>
+    <color name="m3_indicator">#003B42</color>
+    <color name="m3_seam">#0B0F19</color>
+    <color name="m3_field_stroke">#334155</color>
+
+    <color name="m3_on_accent">#001416</color>
+    <color name="m3_on_amber">#2A1A00</color>
+
+    <color name="m3_nav_selected">#CFF7FF</color>
+
+    <color name="m3_hero_idle">#111827</color>
+    <color name="m3_hero_connecting">#352D23</color>
+    <color name="m3_hero_connected">#113235</color>
+    <color name="m3_hero_error">#301E2B</color>
+
+    <color name="m3_ring_idle">#1E293B</color>
+    <color name="m3_ring_connecting">#513D1F</color>
+    <color name="m3_ring_connected">#11423E</color>
+    <color name="m3_ring_error">#42222D</color>
+
+    <color name="m3_tag_neutral">#1E293B</color>
+
+    <color name="m3_amber_container">#3A2A08</color>
+    <color name="m3_on_amber_container">#FDF0D5</color>
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Neutral tag: the advanced-section count, anything that must not borrow
+     the primary hue. Reads as a well cut into the card — fill only, no
+     outline. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/m3_tag_neutral" />
+    <corners android:radius="8dp" />
+</shape>

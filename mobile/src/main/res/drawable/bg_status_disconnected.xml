@@ -1,5 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status ring, idle. A solid tonal disc behind the hero glyph — no stroke
+     and no gradient. The four bg_status_* variants differ only in fill, and
+     MainActivity swaps them with the same state machine that swaps the hero
+     wash, so ring and card always agree. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#64748B" />
-    <size android:width="72dp" android:height="72dp" />
+    <solid android:color="@color/m3_ring_idle" />
 </shape>

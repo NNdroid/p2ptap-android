@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Backup / restore sheet.
+
+     Rebuilt on the M3 surface language: the sheet's own background carries the
+     surface, so the content root is transparent instead of painting a darker
+     inset block over it. Groups are labelled the same way as every other
+     section in the app — 11sp caps, letter-spaced, with a 16dp leading glyph —
+     and the actions use the shared pill button family, which is what makes the
+     sheet look like the rest of the product rather than a leftover dialog.
+
+     The two quick-scan buttons keep their own icons (camera / image) because
+     the label alone does not say which of the two import paths it opens. -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_code_block">
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="20dp">
 
         <!-- Title -->
         <TextView
@@ -18,131 +31,142 @@
             android:layout_height="wrap_content"
             android:text="@string/dialog_backup_title"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textFontWeight="600"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="18dp"
             android:text="@string/backup_description"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
         <!-- Group 1: Export -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_arrow_up_16"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/md_primary"
+            android:letterSpacing="0.06"
             android:text="@string/backup_export_group"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textAllCaps="true"
+            android:textColor="@color/md_primary"
+            android:textFontWeight="600"
+            android:textSize="11sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnExportBundle"
+            style="@style/Widget.P2ptap.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/action_export_bundle"
-            android:textSize="12sp"
             app:icon="@drawable/ic_backup"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnExportConfig"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.P2ptap.Button.FilledTonalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/action_export_config_only"
-            android:textSize="12sp"
             app:icon="@drawable/ic_text"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnExportKey"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.P2ptap.Button.FilledTonalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="18dp"
             android:text="@string/action_export_key_only"
-            android:textSize="12sp"
             app:icon="@drawable/ic_key"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="16dp"
-            android:background="?attr/colorOutlineVariant" />
+            android:layout_height="2dp"
+            android:layout_marginBottom="18dp"
+            android:background="@color/m3_seam" />
 
         <!-- Group 2: Import -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_arrow_down_16"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/status_connected"
+            android:letterSpacing="0.06"
             android:text="@string/backup_import_group"
+            android:textAllCaps="true"
             android:textColor="@color/status_connected"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textFontWeight="600"
+            android:textSize="11sp" />
 
         <!-- Scan QR to Import -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnScanQrImport"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.P2ptap.Button.FilledTonalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/backup_scan_qr"
-            android:textSize="12sp"
             app:icon="@drawable/ic_qr_scan"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <!-- Choose QR from Gallery -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGalleryQrImport"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.P2ptap.Button.FilledTonalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/backup_gallery_qr"
-            android:textSize="12sp"
             app:icon="@drawable/ic_qr_code"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <!-- Paste from Clipboard -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPasteImport"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.P2ptap.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/opt_paste_clipboard"
-            android:textSize="12sp"
             app:icon="@drawable/ic_paste"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <!-- Choose File from Local Storage -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFileImport"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.P2ptap.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/opt_choose_file"
-            android:textSize="12sp"
             app:icon="@drawable/ic_restore"
-            app:iconGravity="textStart" />
+            app:iconGravity="textStart"
+            app:iconSize="18dp" />
 
         <!-- Cancel -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelBackup"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.P2ptap.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="@string/btn_cancel" />
 
     </LinearLayout>

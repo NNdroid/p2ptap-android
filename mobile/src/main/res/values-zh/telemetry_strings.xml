@@ -20,5 +20,6 @@
     <string name="telemetry_replay_drops">重放丢弃包数</string>
     <string name="telemetry_disabling">正在移除出口路由…</string>
     <string name="btn_refresh">刷新</string>
-    <string name="telemetry_relay_only">🔁 仅中继</string>
+    <string name="telemetry_relay_only">仅中继</string>
+    <string name="telemetry_tap_mac_mismatch">TAP MAC 不一致 — 广播地址可能与实际 TAP 设备不匹配</string>
 </resources>

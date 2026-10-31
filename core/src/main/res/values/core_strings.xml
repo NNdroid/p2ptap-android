@@ -117,8 +117,8 @@
     <string name="role_peer">Peer</string>
 
     <!-- Encryption -->
-    <string name="encryption_active">🔒 %1$s</string>
-    <string name="encryption_plain">🔓 Plaintext</string>
+    <string name="encryption_active">%1$s</string>
+    <string name="encryption_plain">Plaintext</string>
 
     <!-- Connection quality -->
     <string name="label_jitter">Jitter</string>
@@ -132,13 +132,13 @@
     <string name="label_geo_location">Location</string>
 
     <!-- System health -->
-    <string name="section_system_health">🖥 System Health</string>
+    <string name="section_system_health">System Health</string>
     <string name="label_heap">Memory</string>
     <string name="label_goroutines">Goroutines</string>
     <string name="label_gc_pause">GC Pause</string>
 
     <!-- Protocol breakdown -->
-    <string name="section_protocol">📊 Traffic Composition</string>
+    <string name="section_protocol">Traffic Composition</string>
     <string name="proto_ipv4">IPv4</string>
     <string name="proto_ipv6">IPv6</string>
     <string name="proto_tcp">TCP</string>

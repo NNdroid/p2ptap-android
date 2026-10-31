@@ -1,80 +1,47 @@
 package app.fjj.p2ptap
 
-import app.fjj.p2ptap.i18n.UiMessages
-
-import android.Manifest
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.net.VpnService
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.PowerManager
-import android.os.SystemClock
-import android.provider.Settings
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
-import java.util.Locale
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import app.fjj.p2ptap.config.AppConfigManager
-import app.fjj.p2ptap.databinding.ActivityMainBinding
-import app.fjj.p2ptap.service.P2PStateRepository
-import app.fjj.p2ptap.service.ProtocolStatsData
-import app.fjj.p2ptap.service.P2PTapVpnService
-import app.fjj.p2ptap.ui.BackupDialog
-import app.fjj.p2ptap.ui.ConfigActivity
-import app.fjj.p2ptap.ui.ExitNodeSelectorDialog
-import app.fjj.p2ptap.ui.LogViewerActivity
-import app.fjj.p2ptap.ui.PeersDetailDialog
-import app.fjj.p2ptap.ui.QrDialog
-import app.fjj.p2ptap.ui.TrafficDetailDialog
-import app.fjj.p2ptap.viewmodel.MainViewModel
+import androidx.fragment.app.Fragment
 import app.fjj.p2ptap.crash.CrashReportDialog
-import com.p2ptap.P2PTap.P2PTap
+import app.fjj.p2ptap.databinding.ActivityMainBinding
+import app.fjj.p2ptap.service.P2PTapVpnService
+import app.fjj.p2ptap.ui.ConfigActivity
+import app.fjj.p2ptap.ui.HomeFragment
+import app.fjj.p2ptap.ui.PeersFragment
+import app.fjj.p2ptap.ui.TrafficFragment
+import app.fjj.p2ptap.viewmodel.MainViewModel
 
-
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.withContext
-
-class MainActivity : AppCompatActivity() {
+/**
+ * The app shell: bottom navigation plus the three tab Fragments.
+ *
+ * What is left here is exactly what a Fragment cannot own — the bar, the
+ * FragmentManager that swaps tab bodies, and the foreground / background
+ * service notifications bound to the host's lifecycle. Everything the home
+ * screen renders moved to [HomeFragment]; the peers and traffic lists live in
+ * their own Fragments. All three read one [MainViewModel] through
+ * `activityViewModels()`, so the engine is still polled once rather than three
+ * times, and no tab has to talk to another.
+ *
+ * Tab bodies are added once and shown/hidden, not replaced: returning to a tab
+ * restores its scroll position and its disclosure state. That also means their
+ * view lifecycles stay RESUMED while hidden, so each Fragment gates its own
+ * re-render through `onHiddenChanged`.
+ *
+ * Settings is the fourth destination but lives in [ConfigActivity], which
+ * inflates the same bar and selects its own item. Tapping it here starts that
+ * Activity and leaves [currentTab] alone — on return, onResume re-selects
+ * whatever tab this screen is actually showing, so the bar can never claim
+ * "settings" while the home hero is on screen.
+ */
+class MainActivity : AppCompatActivity(), HomeFragment.Host {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
 
-    private val vpnPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            startVpnService()
-        } else {
-            updateUiState(P2PTapVpnService.currentState, P2PTapVpnService.lastErrorMessage)
-            Toast.makeText(this, getString(R.string.vpn_permission_denied), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private val notificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { _ -> }
+    private var currentTab: Int = TAB_HOME
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,123 +49,131 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-
-        setupListeners()
-        setupAdvancedSection()
-        // Seed the badge before the first telemetry tick, otherwise the chip
-        // renders as an empty pill for the first 1.5 seconds.
-        updateAdvancedCount()
-        observeMetrics()
-        requestNotificationPermission()
+        setupTabs(
+            savedInstanceState?.getInt(STATE_TAB, TAB_HOME)
+                ?: intent?.getIntExtra(EXTRA_TAB, TAB_HOME)
+                ?: TAB_HOME,
+        )
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                startActivity(Intent(this, ConfigActivity::class.java))
-                true
-            }
-            R.id.action_logs -> {
-                startActivity(Intent(this, LogViewerActivity::class.java))
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-
-    private fun observeMetrics() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    while (kotlinx.coroutines.currentCoroutineContext().isActive) {
-                        viewModel.refreshStats()
-                        kotlinx.coroutines.delay(1500)
-                    }
+    private fun setupTabs(initialTab: Int) {
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.tabHome -> {
+                    selectTab(TAB_HOME)
+                    true
                 }
-                kotlinx.coroutines.flow.combine(viewModel.telemetry, viewModel.state) { data, state -> data to state }
-                    .collect { (data, state) ->
-                        val snapshot = data.snapshot
-                        val content = binding.contentMain
-                        val unknown = getString(R.string.telemetry_unknown)
-                        if (state == P2PTapVpnService.STATE_RUNNING && snapshot != null) {
-                            // Use the pushed metrics (1 Hz from Go's metricsTick)
-                            // as the authoritative source for peer counts and
-                            // throughput — they are always fresh. Recomputing
-                            // from snapshot.peers produces a second, potentially
-                            // divergent count that was only ever as fresh as the
-                            // last pull (TTL 1200 ms).
-                            val m = viewModel.metrics.value
-                            val activeCount = m.peerCount
-                            val direct = m.directPeers
-                            val relay = m.relayPeers
-                            // The cell is one third of the row wide, so it only
-                            // carries the count — the direct/relay split moved
-                            // to the hero subtitle, where there is room for it.
-                            content.tvActivePeers.text = activeCount.toString()
-                            content.tvTxSpeed.text = P2PStateRepository.formatSpeed(m.txSpeed)
-                            content.tvRxSpeed.text = P2PStateRepository.formatSpeed(m.rxSpeed)
-                            content.tvTraffic.text = "↑ ${P2PStateRepository.formatBytes(m.totalTx)}  ↓ ${P2PStateRepository.formatBytes(m.totalRx)}"
-                            // The subtitle carries the peer split rather than the
-                            // static "mesh is active" hint: once connected this is
-                            // the number the user came to the screen to check.
-                            content.tvStatusSubtitle.text = if (activeCount > 0) {
-                                getString(R.string.status_reason_connected_fmt, direct, relay)
-                            } else {
-                                getString(R.string.status_hint_connected)
-                            }
-                            content.tvNatStatus.text = if (snapshot.natStatus.isNotBlank()) snapshot.natStatus else unknown
-                            // System health
-                            val sys = snapshot.systemHealth
-                            content.tvUptime.text = if (sys.uptimeSeconds > 0) P2PStateRepository.formatUptime(sys.uptimeSeconds) else unknown
-                            content.tvHeap.text = if (sys.heapAllocMB > 0f) P2PStateRepository.formatMemoryMB(sys.heapAllocMB) else unknown
-                            content.tvGoroutines.text = if (sys.goroutines > 0) sys.goroutines.toString() else unknown
-                            content.tvGcPause.text = if (sys.lastGcPauseMS > 0f) String.format(Locale.getDefault(), "%.1f ms", sys.lastGcPauseMS) else unknown
-                            // Protocol traffic composition
-                            renderProtocolStats(snapshot.protocolStats)
-                        } else {
-                            content.tvActivePeers.text = getString(if (data.failed) R.string.telemetry_refresh_failed else R.string.telemetry_unknown)
-                            content.tvTxSpeed.text = unknown
-                            content.tvRxSpeed.text = unknown
-                            content.tvTraffic.text = "↑ $unknown  ↓ $unknown"
-                            content.tvNatStatus.text = unknown
-                            content.tvUptime.text = unknown
-                            content.tvHeap.text = unknown
-                            content.tvGoroutines.text = unknown
-                            content.tvGcPause.text = unknown
-                            binding.contentMain.protoContainer.removeAllViews()
-                        }
-                        refreshExitNodeDisplay()
-                        updateAdvancedCount()
-                    }
-            }
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.status.collect { status ->
-                    val state = status.state
-                    updateUiState(state, status.message)
-                    if (state == P2PTapVpnService.STATE_RUNNING || state == P2PTapVpnService.STATE_IDLE) {
-                        refreshPeerId()
-                        refreshMultiaddrs()
-                        viewModel.refreshPeers()
-                    }
+
+                R.id.tabPeers -> {
+                    selectTab(TAB_PEERS)
+                    true
                 }
+
+                R.id.tabTraffic -> {
+                    selectTab(TAB_TRAFFIC)
+                    true
+                }
+
+                R.id.tabSettings -> {
+                    startActivity(Intent(this, ConfigActivity::class.java))
+                    true
+                }
+
+                else -> false
             }
         }
+
+        // Re-selecting the current tab scrolls it back to the top, which is
+        // what every Material app does and the only way back to the hero
+        // without dragging.
+        binding.bottomNav.setOnItemReselectedListener { item ->
+            val tag = when (item.itemId) {
+                R.id.tabHome -> TAG_HOME
+                R.id.tabPeers -> TAG_PEERS
+                R.id.tabTraffic -> TAG_TRAFFIC
+                else -> null
+            }
+            when (val f = tag?.let { supportFragmentManager.findFragmentByTag(it) }) {
+                is HomeFragment -> f.scrollToTop()
+                is PeersFragment, is TrafficFragment ->
+                    (f.view as? androidx.core.widget.NestedScrollView)?.smoothScrollTo(0, 0)
+            }
+        }
+
+        selectTab(initialTab)
+        binding.bottomNav.selectedItemId = navItemFor(currentTab)
+    }
+
+    /**
+     * Swaps the visible tab body and syncs the bar without re-entering the
+     * listener.
+     *
+     * commitNow, not commit: the bar's selected item is set on the next line and
+     * a Fragment that is still pending cannot be found by tag, which made
+     * re-selection and tab restoration flaky.
+     */
+    private fun selectTab(tab: Int) {
+        currentTab = tab
+        val fm = supportFragmentManager
+        val tx = fm.beginTransaction()
+        for (t in ALL_TABS) {
+            val tag = tagFor(t)
+            val existing = fm.findFragmentByTag(tag)
+            if (t == tab) {
+                if (existing == null) tx.add(R.id.tabContainer, newFragmentFor(t), tag) else tx.show(existing)
+            } else if (existing != null) {
+                tx.hide(existing)
+            }
+        }
+        tx.commitNow()
+
+        val item = navItemFor(tab)
+        if (binding.bottomNav.selectedItemId != item) binding.bottomNav.selectedItemId = item
+    }
+
+    private fun newFragmentFor(tab: Int): Fragment = when (tab) {
+        TAB_PEERS -> PeersFragment()
+        TAB_TRAFFIC -> TrafficFragment()
+        else -> HomeFragment()
+    }
+
+    private fun tagFor(tab: Int): String = when (tab) {
+        TAB_PEERS -> TAG_PEERS
+        TAB_TRAFFIC -> TAG_TRAFFIC
+        else -> TAG_HOME
+    }
+
+    private fun navItemFor(tab: Int): Int = when (tab) {
+        TAB_PEERS -> R.id.tabPeers
+        TAB_TRAFFIC -> R.id.tabTraffic
+        else -> R.id.tabHome
+    }
+
+    // ── HomeFragment.Host ──────────────────────────────────────────────────
+
+    override fun navigateToTab(tab: Int) {
+        if (tab != currentTab) selectTab(tab)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        // Arriving from ConfigActivity's bar: it starts this Activity with
+        // CLEAR_TOP|SINGLE_TOP, so the tab lives in the new Intent rather than
+        // in a fresh onCreate.
+        val tab = intent.getIntExtra(EXTRA_TAB, currentTab)
+        if (tab != currentTab) selectTab(tab)
     }
 
     override fun onResume() {
         super.onResume()
-        loadConfigDisplay()
-        updateUiState(P2PTapVpnService.currentState, P2PTapVpnService.lastErrorMessage)
         viewModel.refreshPeers()
+
+        // Re-assert the bar against the tab that is actually visible. Tapping
+        // 设置 starts ConfigActivity and the bar briefly marks it as selected
+        // before this Activity pauses; without this line it would come back
+        // still highlighting Settings while the home hero is on screen.
+        binding.bottomNav.selectedItemId = navItemFor(currentTab)
 
         // Resume engine callbacks when the app returns to foreground.
         if (P2PTapVpnService.isRunning()) {
@@ -216,673 +191,35 @@ class MainActivity : AppCompatActivity() {
                 action = P2PTapVpnService.ACTION_APP_BACKGROUND
             })
         }
-        stopPulseAnimation()
         super.onPause()
     }
 
-    override fun onDestroy() {
-        // The elapsed ticker is a plain Handler loop, not a lifecycle-scoped
-        // coroutine, so it has to be cancelled explicitly or it keeps posting
-        // against a dead binding.
-        elapsedHandler.removeCallbacks(elapsedTicker)
-        super.onDestroy()
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(STATE_TAB, currentTab)
+        super.onSaveInstanceState(outState)
     }
 
-    private fun setupListeners() {
-        binding.contentMain.btnConnect.setOnClickListener {
-            when (P2PTapVpnService.currentState) {
-                // STARTING is cancellable. It used to be disabled outright, which
-                // left the user watching "Connecting…" with no exit but the
-                // timeout — the state machine has always supported a stop here.
-                P2PTapVpnService.STATE_STARTING -> stopVpnService()
-                P2PTapVpnService.STATE_STOPPING -> Unit
-                else -> {
-                    if (P2PTapVpnService.isRunning()) {
-                        stopVpnService()
-                    } else {
-                        binding.contentMain.btnConnect.isEnabled = false
-                        prepareAndStartVpn()
-                    }
-                }
-            }
-        }
+    companion object {
+        // Bottom-nav destinations hosted by this Activity. Settings is intent
+        // #3 — it lives in ConfigActivity — so it has no index here.
+        const val TAB_HOME = 0
+        const val TAB_PEERS = 1
+        const val TAB_TRAFFIC = 2
 
-        // Settings and logs moved to the app bar (see onCreateOptionsMenu);
-        // keeping end-of-page buttons for them meant a full scroll to reach
-        // either destination.
-        binding.contentMain.btnOpenWebUI.setOnClickListener {
-            if (!P2PTapVpnService.isRunning()) {
-                Toast.makeText(this, getString(R.string.prompt_vpn_not_running), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val config = P2PTapVpnService.runningConfiguration() ?: AppConfigManager.load(this)
-            val tokenParam = if (config.webUiToken.isNotBlank()) {
-                "?token=" + java.net.URLEncoder.encode(config.webUiToken.trim(), "UTF-8")
-            } else {
-                ""
-            }
-            val url = "http://127.0.0.1:${config.webUiPort}/$tokenParam"
-            try {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                startActivity(browserIntent)
-            } catch (e: Exception) {
-                Toast.makeText(this, getString(R.string.err_open_browser, UiMessages.describe(this, e)), Toast.LENGTH_SHORT).show()
-            }
-        }
+        private val ALL_TABS = intArrayOf(TAB_HOME, TAB_PEERS, TAB_TRAFFIC)
 
-        binding.contentMain.btnShareQr.setOnClickListener {
-            QrDialog.newInstance().show(supportFragmentManager, QrDialog.TAG)
-        }
+        private const val TAG_HOME = "tab:home"
+        private const val TAG_PEERS = "tab:peers"
+        private const val TAG_TRAFFIC = "tab:traffic"
 
-        binding.contentMain.cellUpload.setOnClickListener {
-            TrafficDetailDialog.newInstance().show(supportFragmentManager, TrafficDetailDialog.TAG)
-        }
+        private const val STATE_TAB = "app.fjj.p2ptap.state.TAB"
 
-        binding.contentMain.cellDownload.setOnClickListener {
-            TrafficDetailDialog.newInstance().show(supportFragmentManager, TrafficDetailDialog.TAG)
-        }
-
-        binding.contentMain.cardPeers.setOnClickListener {
-            PeersDetailDialog.newInstance().show(supportFragmentManager, PeersDetailDialog.TAG)
-        }
-
-        binding.contentMain.cardExitNode.setOnClickListener {
-            ExitNodeSelectorDialog.newInstance {
-                refreshExitNodeDisplay()
-            }.show(supportFragmentManager, ExitNodeSelectorDialog.TAG)
-        }
-
-        binding.contentMain.btnQuickBackup.setOnClickListener {
-            BackupDialog.newInstance {
-                loadConfigDisplay()
-            }.show(supportFragmentManager, BackupDialog.TAG)
-        }
-
-        binding.contentMain.layoutPeerId.setOnClickListener {
-            val pid = binding.contentMain.tvPeerId.text?.toString() ?: ""
-            if (pid.isNotEmpty() && pid != "-") {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(getString(R.string.label_peer_id), pid)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // Tap still copies (the common case). Long-press opens the actions that
-        // do not fit a single tap: reveal the untruncated ID, share it as a QR
-        // code, or jump to the peer list.
-        binding.contentMain.layoutPeerId.setOnLongClickListener {
-            showPeerIdMenu()
-            true
-        }
-
-        binding.contentMain.layoutTapIp.setOnClickListener {
-            val ip = binding.contentMain.tvTapIp.text?.toString() ?: ""
-            if (ip.isNotEmpty()) {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(getString(R.string.label_tap_ip), ip)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, getString(R.string.msg_copied_clipboard) + ": $ip", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.contentMain.layoutTapIpv6.setOnClickListener {
-            val v6 = binding.contentMain.tvTapIpv6.text?.toString() ?: ""
-            if (v6.isNotEmpty()) {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(getString(R.string.label_tap_ipv6), v6)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, getString(R.string.msg_copied_clipboard) + ": $v6", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.contentMain.btnCopyMultiaddrs.setOnClickListener {
-            copyMultiaddrsToClipboard()
-        }
-        binding.contentMain.tvMultiaddrs.setOnClickListener {
-            copyMultiaddrsToClipboard()
-        }
-
-        binding.contentMain.btnOpenGithubRepo.setOnClickListener {
-            openUrl("https://github.com/NNdroid/p2ptap")
-        }
-
-        binding.contentMain.btnOpenDeveloper.setOnClickListener {
-            openUrl("https://github.com/NNdroid")
-        }
-    }
-
-    // ── Advanced disclosure ────────────────────────────────────────────────
-
-    private var advancedExpanded = false
-
-    private fun setupAdvancedSection() {
-        binding.contentMain.layoutAdvancedHeader.setOnClickListener { toggleAdvanced() }
-    }
-
-    /**
-     * Expand or collapse the operator-only block.
-     *
-     * On expand the body is made VISIBLE before animating so the first frame
-     * has a measured height; on collapse the fade runs first and GONE lands in
-     * the end action, otherwise the card snaps shut with no transition.
-     */
-    private fun toggleAdvanced() {
-        val content = binding.contentMain
-        advancedExpanded = !advancedExpanded
-        val body = content.layoutAdvancedBody
-        val chevron = content.ivAdvancedChevron
-        if (advancedExpanded) {
-            body.visibility = View.VISIBLE
-            body.alpha = 0f
-            body.animate().alpha(1f).setDuration(160L).start()
-            chevron.animate().rotation(180f).setDuration(160L).start()
-        } else {
-            body.animate().alpha(0f).setDuration(140L).withEndAction {
-                body.visibility = View.GONE
-                body.alpha = 1f
-            }.start()
-            chevron.animate().rotation(0f).setDuration(160L).start()
-        }
-    }
-
-    /**
-     * Count the advanced entries that actually hold a value.
-     *
-     * The badge is cosmetic, but it should not claim "9" while the engine is
-     * stopped and every cell reads "No data" — so it is derived from the same
-     * strings the block renders rather than being a fixed number.
-     */
-    private fun updateAdvancedCount() {
-        val content = binding.contentMain
-        val unknown = getString(R.string.telemetry_unknown)
-        fun hasValue(v: TextView) = v.text.toString().let { it.isNotBlank() && it != unknown }
-
-        var n = 0
-        if (hasValue(content.tvTraffic)) n++
-        if (hasValue(content.tvNatStatus)) n++
-        if (content.cardSystemHealth.visibility == View.VISIBLE) {
-            if (hasValue(content.tvUptime)) n++
-            if (hasValue(content.tvHeap)) n++
-            if (hasValue(content.tvGoroutines)) n++
-            if (hasValue(content.tvGcPause)) n++
-        }
-        n += content.protoContainer.childCount
-        val addrs = content.tvMultiaddrs.text?.toString().orEmpty()
-        if (addrs.isNotBlank() && addrs != getString(R.string.multiaddrs_empty_hint)) n++
-
-        content.tvAdvancedCount.text = n.toString()
-    }
-
-    // ── Peer ID actions ────────────────────────────────────────────────────
-
-    private fun showPeerIdMenu() {
-        val popup = PopupMenu(this, binding.contentMain.layoutPeerId)
-        popup.menu.add(Menu.NONE, MENU_COPY_ID, 0, R.string.menu_copy_full_id)
-        popup.menu.add(Menu.NONE, MENU_SHARE_QR, 1, R.string.menu_share_qr)
-        popup.menu.add(Menu.NONE, MENU_VIEW_PEERS, 2, R.string.menu_view_peers)
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                MENU_COPY_ID -> {
-                    copyPeerId()
-                    true
-                }
-                MENU_SHARE_QR -> {
-                    QrDialog.newInstance().show(supportFragmentManager, QrDialog.TAG)
-                    true
-                }
-                MENU_VIEW_PEERS -> {
-                    PeersDetailDialog.newInstance().show(supportFragmentManager, PeersDetailDialog.TAG)
-                    true
-                }
-                else -> false
-            }
-        }
-        popup.show()
-    }
-
-    private fun copyPeerId() {
-        // Prefer the persisted identity: tvPeerId reads "-" until the engine
-        // reports one, but the key pair already exists in config by then.
-        val pid = AppConfigManager.getPeerId(this).ifBlank {
-            binding.contentMain.tvPeerId.text?.toString().orEmpty()
-        }
-        if (pid.isBlank() || pid == "-") return
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.label_peer_id), pid))
-        Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
-    }
-
-    // ── Connect elapsed timer ──────────────────────────────────────────────
-
-    // The engine reports STARTING as a single opaque state — there is no
-    // per-stage callback between "starting" and "running". Rather than invent
-    // a progress bar, the screen shows how long the wait has actually been,
-    // which is both truthful and enough to tell "slow" from "stuck".
-    private val elapsedHandler = Handler(Looper.getMainLooper())
-    private var startingSince = 0L
-
-    private val elapsedTicker = object : Runnable {
-        override fun run() {
-            if (P2PTapVpnService.currentState != P2PTapVpnService.STATE_STARTING) return
-            val secs = ((SystemClock.elapsedRealtime() - startingSince) / 1000L).toInt()
-            binding.contentMain.tvStatusElapsed.text = getString(R.string.status_elapsed_fmt, secs)
-            elapsedHandler.postDelayed(this, 1000L)
-        }
-    }
-
-    private fun startElapsedTicker() {
-        if (startingSince == 0L) startingSince = SystemClock.elapsedRealtime()
-        binding.contentMain.tvStatusElapsed.visibility = View.VISIBLE
-        binding.contentMain.tvStatusElapsed.text = getString(R.string.status_elapsed_fmt, 0)
-        elapsedHandler.removeCallbacks(elapsedTicker)
-        elapsedHandler.postDelayed(elapsedTicker, 1000L)
-    }
-
-    private fun stopElapsedTicker() {
-        elapsedHandler.removeCallbacks(elapsedTicker)
-        startingSince = 0L
-        binding.contentMain.tvStatusElapsed.visibility = View.GONE
-    }
-
-    private fun openUrl(url: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.err_open_browser, UiMessages.describe(this, e)), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private var statusPulseAnimator: ObjectAnimator? = null
-    private var statusScaleAnimatorX: ObjectAnimator? = null
-    private var statusScaleAnimatorY: ObjectAnimator? = null
-
-    private fun startPulseAnimation() {
-        if (!ValueAnimator.areAnimatorsEnabled() || statusPulseAnimator?.isRunning == true) return
-        stopPulseAnimation()
-        val ring = binding.contentMain.viewStatusRing
-        ring.scaleX = 1.0f
-        ring.scaleY = 1.0f
-        ring.alpha = 0.20f
-
-        val interpolator = android.view.animation.AccelerateDecelerateInterpolator()
-        val scaleX = ObjectAnimator.ofFloat(ring, View.SCALE_X, 1.0f, 1.22f).apply {
-            duration = 2000L
-            this.interpolator = interpolator
-            repeatCount = ValueAnimator.INFINITE
-            repeatMode = ValueAnimator.REVERSE
-        }
-        val scaleY = ObjectAnimator.ofFloat(ring, View.SCALE_Y, 1.0f, 1.22f).apply {
-            duration = 2000L
-            this.interpolator = interpolator
-            repeatCount = ValueAnimator.INFINITE
-            repeatMode = ValueAnimator.REVERSE
-        }
-        val alpha = ObjectAnimator.ofFloat(ring, View.ALPHA, 0.20f, 0.65f).apply {
-            duration = 2000L
-            this.interpolator = interpolator
-            repeatCount = ValueAnimator.INFINITE
-            repeatMode = ValueAnimator.REVERSE
-        }
-
-        statusScaleAnimatorX = scaleX
-        statusScaleAnimatorY = scaleY
-        statusPulseAnimator = alpha
-
-        scaleX.start()
-        scaleY.start()
-        alpha.start()
-    }
-
-    private fun stopPulseAnimation() {
-        statusScaleAnimatorX?.cancel()
-        statusScaleAnimatorY?.cancel()
-        statusPulseAnimator?.cancel()
-        val ring = binding.contentMain.viewStatusRing
-        ring.scaleX = 1.0f
-        ring.scaleY = 1.0f
-        ring.alpha = 0.20f
-    }
-
-    private fun copyMultiaddrsToClipboard() {
-        val addrs = binding.contentMain.tvMultiaddrs.text?.toString() ?: ""
-        if (addrs.isNotEmpty() && addrs != getString(R.string.multiaddrs_empty_hint) && addrs != getString(R.string.status_connecting)) {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(getString(R.string.label_multiaddrs), addrs)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, getString(R.string.msg_multiaddrs_copied), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun loadConfigDisplay() {
-        val config = AppConfigManager.load(this)
-        binding.contentMain.tvNodeName.text = config.nodeName
-        binding.contentMain.tvTapIp.text = config.tapIp
-
-        // Load and format app/engine version display
-        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Default) {
-            val appVer = try {
-                packageManager.getPackageInfo(packageName, 0).versionName ?: "1.0"
-            } catch (_: Exception) {
-                "1.0"
-            }
-            val formattedAppVer = if (appVer.startsWith("v", ignoreCase = true)) appVer else "v$appVer"
-
-            val engineVer = try {
-                com.p2ptap.P2PTap.P2PTap.version().trim()
-            } catch (_: Exception) {
-                ""
-            }
-
-            val finalDisplayVer = if (engineVer.isNotBlank() && !engineVer.equals("dev", ignoreCase = true) && !engineVer.equals("vdev", ignoreCase = true)) {
-                if (engineVer.startsWith("v", ignoreCase = true)) engineVer else "v$engineVer"
-            } else {
-                formattedAppVer
-            }
-
-            withContext(kotlinx.coroutines.Dispatchers.Main) {
-                binding.contentMain.tvAppVersion.text = finalDisplayVer
-            }
-        }
-
-        refreshPeerId()
-        refreshMultiaddrs()
-        refreshExitNodeDisplay()
-
-        // Only spend a row when the config actually carries a v6 address. The
-        // old code forced the row VISIBLE, so a v4-only node still showed a
-        // "No data" line that could never fill in.
-        if (config.tapIpv6.isNotBlank()) {
-            binding.contentMain.tvTapIpv6.text = config.tapIpv6
-            binding.contentMain.layoutTapIpv6.visibility = View.VISIBLE
-        } else {
-            binding.contentMain.layoutTapIpv6.visibility = View.GONE
-        }
-    }
-
-    private fun renderProtocolStats(stats: ProtocolStatsData) {
-        val container = binding.contentMain.protoContainer
-        container.removeAllViews()
-        if (stats.total == 0L) return
-        val ctx = this
-        val entries = listOf(
-            Triple(getString(R.string.proto_ipv4), stats.ipv4, "#4ade80"),
-            Triple(getString(R.string.proto_ipv6), stats.ipv6, "#60a5fa"),
-            Triple(getString(R.string.proto_tcp), stats.tcp, "#f87171"),
-            Triple(getString(R.string.proto_udp), stats.udp, "#fbbf24"),
-            Triple(getString(R.string.proto_icmp), stats.icmp, "#a78bfa"),
-            Triple(getString(R.string.proto_arp), stats.arp, "#34d399"),
-            Triple(getString(R.string.proto_other), stats.other, "#94a3b8")
-        )
-        for ((name, value, color) in entries) {
-            if (value <= 0L) continue
-            val pct = ((value * 100L) / stats.total).toInt()
-            val row = LinearLayout(ctx).apply {
-                orientation = LinearLayout.VERTICAL
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply { setMargins(0, 2, 0, 2) }
-            }
-            val header = LinearLayout(ctx).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-            }
-            val label = TextView(ctx).apply {
-                text = name
-                textSize = 11f
-                setTextColor(ContextCompat.getColor(ctx, R.color.md_on_surface_variant))
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
-            val barSpace = View(ctx).apply {
-                layoutParams = LinearLayout.LayoutParams(0, 1, 1f)
-            }
-            val pctText = TextView(ctx).apply {
-                text = "$pct%"
-                textSize = 11f
-                setTextColor(ContextCompat.getColor(ctx, R.color.md_on_surface_variant))
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply { marginStart = dpToPx(4) }
-            }
-            header.addView(label)
-            header.addView(barSpace)
-            header.addView(pctText)
-            row.addView(header)
-            val progress = com.google.android.material.progressindicator.LinearProgressIndicator(ctx).apply {
-                max = 100
-                progress = pct
-                setIndicatorColor(android.graphics.Color.parseColor(color))
-                setTrackThickness(dpToPx(4))
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    dpToPx(4)
-                ).apply { setMargins(0, 2, 0, 0) }
-            }
-            row.addView(progress)
-            container.addView(row)
-        }
-    }
-
-    private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
-
-    private fun refreshExitNodeDisplay() {
-        // Read through AppConfigManager every time: the exit node can be changed
-        // and hot-reloaded without the VPN state changing, so caching it against
-        // sessionRevision would keep showing the previous gateway. The config
-        // itself is already memoised, so this is a cheap read.
-        val config = AppConfigManager.load(this)
-        if (config.exitNode.isBlank()) {
-            binding.contentMain.tvExitNodeStatus.text = getString(if (
-                viewModel.telemetry.value.snapshot?.let { it.activeExitPeerId.isNotBlank() || it.activeExitIpv4.isNotBlank() || it.activeExitIpv6.isNotBlank() } == true
-            ) R.string.telemetry_disabling else R.string.exit_node_auto_display)
-        } else {
-            val node = config.exitNode.trim()
-            val shortNode = if (node.length > 20) node.take(8) + "..." + node.takeLast(6) else node
-            val snap = viewModel.telemetry.value.snapshot
-            binding.contentMain.tvExitNodeStatus.text = when {
-                P2PTapVpnService.currentState != P2PTapVpnService.STATE_RUNNING ->
-                    getString(R.string.exit_node_idle_fmt, shortNode)
-                snap?.matchesExit(node) == true ->
-                    getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_applied))
-                // The route is not installed, so say why. A peer the engine is
-                // connected to means the gateway is still working at it; a peer
-                // it cannot reach means nothing will change on its own.
-                snap?.hasConnectedPeer(node) == true ->
-                    getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_pending))
-                else ->
-                    getString(R.string.exit_node_active_fmt, shortNode, getString(R.string.telemetry_unreachable))
-            }
-        }
-    }
-
-    private fun refreshPeerId() {
-        val cachedPid = AppConfigManager.getPeerId(this@MainActivity)
-        if (cachedPid.isNotBlank()) {
-            binding.contentMain.tvPeerId.text = cachedPid
-        }
-
-        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Default) {
-            var pid = com.p2ptap.P2PTap.P2PTap.getPeerID()
-            if (pid.isNullOrEmpty()) {
-                pid = AppConfigManager.getPeerId(this@MainActivity)
-            }
-            withContext(kotlinx.coroutines.Dispatchers.Main) {
-                binding.contentMain.tvPeerId.text = if (!pid.isNullOrEmpty()) pid else "-"
-            }
-        }
-    }
-
-    private fun refreshMultiaddrs() {
-        if (!P2PTapVpnService.isRunning()) {
-            binding.contentMain.tvMultiaddrs.text = getString(R.string.multiaddrs_empty_hint)
-            return
-        }
-
-        // Render whatever the last session produced straight away, then let the
-        // repository fetch only if it has nothing yet. getMultiaddrs() blocks on
-        // the Go engine, so calling it on every onResume was the most visible
-        // startup stall; the listen addresses only change with a new session.
-        val cached = P2PStateRepository.multiaddrsOrNull()
-        if (!cached.isNullOrEmpty()) {
-            binding.contentMain.tvMultiaddrs.text = cached
-            return
-        }
-        binding.contentMain.tvMultiaddrs.text = getString(R.string.status_connecting)
-
-        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.Default) {
-            val addrs = P2PStateRepository.multiaddrs {
-                com.p2ptap.P2PTap.P2PTap.getMultiaddrs()
-            }
-            withContext(kotlinx.coroutines.Dispatchers.Main) {
-                binding.contentMain.tvMultiaddrs.text =
-                    if (addrs.isNullOrEmpty()) getString(R.string.status_connecting) else addrs
-            }
-        }
-    }
-
-    private fun prepareAndStartVpn() {
-        val vpnIntent = VpnService.prepare(this)
-        if (vpnIntent != null) {
-            vpnPermissionLauncher.launch(vpnIntent)
-        } else {
-            startVpnService()
-        }
-    }
-
-    private fun startVpnService() {
-        val intent = Intent(this, P2PTapVpnService::class.java).apply {
-            action = P2PTapVpnService.ACTION_START
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
-    }
-
-    private fun stopVpnService() {
-        val intent = Intent(this, P2PTapVpnService::class.java).apply {
-            action = P2PTapVpnService.ACTION_STOP
-        }
-        startService(intent)
-    }
-
-    private fun updateUiState(state: String, message: String) {
-        val content = binding.contentMain
-        content.btnOpenWebUI.isEnabled = state == P2PTapVpnService.STATE_RUNNING
-        // The health grid reports what the running engine reported, so outside
-        // RUNNING every one of its four cells shows "unknown". Keep the block
-        // only when it has something real to show.
-        content.cardSystemHealth.visibility =
-            if (state == P2PTapVpnService.STATE_RUNNING) View.VISIBLE else View.GONE
-
-        // The hero glow carries the state: green routing, amber working on it,
-        // red failed, neutral idle. Same silhouette in all four, so the card
-        // never jumps between states.
-        when (state) {
-            P2PTapVpnService.STATE_RUNNING -> {
-                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_connected)
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connected)
-                content.tvStatusTitle.text = getString(R.string.status_connected)
-                content.tvStatusSubtitle.text = getString(R.string.status_hint_connected)
-                content.btnConnect.text = getString(R.string.btn_disconnect)
-                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_error)
-                content.btnConnect.setIconResource(R.drawable.ic_stop)
-                content.btnConnect.isEnabled = true
-                stopElapsedTicker()
-                startPulseAnimation()
-            }
-            P2PTapVpnService.STATE_STARTING -> {
-                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_connecting)
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
-                content.tvStatusTitle.text = getString(R.string.status_connecting)
-                content.tvStatusSubtitle.text = getString(R.string.status_hint_starting)
-                // Cancellable: the button stays live and means "give up", not
-                // "wait". A start that hangs used to leave the user no exit
-                // short of the timeout.
-                content.btnConnect.text = getString(R.string.btn_cancel)
-                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_connecting)
-                content.btnConnect.setIconResource(R.drawable.ic_stop)
-                content.btnConnect.isEnabled = true
-                startElapsedTicker()
-                startPulseAnimation()
-            }
-            P2PTapVpnService.STATE_STOPPING -> {
-                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_connecting)
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
-                content.tvStatusTitle.text = getString(R.string.status_stopping)
-                content.tvStatusSubtitle.text = getString(R.string.status_hint_stopping)
-                content.btnConnect.text = getString(R.string.status_stopping)
-                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_connecting)
-                content.btnConnect.setIconResource(R.drawable.ic_refresh)
-                content.btnConnect.isEnabled = false
-                stopElapsedTicker()
-                stopPulseAnimation()
-            }
-            P2PTapVpnService.STATE_TIMEOUT -> {
-                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_error)
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_connecting)
-                content.tvStatusTitle.text = getString(R.string.status_timeout)
-                content.tvStatusSubtitle.text = if (message.isNotBlank()) message else getString(R.string.status_hint_timeout)
-                content.btnConnect.text = getString(R.string.btn_retry)
-                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.status_timeout)
-                content.btnConnect.setIconResource(R.drawable.ic_refresh)
-                content.btnConnect.isEnabled = true
-                stopElapsedTicker()
-                stopPulseAnimation()
-            }
-            P2PTapVpnService.STATE_ERROR -> {
-                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_error)
-                // Dedicated red ring: a failed start used to share the grey
-                // "disconnected" ring with a clean shutdown.
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_error)
-                content.tvStatusTitle.text = getString(R.string.status_error)
-                content.tvStatusSubtitle.text = if (message.isNotEmpty()) message else getString(R.string.status_error)
-                content.btnConnect.text = getString(R.string.btn_retry)
-                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.brand_primary)
-                content.btnConnect.setIconResource(R.drawable.ic_refresh)
-                content.btnConnect.isEnabled = true
-                stopElapsedTicker()
-                stopPulseAnimation()
-            }
-            else -> { // STATE_IDLE
-                content.layoutHero.setBackgroundResource(R.drawable.bg_hero_idle)
-                content.viewStatusRing.setBackgroundResource(R.drawable.bg_status_disconnected)
-                content.tvStatusTitle.text = getString(R.string.status_disconnected)
-                content.tvStatusSubtitle.text = getString(R.string.status_hint_idle)
-                content.btnConnect.text = getString(R.string.btn_connect)
-                content.btnConnect.backgroundTintList = ContextCompat.getColorStateList(this, R.color.brand_primary)
-                content.btnConnect.setIconResource(R.drawable.ic_play)
-                content.btnConnect.isEnabled = true
-                stopElapsedTicker()
-                stopPulseAnimation()
-            }
-        }
-    }
-
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-    }
-
-    private companion object {
-        // PopupMenu item ids. Group NONE + id, so they only need to be unique
-        // inside this menu.
-        const val MENU_COPY_ID = 1001
-        const val MENU_SHARE_QR = 1002
-        const val MENU_VIEW_PEERS = 1003
+        /**
+         * Set on the Intent when ConfigActivity's bar navigates back here.
+         *
+         * Public because the two screens share one bottom bar: ConfigActivity
+         * has to name a destination that only MainActivity knows how to show.
+         */
+        const val EXTRA_TAB = "app.fjj.p2ptap.extra.TAB"
     }
 }

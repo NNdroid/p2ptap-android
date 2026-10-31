@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tag / chip fill: Peer ID pill, protocol badges, version chip.
+     primary_container with on_primary_container text, 8dp radius — the M3
+     "assist chip without an outline" shape. Both colours come from the md_*
+     tokens so night mode swaps them without a second drawable. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#0F06B6D4" />
-    <corners android:radius="10dp" />
-    <stroke android:width="1dp" android:color="#3306B6D4" />
+    <solid android:color="@color/md_primary_container" />
+    <corners android:radius="8dp" />
 </shape>

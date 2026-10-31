@@ -129,8 +129,8 @@
     <string name="peers_empty_offline">노드가 오프라인 상태입니다.\n연결을 시작하면 피어가 자동으로 검색됩니다.</string>
     <string name="peers_waiting_hint">다른 피어 참가 대기 중…</string>
     <string name="peers_summary_fmt">총 %1$d개의 활성 피어 (%2$d 직접 연결, %3$d 릴레이)</string>
-    <string name="badge_direct">⚡ 직접 연결</string>
-    <string name="badge_relay">🔁 릴레이</string>
+    <string name="badge_direct">직접 연결</string>
+    <string name="badge_relay">릴레이</string>
     <string name="msg_peer_id_copied_fmt">Peer ID 복사됨: %s</string>
     <string name="label_endpoint_prefix">엔드포인트: </string>
     <string name="label_traffic_prefix">트래픽: </string>
@@ -140,9 +140,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">트래픽 및 속도 상세</string>
     <string name="traffic_offline_hint">VPN이 연결되지 않았습니다.</string>
-    <string name="section_live_throughput">⚡ 실시간 속도 및 총 트래픽</string>
-    <string name="section_protocol_stats">🌐 L2/L3 프로토콜 분석</string>
-    <string name="section_security_stats">🔒 보안 및 난독화</string>
+    <string name="section_live_throughput">실시간 속도 및 총 트래픽</string>
+    <string name="section_protocol_stats">L2/L3 프로토콜 분석</string>
+    <string name="section_security_stats">보안 및 난독화</string>
     <string name="stat_live_tx_speed">전송 속도</string>
     <string name="stat_live_rx_speed">수신 속도</string>
     <string name="stat_total_tx_bytes">누적 전송량</string>
@@ -191,10 +191,10 @@
     <string name="dialog_manage_allowed_peers">허용된 서브넷 피어 ID 관리</string>
     <string name="btn_manage_list_fmt">목록 관리 (%d)</string>
     <string name="btn_add_address">주소 추가</string>
-    <string name="btn_scan_qr">📷 QR 스캔</string>
-    <string name="btn_paste_clip">📋 붙여넣기 추가</string>
-    <string name="btn_switch_text_mode">📝 일괄 텍스트 모드</string>
-    <string name="btn_switch_list_mode">📇 카드 목록 모드</string>
+    <string name="btn_scan_qr">QR 스캔</string>
+    <string name="btn_paste_clip">붙여넣기 추가</string>
+    <string name="btn_switch_text_mode">일괄 텍스트 모드</string>
+    <string name="btn_switch_list_mode">카드 목록 모드</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">/ip4/.../udp/.../p2p/... 또는 IP/CIDR 입력</string>
     <string name="dialog_edit_address_title">주소 편집</string>
     <string name="dialog_add_address_title">새 주소 추가</string>
@@ -205,13 +205,13 @@
     <string name="btn_save_list">저장 및 적용</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 QR 가져오기</string>
+    <string name="btn_scan_config">QR 가져오기</string>
     <string name="title_scan_qr">노드 연결 QR 코드 스캔</string>
     <string name="msg_scan_success">스캔 성공</string>
     <string name="msg_scan_no_result">유효한 QR 코드를 찾을 수 없습니다</string>
     <string name="dialog_scan_result_title">감지된 노드 연결 정보</string>
-    <string name="action_add_static_peer">➕ 고정 피어로 추가</string>
-    <string name="action_add_bootstrap_peer">🌐 부트스트랩 피어로 추가</string>
+    <string name="action_add_static_peer">고정 피어로 추가</string>
+    <string name="action_add_bootstrap_peer">부트스트랩 피어로 추가</string>
     <string name="action_import_full_config">전체 설정 덮어쓰기 가져오기</string>
     <string name="label_virtual_ipv6">가상 IPv6: </string>
     <string name="label_subnets">알림 서브넷: </string>
@@ -221,9 +221,9 @@
 
     <!-- 출구 노드 선택 -->
     <string name="label_exit_node">출구 노드 / 게이트웨이</string>
-    <string name="exit_node_auto_display">🌐 자동 메쉬 모드 (출구 릴레이 없음)</string>
-    <string name="exit_node_active_fmt">🚀 게이트웨이: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 게이트웨이: %1$s</string>
+    <string name="exit_node_auto_display">자동 메쉬 모드 (출구 릴레이 없음)</string>
+    <string name="exit_node_active_fmt">게이트웨이: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">게이트웨이: %1$s</string>
     <string name="dialog_exit_node_title">출구 노드 선택</string>
     <string name="dialog_exit_node_desc">인터넷/기본 게이트웨이 트래픽을 중계할 노드 선택</string>
     <string name="exit_node_auto_title">자동 메쉬 모드 (기본값)</string>
@@ -306,4 +306,13 @@
     <string name="menu_share_qr">QR 코드 공유</string>
     <string name="menu_view_peers">피어 보기</string>
     <string name="action_logs">로그</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">홈</string>
+    <string name="tab_peers">노드</string>
+    <string name="tab_traffic">트래픽</string>
+    <string name="tab_settings">설정</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">이름, Peer ID 또는 IP로 검색</string>
 </resources>

@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- One line of the traffic dashboard: label left, monospace value right.
+
+     Both cells take weight=1 so the value column is a stable edge across all
+     21 rows — a wrap_content value column made the numbers jitter left and
+     right by up to 30dp as the digits changed width. textIsSelectable stays on
+     the value so a counter can be copied out. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:baselineAligned="true"
     android:orientation="horizontal"
-    android:paddingVertical="4dp">
+    android:paddingHorizontal="@dimen/m3_row_pad_h"
+    android:paddingVertical="10dp">
 
     <TextView
         android:id="@+id/tvLabel"
@@ -19,11 +27,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingStart="8dp"
+        android:fontFamily="monospace"
         android:gravity="end"
-        android:textIsSelectable="true"
+        android:paddingStart="8dp"
         android:text="@string/telemetry_unknown"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textFontWeight="600"
+        android:textIsSelectable="true"
+        android:textSize="13sp" />
 </LinearLayout>

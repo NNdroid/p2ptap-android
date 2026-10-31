@@ -90,8 +90,8 @@
     <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP 最大速率必须大于等于 0。</string>
     <string name="hint_web_ui_pcap_sample_every">PCAP 采样间隔必须大于等于 1。</string>
     <string name="hint_web_ui_port">WebUI 端口必须在 1 到 65535 之间。</string>
-    <string name="encryption_active">🔒 %1$s</string>
-    <string name="encryption_plain">🔓 明文</string>
+    <string name="encryption_active">%1$s</string>
+    <string name="encryption_plain">明文</string>
     <string name="label_connected_since">连接时间</string>
     <string name="label_decrypt_errors">解密错误</string>
     <string name="label_dedup_drops">去重丢弃</string>
@@ -123,6 +123,6 @@
     <string name="role_bootstrap">引导节点</string>
     <string name="role_peer">对等节点</string>
     <string name="role_static">静态节点</string>
-    <string name="section_protocol">📊 流量组成</string>
-    <string name="section_system_health">🖥 系统健康</string>
+    <string name="section_protocol">流量组成</string>
+    <string name="section_system_health">系统健康</string>
 </resources>

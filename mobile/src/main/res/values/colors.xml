@@ -23,7 +23,10 @@
     <!-- ── Material 3 Color Tokens (Light) ──────────────────────────── -->
     <!-- Primary -->
     <color name="md_primary">#06B6D4</color>
-    <color name="md_on_primary">#FFFFFF</color>
+    <!-- Dark, not white. #06B6D4 against white is 2.2:1 — under the 4.5:1
+         floor — while #003036 on the same cyan is 7.9:1. Every filled primary
+         button, the switch thumb and the checked track all inherit this. -->
+    <color name="md_on_primary">#003036</color>
     <color name="md_primary_container">#CFF7FF</color>
     <color name="md_on_primary_container">#001E24</color>
     <color name="md_primary_inverse">#53E3F4</color>
@@ -111,22 +114,74 @@
     <color name="badge_tcp">#F59E0B</color>
 
     <!-- ── Home hero card ──────────────────────────────────────────────
-         The hero is a two-layer background: a neutral vertical gradient
-         (hero_base_*) plus a radial glow anchored at the top edge whose
-         colour carries the connection state (hero_glow_*). Values are
-         declared per theme so the glow reads as a soft tint on white and
-         as a real light source on the dark surface. -->
-    <!-- Light mode runs the same glass model but near-opaque: a white card on a
-         near-white window has nothing to show through, so translucency only
-         costs contrast. The glass reads here through the brighter top sheen and
-         the hairline edge instead. -->
-    <color name="hero_base_top">#F2FFFFFF</color>
-    <color name="hero_base_bottom">#E6F1F5F9</color>
-    <color name="hero_sheen">#66FFFFFF</color>
-    <!-- Dark hairline on light mode: a white edge would vanish into the fill. -->
-    <color name="hero_border">#33000000</color>
-    <color name="hero_glow_idle">#1464748B</color>
-    <color name="hero_glow_connecting">#26F59E0B</color>
-    <color name="hero_glow_connected">#2610B981</color>
-    <color name="hero_glow_error">#26EF4444</color>
+         The hero used to be a glass stack: a translucent gradient base plus
+         a radial state glow plus a top sheen, with a hairline border. It is
+         now a single flat tonal fill per state — see m3_hero_* in the M3
+         block below. The five hero_* tokens that described the glass layers
+         were removed with it; nothing references them any more. -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Material 3 Expressive surface language
+         ══════════════════════════════════════════════════════════════
+         The 2025 M3 look this app now follows separates layers by *tonal
+         fill*, not by shadow or stroke: the page is the lightest surface,
+         a card sits one step darker, and a pressed row one step darker
+         again. Nothing here draws an outline — a 28dp radius plus the
+         two-step fill is the whole hierarchy.
+
+         Kept as their own names instead of re-pointing md_* because the
+         night values are not the same ladder: md_surface_container is
+         #1E293B at night, while the dark card in this language is the
+         deeper #111827 sitting on a #0B0F19 page.
+         ────────────────────────────────────────────────────────────── -->
+    <color name="m3_page">#F8FAFC</color>
+    <color name="m3_card">#F1F5F9</color>
+    <color name="m3_card_press">#E9EEF3</color>
+    <!-- Inset block (code, chips, nested fields): reads as a well cut into
+         the card rather than another card. -->
+    <color name="m3_inset">#E6EDF4</color>
+    <color name="m3_dock">#F1F5F9</color>
+    <color name="m3_indicator">#CFF7FF</color>
+    <!-- Separator between rows of the same group. It is the page colour, not
+         a grey line: the gap reads as two cards with a hairline crack. -->
+    <color name="m3_seam">#F8FAFC</color>
+    <color name="m3_field_stroke">#CBD5E1</color>
+
+    <!-- Text that sits on a saturated accent fill. #003036 on the cyan
+         primary is 7.9:1; white on the same cyan is only 2.2:1 and fails
+         WCAG AA outright, which is why the CTA is no longer white-on-cyan. -->
+    <color name="m3_on_accent">#003036</color>
+    <color name="m3_on_amber">#3D2600</color>
+
+    <!-- Bottom navigation foreground. Selected uses the on-secondary-container
+         tone so the pill indicator and the label agree. -->
+    <color name="m3_nav_selected">#161B5C</color>
+
+    <!-- Hero: one tonal wash per connection state, mixed as 12% of the state
+         colour over the card fill. Four states share one silhouette, so the
+         card never changes shape when the engine changes state.
+         (The old glass layer list mixed a gradient + radial glow; a flat
+         tonal fill is what M3 does instead, and it stays readable at 12%
+         where the glow needed 0.65 alpha to show at all.) -->
+    <color name="m3_hero_idle">#F1F5F9</color>
+    <color name="m3_hero_connecting">#F2E7D3</color>
+    <color name="m3_hero_connected">#CDEBE6</color>
+    <color name="m3_hero_error">#F1DCE0</color>
+
+    <!-- Status ring behind the hero glyph. Slightly stronger than the hero
+         wash so the circle still reads as an object on the tinted card. -->
+    <color name="m3_ring_idle">#E2E8F0</color>
+    <color name="m3_ring_connecting">#F2DDB6</color>
+    <color name="m3_ring_connected">#B6E5DA</color>
+    <color name="m3_ring_error">#F1CED1</color>
+
+    <!-- Neutral tag (counts, protocol badges): a fill one step darker than the
+         card it sits on, never an outline. -->
+    <color name="m3_tag_neutral">#E2E8F0</color>
+
+    <!-- Peer state tags. The tag is a soft container with its matching on-colour,
+         not a neutral fill with coloured text: green text on #E2E8F0 is 2.3:1,
+         while #003820 on #B5F5D9 is 9.6:1. -->
+    <color name="m3_amber_container">#FDF0D5</color>
+    <color name="m3_on_amber_container">#3D2600</color>
 </resources>

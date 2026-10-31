@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="backup_description">設定と識別鍵をバックアップするか、既存のノードをインポートします。</string>
-    <string name="backup_export_group">📤 エクスポートと共有</string>
-    <string name="backup_import_group">📥 インポートと復元</string>
-    <string name="backup_scan_qr">📷 QR をスキャン（設定、識別情報、ノード）</string>
-    <string name="backup_gallery_qr">🖼️ ギャラリーから QR 画像をインポート</string>
+    <string name="backup_export_group">エクスポートと共有</string>
+    <string name="backup_import_group">インポートと復元</string>
+    <string name="backup_scan_qr">QR をスキャン（設定、識別情報、ノード）</string>
+    <string name="backup_gallery_qr">ギャラリーから QR 画像をインポート</string>
     <string name="msg_identity_restored_fmt">設定と識別情報を復元しました。Peer ID: %1$s</string>
     <string name="peer_id_fmt">Peer ID: %1$s</string>
     <string name="identity_not_generated">未生成</string>

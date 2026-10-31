@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="backup_description">Konfiguration und Identitätsschlüssel sichern oder vorhandenen Knoten importieren.</string>
-    <string name="backup_export_group">📤 Exportieren und teilen</string>
-    <string name="backup_import_group">📥 Importieren und wiederherstellen</string>
-    <string name="backup_scan_qr">📷 QR-Code scannen (Konfiguration, Identität oder Knoten)</string>
-    <string name="backup_gallery_qr">🖼️ QR-Bild aus Galerie importieren</string>
+    <string name="backup_export_group">Exportieren und teilen</string>
+    <string name="backup_import_group">Importieren und wiederherstellen</string>
+    <string name="backup_scan_qr">QR-Code scannen (Konfiguration, Identität oder Knoten)</string>
+    <string name="backup_gallery_qr">QR-Bild aus Galerie importieren</string>
     <string name="msg_identity_restored_fmt">Konfiguration und Identität wiederhergestellt. Peer ID: %1$s</string>
     <string name="peer_id_fmt">Peer ID: %1$s</string>
     <string name="identity_not_generated">Noch nicht erstellt</string>

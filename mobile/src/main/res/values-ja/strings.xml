@@ -129,8 +129,8 @@
     <string name="peers_empty_offline">ノードはオフラインです。\n接続を開始すると自動的にピアを検出します。</string>
     <string name="peers_waiting_hint">他のピアの参加を待機中…</string>
     <string name="peers_summary_fmt">合計 %1$d 個のアクティブピア (%2$d ダイレクト, %3$d リレー)</string>
-    <string name="badge_direct">⚡ ダイレクト</string>
-    <string name="badge_relay">🔁 リレー</string>
+    <string name="badge_direct">ダイレクト</string>
+    <string name="badge_relay">リレー</string>
     <string name="msg_peer_id_copied_fmt">Peer IDをコピーしました: %s</string>
     <string name="label_endpoint_prefix">エンドポイント: </string>
     <string name="label_traffic_prefix">トラフィック: </string>
@@ -140,9 +140,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">転送速度とトラフィック詳細</string>
     <string name="traffic_offline_hint">VPNが接続されていません。</string>
-    <string name="section_live_throughput">⚡ リアルタイムスループットと累積データ</string>
-    <string name="section_protocol_stats">🌐 L2/L3 プロトコル内訳</string>
-    <string name="section_security_stats">🔒 セキュリティと難読化</string>
+    <string name="section_live_throughput">リアルタイムスループットと累積データ</string>
+    <string name="section_protocol_stats">L2/L3 プロトコル内訳</string>
+    <string name="section_security_stats">セキュリティと難読化</string>
     <string name="stat_live_tx_speed">送信速度</string>
     <string name="stat_live_rx_speed">受信速度</string>
     <string name="stat_total_tx_bytes">累積送信量</string>
@@ -191,10 +191,10 @@
     <string name="dialog_manage_allowed_peers">許可されたサブネットピアIDの管理</string>
     <string name="btn_manage_list_fmt">リスト管理 (%d)</string>
     <string name="btn_add_address">アドレス追加</string>
-    <string name="btn_scan_qr">📷 QRスキャン</string>
-    <string name="btn_paste_clip">📋 貼り付け追記</string>
-    <string name="btn_switch_text_mode">📝 一括テキストモード</string>
-    <string name="btn_switch_list_mode">📇 カードリストモード</string>
+    <string name="btn_scan_qr">QRスキャン</string>
+    <string name="btn_paste_clip">貼り付け追記</string>
+    <string name="btn_switch_text_mode">一括テキストモード</string>
+    <string name="btn_switch_list_mode">カードリストモード</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">/ip4/.../udp/.../p2p/... または IP/CIDR を入力</string>
     <string name="dialog_edit_address_title">アドレス編集</string>
     <string name="dialog_add_address_title">新しいアドレスを追加</string>
@@ -205,13 +205,13 @@
     <string name="btn_save_list">保存して適用</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 QRからインポート</string>
+    <string name="btn_scan_config">QRからインポート</string>
     <string name="title_scan_qr">ノード接続QRコードをスキャン</string>
     <string name="msg_scan_success">スキャン成功</string>
     <string name="msg_scan_no_result">有効なQRコードが見つかりません</string>
     <string name="dialog_scan_result_title">検出されたノード接続情報</string>
-    <string name="action_add_static_peer">➕ 静的ピアとして追加</string>
-    <string name="action_add_bootstrap_peer">🌐 ブートストラップピアとして追加</string>
+    <string name="action_add_static_peer">静的ピアとして追加</string>
+    <string name="action_add_bootstrap_peer">ブートストラップピアとして追加</string>
     <string name="action_import_full_config">全設定を上書きインポート</string>
     <string name="label_virtual_ipv6">仮想 IPv6: </string>
     <string name="label_subnets">広報サブネット: </string>
@@ -221,9 +221,9 @@
 
     <!-- 出口ノード選択 -->
     <string name="label_exit_node">出口ノード / ゲートウェイ</string>
-    <string name="exit_node_auto_display">🌐 自動メッシュモード (出口リレーなし)</string>
-    <string name="exit_node_active_fmt">🚀 ゲートウェイ: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 ゲートウェイ: %1$s</string>
+    <string name="exit_node_auto_display">自動メッシュモード (出口リレーなし)</string>
+    <string name="exit_node_active_fmt">ゲートウェイ: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">ゲートウェイ: %1$s</string>
     <string name="dialog_exit_node_title">出口ノードの選択</string>
     <string name="dialog_exit_node_desc">インターネット/デフォルトゲートウェイのトラフィックを中継するノードを選択</string>
     <string name="exit_node_auto_title">自動メッシュモード (デフォルト)</string>
@@ -306,4 +306,13 @@
     <string name="menu_share_qr">QR コードを共有</string>
     <string name="menu_view_peers">ピアを表示</string>
     <string name="action_logs">ログ</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">ホーム</string>
+    <string name="tab_peers">ノード</string>
+    <string name="tab_traffic">通信量</string>
+    <string name="tab_settings">設定</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">名前・Peer ID・IP で検索</string>
 </resources>

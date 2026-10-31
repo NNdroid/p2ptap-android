@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Traffic tab.
+
+  Promotion of TrafficDetailDialog for the same reason as the peers tab: it is
+  a read-only dashboard of 21 counters, and a sheet is the wrong container for
+  a screen whose whole purpose is scanning numbers side by side.
+
+  Row ids are the dialog's ids, unchanged, because TrafficTab.render() writes
+  those exact bindings. Section headings moved out of the cards and above them
+  as 12.5sp labels: inside a card a coloured heading competed with the very
+  numbers it was labelling, and this language gets its hierarchy from tone and
+  size, not from tinting a section title.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/m3_page"
+    android:clipToPadding="false"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:letterSpacing="-0.012"
+                android:text="@string/tab_traffic"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="34sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRefresh"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:contentDescription="@string/btn_refresh"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDataStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:accessibilityLiveRegion="polite"
+            android:text="@string/telemetry_loading"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12.5sp" />
+
+        <LinearLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ── Throughput ─────────────────────────────────────────── -->
+            <TextView
+                style="@style/TextAppearance.P2ptap.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m3_section_gap_top"
+                android:layout_marginBottom="@dimen/m3_section_gap_bottom"
+                android:drawableStart="@drawable/ic_bolt_16"
+                android:drawablePadding="7dp"
+                android:drawableTint="?attr/colorOnSurfaceVariant"
+                android:text="@string/section_live_throughput" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/m3_card"
+                app:cardCornerRadius="@dimen/m3_card_radius"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp">
+
+                    <include
+                        android:id="@+id/rowTxSpeed"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowRxSpeed"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowTotalTx"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowTotalRx"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowTxPkts"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowRxPkts"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowDropped"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowDedup"
+                        layout="@layout/item_traffic_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Protocol breakdown ─────────────────────────────────── -->
+            <TextView
+                style="@style/TextAppearance.P2ptap.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m3_section_gap_top"
+                android:layout_marginBottom="@dimen/m3_section_gap_bottom"
+                android:drawableStart="@drawable/ic_globe_16"
+                android:drawablePadding="7dp"
+                android:drawableTint="?attr/colorOnSurfaceVariant"
+                android:text="@string/section_protocol_stats" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/m3_card"
+                app:cardCornerRadius="@dimen/m3_card_radius"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp">
+
+                    <include
+                        android:id="@+id/rowIpv4"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowIpv6"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowArp"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowNdp"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowOther"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowTcp"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowUdp"
+                        layout="@layout/item_traffic_bar_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowIcmp"
+                        layout="@layout/item_traffic_bar_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Security ───────────────────────────────────────────── -->
+            <TextView
+                style="@style/TextAppearance.P2ptap.SectionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m3_section_gap_top"
+                android:layout_marginBottom="@dimen/m3_section_gap_bottom"
+                android:drawableStart="@drawable/ic_lock_16"
+                android:drawablePadding="7dp"
+                android:drawableTint="?attr/colorOnSurfaceVariant"
+                android:text="@string/section_security_stats" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/m3_card"
+                app:cardCornerRadius="@dimen/m3_card_radius"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp">
+
+                    <include
+                        android:id="@+id/rowObf"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowPsk"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowAlgo"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowPfs"
+                        layout="@layout/item_traffic_row" />
+
+                    <View style="@style/Widget.P2ptap.RowDivider" />
+
+                    <include
+                        android:id="@+id/rowReplay"
+                        layout="@layout/item_traffic_row" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

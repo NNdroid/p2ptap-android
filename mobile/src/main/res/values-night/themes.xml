@@ -61,11 +61,11 @@
         <item name="materialButtonStyle">@style/Widget.P2ptap.Button</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.P2ptap.Dialog</item>
 
-        <!-- System bars -->
-        <item name="android:statusBarColor">@color/window_bg</item>
+        <!-- System bars — see the light theme. Same tokens, different values. -->
+        <item name="android:statusBarColor">@color/m3_page</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">@color/window_bg</item>
+        <item name="android:navigationBarColor">@color/m3_dock</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
-        <item name="android:windowBackground">@color/window_bg</item>
+        <item name="android:windowBackground">@color/m3_page</item>
     </style>
 </resources>

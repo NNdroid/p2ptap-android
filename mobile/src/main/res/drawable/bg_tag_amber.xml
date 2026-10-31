@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Connecting / in-flight tag. Amber container, not the saturated amber used
+     by the hero ring: a tag is a label, not a state indicator. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/m3_amber_container" />
+    <corners android:radius="8dp" />
+</shape>

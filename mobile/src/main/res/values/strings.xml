@@ -81,9 +81,13 @@
     <string name="hint_log_level">Log Level</string>
 
     <string name="switch_accept_subnets">Accept Advertised Subnets</string>
+    <string name="switch_accept_subnets_desc">Route subnets advertised by peers into this device’s TAP interface.</string>
     <string name="switch_obfuscation">Enable Traffic Obfuscation &amp; Encryption</string>
+    <string name="switch_obfuscation_desc">Pad short frames so DPI cannot fingerprint the tunnel.</string>
     <string name="switch_discover_boot_mesh">Discover Boot Backbone Mesh</string>
+    <string name="switch_discover_boot_mesh_desc">Join the bootstrap mesh so peers outside your local network can be found.</string>
     <string name="switch_webui_enable">Enable Built-in Web Console</string>
+    <string name="switch_webui_enable_desc">Serve the local control panel on 127.0.0.1.</string>
 
     <!-- Log Viewer -->
     <string name="title_log_viewer">Diagnostic Logs</string>
@@ -129,10 +133,15 @@
     <string name="prompt_vpn_not_running">Notice: P2PTap VPN must be running to access the console</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Enable mDNS LAN Auto-Discovery</string>
+    <string name="switch_enable_mdns_desc">Advertise this node on the LAN and discover nearby peers automatically.</string>
     <string name="switch_disable_relay">Direct-Only Mode (also disables hole punching and AutoRelay)</string>
+    <string name="switch_disable_relay_desc">Use direct connections only. Peers behind NAT will not be reachable.</string>
     <string name="switch_disable_circuit_relay">Disable circuit relay only</string>
+    <string name="switch_disable_circuit_relay_desc">Stop using libp2p circuit relays as a fallback path.</string>
     <string name="switch_disable_hole_punching">Disable hole punching only</string>
+    <string name="switch_disable_hole_punching_desc">Skip NAT hole punching and rely on already-established links.</string>
     <string name="switch_strict_key">Strict Forward Secrecy (Per-Peer PFS Key Isolation)</string>
+    <string name="switch_strict_key_desc">Reject peers whose identity key changes without a rekey.</string>
     <string name="group_transports">Transport Layer Protocols</string>
     <string name="switch_quic">Listen for QUIC connections (UDP)</string>
     <string name="switch_webrtc">Listen for WebRTC connections (NAT punch)</string>
@@ -152,8 +161,8 @@
     <string name="peers_empty_offline">Node is currently offline.\nTap Connect on home screen to discover and connect to peers.</string>
     <string name="peers_waiting_hint">Waiting for other peers to join the virtual mesh…</string>
     <string name="peers_summary_fmt">Total %1$d Active Peers (%2$d Direct, %3$d Relay)</string>
-    <string name="badge_direct">⚡ Direct</string>
-    <string name="badge_relay">🔁 Relay</string>
+    <string name="badge_direct">Direct</string>
+    <string name="badge_relay">Relay</string>
     <string name="msg_peer_id_copied_fmt">Peer ID copied: %s</string>
     <string name="label_endpoint_prefix">Endpoint: </string>
     <string name="label_traffic_prefix">Traffic: </string>
@@ -163,9 +172,9 @@
     <!-- Traffic Detail Dialog -->
     <string name="dialog_traffic_title">Traffic &amp; Throughput Metrics</string>
     <string name="traffic_offline_hint">VPN is not connected. Tap Connect on home screen to monitor live traffic.</string>
-    <string name="section_live_throughput">⚡ Live Throughput &amp; Lifetime Data</string>
-    <string name="section_protocol_stats">🌐 L2/L3 Protocol Breakdown</string>
-    <string name="section_security_stats">🔒 Security &amp; Obfuscation</string>
+    <string name="section_live_throughput">Live Throughput &amp; Lifetime Data</string>
+    <string name="section_protocol_stats">L2/L3 Protocol Breakdown</string>
+    <string name="section_security_stats">Security &amp; Obfuscation</string>
     <string name="stat_live_tx_speed">Live TX Speed</string>
     <string name="stat_live_rx_speed">Live RX Speed</string>
     <string name="stat_total_tx_bytes">Total TX Data</string>
@@ -215,10 +224,10 @@
     <string name="dialog_manage_allowed_peers">Manage Allowed Subnet Peer IDs</string>
     <string name="btn_manage_list_fmt">Manage List (%d)</string>
     <string name="btn_add_address">Add Address</string>
-    <string name="btn_scan_qr">📷 Scan QR</string>
-    <string name="btn_paste_clip">📋 Paste Append</string>
-    <string name="btn_switch_text_mode">📝 Batch Text Mode</string>
-    <string name="btn_switch_list_mode">📇 Card List Mode</string>
+    <string name="btn_scan_qr">Scan QR</string>
+    <string name="btn_paste_clip">Paste Append</string>
+    <string name="btn_switch_text_mode">Batch Text Mode</string>
+    <string name="btn_switch_list_mode">Card List Mode</string>
     <string name="hint_input_address" tools:ignore="TypographyEllipsis">Enter /ip4/.../udp/.../p2p/... or IP/CIDR</string>
     <string name="dialog_edit_address_title">Edit Address</string>
     <string name="dialog_add_address_title">Add New Address</string>
@@ -229,13 +238,13 @@
     <string name="btn_save_list">Save &amp; Apply</string>
 
     <!-- QR Scanner & Import -->
-    <string name="btn_scan_config">📷 Scan QR Import</string>
+    <string name="btn_scan_config">Scan QR Import</string>
     <string name="title_scan_qr">Scan Node Connection QR Code</string>
     <string name="msg_scan_success">QR Code scanned successfully</string>
     <string name="msg_scan_no_result">No valid QR code detected</string>
     <string name="dialog_scan_result_title">Node Connection Info Detected</string>
-    <string name="action_add_static_peer">➕ Add as Static Peer</string>
-    <string name="action_add_bootstrap_peer">🌐 Add as Bootstrap Relay Peer</string>
+    <string name="action_add_static_peer">Add as Static Peer</string>
+    <string name="action_add_bootstrap_peer">Add as Bootstrap Relay Peer</string>
     <string name="action_import_full_config">Import &amp; Override Full Config</string>
     <string name="label_virtual_ipv6">Virtual IPv6: </string>
     <string name="label_subnets">Advertised Subnets: </string>
@@ -245,9 +254,9 @@
 
     <!-- Exit Node Selector -->
     <string name="label_exit_node">Exit Node / Gateway</string>
-    <string name="exit_node_auto_display">🌐 Auto Mesh Mode (No Exit Relay)</string>
-    <string name="exit_node_active_fmt">🚀 Gateway: %1$s (%2$s)</string>
-    <string name="exit_node_idle_fmt">🚀 Gateway: %1$s</string>
+    <string name="exit_node_auto_display">Auto Mesh Mode (No Exit Relay)</string>
+    <string name="exit_node_active_fmt">Gateway: %1$s (%2$s)</string>
+    <string name="exit_node_idle_fmt">Gateway: %1$s</string>
     <string name="dialog_exit_node_title">Select Exit Node / Gateway</string>
     <string name="dialog_exit_node_desc">Select a peer node to relay internet or default gateway traffic through</string>
     <string name="exit_node_auto_title">Auto Mesh Mode (Default)</string>
@@ -337,4 +346,15 @@
     <string name="menu_share_qr">Share QR code</string>
     <string name="menu_view_peers">View peers</string>
     <string name="action_logs">Logs</string>
+
+    <!-- Bottom navigation labels. Short on purpose: a 4-item bar on a 360dp
+         screen gives each label ~80dp, and "Traffic & Throughput" wraps. -->
+    <string name="tab_home">Home</string>
+    <string name="tab_peers">Peers</string>
+    <string name="tab_traffic">Traffic</string>
+    <string name="tab_settings">Settings</string>
+    <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
+    <string name="hint_search_peers">Search by name, Peer ID or IP</string>
+    <string name="action_toggle_theme">Toggle light or dark theme</string>
+    <string name="btn_share_logs">Share logs</string>
 </resources>

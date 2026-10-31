@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One protocol row of the traffic dashboard: label, share bar, count.
+
+     Only the protocol section uses this variant. The bar encodes what share of
+     all classified packets this protocol is, which is the question that
+     section exists to answer — the raw count alone made the reader do the
+     division. The track is fixed and the fill is proportional inside it, so
+     eight rows line up on the same left and right edges.
+
+     The label column is a fixed 76dp rather than wrap_content: the bars have to
+     start at the same x on every row, and wrap_content made them ragged. 76dp
+     clears the longest label in any shipped locale ("IPv4 数据包" at 12.5sp).
+     The count column keeps the unit from the plurals resource, so switching
+     this row to a bare number would have lost information the dialog showed. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/m3_row_pad_h"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="76dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/telemetry_unknown"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="12.5sp" />
+
+    <!-- Track and fill are weighted siblings rather than a FrameLayout with an
+         explicit child width: weights resolve during measure, so the share is
+         correct on the very first frame without waiting for a layout pass to
+         tell us how wide the track turned out. -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_bar_track"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/barFill"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_bar_fill"
+            android:backgroundTint="?attr/colorPrimary" />
+
+        <View
+            android:id="@+id/barRest"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:gravity="end"
+        android:minWidth="88dp"
+        android:text="@string/telemetry_unknown"
+        android:textColor="?attr/colorOnSurface"
+        android:textFontWeight="600"
+        android:textIsSelectable="true"
+        android:textSize="12.5sp" />
+</LinearLayout>

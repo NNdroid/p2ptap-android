@@ -90,8 +90,8 @@
     <string name="hint_web_ui_pcap_max_rate_per_sec">PCAP-Maximalrate muss 0 oder größer sein.</string>
     <string name="hint_web_ui_pcap_sample_every">PCAP-Stichprobenintervall muss 1 oder größer sein.</string>
     <string name="hint_web_ui_port">WebUI-Port muss zwischen 1 und 65535 liegen.</string>
-    <string name="encryption_active">🔒 %1$s</string>
-    <string name="encryption_plain">🔓 Plaintext</string>
+    <string name="encryption_active">%1$s</string>
+    <string name="encryption_plain">Plaintext</string>
     <string name="label_connected_since">Connected</string>
     <string name="label_decrypt_errors">Decrypt errors</string>
     <string name="label_dedup_drops">Dedup drops</string>
@@ -123,6 +123,6 @@
     <string name="role_bootstrap">Bootstrap</string>
     <string name="role_peer">Peer</string>
     <string name="role_static">Static</string>
-    <string name="section_protocol">📊 Traffic Composition</string>
-    <string name="section_system_health">🖥 System Health</string>
+    <string name="section_protocol">Traffic Composition</string>
+    <string name="section_system_health">System Health</string>
 </resources>

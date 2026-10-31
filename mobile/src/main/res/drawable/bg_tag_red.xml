@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Failed-peer tag (crypto failure, protocol mismatch, dead link). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/md_error_container" />
+    <corners android:radius="8dp" />
+</shape>

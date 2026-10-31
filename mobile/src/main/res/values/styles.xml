@@ -20,6 +20,28 @@
         <item name="cornerSize">24dp</item>
     </style>
 
+    <!-- Full pill for every filled / tonal button. 26dp on a 52dp box means
+         the corner radius equals half the height, which is what makes the M3
+         button read as a pill rather than a rounded rectangle. -->
+    <style name="ShapeAppearance.P2ptap.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/m3_button_radius</item>
+    </style>
+
+    <!-- Outlined text field: 10dp, the corner the M3 mockup uses for a field.
+         Deliberately much tighter than a card — a field nested in a 28dp card
+         must not compete with the shell's radius. -->
+    <style name="ShapeAppearance.P2ptap.Field" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/m3_field_radius</item>
+    </style>
+
+    <!-- Navigation active indicator: the 64x32 pill behind the selected icon. -->
+    <style name="ShapeAppearance.P2ptap.NavIndicator" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!-- Type Scale — MD3 2025 type proportions                          -->
     <!-- ════════════════════════════════════════════════════════════════ -->
@@ -98,22 +120,45 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- MD3 headline-large: 34sp at *regular* weight. The page title is a
+         landmark, not a heading — it gains size and loses weight, which is
+         the opposite of what the old 22sp/bold title did. -->
+    <style name="TextAppearance.P2ptap.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textSize">34sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">-0.012</item>
+    </style>
+
+    <!-- The small label above a group of cards ("虚拟网络（L2/L3）"). Medium
+         weight, onSurfaceVariant, no tracking: it labels the group without
+         competing with the 16sp row titles underneath. -->
+    <style name="TextAppearance.P2ptap.SectionLabel" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">12.5sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
     <!-- ════════════════════════════════════════════════════════════════ -->
     <!-- Component Styles                                                 -->
     <!-- ════════════════════════════════════════════════════════════════ -->
 
-    <!-- Filled button — expressive pill shape -->
+    <!-- Filled button — 52dp pill. Text is 15sp/medium because it now sits on
+         a dark-on-cyan pair (see md_on_primary): at the old 14sp/bold the
+         darker ink read as heavier than the surrounding row titles. -->
     <style name="Widget.P2ptap.Button" parent="Widget.Material3.Button">
-        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
-        <item name="android:textSize">14sp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Pill</item>
+        <item name="android:textSize">15sp</item>
         <item name="textAllCaps">false</item>
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minHeight">@dimen/m3_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
         <item name="android:letterSpacing">0.01</item>
     </style>
 
     <!-- Text button -->
     <style name="Widget.P2ptap.Button.TextButton" parent="Widget.Material3.Button.TextButton">
-        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Pill</item>
         <item name="android:textSize">14sp</item>
         <item name="textAllCaps">false</item>
         <item name="android:minHeight">44dp</item>
@@ -122,37 +167,144 @@
 
     <!-- Outlined button -->
     <style name="Widget.P2ptap.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Pill</item>
         <item name="android:textSize">14sp</item>
         <item name="textAllCaps">false</item>
-        <item name="android:minHeight">44dp</item>
-        <item name="strokeColor">?attr/colorOutline</item>
+        <item name="android:minHeight">@dimen/m3_button_height</item>
+        <item name="strokeColor">@color/m3_field_stroke</item>
     </style>
 
-    <!-- Filled tonal button -->
+    <!-- Filled tonal button — the page's secondary action ("Web 控制台",
+         the About links). secondary_container fill, 52dp pill, no shadow. -->
     <style name="Widget.P2ptap.Button.FilledTonalButton" parent="Widget.Material3.Button.TonalButton">
-        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Small</item>
-        <item name="android:textSize">14sp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Pill</item>
+        <item name="android:textSize">14.5sp</item>
         <item name="textAllCaps">false</item>
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minHeight">@dimen/m3_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
     </style>
 
-    <!-- Card — expressive elevation -->
+    <!-- Outlined text field. The box is transparent, so the card tone shows
+         through and only the 1dp hairline marks it — a fill plus a stroke plus
+         a card behind it is three surfaces for one field. Corner 10dp and
+         stroke #CBD5E1 are both measured off the mockup; the focused stroke is
+         1dp like the resting one, because a 2dp focus stroke made the row
+         twitch as focus moved down a form. -->
+    <style name="Widget.P2ptap.TextField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/m3_field_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/m3_field_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/m3_field_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/m3_field_radius</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/m3_field_stroke_color</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="hintTextColor">@color/md_on_surface_variant</item>
+        <item name="android:textColorHint">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- Same box, for a field whose value is picked from a menu. Keeps the
+         exposed-dropdown end icon; everything else is the style above. -->
+    <style name="Widget.P2ptap.TextField.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxCornerRadiusTopStart">@dimen/m3_field_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/m3_field_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/m3_field_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/m3_field_radius</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/m3_field_stroke_color</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="hintTextColor">@color/md_on_surface_variant</item>
+        <item name="android:textColorHint">@color/md_on_surface_variant</item>
+    </style>
+
+    <!-- Card — tonal fill, 28dp, no stroke, no shadow. A card in this
+         language is *darker* than the page in light mode and *deeper* than it
+         at night; in both cases the separation is one tone step, so
+         elevation stays at 0 and cardElevationOverlay must not re-add a
+         tint on top of the fill. -->
     <style name="Widget.P2ptap.Card" parent="Widget.Material3.CardView.Filled">
-        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Medium</item>
-        <item name="cardElevation">1dp</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Large</item>
+        <item name="cardBackgroundColor">@color/m3_card</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="strokeColor">@android:color/transparent</item>
+    </style>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Bottom navigation — 通栏 80dp bar with a 64x32 pill indicator      -->
+    <!-- ════════════════════════════════════════════════════════════════ -->    <style name="Widget.P2ptap.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/m3_dock</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.P2ptap.BottomNav.Indicator</item>
+        <item name="itemIconTint">@color/m3_nav_foreground</item>
+        <item name="itemTextColor">@color/m3_nav_foreground</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.P2ptap.LabelMedium</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.P2ptap.LabelMedium</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.P2ptap.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">@dimen/m3_nav_indicator_width</item>
+        <item name="android:height">@dimen/m3_nav_indicator_height</item>
+        <item name="android:color">@color/m3_indicator</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.NavIndicator</item>
+        <!-- The default indicator insets itself 4dp on each side, which would
+             shrink a 64dp pill to 56dp. Keeping the margin at 0 pins the
+             width to the 64dp above. -->
+        <item name="marginHorizontal">0dp</item>
+    </style>
+
+    <!-- Hairline between two rows of the same card. It sits inside the card's
+         20dp horizontal padding so the line stops short of the rounded edge
+         instead of cutting across it. -->
+    <style name="Widget.P2ptap.RowDivider" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginHorizontal">@dimen/m3_row_pad_h</item>
+        <item name="android:background">?attr/colorOutlineVariant</item>
     </style>
 
     <!-- Alert dialog overlay -->
     <style name="ThemeOverlay.P2ptap.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.P2ptap.Medium</item>
-        <item name="dialogCornerRadius">16dp</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.P2ptap.Large</item>
+        <item name="dialogCornerRadius">@dimen/card_corner_radius</item>
         <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.P2ptap.TitleMedium</item>
         <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.P2ptap.BodyMedium</item>
         <item name="buttonBarPositiveButtonStyle">@style/Widget.P2ptap.Button.TextButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/Widget.P2ptap.Button.TextButton</item>
         <item name="buttonBarNeutralButtonStyle">@style/Widget.P2ptap.Button.TextButton</item>
+    </style>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Segmented control — one pill split into equal choices            -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+
+    <!-- MaterialButtonToggleGroup rounds the outer corners and squares the
+         inner ones by itself, as long as the buttons share one pill shape. The
+         inset overrides matter: OutlinedButton carries a 6dp top/bottom inset
+         for its elevation, which leaves a visible gap between segments and
+         makes the group look like five separate buttons. -->
+    <style name="ShapeAppearance.P2ptap.Segment" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="Widget.P2ptap.SegmentButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.P2ptap.Segment</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="strokeColor">@color/m3_field_stroke</item>
+        <item name="strokeWidth">1dp</item>
     </style>
 
 </resources>

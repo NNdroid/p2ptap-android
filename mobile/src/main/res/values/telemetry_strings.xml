@@ -21,4 +21,5 @@
     <string name="telemetry_replay_drops">Replay packets discarded</string>
     <string name="telemetry_disabling">Removing exit route…</string>
     <string name="btn_refresh">Refresh</string>
+    <string name="telemetry_tap_mac_mismatch">TAP MAC mismatch — the broadcast address may not match the actual TAP device</string>
 </resources>

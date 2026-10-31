@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status ring, starting / stopping. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#F59E0B" />
-    <size android:width="72dp" android:height="72dp" />
+    <solid android:color="@color/m3_ring_connecting" />
 </shape>

@@ -1,34 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Home screen.
+  Home tab.
 
-  Reading order is deliberately the order a user needs it in: state and the
-  one action that matters, then the three numbers worth glancing at, then who
-  this node is, then where it routes. Everything an operator needs but an end
-  user does not — heap, goroutines, GC pause, protocol mix, listen addresses —
-  lives behind the single "advanced" disclosure at the bottom, collapsed by
-  default. Before this rewrite all of it was nine cards in a row, which put
-  Settings about two and a half screens down.
+  Reading order is the order a user needs it in: state and the one action that
+  matters, then the three numbers worth glancing at, then who this node is,
+  then where it routes. Everything an operator needs but an end user does not
+  — heap, goroutines, GC pause, protocol mix, listen addresses — lives behind
+  the single "advanced" disclosure at the bottom, collapsed by default.
 
-  Sizing is driven by the home_* dimens so the hero (24dp) and the list cards
-  (16dp) keep one radius scale and every row shares the same inner padding.
+  Layout language (Material 3 Expressive, 2025):
+    · No elevation, no stroke anywhere. Depth is one tonal step: the page is
+      @color/m3_page, every card is @color/m3_card, a pressed row is
+      @color/m3_card_press.
+    · One radius, 28dp, at page level (@dimen/home_card_radius ==
+      home_hero_radius == 28dp). Nested blocks inside a card step down to
+      12dp so they never compete with the shell.
+    · Rows of the same group are separated by a 2dp @color/m3_seam gap — the
+      page colour showing through — instead of a divider line. That is what
+      makes a 3-row card read as one grouped list rather than three cards.
+    · The hero carries its state as a tonal wash (bg_hero_*), not a glow, and
+      the CTA is a 52dp pill with dark ink on cyan (white on #06B6D4 is 2.2:1).
+
+  Every id here is load-bearing: HomeFragment reaches these views through
+  `binding.<id>`, so renaming one is a Kotlin change too.
 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_window_gradient"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:background="@color/m3_page"
+    android:clipToPadding="false"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/home_screen_padding">
+        android:paddingHorizontal="@dimen/home_screen_padding"
+        android:paddingTop="@dimen/home_screen_padding"
+        android:paddingBottom="24dp">
 
         <!-- ════════════════════════════════════════════════════════════ -->
-        <!-- 1. Status hero                                               -->
+        <!-- 1. Status hero — one tonal container, four states           -->
         <!-- ════════════════════════════════════════════════════════════ -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardHero"
@@ -37,9 +51,12 @@
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/home_hero_radius"
             app:cardElevation="0dp"
-            app:strokeColor="@color/hero_border"
-            app:strokeWidth="@dimen/card_stroke_width">
+            app:strokeWidth="0dp">
 
+            <!-- The wash lives on this inner layout because MainActivity swaps
+                 it per state (setBackgroundResource). Putting it on the card
+                 itself would mean fighting MaterialCardView's own background
+                 and losing the ripple/clip. -->
             <LinearLayout
                 android:id="@+id/layoutHero"
                 android:layout_width="match_parent"
@@ -57,7 +74,6 @@
                         android:id="@+id/viewStatusRing"
                         android:layout_width="@dimen/home_ring_size"
                         android:layout_height="@dimen/home_ring_size"
-                        android:alpha="0.25"
                         android:background="@drawable/bg_status_disconnected" />
 
                     <!-- Decorative: the state is announced by tvStatusTitle
@@ -65,9 +81,8 @@
                          contentDescription here would keep saying
                          "Disconnected" while the node is connected.
                          The tint is not optional — ic_p2p_shield_node is
-                         filled #FFFFFFFF, and the idle hero background is
-                         near-white in the light theme, so an untinted glyph
-                         vanishes entirely there. -->
+                         filled #FFFFFFFF and every hero wash is a light tone
+                         in the light theme, so an untinted glyph vanishes. -->
                     <ImageView
                         android:id="@+id/ivStatus"
                         android:layout_width="@dimen/home_ring_icon"
@@ -84,11 +99,12 @@
                     android:accessibilityLiveRegion="polite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="14dp"
+                    android:letterSpacing="-0.012"
                     android:text="@string/status_disconnected"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
+                    android:textFontWeight="500"
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/tvStatusSubtitle"
@@ -99,9 +115,10 @@
                     android:gravity="center"
                     android:lineSpacingExtra="2dp"
                     android:maxLines="2"
+                    android:minHeight="40dp"
                     android:text="@string/status_hint_idle"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12.5sp" />
+                    android:textSize="14sp" />
 
                 <!-- Elapsed-time counter. Only shown while STARTING, where the
                      engine reports nothing finer-grained than "not running
@@ -110,9 +127,10 @@
                     android:id="@+id/tvStatusElapsed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="monospace"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="11sp"
+                    android:textSize="11.5sp"
                     android:visibility="gone"
                     tools:text="Starting engine · 12s"
                     tools:visibility="visible" />
@@ -122,15 +140,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/home_cta_height"
                     android:layout_marginTop="16dp"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
                     android:text="@string/btn_connect"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="@color/m3_on_accent"
+                    android:textFontWeight="500"
                     android:textSize="15sp"
-                    android:textStyle="bold"
                     app:backgroundTint="?attr/colorPrimary"
-                    app:cornerRadius="14dp"
+                    app:cornerRadius="@dimen/m3_button_radius"
                     app:icon="@drawable/ic_play"
                     app:iconGravity="textStart"
-                    app:iconTint="?attr/colorOnPrimary" />
+                    app:iconTint="@color/m3_on_accent" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -142,11 +162,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/home_gap"
-            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardBackgroundColor="@color/m3_card"
             app:cardCornerRadius="@dimen/home_card_radius"
             app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="@dimen/card_stroke_width">
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,7 +173,7 @@
                 android:baselineAligned="false"
                 android:orientation="horizontal">
 
-                <!-- Upload — taps through to the traffic breakdown -->
+                <!-- Upload — taps through to the traffic tab -->
                 <LinearLayout
                     android:id="@+id/cellUpload"
                     android:layout_width="0dp"
@@ -163,13 +182,17 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="center_horizontal"
                     android:minHeight="@dimen/home_metric_min_height"
                     android:orientation="vertical"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="10dp">
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="14dp">
 
+                    <!-- An 11dp glyph next to an 11sp label has to be its own
+                         ImageView: a compound drawable draws the vector at its
+                         intrinsic 24dp and pushes the label out of the cell. -->
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
@@ -179,32 +202,30 @@
                             android:layout_height="11dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_arrow_up"
-                            app:tint="@color/status_connected" />
+                            app:tint="?attr/colorOnSurfaceVariant" />
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:layout_weight="1"
-                            android:ellipsize="end"
-                            android:maxLines="1"
                             android:text="@string/metric_upload"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tvTxSpeed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFeatureSettings="tnum"
                         android:ellipsize="end"
+                        android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/status_connected"
+                        android:textFontWeight="600"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <View
@@ -222,13 +243,14 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="center_horizontal"
                     android:minHeight="@dimen/home_metric_min_height"
                     android:orientation="vertical"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="10dp">
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="14dp">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
@@ -238,32 +260,30 @@
                             android:layout_height="11dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_arrow_down"
-                            app:tint="?attr/colorSecondary" />
+                            app:tint="?attr/colorOnSurfaceVariant" />
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:layout_weight="1"
-                            android:ellipsize="end"
-                            android:maxLines="1"
                             android:text="@string/metric_download"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tvRxSpeed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFeatureSettings="tnum"
                         android:ellipsize="end"
+                        android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/telemetry_unknown"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorPrimary"
+                        android:textFontWeight="600"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <View
@@ -272,7 +292,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="?attr/colorOutlineVariant" />
 
-                <!-- Peers — taps through to the peer list -->
+                <!-- Peers — taps through to the peers tab -->
                 <LinearLayout
                     android:id="@+id/cardPeers"
                     android:layout_width="0dp"
@@ -281,13 +301,14 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="center_horizontal"
                     android:minHeight="@dimen/home_metric_min_height"
                     android:orientation="vertical"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="10dp">
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="14dp">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
@@ -297,48 +318,45 @@
                             android:layout_height="11dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_peers"
-                            app:tint="?attr/colorTertiary" />
+                            app:tint="?attr/colorOnSurfaceVariant" />
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:layout_weight="1"
-                            android:ellipsize="end"
-                            android:maxLines="1"
                             android:text="@string/metric_peers"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tvActivePeers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFeatureSettings="tnum"
                         android:ellipsize="end"
+                        android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/telemetry_unknown"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textFontWeight="600"
+                        android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- ════════════════════════════════════════════════════════════ -->
-        <!-- 3. Node identity                                             -->
+        <!-- 3. Node identity — one card, three rows, 2dp seams           -->
         <!-- ════════════════════════════════════════════════════════════ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/home_gap"
-            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardBackgroundColor="@color/m3_card"
             app:cardCornerRadius="@dimen/home_card_radius"
             app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="@dimen/card_stroke_width">
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -351,19 +369,18 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="@dimen/home_card_padding"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="6dp"
-                    android:paddingBottom="4dp">
+                    android:paddingStart="@dimen/m3_row_pad_h"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/home_section_identity"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="12.5sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnShareQr"
@@ -384,12 +401,6 @@
                         app:iconTint="?attr/colorSecondary" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="@dimen/home_card_padding"
-                    android:background="?attr/colorOutlineVariant" />
-
                 <!-- Node name (a label, not an address — nothing to copy) -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -397,35 +408,35 @@
                     android:gravity="center_vertical"
                     android:minHeight="@dimen/home_row_min_height"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/home_card_padding"
-                    android:paddingVertical="10dp">
+                    android:paddingHorizontal="@dimen/m3_row_pad_h"
+                    android:paddingVertical="@dimen/m3_row_pad_v">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_node_name"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12.5sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textFontWeight="500"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tvNodeName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="middle"
+                        android:fontFamily="monospace"
                         android:maxLines="1"
                         android:maxWidth="200dp"
                         android:text="@string/telemetry_unknown"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="13.5sp"
-                        android:textStyle="bold" />
+                        android:textSize="12.5sp" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="@dimen/home_card_padding"
-                    android:background="?attr/colorOutlineVariant" />
+                    android:layout_height="@dimen/m3_seam"
+                    android:background="@color/m3_seam" />
 
                 <!-- Peer ID — tap copies, long-press opens the action sheet -->
                 <LinearLayout
@@ -438,16 +449,17 @@
                     android:gravity="center_vertical"
                     android:minHeight="@dimen/home_row_min_height"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/home_card_padding"
-                    android:paddingVertical="10dp">
+                    android:paddingHorizontal="@dimen/m3_row_pad_h"
+                    android:paddingVertical="@dimen/m3_row_pad_v">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_peer_id"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12.5sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textFontWeight="500"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tvPeerId"
@@ -455,19 +467,20 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_node_chip"
                         android:ellipsize="middle"
+                        android:fontFamily="monospace"
                         android:maxLines="1"
                         android:maxWidth="190dp"
-                        android:paddingHorizontal="8dp"
+                        android:paddingHorizontal="9dp"
                         android:paddingVertical="3dp"
                         android:text="-"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="11.5sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/md_on_primary_container"
+                        android:textFontWeight="600"
+                        android:textSize="11.5sp" />
 
                     <ImageView
                         android:layout_width="14dp"
                         android:layout_height="14dp"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="8dp"
                         android:contentDescription="@string/label_peer_id"
                         android:src="@drawable/ic_copy"
                         app:tint="?attr/colorPrimary" />
@@ -475,9 +488,8 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="@dimen/home_card_padding"
-                    android:background="?attr/colorOutlineVariant" />
+                    android:layout_height="@dimen/m3_seam"
+                    android:background="@color/m3_seam" />
 
                 <!-- Virtual IPv4 -->
                 <LinearLayout
@@ -490,30 +502,31 @@
                     android:gravity="center_vertical"
                     android:minHeight="@dimen/home_row_min_height"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/home_card_padding"
-                    android:paddingVertical="10dp">
+                    android:paddingHorizontal="@dimen/m3_row_pad_h"
+                    android:paddingVertical="@dimen/m3_row_pad_v">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_virtual_ip"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12.5sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textFontWeight="500"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tvTapIp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
                         android:text="@string/telemetry_unknown"
                         android:textColor="?attr/colorPrimary"
-                        android:textSize="13.5sp"
-                        android:textStyle="bold" />
+                        android:textSize="12.5sp" />
 
                     <ImageView
                         android:layout_width="14dp"
                         android:layout_height="14dp"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="8dp"
                         android:contentDescription="@string/label_virtual_ip"
                         android:src="@drawable/ic_copy"
                         app:tint="?attr/colorPrimary" />
@@ -532,8 +545,8 @@
                     android:gravity="center_vertical"
                     android:minHeight="@dimen/home_row_min_height"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/home_card_padding"
-                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="@dimen/m3_row_pad_h"
+                    android:paddingVertical="@dimen/m3_row_pad_v"
                     android:visibility="gone"
                     tools:visibility="visible">
 
@@ -542,22 +555,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/label_tap_ipv6"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12.5sp" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textFontWeight="500"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/tvTapIpv6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
                         android:text="@string/telemetry_unknown"
                         android:textColor="?attr/colorSecondary"
-                        android:textSize="12.5sp"
-                        android:textStyle="bold" />
+                        android:textSize="12.5sp" />
 
                     <ImageView
                         android:layout_width="14dp"
                         android:layout_height="14dp"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="8dp"
                         android:contentDescription="@string/label_tap_ipv6"
                         android:src="@drawable/ic_copy"
                         app:tint="?attr/colorSecondary" />
@@ -577,41 +591,41 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardBackgroundColor="@color/m3_card"
             app:cardCornerRadius="@dimen/home_card_radius"
             app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="@dimen/card_stroke_width">
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/home_card_padding"
-                android:paddingVertical="12dp">
+                android:paddingHorizontal="@dimen/m3_row_pad_h"
+                android:paddingVertical="@dimen/m3_row_pad_v">
 
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_p2p_shield_node"
-                    app:tint="?attr/colorSecondary" />
+                    android:src="@drawable/ic_globe"
+                    app:tint="?attr/colorTertiary" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:letterSpacing="0.02"
                         android:text="@string/label_exit_node"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="10.5sp"
-                        android:textStyle="bold" />
+                        android:textFontWeight="600"
+                        android:textSize="10.5sp" />
 
                     <TextView
                         android:id="@+id/tvExitNodeStatus"
@@ -622,16 +636,16 @@
                         android:maxLines="1"
                         android:text="@string/exit_node_auto_display"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="13.5sp"
-                        android:textStyle="bold" />
+                        android:textFontWeight="500"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_chevron_right"
-                    app:tint="?attr/colorOutline" />
+                    app:tint="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -643,11 +657,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/home_gap"
-            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardBackgroundColor="@color/m3_card"
             app:cardCornerRadius="@dimen/home_card_radius"
             app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="@dimen/card_stroke_width">
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -662,14 +675,14 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:minHeight="48dp"
+                    android:minHeight="52dp"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/home_card_padding"
-                    android:paddingVertical="12dp">
+                    android:paddingHorizontal="@dimen/m3_row_pad_h"
+                    android:paddingVertical="@dimen/m3_row_pad_v">
 
                     <ImageView
-                        android:layout_width="17dp"
-                        android:layout_height="17dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:contentDescription="@null"
                         android:src="@drawable/ic_tune"
                         app:tint="?attr/colorOnSurfaceVariant" />
@@ -677,24 +690,25 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="@string/advanced_info_title"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:textFontWeight="500"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/tvAdvancedCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_node_chip"
-                        android:paddingHorizontal="6dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_tag_neutral"
+                        android:fontFamily="monospace"
+                        android:paddingHorizontal="7dp"
                         android:paddingVertical="2dp"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="10.5sp"
-                        android:textStyle="bold"
+                        android:textFontWeight="600"
+                        android:textSize="11sp"
                         tools:text="9" />
 
                     <ImageView
@@ -711,40 +725,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="4dp"
                     android:visibility="gone"
                     tools:visibility="visible">
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="@dimen/home_card_padding"
-                        android:background="?attr/colorOutlineVariant" />
+                        android:layout_height="@dimen/m3_seam"
+                        android:background="@color/m3_seam" />
 
                     <!-- Runtime counters -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="@dimen/home_card_padding"
+                        android:paddingHorizontal="@dimen/m3_row_pad_h"
                         android:paddingTop="12dp"
-                        android:paddingBottom="6dp">
+                        android:paddingBottom="8dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:letterSpacing="0.05"
                             android:text="@string/home_section_runtime"
+                            android:textAllCaps="true"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
+                            android:textFontWeight="600"
+                            android:textSize="11sp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:paddingVertical="4dp">
+                            android:paddingVertical="6dp">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -752,16 +766,17 @@
                                 android:layout_weight="1"
                                 android:text="@string/label_traffic"
                                 android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="12sp" />
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/tvTraffic"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
                                 android:text="@string/telemetry_unknown"
                                 android:textColor="?attr/colorOnSurface"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textFontWeight="600"
+                                android:textSize="12.5sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -769,7 +784,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:paddingVertical="4dp">
+                            android:paddingVertical="6dp">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -777,26 +792,26 @@
                                 android:layout_weight="1"
                                 android:text="@string/label_nat_status"
                                 android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="12sp" />
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/tvNatStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
+                                android:fontFamily="monospace"
                                 android:maxLines="1"
                                 android:text="@string/telemetry_unknown"
                                 android:textColor="?attr/colorOnSurface"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textFontWeight="600"
+                                android:textSize="12.5sp" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="@dimen/home_card_padding"
-                        android:background="?attr/colorOutlineVariant" />
+                        android:layout_height="@dimen/m3_seam"
+                        android:background="@color/m3_seam" />
 
                     <!-- Engine health grid. Only meaningful while RUNNING; the
                          controller keeps this block GONE in every other state. -->
@@ -805,18 +820,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="@dimen/home_card_padding"
+                        android:paddingHorizontal="@dimen/m3_row_pad_h"
                         android:paddingTop="12dp"
-                        android:paddingBottom="6dp">
+                        android:paddingBottom="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="6dp"
+                            android:layout_marginBottom="4dp"
+                            android:drawableStart="@drawable/ic_terminal_16"
+                            android:drawablePadding="6dp"
+                            android:drawableTint="?attr/colorOnSurfaceVariant"
+                            android:letterSpacing="0.05"
                             android:text="@string/section_system_health"
+                            android:textAllCaps="true"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
+                            android:textFontWeight="600"
+                            android:textSize="11sp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -830,7 +850,7 @@
                                 android:layout_weight="1"
                                 android:gravity="center_horizontal"
                                 android:orientation="vertical"
-                                android:paddingVertical="4dp">
+                                android:paddingVertical="6dp">
 
                                 <TextView
                                     android:id="@+id/tvUptime"
@@ -838,16 +858,16 @@
                                     android:layout_height="wrap_content"
                                     android:text="@string/telemetry_unknown"
                                     android:textColor="?attr/colorPrimary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold" />
+                                    android:textFontWeight="600"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="1dp"
+                                    android:layout_marginTop="2dp"
                                     android:text="@string/label_uptime"
                                     android:textColor="?attr/colorOnSurfaceVariant"
-                                    android:textSize="10sp" />
+                                    android:textSize="10.5sp" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -856,24 +876,24 @@
                                 android:layout_weight="1"
                                 android:gravity="center_horizontal"
                                 android:orientation="vertical"
-                                android:paddingVertical="4dp">
+                                android:paddingVertical="6dp">
 
                                 <TextView
                                     android:id="@+id/tvHeap"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/telemetry_unknown"
-                                    android:textColor="?attr/colorSecondary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold" />
+                                    android:textColor="@color/status_connected"
+                                    android:textFontWeight="600"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="1dp"
+                                    android:layout_marginTop="2dp"
                                     android:text="@string/label_heap"
                                     android:textColor="?attr/colorOnSurfaceVariant"
-                                    android:textSize="10sp" />
+                                    android:textSize="10.5sp" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -882,24 +902,24 @@
                                 android:layout_weight="1"
                                 android:gravity="center_horizontal"
                                 android:orientation="vertical"
-                                android:paddingVertical="4dp">
+                                android:paddingVertical="6dp">
 
                                 <TextView
                                     android:id="@+id/tvGoroutines"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/telemetry_unknown"
-                                    android:textColor="?attr/colorTertiary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold" />
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textFontWeight="600"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="1dp"
+                                    android:layout_marginTop="2dp"
                                     android:text="@string/label_goroutines"
                                     android:textColor="?attr/colorOnSurfaceVariant"
-                                    android:textSize="10sp" />
+                                    android:textSize="10.5sp" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -908,33 +928,32 @@
                                 android:layout_weight="1"
                                 android:gravity="center_horizontal"
                                 android:orientation="vertical"
-                                android:paddingVertical="4dp">
+                                android:paddingVertical="6dp">
 
                                 <TextView
                                     android:id="@+id/tvGcPause"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/telemetry_unknown"
-                                    android:textColor="?attr/colorPrimary"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold" />
+                                    android:textColor="@color/status_connecting"
+                                    android:textFontWeight="600"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="1dp"
+                                    android:layout_marginTop="2dp"
                                     android:text="@string/label_gc_pause"
                                     android:textColor="?attr/colorOnSurfaceVariant"
-                                    android:textSize="10sp" />
+                                    android:textSize="10.5sp" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="@dimen/home_card_padding"
-                        android:background="?attr/colorOutlineVariant" />
+                        android:layout_height="@dimen/m3_seam"
+                        android:background="@color/m3_seam" />
 
                     <!-- Protocol mix -->
                     <LinearLayout
@@ -942,18 +961,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="@dimen/home_card_padding"
+                        android:paddingHorizontal="@dimen/m3_row_pad_h"
                         android:paddingTop="12dp"
-                        android:paddingBottom="10dp">
+                        android:paddingBottom="12dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
+                            android:drawableStart="@drawable/ic_traffic_16"
+                            android:drawablePadding="6dp"
+                            android:drawableTint="?attr/colorOnSurfaceVariant"
+                            android:letterSpacing="0.05"
                             android:text="@string/section_protocol"
+                            android:textAllCaps="true"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            android:textSize="10.5sp"
-                            android:textStyle="bold" />
+                            android:textFontWeight="600"
+                            android:textSize="11sp" />
 
                         <LinearLayout
                             android:id="@+id/protoContainer"
@@ -964,18 +988,17 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="@dimen/home_card_padding"
-                        android:background="?attr/colorOutlineVariant" />
+                        android:layout_height="@dimen/m3_seam"
+                        android:background="@color/m3_seam" />
 
                     <!-- Listen addresses -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="@dimen/home_card_padding"
+                        android:paddingHorizontal="@dimen/m3_row_pad_h"
                         android:paddingTop="12dp"
-                        android:paddingBottom="12dp">
+                        android:paddingBottom="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -987,10 +1010,12 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:letterSpacing="0.05"
                                 android:text="@string/label_multiaddrs"
+                                android:textAllCaps="true"
                                 android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="10.5sp"
-                                android:textStyle="bold" />
+                                android:textFontWeight="600"
+                                android:textSize="11sp" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnCopyMultiaddrs"
@@ -1007,12 +1032,12 @@
                             android:id="@+id/tvMultiaddrs"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="6dp"
                             android:background="@drawable/bg_code_block"
                             android:breakStrategy="high_quality"
                             android:fontFamily="monospace"
                             android:lineSpacingExtra="3dp"
-                            android:padding="10dp"
+                            android:padding="12dp"
                             android:text="@string/multiaddrs_empty_hint"
                             android:textColor="?attr/colorOnSurface"
                             android:textIsSelectable="true"
@@ -1032,9 +1057,12 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/home_cta_height"
             android:layout_marginTop="@dimen/home_group_gap"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
             android:text="@string/btn_open_webui"
-            android:textSize="14sp"
-            app:cornerRadius="14dp"
+            android:textFontWeight="500"
+            android:textSize="14.5sp"
+            app:cornerRadius="@dimen/m3_button_radius"
             app:icon="@drawable/ic_speed"
             app:iconGravity="textStart" />
 
@@ -1045,19 +1073,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/home_gap"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardBackgroundColor="@color/m3_card"
             app:cardCornerRadius="@dimen/home_card_radius"
             app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="@dimen/card_stroke_width">
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="18dp">
+                android:paddingTop="20dp"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -1076,10 +1104,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
+                        android:letterSpacing="-0.01"
                         android:text="@string/app_name"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textFontWeight="600"
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/tvAppVersion"
@@ -1087,23 +1116,23 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:background="@drawable/bg_node_chip"
-                        android:paddingHorizontal="6dp"
-                        android:paddingVertical="2dp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="10.5sp"
-                        android:textStyle="bold"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:textColor="@color/md_on_primary_container"
+                        android:textFontWeight="600"
+                        android:textSize="11sp"
                         tools:text="v1.0" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="14dp"
                     android:gravity="center"
                     android:text="@string/about_desc"
                     android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="11.5sp" />
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1114,13 +1143,12 @@
                          on two lines inside a 44dp button, which clipped
                          "Repository" and "@NNdroid" mid-glyph. Insets are
                          zeroed because MaterialButton's default 6dp vertical
-                         inset would otherwise squeeze the 44dp box down to
-                         32dp of content. -->
+                         inset would otherwise squeeze the box. -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnOpenGithubRepo"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="0dp"
-                        android:layout_height="44dp"
+                        android:layout_height="42dp"
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:ellipsize="end"
@@ -1129,9 +1157,9 @@
                         android:maxLines="1"
                         android:text="@string/label_github_short"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:cornerRadius="12dp"
+                        android:textFontWeight="500"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="21dp"
                         app:icon="@drawable/ic_github"
                         app:iconPadding="6dp"
                         app:iconSize="16dp"
@@ -1141,7 +1169,7 @@
                         android:id="@+id/btnOpenDeveloper"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="0dp"
-                        android:layout_height="44dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:ellipsize="end"
@@ -1150,9 +1178,9 @@
                         android:maxLines="1"
                         android:text="@string/label_developer_short"
                         android:textColor="?attr/colorOnSurface"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:cornerRadius="12dp"
+                        android:textFontWeight="500"
+                        android:textSize="12.5sp"
+                        app:cornerRadius="21dp"
                         app:icon="@drawable/ic_person"
                         app:iconPadding="6dp"
                         app:iconSize="16dp"

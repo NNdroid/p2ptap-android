@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Address-list manager sheet.
+
+     Rebuilt on the M3 surface language. The sheet supplies the surface, so the
+     root is transparent and the footer no longer paints a second solid band
+     over it — the separation is carried by a 2dp seam, same as every card in
+     the app.
+
+     One functional fix: the close affordance was drawing ic_delete (a trash
+     can) in the top-right corner, which reads as "delete everything". It is
+     now ic_close. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_code_block"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
 
     <!-- Fixed Header -->
@@ -14,9 +24,9 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="20dp"
-        android:paddingTop="20dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="12dp">
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/tvDialogTitle"
@@ -25,35 +35,35 @@
             android:layout_weight="1"
             android:text="@string/dialog_manage_addresses"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+            android:textFontWeight="600"
+            android:textSize="20sp" />
 
         <!-- Switch Mode Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnToggleMode"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.P2ptap.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
             android:text="@string/btn_switch_text_mode"
-            android:textSize="12sp"
             app:icon="@drawable/ic_text"
-            app:iconSize="16dp" />
+            app:iconSize="18dp" />
 
         <ImageView
             android:id="@+id/ivClose"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/btn_cancel"
-            android:padding="6dp"
-            android:src="@drawable/ic_delete"
+            android:padding="9dp"
+            android:src="@drawable/ic_close"
             app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/colorOutlineVariant" />
+        android:layout_height="2dp"
+        android:background="@color/m3_seam" />
 
     <!-- Scrollable Middle Section -->
     <FrameLayout
@@ -95,15 +105,15 @@
                 android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:src="@drawable/ic_peers"
                     app:tint="?attr/colorOutline" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:text="@string/empty_address_list"
                     android:textColor="?attr/colorOnSurfaceVariant"
@@ -114,45 +124,45 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddAddress"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.P2ptap.Button.FilledTonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="@string/btn_add_address"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:icon="@drawable/ic_add"
-                    app:iconSize="16dp" />
+                    app:iconSize="17dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnScanQr"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.P2ptap.Button.FilledTonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
                     android:layout_weight="1"
                     android:text="@string/btn_scan_qr"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:icon="@drawable/ic_qr_scan"
-                    app:iconSize="16dp" />
+                    app:iconSize="17dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnPasteClipboard"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.P2ptap.Button.FilledTonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:text="@string/btn_paste_clip"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:icon="@drawable/ic_paste"
-                    app:iconSize="16dp" />
+                    app:iconSize="17dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -165,6 +175,7 @@
             android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.P2ptap.TextField"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/hint_input_address"
@@ -185,14 +196,13 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/colorOutlineVariant" />
+        android:layout_height="2dp"
+        android:background="@color/m3_seam" />
 
     <!-- Fixed Bottom Sticky Footer (Always Visible) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
         android:gravity="end"
         android:orientation="horizontal"
         android:paddingStart="20dp"
@@ -202,17 +212,18 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.P2ptap.Button.OutlinedButton"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:text="@string/btn_cancel" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveList"
+            style="@style/Widget.P2ptap.Button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/btn_save_list" />

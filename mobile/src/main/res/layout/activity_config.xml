@@ -27,6 +27,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/m3_nav_height"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -42,8 +44,8 @@
                 android:layout_marginBottom="@dimen/card_gap"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,7 +98,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_key"
-                            app:tint="?attr/colorPrimary" />
+                            app:tint="@color/md_on_primary_container" />
 
                         <TextView
                             android:id="@+id/tvConfigPeerId"
@@ -107,7 +109,7 @@
                             android:ellipsize="middle"
                             android:singleLine="true"
                             android:text="@string/label_peer_id"
-                            android:textColor="?attr/colorPrimary"
+                            android:textColor="@color/md_on_primary_container"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -116,7 +118,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_copy"
-                            app:tint="?attr/colorPrimary" />
+                            app:tint="@color/md_on_primary_container" />
                     </LinearLayout>
 
                     <!-- Identity Actions Row -->
@@ -146,7 +148,7 @@
                             android:minHeight="@dimen/home_cta_height"
                             android:text="@string/btn_backup_restore"
                             android:textSize="12sp"
-                            app:cornerRadius="12dp"
+                            app:cornerRadius="@dimen/m3_button_radius"
                             app:icon="@drawable/ic_backup" />
 
                         <com.google.android.material.button.MaterialButton
@@ -163,7 +165,7 @@
                             android:text="@string/action_reset_key"
                             android:textSize="12sp"
                             android:textColor="@color/status_connecting"
-                            app:cornerRadius="12dp"
+                            app:cornerRadius="@dimen/m3_button_radius"
                             app:icon="@drawable/ic_refresh"
                             app:iconTint="@color/status_connecting" />
                     </LinearLayout>
@@ -178,8 +180,8 @@
                 android:layout_marginBottom="@dimen/card_gap"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,6 +216,7 @@
 
                     <!-- Node Name -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilNodeName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -230,6 +233,7 @@
 
                     <!-- Virtual IPv4 -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilTapIp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -246,6 +250,7 @@
 
                     <!-- Virtual IPv6 -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilTapIpv6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -262,6 +267,7 @@
 
                     <!-- MTU -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilMtu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -304,6 +310,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilDnsServers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -330,8 +337,8 @@
                 android:layout_marginBottom="@dimen/card_gap"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -391,6 +398,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilBootstrapPeers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -436,6 +444,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilStaticPeers"
                         app:helperText="@string/config_static_help"
                         android:layout_width="match_parent"
@@ -455,52 +464,229 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- mDNS Local Auto-Discovery Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchEnableMdns"
+                    <LinearLayout
+                        android:id="@+id/rowEnableMdns"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="@string/switch_enable_mdns"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_enable_mdns"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_enable_mdns_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchEnableMdns"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="true" />
+                    </LinearLayout>
 
                     <!-- Discover Boot Mesh Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchDiscoverBootMesh"
+                    <LinearLayout
+                        android:id="@+id/rowDiscoverBootMesh"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="@string/switch_discover_boot_mesh"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_discover_boot_mesh"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_discover_boot_mesh_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchDiscoverBootMesh"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="true" />
+                    </LinearLayout>
 
                     <!-- Direct-Only / Disable Relay Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchDisableRelay"
+                    <LinearLayout
+                        android:id="@+id/rowDisableRelay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="@string/switch_disable_relay"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_disable_relay"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_disable_relay_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchDisableRelay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="false" />
+                    </LinearLayout>
 
                     <!-- Fine-grained relay switches: they split disable_relay in
                          half so only one side of NAT traversal can be disabled. -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchDisableCircuitRelay"
+                    <LinearLayout
+                        android:id="@+id/rowDisableCircuitRelay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="false"
-                        android:text="@string/switch_disable_circuit_relay"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
 
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchDisableHolePunching"
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_disable_circuit_relay"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_disable_circuit_relay_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchDisableCircuitRelay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="false" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/rowDisableHolePunching"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="@string/switch_disable_hole_punching"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_disable_hole_punching"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_disable_hole_punching_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchDisableHolePunching"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="false" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -512,8 +698,8 @@
                 android:layout_marginBottom="@dimen/card_gap"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -548,6 +734,7 @@
 
                     <!-- PSK Security Key -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilPsk"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -564,6 +751,7 @@
 
                     <!-- TLS/QUIC SNI (outgoing) -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilTlsServerName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -581,6 +769,7 @@
 
                     <!-- TLS SNI suffix (per-peer) -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilTlsSniSuffix"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -597,29 +786,99 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Obfuscation Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchObfuscation"
+                    <LinearLayout
+                        android:id="@+id/rowObfuscation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:checked="true"
-                        android:text="@string/switch_obfuscation"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_obfuscation"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_obfuscation_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchObfuscation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="true" />
+                    </LinearLayout>
 
                     <!-- Strict PFS Key Negotiation Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchStrictKey"
+                    <LinearLayout
+                        android:id="@+id/rowStrictKey"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:checked="false"
-                        android:text="@string/switch_strict_key"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_strict_key"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_strict_key_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchStrictKey"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="false" />
+                    </LinearLayout>
 
                     <!-- Padding Rules -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/menuObfuscationRules"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.P2ptap.TextField"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -638,7 +897,7 @@
                     <!-- Obfuscation Algorithm Dropdown -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/menuObfuscationAlgo"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        style="@style/Widget.P2ptap.TextField.Dropdown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_obfuscation_algo">
@@ -660,8 +919,8 @@
                 android:layout_marginBottom="@dimen/card_gap"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -740,7 +999,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/menuTransportStrategy"
                         app:helperText="@string/config_strategy_help"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        style="@style/Widget.P2ptap.TextField.Dropdown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_transport_strategy">
@@ -784,6 +1043,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilHolePunchTimeout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -826,6 +1086,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilStunServers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -870,6 +1131,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilTurnServers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -896,8 +1158,8 @@
                 android:layout_marginBottom="@dimen/card_gap"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -931,14 +1193,49 @@
                     </LinearLayout>
 
                     <!-- Accept Subnets Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchAcceptSubnets"
+                    <LinearLayout
+                        android:id="@+id/rowAcceptSubnets"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:checked="true"
-                        android:text="@string/switch_accept_subnets"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_accept_subnets"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_accept_subnets_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchAcceptSubnets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="true" />
+                    </LinearLayout>
 
                     <!-- Advertised Subnets Header Row -->
                     <LinearLayout
@@ -967,6 +1264,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilAdvertisedSubnets"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1009,6 +1307,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilAllowedSubnetPeers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1034,8 +1333,8 @@
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
-                app:strokeColor="?attr/colorOutlineVariant"
-                app:strokeWidth="@dimen/card_stroke_width">
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1069,17 +1368,53 @@
                     </LinearLayout>
 
                     <!-- WebUI Switch -->
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchWebUi"
+                    <LinearLayout
+                        android:id="@+id/rowWebUi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:checked="true"
-                        android:text="@string/switch_webui_enable"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:layout_marginBottom="4dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/switch_webui_enable"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textFontWeight="500"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/switch_webui_enable_desc"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textSize="12.5sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchWebUi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:checked="true" />
+                    </LinearLayout>
 
                     <!-- WebUI Port -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilWebUiPort"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1097,6 +1432,7 @@
 
                     <!-- WebUI Auth Token -->
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.P2ptap.TextField"
                         android:id="@+id/tilWebUiToken"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1116,7 +1452,7 @@
                     <!-- Log Level Dropdown -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/menuLogLevel"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        style="@style/Widget.P2ptap.TextField.Dropdown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_log_level">
@@ -1136,9 +1472,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/card_gap"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation"
+                app:cardBackgroundColor="@color/m3_card"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1173,7 +1510,7 @@
                     <!-- Theme Mode Dropdown -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/menuThemeMode"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        style="@style/Widget.P2ptap.TextField.Dropdown"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -1186,6 +1523,58 @@
                             android:inputType="none" />
                     </com.google.android.material.textfield.TextInputLayout>
 
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Diagnostics. The log viewer used to be an app-bar action on the
+                 home screen; with the app bar gone it needs a row, and this is
+                 where a diagnostic tool belongs — next to the log-level field
+                 that controls what it shows. -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_gap"
+                app:cardBackgroundColor="@color/m3_card"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:id="@+id/layoutOpenLogs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="56dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/m3_row_pad_h"
+                    android:paddingVertical="@dimen/m3_row_pad_v">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_terminal"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:text="@string/action_logs"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textFontWeight="500"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -1202,18 +1591,34 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="@dimen/m3_button_height"
                 android:layout_marginBottom="24dp"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
                 android:text="@string/btn_save"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textColor="@color/m3_on_accent"
+                android:textFontWeight="500"
+                android:textSize="15sp"
                 app:backgroundTint="?attr/colorPrimary"
-                app:cornerRadius="16dp"
-                app:icon="@drawable/ic_save" />
+                app:cornerRadius="@dimen/m3_button_radius"
+                app:icon="@drawable/ic_save"
+                app:iconTint="@color/m3_on_accent" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Same bar as MainActivity, with Settings selected. Both screens inflate
+         it from @menu/menu_bottom_nav and each sets its own selected item, so
+         the four destinations behave the same wherever they are tapped from.
+         The scroll view's paddingBottom reserves the bar's height, which lets
+         content scroll *behind* the bar instead of stopping above it. -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        style="@style/Widget.P2ptap.BottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/m3_nav_height"
+        android:layout_gravity="bottom"
+        app:menu="@menu/menu_bottom_nav" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
