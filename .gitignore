@@ -27,3 +27,8 @@ local.properties
 # Local AI-agent scratch space and commit-message helpers
 .zcode/
 .git_commit_msg.txt
+
+# JVM crash dumps: this host's leaked wlanext.exe commit charge makes Gradle
+# workers die with ERROR_COMMITMENT_LIMIT, and each death drops these here.
+hs_err_pid*.log
+replay_pid*.log
