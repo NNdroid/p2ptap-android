@@ -21,4 +21,5 @@
     <string name="telemetry_disabling">출구 경로 제거 중…</string>
     <string name="btn_refresh">새로 고침</string>
     <string name="telemetry_relay_only">Relay-only</string>
+    <string name="telemetry_tap_mac_mismatch">TAP MAC 불일치 — 브로드캐스트 주소가 실제 TAP 장치와 다를 수 있습니다</string>
 </resources>

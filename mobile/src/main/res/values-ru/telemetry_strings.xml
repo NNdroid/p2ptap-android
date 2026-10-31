@@ -21,4 +21,5 @@
     <string name="telemetry_disabling">Удаление выходного маршрута…</string>
     <string name="btn_refresh">Обновить</string>
     <string name="telemetry_relay_only">Relay-only</string>
+    <string name="telemetry_tap_mac_mismatch">MAC TAP не совпадает — широковещательный адрес может не соответствовать реальному TAP-устройству</string>
 </resources>

@@ -70,9 +70,13 @@
     <string name="helper_transport_strategy">best_path は単一経路を使用。multipath はすべての有効な経路（直接 + サーキットリレー）間でトラフィックを分散し受信側で並べ替え。redundant は重複送信、fallback は障害時にフェイルオーバー。再起動が必要です。</string>
     <string name="hint_log_level">ログレベル</string>
     <string name="switch_accept_subnets">リモート通知サブネットを受信</string>
+    <string name="switch_accept_subnets_desc">ピアが通知したサブネットをこの端末の TAP インターフェースにルーティングします。</string>
     <string name="switch_obfuscation">難読化とE2E暗号化を有効化</string>
+    <string name="switch_obfuscation_desc">短いフレームをパディングし、DPI にトンネルを識別されないようにします。</string>
     <string name="switch_discover_boot_mesh">Bootノード中継メッシュを自動検出</string>
+    <string name="switch_discover_boot_mesh_desc">ブートストラップメッシュに参加し、ローカルネットワーク外のピアを検出します。</string>
     <string name="switch_webui_enable">組み込みWebコンソールを有効化</string>
+    <string name="switch_webui_enable_desc">ローカルコンソールを 127.0.0.1 で提供します。</string>
     <string name="title_log_viewer">リアルタイム診断ログ</string>
     <string name="hint_search_logs">ログをキーワード・IP・Peerで検索…</string>
     <string name="filter_all">すべて</string>
@@ -111,10 +115,15 @@
     <string name="prompt_vpn_not_running">注意: WebコンソールにはVPN起動が必要です</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">ローカル mDNS 自動探索を有効化</string>
+    <string name="switch_enable_mdns_desc">このノードを LAN に通知し、近くのピアを自動検出します。</string>
     <string name="switch_disable_relay">直接接続専用モード (ホールパンチと AutoRelay も無効化)</string>
+    <string name="switch_disable_relay_desc">直接接続のみを使用します。NAT 背後のピアには到達できません。</string>
     <string name="switch_disable_circuit_relay">標準リレーのみ無効化</string>
+    <string name="switch_disable_circuit_relay_desc">libp2p サーキットリレーを代替経路として使わないようにします。</string>
     <string name="switch_disable_hole_punching">ホールパンチングのみ無効化</string>
+    <string name="switch_disable_hole_punching_desc">NAT ホールパンチングを行わず、確立済みの接続を使います。</string>
     <string name="switch_strict_key">厳格な前方秘匿性 (PFS キー分離を強制)</string>
+    <string name="switch_strict_key_desc">再鍵交換なしで識別キーが変わるピアを拒否します。</string>
     <string name="group_transports">トランスポート層プロトコル設定</string>
     <string name="switch_quic">QUIC 接続を待ち受ける (UDP)</string>
     <string name="switch_webrtc">WebRTC 接続を待ち受ける (NAT 越え)</string>
@@ -315,4 +324,6 @@
     <string name="tab_settings">設定</string>
     <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
     <string name="hint_search_peers">名前・Peer ID・IP で検索</string>
+    <string name="action_toggle_theme">ライト／ダークテーマを切り替え</string>
+    <string name="btn_share_logs">ログを共有</string>
 </resources>

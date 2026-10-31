@@ -69,9 +69,13 @@
     <string name="helper_transport_strategy">best_path utilise un seul chemin; multipath répartit le trafic sur tous les chemins actifs (direct + relais par circuit) et réordonne chez le récepteur; redundant duplique; fallback bascule en cas de panne. Redémarrage requis.</string>
     <string name="hint_log_level">Niveau de journalisation</string>
     <string name="switch_accept_subnets">Accepter les sous-réseaux annoncés</string>
+    <string name="switch_accept_subnets_desc">Router les sous-réseaux annoncés par les pairs vers l\'interface TAP de cet appareil.</string>
     <string name="switch_obfuscation">Activer l\'obscurcissement et le chiffrement E2E</string>
+    <string name="switch_obfuscation_desc">Remplir les trames courtes pour que le DPI ne puisse pas identifier le tunnel.</string>
     <string name="switch_discover_boot_mesh">Découvrir le maillage dorsal Boot</string>
+    <string name="switch_discover_boot_mesh_desc">Rejoindre le maillage d\'amorçage pour trouver les pairs hors du réseau local.</string>
     <string name="switch_webui_enable">Activer la console Web intégrée</string>
+    <string name="switch_webui_enable_desc">Servir la console locale sur 127.0.0.1.</string>
     <string name="title_log_viewer">Journaux de diagnostic</string>
     <string name="hint_search_logs">Rechercher par mot-clé, IP, pair…</string>
     <string name="filter_all">TOUT</string>
@@ -111,10 +115,15 @@
     <string name="prompt_vpn_not_running">Remarque : P2PTap VPN doit être actif pour accéder à la console</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Activer la découverte automatique mDNS LAN</string>
+    <string name="switch_enable_mdns_desc">Annoncer ce nœud sur le LAN et découvrir automatiquement les pairs proches.</string>
     <string name="switch_disable_relay">Mode direct uniquement (désactive aussi le perçage et l\'AutoRelay)</string>
+    <string name="switch_disable_relay_desc">Utiliser uniquement des connexions directes. Les pairs derrière un NAT seront injoignables.</string>
     <string name="switch_disable_circuit_relay">Désactiver seulement le circuit relay</string>
+    <string name="switch_disable_circuit_relay_desc">Ne plus utiliser les relais de circuit libp2p comme chemin de repli.</string>
     <string name="switch_disable_hole_punching">Désactiver seulement la perforation</string>
+    <string name="switch_disable_hole_punching_desc">Ignorer le perçage NAT et se fier aux liens déjà établis.</string>
     <string name="switch_strict_key">Confidentialité persistante stricte (PFS)</string>
+    <string name="switch_strict_key_desc">Refuser les pairs dont la clé d\'identité change sans renouvellement.</string>
     <string name="group_transports">Protocoles de couche transport</string>
     <string name="switch_quic">Écouter les connexions QUIC (UDP)</string>
     <string name="switch_webrtc">Écouter les connexions WebRTC (perçage NAT)</string>
@@ -321,4 +330,6 @@
     <string name="tab_settings">Réglages</string>
     <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
     <string name="hint_search_peers">Rechercher par nom, Peer ID ou IP</string>
+    <string name="action_toggle_theme">Basculer entre thème clair et sombre</string>
+    <string name="btn_share_logs">Partager les journaux</string>
 </resources>

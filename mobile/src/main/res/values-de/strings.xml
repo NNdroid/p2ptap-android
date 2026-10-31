@@ -69,9 +69,13 @@
     <string name="helper_transport_strategy">best_path nutzt einen Pfad; multipath verteilt den Verkehr auf alle aktiven Pfade (direkt + Circuit-Relay) und sortiert beim Empfänger; redundant dupliziert; fallback weicht bei Ausfall aus. Neustart erforderlich.</string>
     <string name="hint_log_level">Protokollierungsgrad</string>
     <string name="switch_accept_subnets">Angekündigte Subnetze akzeptieren</string>
+    <string name="switch_accept_subnets_desc">Von Peers angekündigte Subnetze in die TAP-Schnittstelle dieses Geräts routen.</string>
     <string name="switch_obfuscation">Verkehrsverschleierung &amp; Verschlüsselung aktivieren</string>
+    <string name="switch_obfuscation_desc">Kurze Frames auffüllen, damit DPI den Tunnel nicht fingerprinten kann.</string>
     <string name="switch_discover_boot_mesh">Boot-Backbone-Mesh erkennen</string>
+    <string name="switch_discover_boot_mesh_desc">Dem Bootstrap-Mesh beitreten, damit Peers außerhalb des lokalen Netzes gefunden werden.</string>
     <string name="switch_webui_enable">Integrierte Web-Konsole aktivieren</string>
+    <string name="switch_webui_enable_desc">Die lokale Konsole auf 127.0.0.1 bereitstellen.</string>
     <string name="title_log_viewer">Diagnoseprotokoll</string>
     <string name="hint_search_logs">Suche nach Begriff, IP, Peer…</string>
     <string name="filter_all">ALLE</string>
@@ -111,10 +115,15 @@
     <string name="prompt_vpn_not_running">Hinweis: P2PTap VPN muss laufen, um die Konsole zu öffnen</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">mDNS LAN-Auto-Erkennung aktivieren</string>
+    <string name="switch_enable_mdns_desc">Diesen Knoten im LAN ankündigen und nahe Peers automatisch finden.</string>
     <string name="switch_disable_relay">Nur-Direktverbindung (deaktiviert auch Hole Punching und AutoRelay)</string>
+    <string name="switch_disable_relay_desc">Nur direkte Verbindungen nutzen. Peers hinter NAT sind nicht erreichbar.</string>
     <string name="switch_disable_circuit_relay">Nur Circuit-Relay deaktivieren</string>
+    <string name="switch_disable_circuit_relay_desc">libp2p-Circuit-Relays nicht mehr als Ausweichpfad verwenden.</string>
     <string name="switch_disable_hole_punching">Nur Hole Punching deaktivieren</string>
+    <string name="switch_disable_hole_punching_desc">NAT-Hole-Punching überspringen und bestehende Verbindungen nutzen.</string>
     <string name="switch_strict_key">Strikte Forward Secrecy (PFS-Schlüsselisolation)</string>
+    <string name="switch_strict_key_desc">Peers ablehnen, deren Identitätsschlüssel ohne Rekey wechselt.</string>
     <string name="group_transports">Transportschicht-Protokolle</string>
     <string name="switch_quic">QUIC-Listener aktivieren (UDP)</string>
     <string name="switch_webrtc">WebRTC-Listener aktivieren (NAT-Traversal)</string>
@@ -318,4 +327,6 @@
     <string name="tab_settings">Einstellungen</string>
     <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
     <string name="hint_search_peers">Nach Name, Peer-ID oder IP suchen</string>
+    <string name="action_toggle_theme">Helles oder dunkles Design umschalten</string>
+    <string name="btn_share_logs">Protokolle teilen</string>
 </resources>

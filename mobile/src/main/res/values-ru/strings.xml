@@ -70,9 +70,13 @@
     <string name="helper_transport_strategy">best_path использует один путь; multipath распределяет трафик по всем активным путям (прямой + ретрансляция по цепи) и переупорядочивает на приёмнике; redundant дублирует; fallback переключается при сбое. Требуется перезапуск.</string>
     <string name="hint_log_level">Уровень логирования</string>
     <string name="switch_accept_subnets">Принимать анонсированные подсети</string>
+    <string name="switch_accept_subnets_desc">Маршрутизировать анонсированные узлами подсети в TAP-интерфейс этого устройства.</string>
     <string name="switch_obfuscation">Включить маскировку трафика и E2 шифрование</string>
+    <string name="switch_obfuscation_desc">Дополнять короткие кадры, чтобы DPI не мог распознать туннель.</string>
     <string name="switch_discover_boot_mesh">Обнаруживать Boot релейную сеть</string>
+    <string name="switch_discover_boot_mesh_desc">Войти в bootstrap-сеть, чтобы находить узлы за пределами локальной сети.</string>
     <string name="switch_webui_enable">Включить встроенную веб-панель</string>
+    <string name="switch_webui_enable_desc">Отдавать локальную панель на 127.0.0.1.</string>
     <string name="title_log_viewer">Журнал диагностики</string>
     <string name="hint_search_logs">Поиск по ключевым словам, IP, Peer…</string>
     <string name="filter_all">ВСЕ</string>
@@ -111,10 +115,15 @@
     <string name="prompt_vpn_not_running">Внимание: Для доступа к панели VPN должен быть запущен</string>
     <string name="tile_label">P2PTap</string>
     <string name="switch_enable_mdns">Включить автообнаружение узлов в LAN (mDNS)</string>
+    <string name="switch_enable_mdns_desc">Анонсировать этот узел в LAN и автоматически находить соседние узлы.</string>
     <string name="switch_disable_relay">Только прямое подключение (также отключает пробитие NAT и AutoRelay)</string>
+    <string name="switch_disable_relay_desc">Только прямые подключения. Узлы за NAT будут недоступны.</string>
     <string name="switch_disable_circuit_relay">Только отключить ретрансляцию</string>
+    <string name="switch_disable_circuit_relay_desc">Не использовать circuit relay libp2p как резервный путь.</string>
     <string name="switch_disable_hole_punching">Только отключить пробитие NAT</string>
+    <string name="switch_disable_hole_punching_desc">Пропустить пробитие NAT и использовать уже установленные соединения.</string>
     <string name="switch_strict_key">Строгая прямая секретность (изоляция ключей PFS)</string>
+    <string name="switch_strict_key_desc">Отклонять узлы, у которых ключ идентичности меняется без перевыпуска.</string>
     <string name="group_transports">Протоколы транспортного уровня</string>
     <string name="switch_quic">Принимать соединения QUIC (UDP)</string>
     <string name="switch_webrtc">Принимать соединения WebRTC (пробитие NAT)</string>
@@ -324,4 +333,6 @@
     <string name="tab_settings">Настройки</string>
     <!-- Peers tab search field. Same wording shape as hint_search_logs. -->
     <string name="hint_search_peers">Поиск по имени, Peer ID или IP</string>
+    <string name="action_toggle_theme">Переключить светлую или тёмную тему</string>
+    <string name="btn_share_logs">Поделиться журналами</string>
 </resources>
