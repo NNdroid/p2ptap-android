@@ -180,7 +180,10 @@ object CrashReporter {
     private fun resolveVersion(context: Context): String = try {
         val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = pInfo.versionName ?: "unknown"
-        "v${versionName} (build ${pInfo.longVersionCode})"
+        // versionName already starts with "v" (it is built as v1.0.<date>.<n>-<sha>
+        // in the Gradle config); only add the prefix when it is missing.
+        val named = if (versionName.startsWith("v", ignoreCase = true)) versionName else "v$versionName"
+        "$named (build ${pInfo.longVersionCode})"
     } catch (_: Exception) {
         "unknown"
     }
