@@ -35,12 +35,23 @@ class LogViewerActivity : AppCompatActivity() {
     private var activeLevelFilter = "ALL"
     private var searchQuery = ""
 
+    // Follow-the-tail state: true while the user is reading at (or near) the
+    // bottom, so a new log poll re-pins to the newest line. When the user
+    // scrolls away to read earlier lines or inspect a filter result, this
+    // flips false and the poll leaves the scroll position alone — otherwise
+    // every 1.5s poll yanked the view to the bottom and back, which read as
+    // the view "kept scrolling up and down".
+    private var autoScroll = true
+
     companion object {
         private const val PREFS_NAME = "p2ptap_ui_prefs"
         private const val KEY_NIGHT_MODE = "night_mode"
         private const val MAX_LOG_LINES = 2000
         // Matches the telemetry poll cadence so both screens move together.
         private const val POLL_MS = 1_500L
+        // How close to the very bottom counts as "at the bottom" (one line of
+        // text is ~20sp, so this is a couple of lines of slack).
+        private const val BOTTOM_TOLERANCE_PX = 48
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +67,7 @@ class LogViewerActivity : AppCompatActivity() {
         setupThemeControls()
         setupActionButtons()
         setupFilters()
+        setupScrollTracking()
         startLogPolling()
     }
 
@@ -150,6 +162,25 @@ class LogViewerActivity : AppCompatActivity() {
     }
 
     /**
+     * Tracks whether the user is reading at the bottom of the log so a poll
+     * only re-pins to the newest line when the tail is actually in view. A
+     * manual scroll away from the bottom (to read earlier lines, or to inspect
+     * a search/filter result) must not be overridden by the next poll.
+     */
+    private fun setupScrollTracking() {
+        binding.scrollView.setOnScrollChangeListener { _, _, _, _, _ ->
+            autoScroll = isScrollAtBottom()
+        }
+    }
+
+    private fun isScrollAtBottom(): Boolean {
+        val sv = binding.scrollView
+        val child = sv.getChildAt(0) ?: return true
+        val maxScroll = child.height + sv.paddingTop - sv.height
+        return sv.scrollY >= maxScroll - BOTTOM_TOLERANCE_PX
+    }
+
+    /**
      * Poll LogCollector at a fixed cadence, replacing the old
      * `Runtime.exec("logcat …")` subprocess that set-top boxes refuse.
      * The in-process sink captures the tunnel's own lines without a
@@ -197,7 +228,7 @@ class LogViewerActivity : AppCompatActivity() {
             R.plurals.msg_filtered_logs_fmt, logTotal, filteredEntries.size, logTotal
         )
 
-        if (!isPaused) {
+        if (!isPaused && autoScroll) {
             pinToBottomAfterLayout()
         }
     }

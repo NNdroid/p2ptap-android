@@ -870,6 +870,11 @@ class ConfigFragment : Fragment() {
         }
         AppConfigManager.reloadRunningService(requireContext())
 
+        // Explicit success feedback before handing control back to the tab the
+        // user came from. Previously the save silently hopped to Home, so the
+        // user could not tell the config was actually committed.
+        Toast.makeText(requireContext(), getString(R.string.msg_config_saved), Toast.LENGTH_SHORT).show()
+
         // What finish() used to do: hand control back to the tab the user came
         // from. The host decides where that is.
         (activity as? Host)?.onSettingsSaved()
