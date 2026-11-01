@@ -28,10 +28,12 @@ import app.fjj.p2ptap.config.P2PBootFlagStore
 import app.fjj.p2ptap.config.P2PConfig
 import com.p2ptap.P2PTap.P2PTap
 import com.p2ptap.P2PTap.InterfaceProvider
+import com.p2ptap.P2PTap.NetworkProtector
 import com.p2ptap.P2PTap.Protector
 import com.p2ptap.P2PTap.StateListener
 import com.p2ptap.P2PTap.ConfigStore
 import com.p2ptap.P2PTap.LogCallback
+import java.net.InetAddress
 import java.net.NetworkInterface
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
@@ -41,7 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import org.json.JSONArray
 
-class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvider, LogCallback {
+class P2PTapVpnService : VpnService(), Protector, NetworkProtector, StateListener, InterfaceProvider, LogCallback {
 
     companion object {
         const val TAG = "P2PTapVpnService"
@@ -295,7 +297,7 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             }
             Log.i(TAG, "Starting P2PTap native engine")
 
-            P2PTap.setProtector(this)
+            P2PTap.setNetworkProtector(this)
             P2PTap.setLogCallback(this)
             currentNativeSession = nativeSessionGeneration.incrementAndGet()
             registerStateListener()
@@ -1047,6 +1049,113 @@ class P2PTapVpnService : VpnService(), Protector, StateListener, InterfaceProvid
             Log.w(TAG, "VpnService.protect(fd=$fd) returned false")
         }
         return ok
+    }
+
+    // com.p2ptap.P2PTap.NetworkProtector implementation. The engine hands us
+    // the dial/listen target so the socket can be bound to the underlying
+    // android.net.Network that reaches it — the only way one process can keep
+    // parallel transports over Wi-Fi AND cellular at the same time (an unbound
+    // socket always rides the OS-preferred network, collapsing every path onto
+    // one). Failures degrade to plain protect(), never to an unprotected dial.
+    override fun protect(fd: Int, network: String?, address: String?): Boolean {
+        if (fd <= 0) return false
+        val target = pickUnderlyingNetwork(address)
+        if (target != null) {
+            try {
+                // adoptFd makes the PFD own the fd for the duration of the
+                // bindSocket call; detachFd hands ownership straight back to Go
+                // so the PFD finalizer can never close it behind the engine.
+                val pfd = ParcelFileDescriptor.adoptFd(fd)
+                try {
+                    target.bindSocket(pfd.fileDescriptor)
+                } finally {
+                    pfd.detachFd()
+                }
+                // A bound socket already egresses its network, but still mark it
+                // VPN-exempt so a later routing change cannot pull it into the
+                // TUN. Best effort: the binding is the authoritative part.
+                super.protect(fd)
+                return true
+            } catch (e: Exception) {
+                Log.w(TAG, "Network.bindSocket(fd=$fd, net=$target, addr=$address) failed; falling back to plain protect", e)
+            }
+        }
+        return super.protect(fd)
+    }
+
+    /**
+     * Maps a dial target (e.g. "192.168.1.10:4001" or "[2001:db8::1]:443") to
+     * the underlying network that should carry it, or null when no confident
+     * match exists (caller then falls back to plain VpnService.protect).
+     *
+     * Resolution order:
+     *  1. A network whose directly-connected subnet contains the destination
+     *     (LAN peers) — unambiguous.
+     *  2. A network with a local address of the same family (v4/v6) that has
+     *    validated internet, preferring Wi-Fi, then cellular, then any —
+     *    public destinations ride the default route of the chosen network.
+     */
+    private fun pickUnderlyingNetwork(address: String?): Network? {
+        if (address.isNullOrEmpty()) return null
+        val host = when {
+            address.startsWith("[") -> address.substringAfter('[').substringBefore(']')
+            else -> address.substringBeforeLast(':')
+        }
+        // Only literal IPs: the engine dials numeric addresses, and
+        // InetAddress.getByName would otherwise block on DNS.
+        if (host.isEmpty() || !host.all { it.isDigit() || it == '.' || it == ':' || it in "abcdefABCDEF" }) {
+            return null
+        }
+        val ip = try {
+            InetAddress.getByName(host)
+        } catch (e: Exception) {
+            return null
+        }
+        val cm = getSystemService(ConnectivityManager::class.java) ?: return null
+        val ipBytes = ip.address
+        val candidates = ArrayList<Pair<Network, LinkProperties>>()
+        for (n in cm.allNetworks) {
+            val caps = cm.getNetworkCapabilities(n) ?: continue
+            if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) continue
+            val lp = cm.getLinkProperties(n) ?: continue
+            candidates += n to lp
+        }
+        if (candidates.isEmpty()) return null
+
+        // 1. Directly-connected subnet wins — that network owns the segment.
+        for ((n, lp) in candidates) {
+            for (la in lp.linkAddresses) {
+                val prefix = la.address.address
+                if (prefix.size != ipBytes.size) continue
+                if (prefixContains(prefix, la.prefixLength, ipBytes)) return n
+            }
+        }
+
+        // 2. Public destination: same-family networks, Wi-Fi first, then
+        // cellular, then whatever has validated internet, then anything.
+        val family = candidates.filter { (_, lp) ->
+            lp.linkAddresses.any { it.address.address.size == ipBytes.size }
+        }.ifEmpty { candidates }
+        fun capsOf(n: Network): NetworkCapabilities? = cm.getNetworkCapabilities(n)
+        return family.firstOrNull { capsOf(it.first)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true }?.first
+            ?: family.firstOrNull { capsOf(it.first)?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true }?.first
+            ?: family.firstOrNull { capsOf(it.first)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true }?.first
+            ?: family.firstOrNull()?.first
+    }
+
+    private fun prefixContains(prefix: ByteArray, prefixLen: Int, addr: ByteArray): Boolean {
+        var i = 0
+        val full = prefixLen / 8
+        while (i < full) {
+            if (prefix[i] != addr[i]) return false
+            i++
+        }
+        val rem = prefixLen % 8
+        if (rem != 0 && i < prefix.size) {
+            val mask = (0xFF shl (8 - rem))
+            if ((prefix[i].toInt() and mask) != (addr[i].toInt() and mask)) return false
+        }
+        return true
     }
 
     private fun updateState(state: String, message: String = "") {
