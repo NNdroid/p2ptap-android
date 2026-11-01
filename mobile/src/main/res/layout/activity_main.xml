@@ -3,17 +3,16 @@
 
      There is no Toolbar any more. The M3 Expressive layout this app now
      follows puts the page name in a 34sp headline inside the scrolling
-     content, and reserves the app bar for back navigation on pushed screens
-     (ConfigActivity still has one). Removing it also removed the two menu
-     actions that used to live up there: Settings is the fourth tab, and Logs
-     moved into the settings page's diagnostics group.
+     content of each tab fragment. Settings is ConfigFragment here — the
+     separate ConfigActivity with its own bar and back arrow is gone, along
+     with the bar-sync bugs that structure caused.
 
-     The three tab bodies are Fragments (HomeFragment / PeersFragment /
-     TrafficFragment), swapped into this container with add/hide rather than
-     replace, so a tab keeps its scroll position and its disclosure state when
-     you come back to it. They share one MainViewModel through
-     `by activityViewModels()`, so the engine is still polled once, not three
-     times.
+     The four tab bodies are Fragments (HomeFragment / PeersFragment /
+     TrafficFragment / ConfigFragment), swapped into this container with
+     add/hide rather than replace, so a tab keeps its scroll position and its
+     disclosure state when you come back to it. They share one MainViewModel
+     through `by activityViewModels()`, so the engine is still polled once,
+     not three times.
 
      Sizing: the content frame takes the weight, the dock is a fixed 80dp, so
      nothing is ever hidden behind the bar and no scroll view needs a bottom

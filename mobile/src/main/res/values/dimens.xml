@@ -2,7 +2,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- The card language every settings group shares. Cards 1 to 7 of
-         activity_config.xml all repeat the same corner radius, stroke,
+         fragment_config.xml all repeat the same corner radius, stroke,
          elevation and inner padding, so a radius change has to land in one
          place instead of in seven card blocks. -->
     <!-- 28dp is the M3 Expressive large radius and the only one used at page

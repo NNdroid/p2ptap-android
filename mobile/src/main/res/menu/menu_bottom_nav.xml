@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Bottom navigation: four destinations, no "more" overflow.
 
-     首页 / 节点 / 流量 是三个常驻目的地。设置 is the fourth: it lives in its own
-     Activity (ConfigActivity) because the settings form is ~1200 lines of
-     layout with its own scroll state and validation, and folding that into a
-     tab would have meant either a Fragment that duplicates the Activity's
-     894 lines of read/write logic or an Activity that pretends to be a tab.
-     The bar is inflated on both screens and the selected item is set from the
-     current screen, so the transition is the only visible difference. -->
+     首页 / 节点 / 流量 / 设置 are all Fragments hosted by MainActivity now.
+     Settings used to be a separate Activity (ConfigActivity) that inflated
+     its own copy of this bar and hopped between screens with Intents; that
+     two-screen structure caused the bar-sync bug family — most loudly the
+     re-entrancy StackOverflowError of 2026-11-01 — so it was promoted to
+     ConfigFragment and this menu is inflated exactly once. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item

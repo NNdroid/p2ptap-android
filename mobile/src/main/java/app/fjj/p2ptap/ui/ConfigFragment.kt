@@ -6,28 +6,28 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.InetAddresses
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.core.widget.doAfterTextChanged
-import app.fjj.p2ptap.MainActivity
+import androidx.fragment.app.Fragment
 import app.fjj.p2ptap.R
 import app.fjj.p2ptap.config.AppConfigManager
 import app.fjj.p2ptap.config.splitPeerAddresses
 import app.fjj.p2ptap.config.P2PConfig
-import app.fjj.p2ptap.databinding.ActivityConfigBinding
+import app.fjj.p2ptap.databinding.FragmentConfigBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
 import app.fjj.p2ptap.service.VpnReloadPlan
 import app.fjj.p2ptap.service.planVpnReload
@@ -35,9 +35,29 @@ import com.google.android.material.textfield.TextInputLayout
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class ConfigActivity : AppCompatActivity() {
+/**
+ * The settings tab, hosted by MainActivity like the other three tabs.
+ *
+ * Promoted from ConfigActivity: a second Activity inflating its own copy of
+ * the bottom bar, hopping back and forth through Intents with CLEAR_TOP /
+ * SINGLE_TOP and a tab extra, was the root cause of the bar-sync bug family
+ * (highlight drift, stale selection on return, and the re-entrancy
+ * StackOverflowError of 2026-11-01). As a Fragment it reuses the host's bar,
+ * so there is exactly one selection listener and nothing to keep in sync.
+ *
+ * The form logic is unchanged from the Activity: same debounced validation,
+ * same reload-plan preview, same gating. After Save the host is told to
+ * return to the tab the user came from, which is what `finish()` used to do.
+ */
+class ConfigFragment : Fragment() {
 
-    private lateinit var binding: ActivityConfigBinding
+    /** Called by the host activity after Save commits, so it can show the previous tab again. */
+    interface Host {
+        fun onSettingsSaved()
+    }
+
+    private var _binding: FragmentConfigBinding? = null
+    private val binding get() = _binding!!
 
     // Debounce for real-time validation: each field's latest validation replaces
     // any pending one, so rapid typing only triggers one check after 300 ms of
@@ -52,11 +72,11 @@ class ConfigActivity : AppCompatActivity() {
     ) { uri: Uri? ->
         if (uri != null) {
             try {
-                contentResolver.openInputStream(uri)?.use { inputStream ->
+                requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
                     val reader = BufferedReader(InputStreamReader(inputStream))
                     val jsonStr = reader.readText()
-                    val (cfg, restoredPid) = AppConfigManager.importBackupOrConfig(this, jsonStr)
-                    AppConfigManager.reloadRunningService(this, forceRestart = true)
+                    val (cfg, restoredPid) = AppConfigManager.importBackupOrConfig(requireContext(), jsonStr)
+                    AppConfigManager.reloadRunningService(requireContext(), forceRestart = true)
                     displayConfig(cfg)
                     refreshPeerIdDisplay()
                     val msg = if (restoredPid != null) {
@@ -64,80 +84,40 @@ class ConfigActivity : AppCompatActivity() {
                     } else {
                         getString(R.string.msg_import_success)
                     }
-                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this, getString(R.string.msg_import_failed) + UiMessages.describe(this, e), Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.msg_import_failed) + UiMessages.describe(requireContext(), e), Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        syncStatusBarColor()
-        binding = ActivityConfigBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentConfigBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupDropdownAdapters()
         loadConfig()
         loadThemeMode()
         refreshPeerIdDisplay()
         setupListeners()
-        setupBottomNav()
     }
 
-    override fun onResume() {
-        super.onResume()
-        syncStatusBarColor()
-        // Coming back from another tab: this screen is always the settings
-        // destination, so re-assert the selection by id (setting a MenuItem's
-        // isChecked does not repaint the bar or move its indicator).
-        binding.bottomNav.selectedItemId = R.id.tabSettings
-    }
-
-    /**
-     * Same bar as the home screen.
-     *
-     * Settings is the selected item here; the other three leave this Activity.
-     * `CLEAR_TOP or SINGLE_TOP` matters: MainActivity is the task root, so this
-     * delivers the requested tab through onNewIntent instead of stacking a
-     * second copy of it on top of the settings screen.
-     */
-    private fun setupBottomNav() {
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.tabSettings -> true
-                R.id.tabHome, R.id.tabPeers, R.id.tabTraffic -> {
-                    val tab = when (item.itemId) {
-                        R.id.tabPeers -> MainActivity.TAB_PEERS
-                        R.id.tabTraffic -> MainActivity.TAB_TRAFFIC
-                        else -> MainActivity.TAB_HOME
-                    }
-                    startActivity(
-                        Intent(this, MainActivity::class.java).apply {
-                            putExtra(MainActivity.EXTRA_TAB, tab)
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        },
-                    )
-                    true
-                }
-
-                else -> false
-            }
-        }
-        binding.bottomNav.selectedItemId = R.id.tabSettings
-    }
-
-    private fun syncStatusBarColor() {
-        val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        window.statusBarColor = ContextCompat.getColor(this, R.color.m3_page)
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = !isNight
+    override fun onDestroyView() {
+        // The debounce runnables capture TextInputLayouts from this view; drop
+        // everything so a destroyed settings view is never touched again.
+        validationHandler.removeCallbacksAndMessages(null)
+        pendingValidations.clear()
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun setupDropdownAdapters() {
@@ -150,10 +130,10 @@ class ConfigActivity : AppCompatActivity() {
             getString(R.string.theme_system)
         )
 
-        binding.actvObfuscationAlgo.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, obfAlgos))
-        binding.actvTransportStrategy.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, strategies))
-        binding.actvLogLevel.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, logLevels))
-        binding.actvThemeMode.setAdapter(ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, themeModes))
+        binding.actvObfuscationAlgo.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, obfAlgos))
+        binding.actvTransportStrategy.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, strategies))
+        binding.actvLogLevel.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, logLevels))
+        binding.actvThemeMode.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, themeModes))
     }
 
     private fun setupListeners() {
@@ -162,14 +142,14 @@ class ConfigActivity : AppCompatActivity() {
         }
 
         binding.layoutOpenLogs.setOnClickListener {
-            startActivity(Intent(this, LogViewerActivity::class.java))
+            startActivity(Intent(requireContext(), LogViewerActivity::class.java))
         }
 
         binding.btnBackupRestore.setOnClickListener {
             BackupDialog.newInstance {
                 loadConfig()
                 refreshPeerIdDisplay()
-            }.show(supportFragmentManager, BackupDialog.TAG)
+            }.show(parentFragmentManager, BackupDialog.TAG)
         }
 
         binding.btnResetKey.setOnClickListener {
@@ -177,11 +157,11 @@ class ConfigActivity : AppCompatActivity() {
         }
 
         binding.ivCopyPeerId.setOnClickListener {
-            val pid = AppConfigManager.getPeerId(this)
+            val pid = AppConfigManager.getPeerId(requireContext())
             if (pid.isNotBlank()) {
-                val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 cm.setPrimaryClip(ClipData.newPlainText(getString(R.string.label_peer_id), pid))
-                Toast.makeText(this, getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.msg_peer_id_copied), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -341,7 +321,7 @@ class ConfigActivity : AppCompatActivity() {
         // holds the last saved config and the service's cached config is set
         // from it, so the file read is the baseline until this screen saves.
         val plan = if (P2PTapVpnService.isRunning()) {
-            planVpnReload(AppConfigManager.load(this), collectConfigFromUi(), false, null)
+            planVpnReload(AppConfigManager.load(requireContext()), collectConfigFromUi(), false, null)
         } else {
             null
         }
@@ -351,7 +331,7 @@ class ConfigActivity : AppCompatActivity() {
             VpnReloadPlan.HOT -> getString(R.string.reload_plan_hot)
             VpnReloadPlan.RESTART -> getString(R.string.reload_plan_restart)
         }
-        binding.tvReloadPlan.setTextColor(ContextCompat.getColor(this, when (plan) {
+        binding.tvReloadPlan.setTextColor(ContextCompat.getColor(requireContext(), when (plan) {
             VpnReloadPlan.HOT -> R.color.status_connected
             VpnReloadPlan.RESTART -> R.color.status_connecting
             else -> R.color.md_on_surface_variant
@@ -589,32 +569,32 @@ class ConfigActivity : AppCompatActivity() {
                     binding.etTurnServers.setText(updatedList.joinToString("\n"))
                 }
             }
-        }.show(supportFragmentManager, AddressListManagerDialog.TAG)
+        }.show(parentFragmentManager, AddressListManagerDialog.TAG)
     }
 
     private fun refreshPeerIdDisplay() {
-        val pid = AppConfigManager.getPeerId(this)
+        val pid = AppConfigManager.getPeerId(requireContext())
         binding.tvConfigPeerId.text = getString(R.string.peer_id_fmt, pid.ifBlank { getString(R.string.identity_not_generated) })
     }
 
     private fun showResetKeyDialog() {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(R.string.confirm_reset_key_title)
             .setMessage(R.string.confirm_reset_key_msg)
             .setPositiveButton(R.string.btn_confirm_reset) { _, _ ->
                 try {
-                    val newPid = AppConfigManager.generateNewIdentityKey(this)
+                    val newPid = AppConfigManager.generateNewIdentityKey(requireContext())
                     refreshPeerIdDisplay()
                     // The running tunnel keeps the old identity until restarted —
                     // without this the user sees a new peer ID that never appears
                     // on the wire, and every peer entry containing the old ID
                     // goes stale the moment they reset.
                     if (P2PTapVpnService.isRunning()) {
-                        AppConfigManager.reloadRunningService(this, forceRestart = true)
+                        AppConfigManager.reloadRunningService(requireContext(), forceRestart = true)
                     }
-                    Toast.makeText(this, getString(R.string.msg_key_loaded_fmt, newPid.take(12) + "..."), Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), getString(R.string.msg_key_loaded_fmt, newPid.take(12) + "..."), Toast.LENGTH_LONG).show()
                 } catch (e: Exception) {
-                    Toast.makeText(this, getString(R.string.err_key_load_fmt, UiMessages.describe(this, e)), Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), getString(R.string.err_key_load_fmt, UiMessages.describe(requireContext(), e)), Toast.LENGTH_LONG).show()
                 }
             }
             .setNegativeButton(R.string.btn_cancel, null)
@@ -622,12 +602,12 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun loadConfig() {
-        val config = AppConfigManager.load(this)
+        val config = AppConfigManager.load(requireContext())
         displayConfig(config)
     }
 
     private fun loadThemeMode() {
-        val prefs = getSharedPreferences("p2ptap_ui_prefs", Context.MODE_PRIVATE)
+        val prefs = requireContext().getSharedPreferences("p2ptap_ui_prefs", Context.MODE_PRIVATE)
         val mode = prefs.getInt("night_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         val label = when (mode) {
             AppCompatDelegate.MODE_NIGHT_NO -> getString(R.string.theme_light)
@@ -638,7 +618,7 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun saveThemeMode() {
-        val prefs = getSharedPreferences("p2ptap_ui_prefs", Context.MODE_PRIVATE)
+        val prefs = requireContext().getSharedPreferences("p2ptap_ui_prefs", Context.MODE_PRIVATE)
         val mode = when (binding.actvThemeMode.text?.toString()?.trim()) {
             getString(R.string.theme_light) -> AppCompatDelegate.MODE_NIGHT_NO
             getString(R.string.theme_dark) -> AppCompatDelegate.MODE_NIGHT_YES
@@ -710,7 +690,7 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun collectConfigFromUi(): P2PConfig {
-        val savedConfig = AppConfigManager.load(this)
+        val savedConfig = AppConfigManager.load(requireContext())
         val nodeName = binding.etNodeName.text?.toString()?.trim() ?: ""
         val tapIp = binding.etTapIp.text?.toString()?.trim() ?: "10.0.0.88/24"
         val tapIpv6 = binding.etTapIpv6.text?.toString()?.trim() ?: ""
@@ -819,78 +799,80 @@ class ConfigActivity : AppCompatActivity() {
         // --- UI-level format validation for immediate feedback ---
         // TAP IPv4 CIDR
         if (!isValidIpv4Cidr(config.tapIp)) {
-            Toast.makeText(this, getString(R.string.err_invalid_ipv4), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_ipv4), Toast.LENGTH_SHORT).show()
             return
         }
         // TAP IPv6 CIDR (if non-empty)
         if (config.tapIpv6.isNotEmpty() && !isValidIpv6Cidr(config.tapIpv6)) {
-            Toast.makeText(this, getString(R.string.err_invalid_ipv6), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_ipv6), Toast.LENGTH_SHORT).show()
             return
         }
         // MTU range
         if (config.mtu < 576 || config.mtu > 9000) {
-            Toast.makeText(this, getString(R.string.err_invalid_mtu), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_mtu), Toast.LENGTH_SHORT).show()
             return
         }
         // WebUI port
         if (config.webUiPort < 1 || config.webUiPort > 65535) {
-            Toast.makeText(this, getString(R.string.err_invalid_port), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_port), Toast.LENGTH_SHORT).show()
             return
         }
         // Hole punch timeout (1s–120s). Stored in ms; mirrors the engine's own
         // Validate, which resets anything outside 100ms..120s to the 15s default.
         if (config.holePunchTimeout < 1000 || config.holePunchTimeout > 120000) {
-            Toast.makeText(this, getString(R.string.err_invalid_timeout), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_timeout), Toast.LENGTH_SHORT).show()
             return
         }
         // Node name
         if (config.nodeName.length > 64) {
-            Toast.makeText(this, getString(R.string.err_invalid_node_name), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_node_name), Toast.LENGTH_SHORT).show()
             return
         }
         // Advertised subnets (each line must be a valid CIDR)
         for (sub in config.advertisedSubnets) {
             if (sub.isNotEmpty() && !isValidCidr(sub)) {
-                Toast.makeText(this, getString(R.string.err_invalid_subnet_fmt, sub), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.err_invalid_subnet_fmt, sub), Toast.LENGTH_SHORT).show()
                 return
             }
         }
         // DNS servers (each must be a valid IP address)
         for (dns in config.dnsServers) {
             if (dns.isNotEmpty() && !InetAddresses.isNumericAddress(dns)) {
-                Toast.makeText(this, getString(R.string.err_invalid_dns_fmt, dns), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.err_invalid_dns_fmt, dns), Toast.LENGTH_SHORT).show()
                 return
             }
         }
         // STUN servers (basic format check)
         for (srv in config.stunServers) {
             if (srv.isNotEmpty() && !isValidStunServer(srv)) {
-                Toast.makeText(this, getString(R.string.err_invalid_stun_fmt, srv), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.err_invalid_stun_fmt, srv), Toast.LENGTH_SHORT).show()
                 return
             }
         }
         // TURN servers (must start with turn: and have valid port)
         for (srv in config.turnServers) {
             if (srv.isNotEmpty() && !isValidTurnServer(srv)) {
-                Toast.makeText(this, getString(R.string.err_invalid_turn_fmt, srv), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.err_invalid_turn_fmt, srv), Toast.LENGTH_SHORT).show()
                 return
             }
         }
         // Obfuscation params
         if (config.obfuscationMaxFragSize > 0 && config.obfuscationMaxFragSize < 256) {
-            Toast.makeText(this, getString(R.string.err_invalid_max_frag_size), Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.err_invalid_max_frag_size), Toast.LENGTH_SHORT).show()
             return
         }
 
         try {
-            AppConfigManager.save(this, config)
+            AppConfigManager.save(requireContext(), config)
         } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.config_invalid_fmt, UiMessages.describe(this, e)), Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.config_invalid_fmt, UiMessages.describe(requireContext(), e)), Toast.LENGTH_LONG).show()
             return
         }
-        AppConfigManager.reloadRunningService(this)
+        AppConfigManager.reloadRunningService(requireContext())
 
-        finish()
+        // What finish() used to do: hand control back to the tab the user came
+        // from. The host decides where that is.
+        (activity as? Host)?.onSettingsSaved()
     }
 
     // --- Format validators (UI-level, fast checks before JNI round-trip) ---

@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Settings tab.
+
+     Promoted from ConfigActivity: the two-screen split (an Activity that
+     inflates its own copy of the bottom bar and hops between screens with
+     Intents) was the root cause of a whole class of bar-sync bugs, including
+     the re-entrancy StackOverflowError of 2026-11-01. The settings screen is
+     now the fourth tab Fragment, hosted by MainActivity like the other
+     three, and this layout carries only the form.
+
+     Same structure as the other tab fragments: a NestedScrollView with the
+     34sp page headline inside the scrolling content, no Toolbar. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_window_gradient"
-    android:fitsSystemWindows="true">
+    android:background="@color/m3_page"
+    android:clipToPadding="false"
+    android:scrollbars="none">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_window_gradient"
-        app:elevation="0dp">
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/title_settings"
-            app:titleTextColor="?attr/colorOnSurface"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="?attr/colorOnSurface" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/m3_nav_height"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/screen_padding">
+            android:layout_marginBottom="16dp"
+            android:letterSpacing="-0.012"
+            android:text="@string/title_settings"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="34sp" />
 
             <!-- Card 1: Identity & Key Management -->
             <com.google.android.material.card.MaterialCardView
@@ -1607,18 +1604,3 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <!-- Same bar as MainActivity, with Settings selected. Both screens inflate
-         it from @menu/menu_bottom_nav and each sets its own selected item, so
-         the four destinations behave the same wherever they are tapped from.
-         The scroll view's paddingBottom reserves the bar's height, which lets
-         content scroll *behind* the bar instead of stopping above it. -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
-        style="@style/Widget.P2ptap.BottomNav"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/m3_nav_height"
-        android:layout_gravity="bottom"
-        app:menu="@menu/menu_bottom_nav" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>

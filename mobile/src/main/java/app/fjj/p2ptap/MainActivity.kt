@@ -8,40 +8,49 @@ import androidx.fragment.app.Fragment
 import app.fjj.p2ptap.crash.CrashReportDialog
 import app.fjj.p2ptap.databinding.ActivityMainBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
-import app.fjj.p2ptap.ui.ConfigActivity
+import app.fjj.p2ptap.ui.ConfigFragment
 import app.fjj.p2ptap.ui.HomeFragment
 import app.fjj.p2ptap.ui.PeersFragment
 import app.fjj.p2ptap.ui.TrafficFragment
 import app.fjj.p2ptap.viewmodel.MainViewModel
 
 /**
- * The app shell: bottom navigation plus the three tab Fragments.
+ * The app shell: bottom navigation plus the four tab Fragments.
  *
- * What is left here is exactly what a Fragment cannot own — the bar, the
- * FragmentManager that swaps tab bodies, and the foreground / background
- * service notifications bound to the host's lifecycle. Everything the home
- * screen renders moved to [HomeFragment]; the peers and traffic lists live in
- * their own Fragments. All three read one [MainViewModel] through
- * `activityViewModels()`, so the engine is still polled once rather than three
- * times, and no tab has to talk to another.
+ * What is left here is exactly what a Fragment cannot own — the bar and the
+ * FragmentManager that swaps tab bodies. All four tabs (HomeFragment /
+ * PeersFragment / TrafficFragment / ConfigFragment) read one [MainViewModel]
+ * through `activityViewModels()`, and the bar has exactly one selection
+ * listener, so there is nothing to keep in sync between screens.
  *
  * Tab bodies are added once and shown/hidden, not replaced: returning to a tab
  * restores its scroll position and its disclosure state. That also means their
  * view lifecycles stay RESUMED while hidden, so each Fragment gates its own
  * re-render through `onHiddenChanged`.
  *
- * Settings is the fourth destination but lives in [ConfigActivity], which
- * inflates the same bar and selects its own item. Tapping it here starts that
- * Activity and leaves [currentTab] alone — on return, onResume re-selects
- * whatever tab this screen is actually showing, so the bar can never claim
- * "settings" while the home hero is on screen.
+ * Settings used to be the fourth destination in a separate [ConfigActivity]
+ * with its own copy of the bar; hopping between the two screens with Intents
+ * caused the bar-sync bug family that ended in the 2026-11-01
+ * StackOverflowError, so the settings screen is now [ConfigFragment] here.
  */
-class MainActivity : AppCompatActivity(), HomeFragment.Host {
+class MainActivity : AppCompatActivity(), HomeFragment.Host, ConfigFragment.Host {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
 
     private var currentTab: Int = TAB_HOME
+
+    // The tab to return to when the settings tab closes (Save committed).
+    private var tabBeforeSettings: Int = TAB_HOME
+
+    // Re-entrancy guard for programmatic bar selection. Material commits the
+    // checked state AFTER the selection callback returns, so while that
+    // callback is on the stack `selectedItemId` still reads the PREVIOUS item.
+    // selectTab's "already selected?" check therefore always sees a stale value
+    // and re-enters setSelectedItemId without a flag — infinite recursion,
+    // observed as a StackOverflowError on launch whenever the initial tab is
+    // not Home (crash report 2026-11-01 09:38).
+    private var barSelectionSync = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,15 +58,13 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupTabs(
-            savedInstanceState?.getInt(STATE_TAB, TAB_HOME)
-                ?: intent?.getIntExtra(EXTRA_TAB, TAB_HOME)
-                ?: TAB_HOME,
-        )
+        setupTabs(savedInstanceState?.getInt(STATE_TAB, TAB_HOME) ?: TAB_HOME)
     }
 
     private fun setupTabs(initialTab: Int) {
         binding.bottomNav.setOnItemSelectedListener { item ->
+            // This bar is being driven programmatically; acknowledge and stop.
+            if (barSelectionSync) return@setOnItemSelectedListener true
             when (item.itemId) {
                 R.id.tabHome -> {
                     selectTab(TAB_HOME)
@@ -75,7 +82,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host {
                 }
 
                 R.id.tabSettings -> {
-                    startActivity(Intent(this, ConfigActivity::class.java))
+                    selectTab(TAB_SETTINGS)
                     true
                 }
 
@@ -101,7 +108,6 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host {
         }
 
         selectTab(initialTab)
-        binding.bottomNav.selectedItemId = navItemFor(currentTab)
     }
 
     /**
@@ -113,6 +119,9 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host {
      * re-selection and tab restoration flaky.
      */
     private fun selectTab(tab: Int) {
+        if (tab == TAB_SETTINGS && currentTab != TAB_SETTINGS) {
+            tabBeforeSettings = currentTab
+        }
         currentTab = tab
         val fm = supportFragmentManager
         val tx = fm.beginTransaction()
@@ -127,53 +136,64 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host {
         }
         tx.commitNow()
 
-        val item = navItemFor(tab)
-        if (binding.bottomNav.selectedItemId != item) binding.bottomNav.selectedItemId = item
+        syncBarToCurrentTab()
+    }
+
+    /**
+     * Points the bar at the tab that is actually visible. The selection
+     * listener is suppressed for the duration (see [barSelectionSync]): the
+     * stale-read inside Material makes the "is it already selected" short
+     * circuit unusable on its own.
+     */
+    private fun syncBarToCurrentTab() {
+        val item = navItemFor(currentTab)
+        if (binding.bottomNav.selectedItemId == item) return
+        barSelectionSync = true
+        try {
+            binding.bottomNav.selectedItemId = item
+        } finally {
+            barSelectionSync = false
+        }
     }
 
     private fun newFragmentFor(tab: Int): Fragment = when (tab) {
         TAB_PEERS -> PeersFragment()
         TAB_TRAFFIC -> TrafficFragment()
+        TAB_SETTINGS -> ConfigFragment()
         else -> HomeFragment()
     }
 
     private fun tagFor(tab: Int): String = when (tab) {
         TAB_PEERS -> TAG_PEERS
         TAB_TRAFFIC -> TAG_TRAFFIC
+        TAB_SETTINGS -> TAG_SETTINGS
         else -> TAG_HOME
     }
 
     private fun navItemFor(tab: Int): Int = when (tab) {
         TAB_PEERS -> R.id.tabPeers
         TAB_TRAFFIC -> R.id.tabTraffic
+        TAB_SETTINGS -> R.id.tabSettings
         else -> R.id.tabHome
     }
 
-    // ── HomeFragment.Host ──────────────────────────────────────────────────
+    // ── Host interfaces ────────────────────────────────────────────────────
 
     override fun navigateToTab(tab: Int) {
         if (tab != currentTab) selectTab(tab)
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        // Arriving from ConfigActivity's bar: it starts this Activity with
-        // CLEAR_TOP|SINGLE_TOP, so the tab lives in the new Intent rather than
-        // in a fresh onCreate.
-        val tab = intent.getIntExtra(EXTRA_TAB, currentTab)
-        if (tab != currentTab) selectTab(tab)
+    override fun onSettingsSaved() {
+        selectTab(tabBeforeSettings)
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.refreshPeers()
 
-        // Re-assert the bar against the tab that is actually visible. Tapping
-        // 设置 starts ConfigActivity and the bar briefly marks it as selected
-        // before this Activity pauses; without this line it would come back
-        // still highlighting Settings while the home hero is on screen.
-        binding.bottomNav.selectedItemId = navItemFor(currentTab)
+        // Re-assert the bar against the tab that is actually visible, in case
+        // a recreated view or an intent left it somewhere stale.
+        syncBarToCurrentTab()
 
         // Resume engine callbacks when the app returns to foreground.
         if (P2PTapVpnService.isRunning()) {
@@ -200,26 +220,20 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host {
     }
 
     companion object {
-        // Bottom-nav destinations hosted by this Activity. Settings is intent
-        // #3 — it lives in ConfigActivity — so it has no index here.
+        // Bottom-nav destinations hosted by this Activity — all four of them
+        // now, including Settings (ConfigFragment).
         const val TAB_HOME = 0
         const val TAB_PEERS = 1
         const val TAB_TRAFFIC = 2
+        const val TAB_SETTINGS = 3
 
-        private val ALL_TABS = intArrayOf(TAB_HOME, TAB_PEERS, TAB_TRAFFIC)
+        private val ALL_TABS = intArrayOf(TAB_HOME, TAB_PEERS, TAB_TRAFFIC, TAB_SETTINGS)
 
         private const val TAG_HOME = "tab:home"
         private const val TAG_PEERS = "tab:peers"
         private const val TAG_TRAFFIC = "tab:traffic"
+        private const val TAG_SETTINGS = "tab:settings"
 
         private const val STATE_TAB = "app.fjj.p2ptap.state.TAB"
-
-        /**
-         * Set on the Intent when ConfigActivity's bar navigates back here.
-         *
-         * Public because the two screens share one bottom bar: ConfigActivity
-         * has to name a destination that only MainActivity knows how to show.
-         */
-        const val EXTRA_TAB = "app.fjj.p2ptap.extra.TAB"
     }
 }
