@@ -210,10 +210,10 @@ object QrImportHelper {
 
         binding.tvScanNodeName.text = if (info.nodeName.isNotBlank()) info.nodeName else context.getString(R.string.scan_node_unknown)
         val ipText = buildString {
-            if (info.tapIp.isNotBlank()) append("IPv4: " + info.tapIp)
+            if (info.tapIp.isNotBlank()) append(context.getString(R.string.label_ipv4_colon, info.tapIp))
             if (info.tapIpv6.isNotBlank()) {
                 if (isNotEmpty()) append(" | ")
-                append("IPv6: " + info.tapIpv6)
+                append(context.getString(R.string.label_ipv6_colon, info.tapIpv6))
             }
         }
         binding.tvScanIps.text = if (ipText.isNotBlank()) ipText else context.getString(R.string.scan_ip_unknown)

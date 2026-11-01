@@ -5,6 +5,12 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import app.fjj.p2ptap.crash.CrashReportDialog
 import app.fjj.p2ptap.databinding.ActivityMainBinding
 import app.fjj.p2ptap.service.P2PTapVpnService
@@ -59,6 +65,28 @@ class MainActivity : AppCompatActivity(), HomeFragment.Host, ConfigFragment.Host
         setContentView(binding.root)
 
         setupTabs(savedInstanceState?.getInt(STATE_TAB, TAB_HOME) ?: TAB_HOME)
+        startTelemetryPolling()
+    }
+
+    /**
+     * Telemetry polling used to live in HomeFragment, which only ran when that
+     * Fragment existed. Tab bodies are created lazily (selectTab adds only the
+     * current tab), so a process restored onto Peers or Traffic never created
+     * HomeFragment and nothing refreshed the shared telemetry: Peers/Traffic
+     * froze on the last pulled values. Polling belongs to the Activity shell —
+     * it runs whenever the app is foregrounded, regardless of which tab body
+     * exists. refreshStats is TTL-coalesced (1200 ms) and mutex-guarded, so
+     * HomeFragment's own UI observation no longer needs its own loop.
+     */
+    private fun startTelemetryPolling() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (isActive) {
+                    viewModel.refreshStats()
+                    delay(1500)
+                }
+            }
+        }
     }
 
     private fun setupTabs(initialTab: Int) {

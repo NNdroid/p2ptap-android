@@ -94,6 +94,12 @@ class QrDialog : BottomSheetDialogFragment() {
             val qrUri = buildQrUri(cfg, peerId, multiaddrsStr)
             try {
                 binding.ivQrCode.setImageBitmap(withContext(Dispatchers.Default) { generateQrBitmap(qrUri, 512) })
+            } catch (c: kotlinx.coroutines.CancellationException) {
+                // The sheet's view can be torn down while the bitmap renders
+                // off-thread. A cancelled coroutine must rethrow, not fall
+                // through to wireQrActions: _binding is null by then and the
+                // _binding!! in the getter would NPE.
+                throw c
             } catch (_: Exception) {}
             wireQrActions(ctx, cfg, peerId, multiaddrsStr, qrUri)
         }

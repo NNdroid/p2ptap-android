@@ -164,12 +164,10 @@ class HomeFragment : Fragment() {
         val owner = viewLifecycleOwner
         owner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    while (kotlinx.coroutines.currentCoroutineContext().isActive) {
-                        viewModel.refreshStats()
-                        kotlinx.coroutines.delay(1500)
-                    }
-                }
+                // Telemetry polling lives in MainActivity.startTelemetryPolling
+                // now, so the shared snapshot stays fresh even when this
+                // Fragment was never created (process restored onto another
+                // tab). This block only observes and renders.
                 kotlinx.coroutines.flow.combine(viewModel.telemetry, viewModel.state) { data, state -> data to state }
                     .collect { (data, state) ->
                         if (_binding == null) return@collect

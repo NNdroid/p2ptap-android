@@ -326,4 +326,8 @@
     <string name="hint_search_peers">名前・Peer ID・IP で検索</string>
     <string name="action_toggle_theme">ライト／ダークテーマを切り替え</string>
     <string name="btn_share_logs">ログを共有</string>
+    <!-- Peer link quality metrics. The first argument is the measured value. -->
+    <string name="label_rtt_ms">RTT %.1f ms</string>
+    <string name="label_jitter_ms">ジッター %.1f ms</string>
+    <string name="label_loss_pct">パケット損失率 %.1f%%</string>
 </resources>

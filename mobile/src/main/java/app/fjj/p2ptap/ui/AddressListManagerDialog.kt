@@ -402,7 +402,7 @@ class AddressListManagerDialog : BottomSheetDialogFragment() {
                 lower.contains("turn:") -> "TURN" to R.color.badge_relay
                 lower.contains("stun:") || lower.contains("/stun") -> "STUN" to R.color.badge_relay
                 lower.contains("p2p/") && lower.contains("dnsaddr") -> "DNSADDR" to R.color.brand_secondary
-                addr.trimStart().startsWith("12D3") || addr.trimStart().startsWith("Qm") -> "Peer ID" to R.color.brand_secondary
+                addr.trimStart().startsWith("12D3") || addr.trimStart().startsWith("Qm") -> getString(R.string.label_peer_id) to R.color.brand_secondary
                 lower.contains("/ip6/") || lower.contains("::") -> "IPv6" to R.color.badge_ipv6
                 lower.contains("/") && lower.contains(".") -> "CIDR" to R.color.badge_cidr
                 else -> getString(R.string.protocol_endpoint) to R.color.brand_primary

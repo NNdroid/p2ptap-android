@@ -357,4 +357,14 @@
     <string name="hint_search_peers">Search by name, Peer ID or IP</string>
     <string name="action_toggle_theme">Toggle light or dark theme</string>
     <string name="btn_share_logs">Share logs</string>
+
+    <!-- Exit-node / peer address and link-quality labels. The IPv4/IPv6/ID
+         prefixes are protocol abbreviations that stay as-is in every locale
+         (translatable=false); the quality metrics are translated. -->
+    <string name="label_ipv4_colon" translatable="false">IPv4: %1$s</string>
+    <string name="label_ipv6_colon" translatable="false">IPv6: %1$s</string>
+    <string name="label_id_colon" translatable="false">ID: %1$s</string>
+    <string name="label_rtt_ms">RTT %.1f ms</string>
+    <string name="label_jitter_ms">Jitter %.1f ms</string>
+    <string name="label_loss_pct">Loss %.1f%%</string>
 </resources>

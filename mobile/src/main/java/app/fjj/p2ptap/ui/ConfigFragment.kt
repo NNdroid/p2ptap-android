@@ -70,7 +70,10 @@ class ConfigFragment : Fragment() {
     private val importFileLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
-        if (uri != null) {
+        // The picker result can land after this view was destroyed (user left
+        // the tab while the system picker was up); every branch below touches
+        // binding. Bail out instead of hitting the _binding!! in the getter.
+        if (uri != null && _binding != null) {
             try {
                 requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
                     val reader = BufferedReader(InputStreamReader(inputStream))

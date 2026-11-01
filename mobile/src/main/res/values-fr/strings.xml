@@ -332,4 +332,8 @@
     <string name="hint_search_peers">Rechercher par nom, Peer ID ou IP</string>
     <string name="action_toggle_theme">Basculer entre thème clair et sombre</string>
     <string name="btn_share_logs">Partager les journaux</string>
+    <!-- Peer link quality metrics. The first argument is the measured value. -->
+    <string name="label_rtt_ms">RTT %.1f ms</string>
+    <string name="label_jitter_ms">Gigue %.1f ms</string>
+    <string name="label_loss_pct">Perte %.1f%%</string>
 </resources>

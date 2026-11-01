@@ -119,9 +119,9 @@ class ExitNodeSelectorDialog : LiveDataSheet() {
             item.tvRtt.text = if (peer.rttMeasured) String.format(Locale.getDefault(), "%.1f ms", peer.rtt)
                 else getString(R.string.telemetry_unmeasured)
             item.tvIpAndPid.text = buildString {
-                append("IPv4: ${peer.tapIp.ifBlank { getString(R.string.telemetry_unknown) }}")
-                append("\nIPv6: ${peer.tapIpv6.ifBlank { getString(R.string.telemetry_unknown) }}")
-                append("\nID: ${peer.peerId}")
+                append(getString(R.string.label_ipv4_colon, peer.tapIp.ifBlank { getString(R.string.telemetry_unknown) }))
+                append("\n" + getString(R.string.label_ipv6_colon, peer.tapIpv6.ifBlank { getString(R.string.telemetry_unknown) }))
+                append("\n" + getString(R.string.label_id_colon, peer.peerId))
                 append("\n${peer.os.ifBlank { getString(R.string.telemetry_unknown) }} · ${peer.version.ifBlank { getString(R.string.telemetry_unknown) }}")
                 if (peer.rttSource.isNotBlank()) append("\n${peer.rttSource}")
             }

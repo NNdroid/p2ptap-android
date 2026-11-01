@@ -52,7 +52,7 @@
     <string name="label_developer">开发者 @NNdroid</string>
 
     <!-- Settings Groups -->
-    <string name="title_settings">节点参数配置</string>
+    <string name="title_settings">设置</string>
     <string name="group_identity">节点身份与密钥管理</string>
     <string name="group_network">虚拟网络参数 (L2/L3)</string>
     <string name="group_peers">引导中继与静态节点</string>
@@ -343,4 +343,8 @@
     <string name="hint_search_peers">搜索节点名称、Peer ID 或 IP</string>
     <string name="action_toggle_theme">切换浅色/深色主题</string>
     <string name="btn_share_logs">分享日志</string>
+    <!-- Peer link quality metrics. The first argument is the measured value. -->
+    <string name="label_rtt_ms">RTT %.1f ms</string>
+    <string name="label_jitter_ms">抖动 %.1f ms</string>
+    <string name="label_loss_pct">丢包率 %.1f%%</string>
 </resources>

@@ -280,7 +280,7 @@ class PeersFragment : Fragment() {
         // would be noise, but a screen reader should still say where the number
         // came from.
         itemBinding.tvRtt.text = if (item.rttMeasured) {
-            String.format(Locale.getDefault(), "RTT %.1f ms", item.rtt)
+            getString(R.string.label_rtt_ms, item.rtt)
         } else {
             getString(R.string.telemetry_unmeasured)
         }
@@ -290,7 +290,7 @@ class PeersFragment : Fragment() {
         // Jitter
         itemBinding.tvJitter.apply {
             if (item.jitterMeasured && item.jitterMs > 0) {
-                text = String.format(Locale.getDefault(), "Jitter %.1f ms", item.jitterMs)
+                text = getString(R.string.label_jitter_ms, item.jitterMs)
                 visibility = View.VISIBLE
             } else {
                 visibility = View.GONE
@@ -300,7 +300,7 @@ class PeersFragment : Fragment() {
         // Loss
         itemBinding.tvLoss.apply {
             if (item.lossMeasured && item.lossRatePercent > 0) {
-                text = String.format(Locale.getDefault(), "Loss %.1f%%", item.lossRatePercent)
+                text = getString(R.string.label_loss_pct, item.lossRatePercent)
                 visibility = View.VISIBLE
             } else {
                 visibility = View.GONE
@@ -344,8 +344,8 @@ class PeersFragment : Fragment() {
 
         // TAP IPs — tap to copy
         val ipText = buildString {
-            if (item.tapIp.isNotBlank()) append("IPv4: ${item.tapIp}  ")
-            if (item.tapIpv6.isNotBlank()) append("IPv6: ${item.tapIpv6}")
+            if (item.tapIp.isNotBlank()) append(getString(R.string.label_ipv4_colon, item.tapIp) + "  ")
+            if (item.tapIpv6.isNotBlank()) append(getString(R.string.label_ipv6_colon, item.tapIpv6))
         }
         itemBinding.tvIpAddresses.text = ipText.ifBlank { getString(R.string.telemetry_unknown) }
         itemBinding.tvIpAddresses.visibility = View.VISIBLE
